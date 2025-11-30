@@ -202,3 +202,12 @@ settings.local.js
 # ========================================
 # END OF GITIGNORE
 # ========================================
+backend/node_modules/*
+backend/.env.dev
+backend/.env.prod
+backend/wrangler.toml
+frontend/.env.dev
+frontend/.env.prod
+frontend/vite.config.dev.js
+frontend/vite.config.prod.js
+frontend/node_modules/*
