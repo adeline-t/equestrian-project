@@ -1,0 +1,14 @@
+name = "equestrian-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+SUPABASE_URL = "https://uunhfbdjewnecmzlfiyk.supabase.co"
+
+
+# Environment-specific settings
+[env.production]
+name = "equestrian-api-prod"
+
+[env.staging]
+name = "equestrian-api-staging"

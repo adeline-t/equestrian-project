@@ -1,0 +1,25 @@
+{
+  "name": "equestrian-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Equestrian facility management API",
+  "scripts": {
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy",
+    "test": "echo &quot;Error: no test specified&quot; && exit 1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.86.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.51.0"
+  },
+  "keywords": [
+    "equestrian",
+    "management",
+    "api",
+    "cloudflare-workers"
+  ],
+  "author": "Equestrian Center",
+  "license": "MIT"
+}
