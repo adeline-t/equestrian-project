@@ -6,6 +6,7 @@
 # ========================================
 # Node.js dependencies
 node_modules/
+node_modules/*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -22,10 +23,12 @@ pnpm-lock.yaml
 frontend/dist/
 frontend/build/
 frontend/.output/
+frontend/.env
 
 # Backend build output (Cloudflare Workers)
 backend/.wrangler/
 backend/dist/
+backend/.dev.*
 
 # Vite specific
 .vite/
