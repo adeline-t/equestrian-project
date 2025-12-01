@@ -1,4 +1,12 @@
 import { getDatabase, handleDbError, jsonResponse, validateEmail, validatePhone, validateRequired, checkRateLimit, getSecurityHeaders } from '../db.js';
+import { 
+  handleDatabaseError, 
+  handleValidationError, 
+  handleNotFoundError, 
+  handleRateLimitError,
+  handleUnexpectedError 
+} from '../utils/errorHandler.js';
+import { sanitizeRiderData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
 export async function handleRiders(request, env) {
   const db = getDatabase(env);
