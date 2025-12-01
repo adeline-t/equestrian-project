@@ -1,0 +1,96 @@
+import React, { useState, useEffect } from 'react';
+{{validationImport}}
+
+function {{ModelName}}Form({ {{modelName}}, onSubmit, onCancel }) {
+  const [formData, setFormData] = useState({
+    {{initialFormState}}
+  });
+  
+  const [errors, setErrors] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if ({{modelName}}) {
+      setFormData({
+        {{editFormState}}
+      });
+    }
+  }, [{{modelName}}]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    
+    // Clear errors when user starts typing
+    if (errors.length > 0) {
+      setErrors([]);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    const validationErrors = validate{{ModelName}}(formData);
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setSubmitting(true);
+    
+    try {
+      await onSubmit(formData);
+    } catch (error) {
+      setErrors([error.message]);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{{modelName}} ? '✏️ Modifier un {{modelName}}' : '➕ Ajouter un {{modelName}}'}</h2>
+          <button className="modal-close" onClick={onCancel}>×</button>
+        </div>
+
+        {errors.length > 0 && (
+          <div className="alert alert-error">
+            {errors.map((error, index) => (
+              <div key={index}>❌ {error}</div>
+            ))}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="{{modelName}}-form">
+          {{formFields}}
+
+          <div className="form-actions">
+            <button 
+              type="button" 
+              className="btn btn-secondary"
+              onClick={onCancel}
+              disabled={submitting}
+            >
+              Annuler
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              disabled={submitting}
+            >
+              {submitting ? 'Enregistrement...' : ({{modelName}} ? 'Mettre à jour' : 'Créer')}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default {{ModelName}}Form;

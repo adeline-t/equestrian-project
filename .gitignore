@@ -211,3 +211,6 @@ frontend/.env.prod
 frontend/vite.config.dev.js
 frontend/vite.config.prod.js
 frontend/node_modules/*
+frontend/dist-dev
+frontend/.env
+cloudflare.toml

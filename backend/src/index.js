@@ -19,9 +19,10 @@ export default {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          ...getSecurityHeaders()
-        }
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+          'Access-Control-Max-Age': '86400',
+          ...getSecurityHeaders(),
+        },
       });
     }
 
@@ -51,66 +52,84 @@ export default {
       }
 
       // Health check
-      if (path === '/api/health') {
-        return jsonResponse({ 
-          status: 'ok', 
-          message: 'API opérationnelle',
-          timestamp: new Date().toISOString(),
-          version: '1.0.0'
-        }, 200, getSecurityHeaders());
+      if (path === '/api/health' || path === '/api' || path === '/api/') {
+        return jsonResponse(
+          {
+            status: 'ok',
+            message: 'API opérationnelle',
+            timestamp: new Date().toISOString(),
+            version: '1.0.0',
+            environment: env.ENVIRONMENT || 'unknown',
+          },
+          200
+        );
       }
 
       // API documentation endpoint
       if (path === '/api/docs') {
-        return jsonResponse({
-          title: 'Equestrian Management API',
-          version: '1.0.0',
-          endpoints: {
-            riders: {
-              'GET /api/riders': 'List all riders',
-              'GET /api/riders/:id': 'Get single rider',
-              'POST /api/riders': 'Create rider',
-              'PUT /api/riders/:id': 'Update rider',
-              'DELETE /api/riders/:id': 'Delete rider',
-              'GET /api/riders/:id/horses': 'Get horses for rider'
+        return jsonResponse(
+          {
+            title: 'Equestrian Management API',
+            version: '1.0.0',
+            endpoints: {
+              riders: {
+                'GET /api/riders': 'List all riders',
+                'GET /api/riders/:id': 'Get single rider',
+                'POST /api/riders': 'Create rider',
+                'PUT /api/riders/:id': 'Update rider',
+                'DELETE /api/riders/:id': 'Delete rider',
+                'GET /api/riders/:id/horses': 'Get horses for rider',
+              },
+              horses: {
+                'GET /api/horses': 'List all horses',
+                'GET /api/horses/:id': 'Get single horse',
+                'POST /api/horses': 'Create horse',
+                'PUT /api/horses/:id': 'Update horse',
+                'DELETE /api/horses/:id': 'Delete horse',
+                'GET /api/horses/:id/riders': 'Get riders for horse',
+              },
+              associations: {
+                'GET /api/associations': 'List all associations',
+                'GET /api/associations/:id': 'Get single association',
+                'POST /api/associations': 'Create association',
+                'PUT /api/associations/:id': 'Update association',
+                'DELETE /api/associations/:id': 'Delete association',
+              },
+              utility: {
+                'GET /api/health': 'Health check',
+                'GET /api/docs': 'API documentation',
+              },
             },
-            horses: {
-              'GET /api/horses': 'List all horses',
-              'GET /api/horses/:id': 'Get single horse',
-              'POST /api/horses': 'Create horse',
-              'PUT /api/horses/:id': 'Update horse',
-              'DELETE /api/horses/:id': 'Delete horse',
-              'GET /api/horses/:id/riders': 'Get riders for horse'
-            },
-            associations: {
-              'GET /api/associations': 'List all associations',
-              'GET /api/associations/:id': 'Get single association',
-              'POST /api/associations': 'Create association',
-              'PUT /api/associations/:id': 'Update association',
-              'DELETE /api/associations/:id': 'Delete association'
-            },
-            utility: {
-              'GET /api/health': 'Health check',
-              'GET /api/docs': 'API documentation'
-            }
-          }
-        }, 200, getSecurityHeaders());
+          },
+          200
+        );
       }
 
       // 404 - Route not found
-      return jsonResponse({ 
-        error: 'Route non trouvée',
-        message: 'Utilisez /api/docs pour voir la documentation disponible',
-        available_endpoints: ['/api/health', '/api/docs', '/api/riders', '/api/horses', '/api/associations']
-      }, 404, getSecurityHeaders());
-
+      return jsonResponse(
+        {
+          error: 'Route non trouvée',
+          message: 'Utilisez /api/docs pour voir la documentation disponible',
+          available_endpoints: [
+            '/api/health',
+            '/api/docs',
+            '/api/riders',
+            '/api/horses',
+            '/api/associations',
+          ],
+        },
+        404
+      );
     } catch (error) {
       console.error('Unhandled error:', error);
-      return jsonResponse({ 
-        error: 'Erreur serveur interne',
-        message: 'Une erreur inattendue est survenue',
-        timestamp: new Date().toISOString()
-      }, 500, getSecurityHeaders());
+      return jsonResponse(
+        {
+          error: 'Erreur serveur interne',
+          message: error.message,
+          timestamp: new Date().toISOString(),
+        },
+        500
+      );
     }
-  }
+  },
 };

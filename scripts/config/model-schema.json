@@ -1,0 +1,98 @@
+{
+  "fieldTypes": {
+    "string": {
+      "sql": "VARCHAR(255)",
+      "js": "string",
+      "validation": "trim",
+      "form": "text"
+    },
+    "text": {
+      "sql": "TEXT",
+      "js": "string", 
+      "validation": "trim",
+      "form": "textarea"
+    },
+    "integer": {
+      "sql": "INTEGER",
+      "js": "number",
+      "validation": "parseInt",
+      "form": "number"
+    },
+    "decimal": {
+      "sql": "DECIMAL(10,2)",
+      "js": "number",
+      "validation": "parseFloat",
+      "form": "number"
+    },
+    "boolean": {
+      "sql": "BOOLEAN",
+      "js": "boolean",
+      "validation": "Boolean",
+      "form": "checkbox"
+    },
+    "date": {
+      "sql": "DATE",
+      "js": "string",
+      "validation": "date",
+      "form": "date"
+    },
+    "datetime": {
+      "sql": "TIMESTAMP",
+      "js": "string", 
+      "validation": "datetime",
+      "form": "datetime-local"
+    },
+    "email": {
+      "sql": "VARCHAR(255)",
+      "js": "string",
+      "validation": "email",
+      "form": "email"
+    },
+    "phone": {
+      "sql": "VARCHAR(50)",
+      "js": "string",
+      "validation": "phone",
+      "form": "tel"
+    },
+    "enum": {
+      "sql": "VARCHAR(100)",
+      "js": "string",
+      "validation": "enum",
+      "form": "select"
+    }
+  },
+  "commonFields": {
+    "id": {
+      "type": "integer",
+      "sql": "SERIAL PRIMARY KEY",
+      "auto": true,
+      "required": true
+    },
+    "created_at": {
+      "type": "datetime",
+      "sql": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+      "auto": true,
+      "required": false
+    },
+    "updated_at": {
+      "type": "datetime", 
+      "sql": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+      "auto": true,
+      "required": false
+    }
+  },
+  "relationships": {
+    "hasOne": {
+      "description": "One-to-one relationship",
+      "sql": "REFERENCES target_table(id) ON DELETE SET NULL"
+    },
+    "hasMany": {
+      "description": "One-to-many relationship",
+      "sql": "REFERENCES source_table(id) ON DELETE CASCADE"
+    },
+    "belongsToMany": {
+      "description": "Many-to-many relationship (requires junction table)",
+      "requiresJunction": true
+    }
+  }
+}

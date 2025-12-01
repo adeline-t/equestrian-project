@@ -1,0 +1,19 @@
+{
+  "testModel": {
+    "name": "TestModel",
+    "displayName": "Test Model",
+    "plural": "Test Models",
+    "fields": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "type": "text",
+        "required": false
+      }
+    ]
+  }
+}

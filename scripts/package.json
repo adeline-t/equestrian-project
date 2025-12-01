@@ -1,0 +1,30 @@
+{
+  "name": "equestrian-model-automation",
+  "version": "1.0.0",
+  "description": "Automation scripts for equestrian management system model development",
+  "main": "index.js",
+  "bin": {
+    "add-model": "./add-model.js",
+    "modify-model": "./modify-model.js"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "fs-extra": "^11.1.0",
+    "inquirer": "^9.2.0",
+    "ora": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  },
+  "keywords": [
+    "automation",
+    "code-generation",
+    "equestrian",
+    "crud"
+  ],
+  "author": "Equestrian Project Team",
+  "license": "MIT"
+}
