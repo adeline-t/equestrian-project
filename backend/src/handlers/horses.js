@@ -1,4 +1,12 @@
 import { getDatabase, handleDbError, jsonResponse, validateRequired, checkRateLimit, getSecurityHeaders } from '../db.js';
+import { 
+  handleDatabaseError, 
+  handleValidationError, 
+  handleNotFoundError, 
+  handleRateLimitError,
+  handleUnexpectedError 
+} from '../utils/errorHandler.js';
+import { sanitizeHorseData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
 export async function handleHorses(request, env) {
   const db = getDatabase(env);
@@ -8,7 +16,7 @@ export async function handleHorses(request, env) {
 
   // Rate limiting
   if (!checkRateLimit(clientIP, 60, 60000)) {
-    return jsonResponse({ error: 'Trop de requêtes' }, 429);
+    return handleRateLimitError('horses.rateLimit');
   }
 
   if (request.method === 'OPTIONS') {
@@ -23,7 +31,7 @@ export async function handleHorses(request, env) {
         .select('*')
         .order('name');
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'horses.list');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -41,7 +49,7 @@ export async function handleHorses(request, env) {
         .eq('id', horseId)
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'horses.get');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -77,7 +85,7 @@ export async function handleHorses(request, env) {
         .select()
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'horses.create');
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
@@ -115,7 +123,7 @@ export async function handleHorses(request, env) {
         .select()
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'horses.update');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -132,7 +140,7 @@ export async function handleHorses(request, env) {
         .delete()
         .eq('id', horseId);
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'horses.delete');
       return jsonResponse({ message: 'Cheval supprimé avec succès' }, 200, getSecurityHeaders());
     }
 
@@ -177,7 +185,7 @@ export async function handleHorseRiders(request, env, horseId) {
       .eq('horse_id', horseIdNum)
       .order('association_start_date', { ascending: false });
 
-    if (error) return handleDbError(error);
+    if (error) return handleDatabaseError(error, 'horses.getRiders');
     return jsonResponse(data, 200, getSecurityHeaders());
   } catch (error) {
     console.error('Unexpected error:', error);

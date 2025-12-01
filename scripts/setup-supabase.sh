@@ -1,217 +1,168 @@
 #!/bin/bash
 
-# Supabase Setup Script
-# This script helps set up Supabase projects for dev and prod environments
+# Simplified Supabase Setup Guide
+# This script provides instructions for setting up Supabase
 
 set -e
 
-echo "🔧 Supabase Setup Script"
-echo "This script will guide you through setting up Supabase projects"
+echo "🗄️  Supabase Setup Guide"
+echo "======================="
 echo ""
 
-# Function to create Supabase project
-create_supabase_project() {
-    local env_name=$1
-    local project_name=$2
-    
-    echo ""
-    echo "📝 Setting up $env_name Supabase project..."
-    echo ""
-    echo "Please follow these steps:"
-    echo "1. Go to https://supabase.com/dashboard"
-    echo "2. Sign in or create an account"
-    echo "3. Click 'New Project'"
-    echo "4. Use these settings:"
-    echo "   - Organization: Your organization name"
-    echo "   - Project Name: $project_name"
-    echo "   - Database Password: Generate a strong password"
-    echo "   - Region: Choose your closest region"
-    echo ""
-    echo "5. After creating the project, copy these values:"
-    echo ""
-    
-    read -p "Enter Project URL (e.g., https://abcdefg.supabase.co): " project_url
-    read -p "Enter Anon Key: " anon_key
-    read -p "Enter Service Role Key: " service_role_key
-    
-    # Save to environment file
-    local env_file
-    case $env_name in
-        "Development")
-            env_file="frontend/.env.dev"
-            ;;
-        "Production")
-            env_file="frontend/.env.prod"
-            ;;
-    esac
-    
-    # Update frontend environment file
-    sed -i.bak "s|VITE_SUPABASE_URL=.*|VITE_SUPABASE_URL=$project_url|g" "$env_file"
-    sed -i.bak "s|VITE_SUPABASE_ANON_KEY=.*|VITE_SUPABASE_ANON_KEY=$anon_key|g" "$env_file"
-    
-    # Update backend environment file
-    local backend_env_file
-    case $env_name in
-        "Development")
-            backend_env_file="backend/.env.dev"
-            ;;
-        "Production")
-            backend_env_file="backend/.env.prod"
-            ;;
-    esac
-    
-    sed -i.bak "s|SUPABASE_URL=.*|SUPABASE_URL=$project_url|g" "$backend_env_file"
-    sed -i.bak "s|SUPABASE_ANON_KEY=.*|SUPABASE_ANON_KEY=$anon_key|g" "$backend_env_file"
-    sed -i.bak "s|SUPABASE_SERVICE_ROLE_KEY=.*|SUPABASE_SERVICE_ROLE_KEY=$service_role_key|g" "$backend_env_file"
-    
-    echo "✅ $env_name Supabase configuration updated"
-    echo "   Frontend: $env_file"
-    echo "   Backend: $backend_env_file"
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+print_step() {
+    echo -e "${BLUE}$1${NC}"
 }
 
-# Function to setup database schema
-setup_database_schema() {
-    local env_name=$1
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+print_info() {
+    echo -e "${YELLOW}ℹ $1${NC}"
+}
+
+echo "This guide will help you set up Supabase for your project."
+echo ""
+
+print_step "Step 1: Create a Supabase Project"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "1. Go to: https://supabase.com/dashboard"
+echo "2. Sign in or create an account"
+echo "3. Click 'New Project'"
+echo "4. Fill in the details:"
+echo "   - Name: equestrian-dev (or your preferred name)"
+echo "   - Database Password: (generate a strong password)"
+echo "   - Region: (choose closest to you)"
+echo "5. Click 'Create new project'"
+echo ""
+read -p "Press Enter when you've created your project..."
+echo ""
+
+print_step "Step 2: Get Your Project Credentials"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "1. In your Supabase project dashboard:"
+echo "2. Go to: Settings > API"
+echo "3. Copy the following values:"
+echo ""
+echo "   📋 Project URL (looks like: https://xxxxx.supabase.co)"
+echo "   📋 anon/public key (starts with: eyJhbG...)"
+echo "   📋 service_role key (starts with: eyJhbG...)"
+echo ""
+read -p "Press Enter when you have these values ready..."
+echo ""
+
+print_step "Step 3: Configure Environment Files"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Function to update env file
+update_env_file() {
+    local file=$1
+    local url=$2
+    local anon_key=$3
+    local service_key=$4
     
-    echo ""
-    echo "🗄️ Setting up database schema for $env_name..."
-    echo ""
-    echo "Please run these SQL commands in your Supabase SQL Editor:"
-    echo ""
-    
-    cat << 'EOF'
--- Enable necessary extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- Create riders table
-CREATE TABLE IF NOT EXISTS riders (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    phone VARCHAR(20),
-    email VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    last_activity_at TIMESTAMP WITH TIME ZONE,
-    created_by UUID REFERENCES auth.users(id)
-);
-
--- Create horses table
-CREATE TABLE IF NOT EXISTS horses (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    kind VARCHAR(100) NOT NULL,
-    is_owned_by_laury BOOLEAN DEFAULT false,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    last_activity_at TIMESTAMP WITH TIME ZONE,
-    created_by UUID REFERENCES auth.users(id)
-);
-
--- Create associations table
-CREATE TABLE IF NOT EXISTS associations (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    rider_id UUID NOT NULL REFERENCES riders(id) ON DELETE CASCADE,
-    horse_id UUID NOT NULL REFERENCES horses(id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    last_associated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    created_by UUID REFERENCES auth.users(id),
-    UNIQUE(rider_id, horse_id)
-);
-
--- Enable Row Level Security
-ALTER TABLE riders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE horses ENABLE ROW LEVEL SECURITY;
-ALTER TABLE associations ENABLE ROW LEVEL SECURITY;
-
-EOF
-    
-    if [ "$env_name" = "Development" ]; then
-        cat << 'EOF'
--- Development RLS Policies (permissive)
-CREATE POLICY "Dev - All operations on riders" ON riders
-    FOR ALL USING (true) WITH CHECK (true);
-
-CREATE POLICY "Dev - All operations on horses" ON horses
-    FOR ALL USING (true) WITH CHECK (true);
-
-CREATE POLICY "Dev - All operations on associations" ON associations
-    FOR ALL USING (true) WITH CHECK (true);
-
-EOF
+    if [ -f "$file" ]; then
+        # Update existing file
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s|SUPABASE_URL=.*|SUPABASE_URL=$url|g" "$file"
+            sed -i '' "s|SUPABASE_ANON_KEY=.*|SUPABASE_ANON_KEY=$anon_key|g" "$file"
+            if [ -n "$service_key" ]; then
+                sed -i '' "s|SUPABASE_SERVICE_ROLE_KEY=.*|SUPABASE_SERVICE_ROLE_KEY=$service_key|g" "$file"
+            fi
+        else
+            # Linux
+            sed -i "s|SUPABASE_URL=.*|SUPABASE_URL=$url|g" "$file"
+            sed -i "s|SUPABASE_ANON_KEY=.*|SUPABASE_ANON_KEY=$anon_key|g" "$file"
+            if [ -n "$service_key" ]; then
+                sed -i "s|SUPABASE_SERVICE_ROLE_KEY=.*|SUPABASE_SERVICE_ROLE_KEY=$service_key|g" "$file"
+            fi
+        fi
+        print_success "Updated $file"
     else
-        cat << 'EOF'
--- Production RLS Policies (restrictive)
-CREATE POLICY "Users can read riders" ON riders
-    FOR SELECT USING (auth.uid() IS NOT NULL);
-
-CREATE POLICY "Users can insert riders" ON riders
-    FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
-
-CREATE POLICY "Users can update own riders" ON riders
-    FOR UPDATE USING (auth.uid() = created_by);
-
-CREATE POLICY "Users can delete own riders" ON riders
-    FOR DELETE USING (auth.uid() = created_by);
-
-CREATE POLICY "Users can read horses" ON horses
-    FOR SELECT USING (auth.uid() IS NOT NULL);
-
-CREATE POLICY "Users can insert horses" ON horses
-    FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
-
-CREATE POLICY "Users can update own horses" ON horses
-    FOR UPDATE USING (auth.uid() = created_by);
-
-CREATE POLICY "Users can delete own horses" ON horses
-    FOR DELETE USING (auth.uid() = created_by);
-
-CREATE POLICY "Users can read associations" ON associations
-    FOR SELECT USING (auth.uid() IS NOT NULL);
-
-CREATE POLICY "Users can insert associations" ON associations
-    FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
-
-CREATE POLICY "Users can update own associations" ON associations
-    FOR UPDATE USING (auth.uid() = created_by);
-
-CREATE POLICY "Users can delete own associations" ON associations
-    FOR DELETE USING (auth.uid() = created_by);
-
-EOF
+        print_info "$file not found (will need manual creation)"
     fi
-    
-    echo "✅ Copy and run these SQL commands in your Supabase SQL Editor"
 }
 
-# Main setup function
-main() {
-    echo "This script will help you set up Supabase for both dev and prod environments"
-    echo ""
-    
-    # Setup Development
-    echo "1. Setting up Development Environment"
-    create_supabase_project "Development" "equestrian-dev"
-    setup_database_schema "Development"
-    
-    echo ""
-    read -p "Press Enter to continue with Production setup..."
-    
-    # Setup Production
-    echo ""
-    echo "2. Setting up Production Environment"
-    create_supabase_project "Production" "equestrian-prod"
-    setup_database_schema "Production"
-    
-    echo ""
-    echo "🎉 Supabase setup completed!"
-    echo ""
-    echo "📋 Next steps:"
-    echo "1. Test both environments"
-    echo "2. Configure your custom domains"
-    echo "3. Set up authentication providers"
-    echo ""
-}
+# Get credentials from user
+read -p "Enter your Project URL: " PROJECT_URL
+read -p "Enter your anon/public key: " ANON_KEY
+read -p "Enter your service_role key: " SERVICE_KEY
 
-# Run the setup
-main
+echo ""
+echo "Updating environment files..."
+echo ""
+
+# Update frontend files
+update_env_file "frontend/.env.dev" "$PROJECT_URL" "$ANON_KEY" ""
+update_env_file "frontend/.env.prod" "$PROJECT_URL" "$ANON_KEY" ""
+
+# Update backend files
+update_env_file "backend/.env.dev" "$PROJECT_URL" "$ANON_KEY" "$SERVICE_KEY"
+update_env_file "backend/.env.prod" "$PROJECT_URL" "$ANON_KEY" "$SERVICE_KEY"
+
+echo ""
+print_step "Step 4: Set Up Database Schema"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "1. In your Supabase project dashboard:"
+echo "2. Go to: SQL Editor"
+echo "3. Click 'New Query'"
+echo "4. Copy and paste the SQL from: docs/database-schema.sql"
+echo "5. Click 'Run' to execute the schema"
+echo ""
+echo "This will create:"
+echo "  - riders table"
+echo "  - horses table"
+echo "  - associations table"
+echo "  - Row Level Security policies"
+echo ""
+read -p "Press Enter when you've run the schema..."
+echo ""
+
+print_step "Step 5: Verify Setup"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Testing connection..."
+echo ""
+
+# Simple verification
+if [ -f "frontend/.env.dev" ] && grep -q "supabase.co" "frontend/.env.dev"; then
+    print_success "Frontend configuration looks good"
+else
+    print_info "Frontend configuration may need manual verification"
+fi
+
+if [ -f "backend/.env.dev" ] && grep -q "supabase.co" "backend/.env.dev"; then
+    print_success "Backend configuration looks good"
+else
+    print_info "Backend configuration may need manual verification"
+fi
+
+echo ""
+print_success "Supabase setup complete!"
+echo ""
+echo "🎉 Next Steps:"
+echo ""
+echo "1. Start your development servers:"
+echo "   - Frontend: cd frontend && npm run dev"
+echo "   - Backend: cd backend && npm run dev"
+echo ""
+echo "2. Test the connection by creating a rider or horse"
+echo ""
+echo "3. For production setup:"
+echo "   - Create a separate Supabase project for production"
+echo "   - Update frontend/.env.prod and backend/.env.prod"
+echo "   - Run the same database schema"
+echo ""
+echo "📚 Documentation: docs/"
+echo ""

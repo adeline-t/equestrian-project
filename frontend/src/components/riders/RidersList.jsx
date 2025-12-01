@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { ridersApi } from '../../services/api';
 import RiderForm from './RiderForm';
 import { format } from 'date-fns';
@@ -194,5 +195,8 @@ function RidersList() {
     </div>
   );
 }
+
+// RidersList has no props, but we include PropTypes for consistency
+RidersList.propTypes = {};
 
 export default RidersList;

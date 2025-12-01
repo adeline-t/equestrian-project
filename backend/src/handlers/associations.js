@@ -1,4 +1,11 @@
 import { getDatabase, handleDbError, jsonResponse, validateRequired, checkRateLimit, getSecurityHeaders } from '../db.js';
+import { 
+  handleDatabaseError, 
+  handleValidationError, 
+  handleNotFoundError, 
+  handleRateLimitError 
+} from '../utils/errorHandler.js';
+import { sanitizeAssociationData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
 export async function handleAssociations(request, env) {
   const db = getDatabase(env);
@@ -8,7 +15,7 @@ export async function handleAssociations(request, env) {
 
   // Rate limiting
   if (!checkRateLimit(clientIP, 60, 60000)) {
-    return jsonResponse({ error: 'Trop de requêtes' }, 429);
+    return handleRateLimitError('associations.rateLimit');
   }
 
   if (request.method === 'OPTIONS') {
@@ -31,7 +38,7 @@ export async function handleAssociations(request, env) {
         `)
         .order('association_start_date', { ascending: false });
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'associations.list');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -57,7 +64,7 @@ export async function handleAssociations(request, env) {
         .eq('id', associationId)
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'associations.get');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -114,7 +121,7 @@ export async function handleAssociations(request, env) {
         `)
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'associations.create');
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
@@ -148,7 +155,7 @@ export async function handleAssociations(request, env) {
         `)
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'associations.update');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -165,7 +172,7 @@ export async function handleAssociations(request, env) {
         .delete()
         .eq('id', associationId);
 
-      if (error) return handleDbError(error);
+      if (error) return handleDatabaseError(error, 'associations.delete');
       return jsonResponse({ message: 'Association supprimée avec succès' }, 200, getSecurityHeaders());
     }
 

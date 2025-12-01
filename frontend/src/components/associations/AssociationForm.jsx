@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 function AssociationForm({ association, riders, horses, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
@@ -248,5 +249,34 @@ function AssociationForm({ association, riders, horses, onSubmit, onCancel }) {
     </form>
   );
 }
+
+AssociationForm.propTypes = {
+  association: PropTypes.shape({
+    id: PropTypes.string,
+    rider_id: PropTypes.string,
+    horse_id: PropTypes.string,
+    association_start_date: PropTypes.string,
+    association_end_date: PropTypes.string,
+  }),
+  riders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  horses: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      kind: PropTypes.oneOf(['horse', 'pony']),
+    })
+  ).isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
+
+AssociationForm.defaultProps = {
+  association: null,
+};
 
 export default AssociationForm;

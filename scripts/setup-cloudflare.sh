@@ -1,243 +1,172 @@
 #!/bin/bash
 
-# Cloudflare Setup Script
-# This script helps set up Cloudflare configuration for dev and prod environments
+# Simplified Cloudflare Setup Guide
+# This script provides instructions for setting up Cloudflare Workers
 
 set -e
 
-echo "☁️  Cloudflare Setup Script"
-echo "This script will guide you through setting up Cloudflare configuration"
+echo "☁️  Cloudflare Workers Setup Guide"
+echo "=================================="
 echo ""
 
-# Function to setup custom domains
-setup_custom_domains() {
-    echo ""
-    echo "🌐 Setting up Custom Domains"
-    echo ""
-    echo "Please follow these steps:"
-    echo "1. Log in to Cloudflare Dashboard: https://dash.cloudflare.com"
-    echo "2. Add your domain: yourdomain.com"
-    echo "3. Update your nameservers to Cloudflare's nameservers"
-    echo ""
-    echo "4. Create these DNS records:"
-    echo ""
-    echo "Development Environment:"
-    echo "  Type: A"
-    echo "  Name: dev"
-    echo "  Content: 192.0.2.1"
-    echo "  TTL: Auto"
-    echo "  Proxy: Proxied (orange cloud)"
-    echo ""
-    echo "Production Environment:"
-    echo "  Type: A"
-    echo "  Name: app (or @ for root)"
-    echo "  Content: 192.0.2.1"
-    echo "  TTL: Auto"
-    echo "  Proxy: Proxied (orange cloud)"
-    echo ""
-    echo "  Type: CNAME"
-    echo "  Name: api"
-    echo "  Content: your-workers-subdomain.workers.dev"
-    echo "  TTL: Auto"
-    echo "  Proxy: Proxied (orange cloud)"
-    echo ""
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+print_step() {
+    echo -e "${BLUE}$1${NC}"
 }
 
-# Function to setup Workers
-setup_workers() {
-    echo ""
-    echo "⚙️  Setting up Cloudflare Workers"
-    echo ""
-    echo "1. Make sure you're authenticated with Wrangler:"
-    echo "   wrangler auth login"
-    echo ""
-    echo "2. Deploy development worker:"
-    echo "   cd backend"
-    echo "   npx wrangler deploy --env dev"
-    echo ""
-    echo "3. Deploy production worker:"
-    echo "   npx wrangler deploy --env prod"
-    echo ""
-    echo "4. Bind custom domains:"
-    echo "   npx wrangler custom-domains add dev-api.yourdomain.com --env dev"
-    echo "   npx wrangler custom-domains add api.yourdomain.com --env prod"
-    echo ""
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
 }
 
-# Function to setup security settings
-setup_security_settings() {
-    echo ""
-    echo "🔒 Setting up Security Settings"
-    echo ""
-    echo "Development Environment Settings (dev.yourdomain.com):"
-    echo "  SSL/TLS: Flexible"
-    echo "  Security Level: Medium"
-    echo "  Cache Level: No Query String"
-    echo "  Browser Cache TTL: 4 hours"
-    echo "  Development Mode: Enabled"
-    echo ""
-    echo "Production Environment Settings (yourdomain.com):"
-    echo "  SSL/TLS: Full (Strict)"
-    echo "  Security Level: High"
-    echo "  Cache Level: Standard"
-    echo "  Browser Cache TTL: 1 day"
-    echo "  Development Mode: Disabled"
-    echo "  Always Online: Enabled"
-    echo "  Automatic HTTPS Rewrites: Enabled"
-    echo ""
+print_info() {
+    echo -e "${YELLOW}ℹ $1${NC}"
 }
 
-# Function to create Page Rules
-create_page_rules() {
-    echo ""
-    echo "📋 Creating Page Rules"
-    echo ""
-    echo "Development Page Rules:"
-    echo "  URL: dev.yourdomain.com/*"
-    echo "  Settings:"
-    echo "    - Cache Level: Bypass"
-    echo "    - Security Level: Off"
-    echo "    - Browser Cache TTL: 30 minutes"
-    echo ""
-    echo "Production Page Rules:"
-    echo "  URL 1: yourdomain.com/api/*"
-    echo "  Settings:"
-    echo "    - Cache Level: Bypass (for API endpoints)"
-    echo ""
-    echo "  URL 2: yourdomain.com/*"
-    echo "  Settings:"
-    echo "    - Cache Level: Standard"
-    echo "    - Security Level: High"
-    echo ""
-}
+echo "This guide will help you deploy your backend to Cloudflare Workers."
+echo ""
 
-# Function to setup environment variables
-setup_worker_secrets() {
-    echo ""
-    echo "🔐 Setting up Worker Secrets"
-    echo ""
-    echo "Development Environment:"
-    echo "  cd backend"
-    echo "  npx wrangler secret put SUPABASE_URL --env dev"
-    echo "  npx wrangler secret put SUPABASE_ANON_KEY --env dev"
-    echo "  npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env dev"
-    echo ""
-    echo "Production Environment:"
-    echo "  cd backend"
-    echo "  npx wrangler secret put SUPABASE_URL --env prod"
-    echo "  npx wrangler secret put SUPABASE_ANON_KEY --env prod"
-    echo "  npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env prod"
-    echo ""
-    echo "Note: You'll be prompted to enter each secret value"
-}
+print_step "Step 1: Install Wrangler CLI"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-# Function to create Cloudflare configuration file
-create_cloudflare_config() {
-    echo ""
-    echo "📄 Creating Cloudflare Configuration Files"
-    echo ""
-    
-    # Create Cloudflare.toml for project configuration
-    cat > cloudflare.toml << 'EOF'
-# Cloudflare Configuration
-# This file contains Cloudflare-specific settings
+if command -v wrangler &> /dev/null; then
+    print_success "Wrangler is already installed ($(wrangler --version))"
+else
+    echo "Wrangler is not installed. Installing..."
+    npm install -g wrangler
+    print_success "Wrangler installed"
+fi
 
-[environments]
+echo ""
+read -p "Press Enter to continue..."
+echo ""
 
-[environments.dev]
-domain = "dev.yourdomain.com"
-worker_domain = "dev-api.yourdomain.com"
+print_step "Step 2: Authenticate with Cloudflare"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Run the following command to authenticate:"
+echo ""
+echo "  wrangler login"
+echo ""
+echo "This will open a browser window to log in to Cloudflare."
+echo ""
+read -p "Press Enter when you've completed authentication..."
+echo ""
 
-[environments.prod]
-domain = "yourdomain.com"
-worker_domain = "api.yourdomain.com"
+print_step "Step 3: Configure wrangler.toml"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-[security]
+if [ ! -f "backend/wrangler.toml" ]; then
+    print_info "wrangler.toml not found. Creating from template..."
+    if [ -f "backend/wrangler.toml.template" ]; then
+        cp backend/wrangler.toml.template backend/wrangler.toml
+        print_success "Created backend/wrangler.toml"
+    else
+        print_info "Template not found. You'll need to create wrangler.toml manually."
+    fi
+else
+    print_success "wrangler.toml already exists"
+fi
 
-[security.dev]
-ssl_mode = "flexible"
-security_level = "medium"
-cache_level = "no_query_string"
-browser_cache_ttl = "4h"
-development_mode = true
+echo ""
+echo "Edit backend/wrangler.toml and update:"
+echo "  - name: your-worker-name"
+echo "  - account_id: your-cloudflare-account-id"
+echo ""
+echo "To find your account ID:"
+echo "  1. Go to: https://dash.cloudflare.com"
+echo "  2. Select your account"
+echo "  3. Copy the Account ID from the right sidebar"
+echo ""
+read -p "Press Enter when you've updated wrangler.toml..."
+echo ""
 
-[security.prod]
-ssl_mode = "full_strict"
-security_level = "high"
-cache_level = "standard"
-browser_cache_ttl = "1d"
-development_mode = false
+print_step "Step 4: Set Environment Secrets"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Set your Supabase credentials as secrets:"
+echo ""
+echo "Run these commands in the backend directory:"
+echo ""
+echo "  cd backend"
+echo "  wrangler secret put SUPABASE_URL"
+echo "  wrangler secret put SUPABASE_ANON_KEY"
+echo "  wrangler secret put SUPABASE_SERVICE_ROLE_KEY"
+echo ""
+echo "You'll be prompted to enter each value."
+echo ""
+read -p "Press Enter when you've set the secrets..."
+echo ""
 
-[page_rules]
+print_step "Step 5: Deploy to Cloudflare Workers"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Deploy your worker with:"
+echo ""
+echo "  cd backend"
+echo "  npm run deploy"
+echo ""
+echo "Or for development:"
+echo ""
+echo "  npm run dev"
+echo ""
+read -p "Press Enter to see deployment options..."
+echo ""
 
-[page_rules.dev]
-url = "dev.yourdomain.com/*"
-cache_level = "bypass"
-security_level = "off"
-browser_cache_ttl = "30m"
+print_step "Step 6: Configure Custom Domain (Optional)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "To use a custom domain:"
+echo ""
+echo "1. In Cloudflare Dashboard:"
+echo "   - Go to Workers & Pages"
+echo "   - Select your worker"
+echo "   - Go to Settings > Triggers"
+echo "   - Add Custom Domain"
+echo ""
+echo "2. Or use Wrangler CLI:"
+echo "   wrangler domains add api.yourdomain.com"
+echo ""
+read -p "Press Enter to continue..."
+echo ""
 
-[page_rules.prod_api]
-url = "yourdomain.com/api/*"
-cache_level = "bypass"
+print_step "Step 7: Update Frontend Configuration"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "Update your frontend environment files with the Worker URL:"
+echo ""
+echo "In frontend/.env.prod:"
+echo "  VITE_API_URL=https://your-worker.your-subdomain.workers.dev"
+echo ""
+echo "Or if using custom domain:"
+echo "  VITE_API_URL=https://api.yourdomain.com"
+echo ""
+read -p "Press Enter when you've updated the frontend config..."
+echo ""
 
-[page_rules.prod_site]
-url = "yourdomain.com/*"
-cache_level = "standard"
-security_level = "high"
-EOF
-    
-    echo "✅ Created cloudflare.toml configuration file"
-}
-
-# Function to test setup
-test_setup() {
-    echo ""
-    echo "🧪 Testing Setup"
-    echo ""
-    echo "After completing the setup, test with these commands:"
-    echo ""
-    echo "1. Test Workers:"
-    echo "   curl https://dev-api.yourdomain.com/api/riders"
-    echo "   curl https://api.yourdomain.com/api/riders"
-    echo ""
-    echo "2. Test Frontend:"
-    echo "   curl https://dev.yourdomain.com"
-    echo "   curl https://yourdomain.com"
-    echo ""
-    echo "3. Check Worker logs:"
-    echo "   npx wrangler tail --env dev"
-    echo "   npx wrangler tail --env prod"
-    echo ""
-}
-
-# Main setup function
-main() {
-    echo "This script will guide you through Cloudflare setup for both environments"
-    echo ""
-    
-    setup_custom_domains
-    setup_workers
-    setup_security_settings
-    create_page_rules
-    setup_worker_secrets
-    create_cloudflare_config
-    test_setup
-    
-    echo ""
-    echo "🎉 Cloudflare setup guide completed!"
-    echo ""
-    echo "📋 Important Notes:"
-    echo "1. DNS changes may take 24-48 hours to propagate"
-    echo "2. SSL certificates may take time to issue"
-    echo "3. Test thoroughly in development before production"
-    echo "4. Monitor Cloudflare Analytics for performance"
-    echo ""
-    echo "📚 Additional Resources:"
-    echo "  - Cloudflare Docs: https://developers.cloudflare.com"
-    echo "  - Wrangler CLI: https://developers.cloudflare.com/workers/wrangler"
-    echo "  - Custom Domains: https://developers.cloudflare.com/workers/platform/custom-domains"
-    echo ""
-}
-
-# Run the setup
-main
+print_success "Cloudflare Workers setup complete!"
+echo ""
+echo "🎉 Next Steps:"
+echo ""
+echo "1. Test your deployment:"
+echo "   curl https://your-worker.workers.dev/api/riders"
+echo ""
+echo "2. Deploy your frontend:"
+echo "   cd frontend"
+echo "   npm run build"
+echo "   npm run deploy"
+echo ""
+echo "3. Monitor your worker:"
+echo "   - Cloudflare Dashboard > Workers & Pages"
+echo "   - View logs with: wrangler tail"
+echo ""
+echo "📚 Documentation:"
+echo "  - Cloudflare Workers: https://developers.cloudflare.com/workers"
+echo "  - Wrangler CLI: https://developers.cloudflare.com/workers/wrangler"
+echo ""
