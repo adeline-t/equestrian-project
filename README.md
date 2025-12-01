@@ -30,37 +30,61 @@ A modern, production-ready web application for managing horse riders and horses 
 - **Automatic timestamp tracking** with triggers
 - **Foreign key relationships** for data integrity
 
+## 📚 Documentation
+
+Complete documentation is available in the `docs/` directory:
+
+### Getting Started
+- **[Prerequisites](docs/01-getting-started/prerequisites.md)** - System requirements and tools needed
+- **[Installation Guide](docs/01-getting-started/installation.md)** - Step-by-step setup instructions
+- **[Quick Start](docs/QUICK_START.md)** - Get running in 5 minutes
+
+### Development
+- **[Adding New Models](docs/ADDING_NEW_OBJECT_MODEL_GUIDE.md)** - Guide for creating new data models
+- **[Modifying Existing Models](docs/MODIFYING_EXISTING_MODEL_GUIDE.md)** - Guide for updating models
+- **[Local Development](docs/01-getting-started/installation.md#step-4-configure-frontend)** - Running locally
+
+### Deployment
+- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
+- **[Multi-Environment Setup](docs/MULTI_ENVIRONMENT_DEPLOYMENT_GUIDE.md)** - Dev/Prod environments
+- **[Troubleshooting](docs/PRODUCTION_DEPLOYMENT_TROUBLESHOOTING.md)** - Common issues and solutions
+
+### Features
+- **[Rider-Horse Associations](docs/04-features/associations.md)** - Association management feature
+- **[Environment Variables](docs/ENVIRONMENT_VARIABLES_REFERENCE.md)** - Configuration reference
+
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - Git
 - Cloudflare account (free)
 - Supabase account (free)
 
 ### Installation
 
-1. **Clone and setup the project:**
+1. **Clone the repository:**
 ```bash
-git clone <repository-url>
-cd equestrian-manager
+git clone https://github.com/adeline-t/equestrian-project.git
+cd equestrian-project
 ```
 
 2. **Set up the database:**
-```bash
-# Go to Supabase dashboard → SQL Editor
-# Copy and paste the contents of database/schema.sql
-# Execute the script to create tables
-```
+   - Create a Supabase project at [supabase.com](https://supabase.com)
+   - Run the SQL script from `database/schema.sql` in Supabase SQL Editor
+   - Copy your Project URL and anon key
 
 3. **Configure backend:**
 ```bash
 cd backend
 npm install
 
-# Update wrangler.toml with your Supabase URL
-wrangler secret put SUPABASE_KEY  # Add your Supabase anon key
-npm run deploy                   # Deploy to Cloudflare Workers
+# Create wrangler.toml from example
+cp wrangler.toml.example wrangler.toml
+# Edit wrangler.toml with your Supabase URL
+
+# Set Supabase secret
+wrangler secret put SUPABASE_ANON_KEY --env dev
 ```
 
 4. **Configure frontend:**
@@ -68,24 +92,31 @@ npm run deploy                   # Deploy to Cloudflare Workers
 cd ../frontend
 npm install
 
-# Create .env file from .env.example
-cp .env.example .env
-# Update VITE_API_URL with your Workers URL
+# Create environment file from example
+cp .env.dev.example .env.dev
+# Edit .env.dev with your backend URL and Supabase credentials
 
-npm run build                    # Build for production
-npm run dev                      # Or run in development
+# Copy to active environment
+cp .env.dev .env
 ```
 
-5. **Deploy frontend:**
+5. **Run locally:**
 ```bash
-# Deploy to Cloudflare Pages
-npx wrangler pages deploy dist --project-name=equestrian-frontend
+# Terminal 1 - Backend
+cd backend
+npm run dev
+
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
 ```
+
+Visit `http://localhost:5173` to see the application.
 
 ## 📁 Project Structure
 
 ```
-equestrian-manager/
+equestrian-project/
 ├── backend/                     # Cloudflare Workers API
 │   ├── src/
 │   │   ├── handlers/           # Route handlers
@@ -94,7 +125,7 @@ equestrian-manager/
 │   │   │   └── associations.js
 │   │   ├── db.js              # Database utilities
 │   │   └── index.js           # Main router
-│   ├── wrangler.toml          # Cloudflare config
+│   ├── wrangler.toml.example  # Cloudflare config template
 │   └── package.json
 ├── frontend/                   # React application
 │   ├── src/
@@ -102,221 +133,157 @@ equestrian-manager/
 │   │   │   ├── riders/
 │   │   │   ├── horses/
 │   │   │   └── associations/
-│   │   ├── services/          # API client
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── index.html
-│   ├── vite.config.js
+│   │   ├── services/          # API services
+│   │   ├── App.jsx           # Main app component
+│   │   └── main.jsx          # Entry point
+│   ├── .env.dev.example      # Dev environment template
+│   ├── .env.prod.example     # Prod environment template
 │   └── package.json
 ├── database/
-│   └── schema.sql              # Database schema
-└── README.md
+│   └── schema.sql            # Database schema
+├── docs/                      # Documentation
+│   ├── 01-getting-started/   # Getting started guides
+│   ├── 04-features/          # Feature documentation
+│   └── ...                   # Other documentation
+├── scripts/                   # Automation scripts
+│   ├── add-model.js          # Model generator
+│   └── modify-model.js       # Model modifier
+└── README.md                 # This file
 ```
 
-## 🔧 Configuration
+## 🔧 Development
 
-### Environment Variables
+### Adding a New Model
 
-**Backend (Cloudflare Workers Secrets):**
+Use the model generator script:
 ```bash
-wrangler secret put SUPABASE_KEY
-# Paste your Supabase anon/public key
+cd scripts
+npm install
+node add-model.js
 ```
 
-**Frontend (.env):**
-```env
-VITE_API_URL=https://your-workers-url.workers.dev/api
+Follow the interactive prompts to generate:
+- Database migration
+- Backend handler
+- Frontend components
+- API routes
+
+See [Adding New Models Guide](docs/ADDING_NEW_OBJECT_MODEL_GUIDE.md) for details.
+
+### Modifying an Existing Model
+
+Use the model modifier script:
+```bash
+cd scripts
+node modify-model.js
 ```
 
-### Database Schema
+See [Modifying Models Guide](docs/MODIFYING_EXISTING_MODEL_GUIDE.md) for details.
 
-The system uses three main tables:
+## 🚢 Deployment
 
-1. **riders** - Horse riders information
-2. **horses** - Horse details and type
-3. **rider_horse_associations** - Many-to-many relationships with date ranges
+### Deploy to Production
 
-## 🎯 Usage Guide
+1. **Set up production environment:**
+   - Create production Supabase project
+   - Configure `wrangler.toml` with `[env.prod]` section
+   - Create `frontend/.env.prod` with production values
 
-### Managing Riders
+2. **Deploy using the deployment script:**
+```bash
+./deploy.sh prod
+```
 
-1. **Add a Rider:**
-   - Click "➕ Nouveau Cavalier"
-   - Fill in name (required), phone, email
-   - Set activity dates if needed
-   - Click "✓ Créer le cavalier"
+Or deploy manually:
+```bash
+# Deploy backend
+cd backend
+wrangler deploy --env prod
 
-2. **Edit a Rider:**
-   - Click "✏️ Modifier" next to any rider
-   - Update the information
-   - Click "✓ Mettre à jour le cavalier"
+# Deploy frontend
+cd ../frontend
+npm run build
+wrangler pages deploy dist --project-name equestrian-prod
+```
 
-3. **Delete a Rider:**
-   - Click "🗑️ Supprimer" next to any rider
-   - Confirm the deletion
+See [Deployment Guide](docs/DEPLOYMENT_GUIDE.md) for complete instructions.
 
-### Managing Horses
+## 🧪 Testing
 
-1. **Add a Horse:**
-   - Click "➕ Nouveau Cheval"
-   - Enter name and select type (Cheval/Poney)
-   - Set activity dates if needed
-   - Click "✓ Créer le cheval"
+```bash
+# Frontend tests
+cd frontend
+npm test
 
-2. **Filter Horses:**
-   - Use filter buttons to show all, horses only, or ponies only
-   - View statistics in the dashboard
+# Backend tests
+cd backend
+npm test
+```
 
-### Managing Associations
+## 📊 API Documentation
 
-1. **Create Association:**
-   - Click "➕ Nouvelle Association"
-   - Select rider and horse from dropdowns
-   - Set association dates if needed
-   - Click "✓ Créer l'association"
+The API provides RESTful endpoints for managing riders, horses, and associations.
 
-2. **View Status:**
-   - Green badge = Active association
-   - Gray badge = Inactive association
-   - Filter by active/inactive status
+### Base URL
+- Development: `http://localhost:8787/api`
+- Production: `https://your-worker.workers.dev/api`
 
-## 🔒 Security Features
+### Endpoints
 
-- **CORS Configuration** for cross-origin requests
-- **Input Validation** on both frontend and backend
-- **SQL Injection Protection** using parameterized queries
-- **Rate Limiting** to prevent abuse
-- **Security Headers** for additional protection
-- **Environment Variables** for sensitive data
-
-## 📊 API Endpoints
-
-### Riders
+**Riders:**
 - `GET /api/riders` - List all riders
 - `GET /api/riders/:id` - Get single rider
 - `POST /api/riders` - Create rider
 - `PUT /api/riders/:id` - Update rider
 - `DELETE /api/riders/:id` - Delete rider
-- `GET /api/riders/:id/horses` - Get rider's horses
+- `GET /api/riders/:id/horses` - Get horses for rider
 
-### Horses
+**Horses:**
 - `GET /api/horses` - List all horses
 - `GET /api/horses/:id` - Get single horse
 - `POST /api/horses` - Create horse
 - `PUT /api/horses/:id` - Update horse
 - `DELETE /api/horses/:id` - Delete horse
-- `GET /api/horses/:id/riders` - Get horse's riders
+- `GET /api/horses/:id/riders` - Get riders for horse
 
-### Associations
+**Associations:**
 - `GET /api/associations` - List all associations
 - `GET /api/associations/:id` - Get single association
 - `POST /api/associations` - Create association
 - `PUT /api/associations/:id` - Update association
 - `DELETE /api/associations/:id` - Delete association
 
-### Utility
+**Utility:**
 - `GET /api/health` - Health check
 - `GET /api/docs` - API documentation
 
-## 🌍 Deployment
+## 🤝 Contributing
 
-### Production Deployment
+Contributions are welcome! Please follow these steps:
 
-1. **Backend (Cloudflare Workers):**
-```bash
-cd backend
-npm run deploy
-```
-
-2. **Frontend (Cloudflare Pages):**
-```bash
-cd frontend
-npm run build
-npx wrangler pages deploy dist --project-name=equestrian-frontend
-```
-
-### Environment Updates
-
-To update the application:
-
-1. **Backend Changes:**
-```bash
-cd backend
-npm run deploy  # Automatic redeployment
-```
-
-2. **Frontend Changes:**
-```bash
-cd frontend
-npm run build
-npx wrangler pages deploy dist --project-name=equestrian-frontend
-```
-
-## 💰 Costs
-
-This solution is **100% FREE**:
-
-- **Supabase**: 500MB database, 50K users/month
-- **Cloudflare Workers**: 100K requests/day
-- **Cloudflare Pages**: Unlimited bandwidth, 500 builds/month
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-1. **"Failed to fetch" Error:**
-   - Check VITE_API_URL in frontend .env
-   - Verify backend is deployed and accessible
-   - Check browser console for CORS errors
-
-2. **Database Connection Errors:**
-   - Verify SUPABASE_URL in wrangler.toml
-   - Check SUPABASE_KEY secret is set correctly
-   - Ensure Supabase database is active
-
-3. **Build Failures:**
-   - Clear node_modules: `rm -rf node_modules && npm install`
-   - Check Node.js version: `node -v` (should be 18+)
-
-### Getting Help
-
-- Check Cloudflare Workers logs: `wrangler tail`
-- Verify Supabase database status
-- Test API endpoints directly with curl/Postman
-
-## 🚀 Future Enhancements
-
-The architecture supports easy expansion:
-
-1. **Authentication System**
-   - User login with Supabase Auth
-   - Role-based access control
-   - Personalized dashboards
-
-2. **Advanced Features**
-   - Scheduling system for lessons
-   - Payment tracking and invoices
-   - Medical records management
-   - Document storage for insurance papers
-
-3. **Analytics & Reporting**
-   - Usage statistics
-   - Export to PDF/Excel
-   - Advanced filtering and search
-
-4. **Mobile App**
-   - React Native implementation
-   - Offline support
-   - Push notifications
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📝 License
 
-MIT License - feel free to use this for your equestrian facility!
+This project is licensed under the MIT License.
 
-## 🤝 Contributing
+## 🆘 Support
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- **Documentation:** Check the [docs/](docs/) directory
+- **Issues:** Open an issue on GitHub
+- **Troubleshooting:** See [Troubleshooting Guide](docs/PRODUCTION_DEPLOYMENT_TROUBLESHOOTING.md)
+
+## 🙏 Acknowledgments
+
+- Built with [React](https://react.dev/)
+- Powered by [Cloudflare Workers](https://workers.cloudflare.com/)
+- Database by [Supabase](https://supabase.com/)
+- Bundled with [Vite](https://vitejs.dev/)
 
 ---
 
-**Built with ❤️ for the equestrian community**
+**Made with ❤️ for equestrian facilities**
