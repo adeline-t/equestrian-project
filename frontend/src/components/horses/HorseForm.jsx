@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 function HorseForm({ horse, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
@@ -220,5 +221,21 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     </form>
   );
 }
+
+HorseForm.propTypes = {
+  horse: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    kind: PropTypes.oneOf(['horse', 'pony']),
+    activity_start_date: PropTypes.string,
+    activity_end_date: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
+
+HorseForm.defaultProps = {
+  horse: null,
+};
 
 export default HorseForm;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 function RiderForm({ rider, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
@@ -217,5 +218,22 @@ function RiderForm({ rider, onSubmit, onCancel }) {
     </form>
   );
 }
+
+RiderForm.propTypes = {
+  rider: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    phone: PropTypes.string,
+    email: PropTypes.string,
+    activity_start_date: PropTypes.string,
+    activity_end_date: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
+
+RiderForm.defaultProps = {
+  rider: null,
+};
 
 export default RiderForm;

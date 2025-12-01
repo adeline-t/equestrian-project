@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { associationsApi, ridersApi, horsesApi } from '../../services/api';
 import AssociationForm from './AssociationForm';
 import { format } from 'date-fns';
@@ -285,5 +286,8 @@ function AssociationsList() {
     </div>
   );
 }
+
+// AssociationsList has no props, but we include PropTypes for consistency
+AssociationsList.propTypes = {};
 
 export default AssociationsList;

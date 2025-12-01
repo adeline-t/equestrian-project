@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { horsesApi } from '../../services/api';
 import HorseForm from './HorseForm';
 import { format } from 'date-fns';
@@ -271,5 +272,8 @@ function HorsesList() {
     </div>
   );
 }
+
+// HorsesList has no props, but we include PropTypes for consistency
+HorsesList.propTypes = {};
 
 export default HorsesList;
