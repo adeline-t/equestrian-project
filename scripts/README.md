@@ -24,6 +24,12 @@ chmod +x add-model.js modify-model.js
 ./modify-model.js
 ```
 
+### Complete Script Catalog
+
+For a complete inventory of all project scripts (including launch, deployment, and utility scripts), see:
+- **[Scripts Catalog](./SCRIPTS_CATALOG.md)** - Complete script inventory with usage examples
+- **[Scripts Documentation](../docs/09-scripts/README.md)** - Comprehensive script guides
+
 ## 📁 File Structure
 
 ```
