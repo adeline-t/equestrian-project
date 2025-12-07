@@ -37,21 +37,28 @@ Complete documentation is available in the `docs/` directory:
 ### Getting Started
 - **[Prerequisites](docs/01-getting-started/prerequisites.md)** - System requirements and tools needed
 - **[Installation Guide](docs/01-getting-started/installation.md)** - Step-by-step setup instructions
-- **[Quick Start](docs/QUICK_START.md)** - Get running in 5 minutes
+- **[Quick Start](docs/01-getting-started/quick-start.md)** - Get running in 5 minutes
+- **[macOS Launch Guide](docs/01-getting-started/macos-launch.md)** - macOS-specific instructions
+
+### Scripts & Tools
+- **[Scripts Catalog](scripts/SCRIPTS_CATALOG.md)** - Complete inventory of all scripts
+- **[Scripts Documentation](docs/09-scripts/README.md)** - Comprehensive script guides
+- **[Script Reference](docs/09-scripts/script-reference.md)** - Detailed script documentation
+- **[Quick Launch Reference](QUICK_LAUNCH.md)** - One-page quick reference
 
 ### Development
-- **[Adding New Models](docs/ADDING_NEW_OBJECT_MODEL_GUIDE.md)** - Guide for creating new data models
-- **[Modifying Existing Models](docs/MODIFYING_EXISTING_MODEL_GUIDE.md)** - Guide for updating models
-- **[Local Development](docs/01-getting-started/installation.md#step-4-configure-frontend)** - Running locally
+- **[Adding New Models](docs/02-development/adding-models.md)** - Guide for creating new data models
+- **[Modifying Existing Models](docs/02-development/modifying-models.md)** - Guide for updating models
+- **[Local Development](docs/02-development/README.md)** - Development workflow
 
 ### Deployment
-- **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
-- **[Multi-Environment Setup](docs/MULTI_ENVIRONMENT_DEPLOYMENT_GUIDE.md)** - Dev/Prod environments
-- **[Troubleshooting](docs/PRODUCTION_DEPLOYMENT_TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Deployment Guide](docs/03-deployment/deployment-guide.md)** - Complete deployment instructions
+- **[Multi-Environment Setup](docs/03-deployment/multi-environment.md)** - Dev/Prod environments
+- **[Troubleshooting](docs/03-deployment/troubleshooting.md)** - Common issues and solutions
 
 ### Features
 - **[Rider-Horse Associations](docs/04-features/associations.md)** - Association management feature
-- **[Environment Variables](docs/ENVIRONMENT_VARIABLES_REFERENCE.md)** - Configuration reference
+- **[Environment Variables](docs/08-reference/environment-variables.md)** - Configuration reference
 
 ## 🚀 Quick Start
 
@@ -61,7 +68,28 @@ Complete documentation is available in the `docs/` directory:
 - Cloudflare account (free)
 - Supabase account (free)
 
-### Installation
+### Easiest Way to Launch Locally
+
+**Just run one command:**
+
+```bash
+# Linux/Mac
+./start.sh
+
+# Windows
+start.bat
+```
+
+That's it! The script will automatically:
+- ✅ Check prerequisites
+- ✅ Install dependencies
+- ✅ Launch frontend (port 5173)
+- ✅ Launch backend (port 8787)
+- ✅ Monitor services
+
+**See [LAUNCH_README.md](LAUNCH_README.md) for detailed launch instructions.**
+
+### First-Time Setup
 
 1. **Clone the repository:**
 ```bash
@@ -74,44 +102,44 @@ cd equestrian-project
    - Run the SQL script from `database/schema.sql` in Supabase SQL Editor
    - Copy your Project URL and anon key
 
-3. **Configure backend:**
+3. **Configure environment files:**
+
+   Create `frontend/.env`:
+   ```bash
+   VITE_API_URL=http://localhost:8787/api
+   VITE_SUPABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
+   Create `backend/.env`:
+   ```bash
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   ```
+
+4. **Launch the application:**
 ```bash
-cd backend
-npm install
-
-# Create wrangler.toml from example
-cp wrangler.toml.example wrangler.toml
-# Edit wrangler.toml with your Supabase URL
-
-# Set Supabase secret
-wrangler secret put SUPABASE_ANON_KEY --env dev
+./start.sh
 ```
 
-4. **Configure frontend:**
-```bash
-cd ../frontend
-npm install
+Visit `http://localhost:5173` to see the application.
 
-# Create environment file from example
-cp .env.dev.example .env.dev
-# Edit .env.dev with your backend URL and Supabase credentials
+### Manual Launch (Alternative)
 
-# Copy to active environment
-cp .env.dev .env
-```
+If you prefer to launch services manually:
 
-5. **Run locally:**
 ```bash
 # Terminal 1 - Backend
 cd backend
+npm install
 npm run dev
 
 # Terminal 2 - Frontend
 cd frontend
+npm install
 npm run dev
 ```
-
-Visit `http://localhost:5173` to see the application.
 
 ## 📁 Project Structure
 
@@ -143,11 +171,16 @@ equestrian-project/
 │   └── schema.sql            # Database schema
 ├── docs/                      # Documentation
 │   ├── 01-getting-started/   # Getting started guides
-│   ├── 04-features/          # Feature documentation
+│   ├── 09-scripts/           # Scripts documentation
 │   └── ...                   # Other documentation
 ├── scripts/                   # Automation scripts
 │   ├── add-model.js          # Model generator
-│   └── modify-model.js       # Model modifier
+│   ├── modify-model.js       # Model modifier
+│   ├── SCRIPTS_CATALOG.md    # Complete script inventory
+│   └── .scripts-index.json   # Machine-readable metadata
+├── start.sh                   # One-command launcher
+├── launch-local.sh            # Full-featured launcher
+├── deploy.sh                  # Deployment script
 └── README.md                 # This file
 ```
 

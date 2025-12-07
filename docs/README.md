@@ -65,6 +65,13 @@ Reference materials and specifications.
 - Glossary
 - FAQ
 
+### [09. Scripts](./09-scripts/README.md)
+Complete script documentation and reference.
+- Script catalog and inventory
+- Detailed script reference
+- Script development guidelines
+- Validation and testing
+
 ## 🚀 Quick Links
 
 ### New Users
@@ -75,7 +82,8 @@ Reference materials and specifications.
 ### Developers
 1. [Local Development](./02-development/README.md)
 2. [Adding Models](./02-development/adding-models.md)
-3. [API Reference](./05-api/README.md)
+3. [Scripts Reference](./09-scripts/README.md)
+4. [API Reference](./05-api/README.md)
 
 ### Operations
 1. [Deployment Guide](./03-deployment/deployment-guide.md)
@@ -91,7 +99,8 @@ docs/
 │   ├── README.md
 │   ├── prerequisites.md
 │   ├── installation.md
-│   └── quick-start.md
+│   ├── quick-start.md
+│   └── macos-launch.md
 ├── 02-development/
 │   ├── README.md
 │   ├── adding-models.md
@@ -115,10 +124,13 @@ docs/
 ├── 07-operations/
 │   ├── README.md
 │   └── ...
-└── 08-reference/
+├── 08-reference/
+│   ├── README.md
+│   ├── environment-variables.md
+│   └── ...
+└── 09-scripts/
     ├── README.md
-    ├── environment-variables.md
-    └── ...
+    └── script-reference.md
 ```
 
 ## 🎯 Finding What You Need
