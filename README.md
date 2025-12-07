@@ -41,9 +41,11 @@ Complete documentation is available in the `docs/` directory:
 - **[macOS Launch Guide](docs/01-getting-started/macos-launch.md)** - macOS-specific instructions
 
 ### Scripts & Tools
+- **[Scripts Directory](scripts/README.md)** - Overview of all scripts and organization
 - **[Scripts Catalog](scripts/SCRIPTS_CATALOG.md)** - Complete inventory of all scripts
 - **[Scripts Documentation](docs/09-scripts/README.md)** - Comprehensive script guides
 - **[Script Reference](docs/09-scripts/script-reference.md)** - Detailed script documentation
+- **[Model Generator Guide](docs/09-scripts/add-model-bash.md)** - Complete model generation guide
 - **[Quick Launch Reference](QUICK_LAUNCH.md)** - One-page quick reference
 
 ### Development

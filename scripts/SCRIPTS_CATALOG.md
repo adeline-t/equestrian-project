@@ -4,300 +4,153 @@
 
 This catalog provides a quick reference for all scripts in the Equestrian Project. For detailed documentation, see [docs/09-scripts/](../docs/09-scripts/).
 
+## 🗂️ New Organization Structure
+
+As of version 2.0.0, scripts are organized into subdirectories for better maintainability:
+
+```
+scripts/
+├── setup/              # First-time configuration and installation
+├── automation/         # Code generation and model management
+├── utils/             # Maintenance, testing, and validation
+├── deprecated/        # Archived non-functional or replaced scripts
+├── config/            # Configuration files
+├── templates/         # Code generation templates
+└── examples/          # Example scripts
+```
+
+**Convenience Symlinks**: All scripts have symlinks in the root `scripts/` directory for backward compatibility.
+
 ## 📊 Quick Reference Table
 
-| Script | Category | Platform | Purpose | Status | Location |
-|--------|----------|----------|---------|--------|----------|
-| `start.sh` | Launch | macOS/Linux | One-command app launcher | ✅ Working | Root |
-| `start.bat` | Launch | Windows | One-command app launcher | ✅ Working | Root |
-| `launch-local.sh` | Launch | macOS/Linux | Full-featured launcher with monitoring | ✅ Working | Root |
-| `launch-local.ps1` | Launch | Windows | PowerShell launcher with monitoring | ✅ Working | Root |
-| `deploy.sh` | Deployment | macOS/Linux | Production deployment script | ✅ Working | Root |
-| `add-model.sh` | Automation | macOS/Linux | Interactive model generator (Bash) | ⭐ NEW | scripts/ |
-| `add-model.js` | Automation | Cross-platform | Interactive model generator (JS) | ❌ Broken | scripts/ |
-| `modify-model.js` | Automation | Cross-platform | Interactive model modifier | ⚠️ Untested | scripts/ |
-| `setup-project.sh` | Setup | macOS/Linux | Complete project setup | ✅ Working | scripts/ |
-| `setup-supabase.sh` | Setup | macOS/Linux | Supabase configuration | ✅ Working | scripts/ |
-| `setup-cloudflare.sh` | Setup | macOS/Linux | Cloudflare configuration | ✅ Working | scripts/ |
-| `install.sh` | Setup | macOS/Linux | Dependency installation | ✅ Working | scripts/ |
-| `quick-start.sh` | Setup | macOS/Linux | Quick setup and launch | ✅ Working | scripts/ |
-| `cleanup.sh` | Utility | macOS/Linux | Clean build artifacts | ✅ Working | scripts/ |
-| `test.js` | Testing | Cross-platform | Script testing utility | ✅ Working | scripts/ |
-| `validate-scripts.sh` | Validation | macOS/Linux | Script integrity checker | ✅ Working | scripts/ |
+| Script | Category | Location | Status | Purpose |
+|--------|----------|----------|--------|---------|
+| `add-model.sh` | Automation | automation/ | ⭐ NEW | Complete model generator |
+| `add-field.sh` | Automation | automation/ | ⭐ NEW | Add field to existing model |
+| `test.sh` | Testing | utils/ | ⭐ NEW | Comprehensive test suite |
+| `setup-project.sh` | Setup | setup/ | ✅ Working | Complete project setup |
+| `setup-supabase.sh` | Setup | setup/ | ✅ Working | Supabase configuration |
+| `setup-cloudflare.sh` | Setup | setup/ | ✅ Working | Cloudflare configuration |
+| `install.sh` | Setup | setup/ | ✅ Working | Dependency installation |
+| `quick-start.sh` | Setup | setup/ | ✅ Working | Quick setup |
+| `cleanup.sh` | Utility | utils/ | ✅ Working | Clean build artifacts |
+| `validate-scripts.sh` | Validation | utils/ | ✅ Working | Script integrity checker |
+| `add-model.js` | Automation | deprecated/ | ❌ Deprecated | Non-functional JS version |
+| `modify-model.js` | Automation | deprecated/ | ❌ Deprecated | Partially functional |
+| `test.js` | Testing | deprecated/ | ❌ Deprecated | Outdated JS version |
 
 ## 🗂️ Scripts by Category
 
-### 🚀 Launch Scripts (Root Level)
-
-#### `start.sh`
-**Purpose**: Simplest way to launch the application locally.
-
-**Usage**:
-```bash
-./start.sh
-```
-
-**What it does**:
-- Calls `launch-local.sh` automatically
-- No parameters needed
-- Perfect for daily development
-
-**Dependencies**: None (calls launch-local.sh)
-
-**Platform**: macOS, Linux
-
----
-
-#### `start.bat`
-**Purpose**: Windows equivalent of start.sh.
-
-**Usage**:
-```cmd
-start.bat
-```
-
-**What it does**:
-- Calls `launch-local.ps1` automatically
-- Handles PowerShell execution policy
-- Windows-optimized
-
-**Dependencies**: PowerShell
-
-**Platform**: Windows
-
----
-
-#### `launch-local.sh`
-**Purpose**: Full-featured local development launcher with monitoring.
-
-**Usage**:
-```bash
-./launch-local.sh
-```
-
-**What it does**:
-- Checks prerequisites (Node.js, npm, ports)
-- Installs dependencies if needed
-- Launches backend (port 8787)
-- Launches frontend (port 5173)
-- Monitors service health
-- Saves logs to `logs/` directory
-- Handles graceful shutdown
-
-**Dependencies**:
-- Node.js 18+
-- npm
-- lsof (for port checking)
-
-**Platform**: macOS, Linux
-
-**Exit Codes**:
-- `0`: Success
-- `1`: Prerequisites missing or service failed
-
----
-
-#### `launch-local.ps1`
-**Purpose**: PowerShell version of launch-local.sh for Windows.
-
-**Usage**:
-```powershell
-.\launch-local.ps1
-```
-
-**What it does**:
-- Same features as launch-local.sh
-- Windows-specific port checking
-- PowerShell job management
-- Colored console output
-
-**Dependencies**:
-- Node.js 18+
-- npm
-- PowerShell 5.1+
-
-**Platform**: Windows
-
----
-
-### 📦 Deployment Scripts (Root Level)
-
-#### `deploy.sh`
-**Purpose**: Deploy application to production environment.
-
-**Usage**:
-```bash
-./deploy.sh [environment]
-
-# Examples:
-./deploy.sh prod        # Deploy to production
-./deploy.sh staging     # Deploy to staging
-```
-
-**What it does**:
-- Builds frontend for production
-- Deploys backend to Cloudflare Workers
-- Deploys frontend to Cloudflare Pages
-- Validates deployment
-- Provides deployment URLs
-
-**Dependencies**:
-- Node.js 18+
-- npm
-- wrangler CLI
-- Cloudflare account configured
-
-**Platform**: macOS, Linux
-
-**Environment Variables Required**:
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-
----
-
-### 🤖 Model Automation Scripts (scripts/)
+### 🤖 Automation Scripts (automation/)
 
 #### `add-model.sh` ⭐ NEW
-**Purpose**: Interactive generator for creating new data models (Bash version).
-
-**Status**: ✅ **Production Ready** - Complete, functional implementation
+**Purpose**: Complete, production-ready model generator
 
 **Usage**:
 ```bash
 cd scripts
 ./add-model.sh
+# or
+cd scripts/automation
+./add-model.sh
 ```
 
 **What it does**:
-- Interactive CLI prompts with colored output
-- Generates complete, working database migration SQL
-- Creates fully functional backend API handler with validation
-- Creates complete frontend components (List, Form) with all features
-- Generates comprehensive CSS styles
-- Updates routing automatically
+- Interactive CLI with colored output
+- Generates complete, working backend handler
+- Creates full database migration with indexes
+- Generates working frontend components (List, Form)
+- Creates comprehensive CSS styles
+- Updates API service and routing automatically
 - Provides clear next steps
 
-**Dependencies**:
-- bash
-- Standard Unix utilities (sed, awk, date)
+**Features**:
+- ✅ 100% functional (not stubs)
+- ✅ No dependencies (pure bash)
+- ✅ Production-ready output
+- ✅ All field types supported
+- ✅ Complete CRUD operations
+- ✅ Input validation
+- ✅ Error handling
+
+**Dependencies**: bash, sed, awk, date
 
 **Platform**: macOS, Linux
 
-**Generated Files**:
-- `backend/src/handlers/{model}.js` - Complete CRUD handler
-- `database/migrations/{timestamp}_create_{model}.sql` - Full migration
-- `frontend/src/components/{model}/{Model}List.jsx` - Working list component
-- `frontend/src/components/{model}/{Model}Form.jsx` - Complete form component
-- `frontend/src/components/{model}/{model}.css` - Full styling
-
-**Key Features**:
-- ✅ All code generation methods implemented (not stubs)
-- ✅ Generates production-ready, working code
-- ✅ Complete CRUD functionality
-- ✅ Input validation and error handling
-- ✅ Colored terminal output
-- ✅ No external dependencies (pure bash)
-
-**See Also**: 
-- [docs/09-scripts/add-model-bash.md](../docs/09-scripts/add-model-bash.md)
-- [docs/02-development/adding-models.md](../docs/02-development/adding-models.md)
+**See Also**: [docs/09-scripts/add-model-bash.md](../docs/09-scripts/add-model-bash.md)
 
 ---
 
-#### `add-model.js` ⚠️ DEPRECATED
-**Purpose**: Interactive generator for creating new data models (JavaScript version).
-
-**Status**: ❌ **NON-FUNCTIONAL** - Incomplete implementation (30% complete)
-
-**Issues**:
-- All code generation methods are stubs returning placeholder comments
-- Generated files are non-functional skeletons
-- Missing implementation for all critical features
-- See `ADD_MODEL_ISSUES.md` for detailed analysis
-
-**Recommendation**: **Use `add-model.sh` instead**
-
-**See Also**: 
-- [ADD_MODEL_ISSUES.md](../ADD_MODEL_ISSUES.md) - Detailed issue analysis
-- [docs/09-scripts/add-model-bash.md](../docs/09-scripts/add-model-bash.md) - Working alternative
-
----
-
-#### `modify-model.js`
-**Purpose**: Interactive tool for modifying existing models.
+#### `add-field.sh` ⭐ NEW
+**Purpose**: Simple helper to add a field to existing model
 
 **Usage**:
 ```bash
 cd scripts
-./modify-model.js
+./add-field.sh
+# or
+cd scripts/automation
+./add-field.sh
 ```
 
 **What it does**:
-- Add new fields to existing models
-- Remove fields safely
-- Modify field properties
-- Add relationships
-- Create custom endpoints
-- Generate migration SQL
+- Select existing model interactively
+- Gather field information
+- Generate database migration
+- Provide code snippets for handler updates
+- Provide code snippets for frontend updates
+- Step-by-step guidance
 
-**Dependencies**:
-- Node.js 18+
-- npm packages: inquirer, chalk, fs-extra
+**Features**:
+- ✅ Migration generation
+- ✅ Code snippets with proper formatting
+- ✅ Colored output
+- ✅ Clear instructions
+- ✅ All field types supported
 
-**Platform**: Cross-platform (Node.js)
+**Dependencies**: bash, sed, awk, date
 
-**Operations Supported**:
-- Add field(s)
-- Remove field(s)
-- Modify field properties
-- Add foreign key relationship
-- Add many-to-many relationship
-- Add custom endpoint
-
-**See Also**: [docs/02-development/modifying-models.md](../docs/02-development/modifying-models.md)
+**Platform**: macOS, Linux
 
 ---
 
-### ⚙️ Setup Scripts (scripts/)
+### ⚙️ Setup Scripts (setup/)
 
 #### `setup-project.sh`
-**Purpose**: Complete project setup from scratch.
+**Purpose**: Complete project setup from scratch
 
 **Usage**:
 ```bash
 ./scripts/setup-project.sh
+# or
+cd scripts/setup
+./setup-project.sh
 ```
 
 **What it does**:
 - Checks prerequisites
 - Installs frontend dependencies
 - Installs backend dependencies
-- Creates environment files from templates
+- Creates environment files
 - Prompts for Supabase credentials
 - Creates wrangler.toml
 - Validates configuration
 
-**Dependencies**:
-- Node.js 18+
-- npm
-- Git
+**Dependencies**: Node.js 18+, npm, Git
 
 **Platform**: macOS, Linux
-
-**Interactive Prompts**:
-- Supabase URL
-- Supabase Anon Key
-- Supabase Service Role Key
-- Environment selection (dev/prod)
 
 ---
 
 #### `setup-supabase.sh`
-**Purpose**: Configure Supabase connection and database.
+**Purpose**: Configure Supabase connection
 
 **Usage**:
 ```bash
 ./scripts/setup-supabase.sh
+# or
+cd scripts/setup
+./setup-supabase.sh
 ```
 
 **What it does**:
@@ -307,26 +160,21 @@ cd scripts
 - Creates environment variables
 - Verifies RLS policies
 
-**Dependencies**:
-- curl
-- jq (for JSON parsing)
-- Supabase account
+**Dependencies**: curl, jq
 
 **Platform**: macOS, Linux
-
-**Environment Variables Set**:
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
 
 ---
 
 #### `setup-cloudflare.sh`
-**Purpose**: Configure Cloudflare Workers and Pages.
+**Purpose**: Configure Cloudflare Workers and Pages
 
 **Usage**:
 ```bash
 ./scripts/setup-cloudflare.sh
+# or
+cd scripts/setup
+./setup-cloudflare.sh
 ```
 
 **What it does**:
@@ -336,25 +184,21 @@ cd scripts
 - Configures Pages project
 - Tests deployment
 
-**Dependencies**:
-- wrangler CLI
-- Cloudflare account
+**Dependencies**: wrangler CLI
 
 **Platform**: macOS, Linux
-
-**Cloudflare Resources Created**:
-- Workers project
-- Pages project
-- KV namespaces (if needed)
 
 ---
 
 #### `install.sh`
-**Purpose**: Install all project dependencies.
+**Purpose**: Install all project dependencies
 
 **Usage**:
 ```bash
 ./scripts/install.sh
+# or
+cd scripts/setup
+./install.sh
 ```
 
 **What it does**:
@@ -364,25 +208,21 @@ cd scripts
 - Verifies installations
 - Reports any issues
 
-**Dependencies**:
-- Node.js 18+
-- npm
+**Dependencies**: Node.js 18+, npm
 
 **Platform**: macOS, Linux
-
-**Installs**:
-- Frontend: React, Vite, etc.
-- Backend: Cloudflare Workers, Supabase
-- Scripts: Inquirer, Chalk, etc.
 
 ---
 
 #### `quick-start.sh`
-**Purpose**: Fastest way to get started (setup + launch).
+**Purpose**: Quick setup and preparation
 
 **Usage**:
 ```bash
 ./scripts/quick-start.sh
+# or
+cd scripts/setup
+./quick-start.sh
 ```
 
 **What it does**:
@@ -392,24 +232,80 @@ cd scripts
 - Optionally runs setup-project.sh
 - Provides next steps
 
-**Dependencies**:
-- Node.js 18+
-- npm
+**Dependencies**: Node.js 18+, npm
 
 **Platform**: macOS, Linux
 
-**Note**: Does not launch services, only prepares environment.
+---
+
+### 🛠️ Utility Scripts (utils/)
+
+#### `test.sh` ⭐ NEW
+**Purpose**: Comprehensive script testing suite
+
+**Usage**:
+```bash
+cd scripts
+./test.sh [test-name]
+# or
+cd scripts/utils
+./test.sh [test-name]
+
+# Run specific test
+./test.sh syntax
+./test.sh dependencies
+```
+
+**What it does**:
+- Tests script executability
+- Validates shebang lines
+- Checks script syntax
+- Verifies dependencies
+- Tests configuration files
+- Validates templates
+- Checks documentation
+- Tests project structure
+- Validates add-model.sh functionality
+- Checks deprecated scripts
+- Tests git integration
+- Validates catalog consistency
+
+**Available Tests**:
+- `executability` - Test script permissions
+- `shebangs` - Test shebang lines
+- `syntax` - Test script syntax
+- `dependencies` - Test system dependencies
+- `config` - Test configuration files
+- `templates` - Test template files
+- `documentation` - Test documentation
+- `structure` - Test project structure
+- `add-model` - Test add-model.sh
+- `deprecated` - Test deprecated scripts
+- `git` - Test git integration
+- `catalog` - Test catalog consistency
+
+**Features**:
+- ✅ Colored output
+- ✅ Detailed test results
+- ✅ Pass/fail statistics
+- ✅ Individual test selection
+- ✅ CI/CD friendly exit codes
+
+**Dependencies**: bash, optional: jq
+
+**Platform**: macOS, Linux
 
 ---
 
-### 🧹 Utility Scripts (scripts/)
-
 #### `cleanup.sh`
-**Purpose**: Clean build artifacts and temporary files.
+**Purpose**: Clean build artifacts and temporary files
 
 **Usage**:
 ```bash
 ./scripts/cleanup.sh [options]
+# or
+cd scripts/utils
+./cleanup.sh [options]
 
 # Options:
 ./scripts/cleanup.sh --all        # Clean everything
@@ -433,41 +329,15 @@ cd scripts
 
 ---
 
-#### `test.js`
-**Purpose**: Test script functionality and templates.
-
-**Usage**:
-```bash
-cd scripts
-node test.js [test-name]
-
-# Examples:
-node test.js              # Run all tests
-node test.js templates    # Test templates only
-node test.js validation   # Test validation only
-```
-
-**What it does**:
-- Tests template rendering
-- Validates script syntax
-- Checks file generation
-- Verifies dependencies
-- Reports test results
-
-**Dependencies**:
-- Node.js 18+
-- npm packages: jest (optional)
-
-**Platform**: Cross-platform (Node.js)
-
----
-
 #### `validate-scripts.sh`
-**Purpose**: Validate script integrity and dependencies.
+**Purpose**: Validate script integrity
 
 **Usage**:
 ```bash
 ./scripts/validate-scripts.sh
+# or
+cd scripts/utils
+./validate-scripts.sh
 ```
 
 **What it does**:
@@ -477,15 +347,21 @@ node test.js validation   # Test validation only
 - Checks for common issues
 - Reports validation results
 
-**Dependencies**:
-- bash
-- shellcheck (optional, for enhanced validation)
+**Dependencies**: bash, optional: shellcheck
 
 **Platform**: macOS, Linux
 
-**Exit Codes**:
-- `0`: All scripts valid
-- `1`: Validation errors found
+---
+
+### ⚠️ Deprecated Scripts (deprecated/)
+
+See [deprecated/README.md](deprecated/README.md) for details on deprecated scripts.
+
+**Do not use these scripts**. They are kept for reference only.
+
+- `add-model.js` - Non-functional (30% complete) → Use `automation/add-model.sh`
+- `modify-model.js` - Partially functional → Use `automation/add-field.sh`
+- `test.js` - Outdated → Use `utils/test.sh`
 
 ---
 
@@ -532,6 +408,29 @@ cd ..
 ./deploy.sh staging
 ```
 
+### Adding a Field to Existing Model
+```bash
+# 1. Run helper script
+cd scripts
+./add-field.sh
+
+# 2. Follow the instructions provided
+# 3. Apply migration
+# 4. Update handler and frontend as guided
+# 5. Test
+```
+
+### Testing Scripts
+```bash
+# Run all tests
+cd scripts
+./test.sh
+
+# Run specific test
+./test.sh syntax
+./test.sh dependencies
+```
+
 ### Cleaning Up
 ```bash
 # Clean everything
@@ -544,25 +443,7 @@ cd ..
 ./start.sh
 ```
 
-### Deployment
-```bash
-# 1. Test locally
-./start.sh
-
-# 2. Run tests
-cd scripts
-node test.js
-
-# 3. Deploy to staging
-cd ..
-./deploy.sh staging
-
-# 4. Verify staging
-# (Test at staging URL)
-
-# 5. Deploy to production
-./deploy.sh prod
-```
+---
 
 ## 🔧 Script Dependencies
 
@@ -570,6 +451,7 @@ cd ..
 - **Node.js**: 18.0.0 or higher
 - **npm**: 9.0.0 or higher
 - **Git**: 2.0.0 or higher
+- **Bash**: 4.0 or higher
 
 ### Optional Tools
 - **wrangler**: For Cloudflare deployments
@@ -598,18 +480,21 @@ sudo apt-get install nodejs npm git jq shellcheck
 npm install -g wrangler
 ```
 
+---
+
 ## 📝 Script Development Guidelines
 
 ### Creating New Scripts
 
 1. **Choose appropriate location**:
-   - Root level: Launch and deployment scripts
-   - scripts/: Development and utility scripts
+   - `setup/`: First-time configuration
+   - `automation/`: Code generation
+   - `utils/`: Maintenance and testing
 
 2. **Follow naming conventions**:
    - Use kebab-case: `my-script.sh`
    - Be descriptive: `setup-database.sh` not `setup.sh`
-   - Include extension: `.sh`, `.js`, `.ps1`
+   - Include extension: `.sh`
 
 3. **Add proper headers**:
 ```bash
@@ -617,6 +502,8 @@ npm install -g wrangler
 # Script Name
 # Brief description of what the script does
 # Usage: ./script-name.sh [options]
+
+set -e  # Exit on error
 ```
 
 4. **Make executable**:
@@ -624,28 +511,18 @@ npm install -g wrangler
 chmod +x script-name.sh
 ```
 
-5. **Update this catalog**:
-   - Add entry to Quick Reference Table
-   - Add detailed section
-   - Update `.scripts-index.json`
-
-6. **Document in code**:
-   - Add comments for complex logic
-   - Document parameters
-   - Include usage examples
-
-### Testing Scripts
-
+5. **Create symlink in root**:
 ```bash
-# Validate syntax
-bash -n script-name.sh
-
-# Run validation
-./scripts/validate-scripts.sh
-
-# Test functionality
-./scripts/test.js
+cd scripts
+ln -sf category/script-name.sh script-name.sh
 ```
+
+6. **Update documentation**:
+   - Add entry to this catalog
+   - Update `.scripts-index.json`
+   - Add detailed docs if needed
+
+---
 
 ## 🐛 Troubleshooting
 
@@ -655,7 +532,7 @@ bash -n script-name.sh
 
 **Solution**:
 ```bash
-chmod +x script-name.sh
+chmod +x scripts/script-name.sh
 ```
 
 ---
@@ -665,8 +542,8 @@ chmod +x script-name.sh
 **Solution**: Ensure script is executable and in correct directory
 ```bash
 # From project root
-./start.sh          # Correct
-start.sh            # Wrong (unless in PATH)
+./scripts/script-name.sh          # Correct
+scripts/script-name.sh             # Wrong (unless in PATH)
 ```
 
 ---
@@ -708,23 +585,51 @@ lsof -ti:8787 | xargs kill -9
 ./scripts/setup-project.sh
 ```
 
+---
+
 ## 📚 Additional Resources
 
 - **Detailed Documentation**: [docs/09-scripts/](../docs/09-scripts/)
-- **Model Automation**: [scripts/README.md](./README.md)
+- **Model Automation**: [docs/09-scripts/add-model-bash.md](../docs/09-scripts/add-model-bash.md)
 - **Development Guide**: [docs/02-development/](../docs/02-development/)
 - **Deployment Guide**: [docs/03-deployment/](../docs/03-deployment/)
+
+---
 
 ## 🔄 Keeping This Catalog Updated
 
 When adding new scripts:
-1. Update Quick Reference Table
-2. Add detailed section
-3. Update `.scripts-index.json`
-4. Update relevant documentation
-5. Run validation: `./scripts/validate-scripts.sh`
+1. Add script to appropriate directory
+2. Create symlink in root scripts/
+3. Update this catalog
+4. Update `.scripts-index.json`
+5. Add detailed documentation if needed
+6. Run validation: `./scripts/validate-scripts.sh`
+7. Run tests: `./scripts/test.sh`
+
+---
+
+## 📊 Version History
+
+### Version 2.0.0 (December 2024)
+- **Major reorganization**: Scripts moved to subdirectories
+- **New scripts**: test.sh, add-field.sh
+- **Deprecated**: add-model.js, modify-model.js, test.js
+- **Improved**: Better organization, clearer structure
+- **Added**: Convenience symlinks for backward compatibility
+
+### Version 1.1.0 (December 2024)
+- **New**: add-model.sh (complete bash implementation)
+- **Deprecated**: add-model.js (non-functional)
+- **Updated**: Documentation and references
+
+### Version 1.0.0 (Initial)
+- Initial script collection
+- Basic automation tools
+- Setup and utility scripts
 
 ---
 
 **Last Updated**: December 2024  
+**Version**: 2.0.0  
 **Maintained by**: Equestrian Project Team

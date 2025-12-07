@@ -1,19 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "version": "2.0.0",
+  "version": "1.1.0",
   "lastUpdated": "2024-12-07",
   "changelog": {
-    "2.0.0": {
-      "date": "2024-12-07",
-      "changes": [
-        "Major reorganization: scripts moved to subdirectories",
-        "Added test.sh - Comprehensive bash testing suite",
-        "Added add-field.sh - Simple field addition helper",
-        "Deprecated modify-model.js and test.js",
-        "Created convenience symlinks for backward compatibility",
-        "Updated all paths to reflect new structure"
-      ]
-    },
     "1.1.0": {
       "date": "2024-12-07",
       "changes": [
@@ -23,20 +12,129 @@
       ]
     }
   },
-  "structure": {
-    "setup": "First-time configuration and installation scripts",
-    "automation": "Code generation and model management scripts",
-    "utils": "Maintenance, testing, and utility scripts",
-    "deprecated": "Archived non-functional or replaced scripts",
-    "config": "Configuration files",
-    "templates": "Code generation templates",
-    "examples": "Example scripts and usage demonstrations"
-  },
   "scripts": [
     {
+      "name": "start.sh",
+      "path": "./start.sh",
+      "category": "launch",
+      "platform": ["macos", "linux"],
+      "description": "One-command launcher for local development",
+      "usage": "./start.sh",
+      "dependencies": {
+        "system": [],
+        "scripts": ["launch-local.sh"]
+      },
+      "executable": true,
+      "interactive": false,
+      "exitCodes": {
+        "0": "Success",
+        "1": "Launch failed"
+      }
+    },
+    {
+      "name": "start.bat",
+      "path": "./start.bat",
+      "category": "launch",
+      "platform": ["windows"],
+      "description": "One-command launcher for Windows",
+      "usage": "start.bat",
+      "dependencies": {
+        "system": ["powershell"],
+        "scripts": ["launch-local.ps1"]
+      },
+      "executable": true,
+      "interactive": false,
+      "exitCodes": {
+        "0": "Success",
+        "1": "Launch failed"
+      }
+    },
+    {
+      "name": "launch-local.sh",
+      "path": "./launch-local.sh",
+      "category": "launch",
+      "platform": ["macos", "linux"],
+      "description": "Full-featured local launcher with monitoring",
+      "usage": "./launch-local.sh",
+      "dependencies": {
+        "system": ["node", "npm", "lsof"],
+        "scripts": []
+      },
+      "executable": true,
+      "interactive": true,
+      "features": [
+        "prerequisite-checking",
+        "dependency-installation",
+        "service-monitoring",
+        "logging",
+        "graceful-shutdown"
+      ],
+      "ports": [5173, 8787],
+      "exitCodes": {
+        "0": "Success",
+        "1": "Prerequisites missing or service failed"
+      }
+    },
+    {
+      "name": "launch-local.ps1",
+      "path": "./launch-local.ps1",
+      "category": "launch",
+      "platform": ["windows"],
+      "description": "PowerShell launcher with monitoring",
+      "usage": ".\\launch-local.ps1",
+      "dependencies": {
+        "system": ["node", "npm", "powershell"],
+        "scripts": []
+      },
+      "executable": true,
+      "interactive": true,
+      "features": [
+        "prerequisite-checking",
+        "dependency-installation",
+        "service-monitoring",
+        "logging",
+        "graceful-shutdown"
+      ],
+      "ports": [5173, 8787],
+      "exitCodes": {
+        "0": "Success",
+        "1": "Prerequisites missing or service failed"
+      }
+    },
+    {
+      "name": "deploy.sh",
+      "path": "./deploy.sh",
+      "category": "deployment",
+      "platform": ["macos", "linux"],
+      "description": "Deploy application to production",
+      "usage": "./deploy.sh [environment]",
+      "parameters": [
+        {
+          "name": "environment",
+          "type": "string",
+          "required": false,
+          "default": "prod",
+          "options": ["prod", "staging", "dev"]
+        }
+      ],
+      "dependencies": {
+        "system": ["node", "npm", "wrangler"],
+        "scripts": []
+      },
+      "environmentVariables": [
+        "CLOUDFLARE_API_TOKEN",
+        "CLOUDFLARE_ACCOUNT_ID"
+      ],
+      "executable": true,
+      "interactive": false,
+      "exitCodes": {
+        "0": "Deployment successful",
+        "1": "Deployment failed"
+      }
+    },
+    {
       "name": "add-model.sh",
-      "path": "./scripts/automation/add-model.sh",
-      "symlink": "./scripts/add-model.sh",
+      "path": "./scripts/add-model.sh",
       "category": "automation",
       "platform": ["macos", "linux"],
       "description": "Interactive model generator (Bash - Production Ready)",
@@ -68,72 +166,68 @@
       }
     },
     {
-      "name": "add-field.sh",
-      "path": "./scripts/automation/add-field.sh",
-      "symlink": "./scripts/add-field.sh",
+      "name": "add-model.js",
+      "path": "./scripts/add-model.js",
       "category": "automation",
-      "platform": ["macos", "linux"],
-      "description": "Simple helper to add a field to existing model",
-      "usage": "cd scripts && ./add-field.sh",
-      "status": "production-ready",
+      "platform": ["cross-platform"],
+      "description": "Interactive model generator (JavaScript - DEPRECATED)",
+      "usage": "cd scripts && ./add-model.js",
+      "status": "deprecated-non-functional",
+      "deprecated": true,
+      "deprecationReason": "Incomplete implementation - all code generation methods are stubs",
+      "replacement": "add-model.sh",
       "dependencies": {
-        "system": ["bash", "sed", "awk", "date"],
-        "npm": []
+        "system": ["node"],
+        "npm": ["inquirer", "chalk", "fs-extra"]
       },
       "executable": true,
       "interactive": true,
       "generates": [
-        "database/migrations/{timestamp}_add_{field}_to_{table}.sql"
+        "backend/src/handlers/{model}.js",
+        "database/migrations/XXX_create_{model}.sql",
+        "frontend/src/components/{model}/{Model}List.jsx",
+        "frontend/src/components/{model}/{Model}Form.jsx",
+        "frontend/src/types/{model}.js",
+        "frontend/src/components/{model}/{model}.css"
       ],
-      "features": [
-        "migration-generation",
-        "code-snippets",
-        "colored-output",
-        "step-by-step-guidance"
+      "issues": [
+        "All code generation methods return placeholder comments",
+        "Generated files are non-functional",
+        "Approximately 30% complete"
       ],
       "exitCodes": {
-        "0": "Field addition guide completed",
-        "1": "Operation failed"
+        "0": "Model created successfully",
+        "1": "Generation failed"
       }
     },
     {
-      "name": "test.sh",
-      "path": "./scripts/utils/test.sh",
-      "symlink": "./scripts/test.sh",
-      "category": "testing",
-      "platform": ["macos", "linux"],
-      "description": "Comprehensive script testing suite",
-      "usage": "cd scripts && ./test.sh [test-name]",
-      "status": "production-ready",
+      "name": "modify-model.js",
+      "path": "./scripts/modify-model.js",
+      "category": "automation",
+      "platform": ["cross-platform"],
+      "description": "Interactive model modifier",
+      "usage": "cd scripts && ./modify-model.js",
       "dependencies": {
-        "system": ["bash"],
-        "optional": ["jq"]
+        "system": ["node"],
+        "npm": ["inquirer", "chalk", "fs-extra"]
       },
       "executable": true,
-      "interactive": false,
-      "tests": [
-        "executability",
-        "shebangs",
-        "syntax",
-        "dependencies",
-        "config",
-        "templates",
-        "documentation",
-        "structure",
-        "add-model",
-        "deprecated",
-        "git",
-        "catalog"
+      "interactive": true,
+      "operations": [
+        "add-field",
+        "remove-field",
+        "modify-field",
+        "add-relationship",
+        "add-endpoint"
       ],
       "exitCodes": {
-        "0": "All tests passed",
-        "1": "Some tests failed"
+        "0": "Model modified successfully",
+        "1": "Modification failed"
       }
     },
     {
       "name": "setup-project.sh",
-      "path": "./scripts/setup/setup-project.sh",
-      "symlink": "./scripts/setup-project.sh",
+      "path": "./scripts/setup-project.sh",
       "category": "setup",
       "platform": ["macos", "linux"],
       "description": "Complete project setup from scratch",
@@ -156,8 +250,7 @@
     },
     {
       "name": "setup-supabase.sh",
-      "path": "./scripts/setup/setup-supabase.sh",
-      "symlink": "./scripts/setup-supabase.sh",
+      "path": "./scripts/setup-supabase.sh",
       "category": "setup",
       "platform": ["macos", "linux"],
       "description": "Configure Supabase connection",
@@ -180,8 +273,7 @@
     },
     {
       "name": "setup-cloudflare.sh",
-      "path": "./scripts/setup/setup-cloudflare.sh",
-      "symlink": "./scripts/setup-cloudflare.sh",
+      "path": "./scripts/setup-cloudflare.sh",
       "category": "setup",
       "platform": ["macos", "linux"],
       "description": "Configure Cloudflare Workers and Pages",
@@ -202,8 +294,7 @@
     },
     {
       "name": "install.sh",
-      "path": "./scripts/setup/install.sh",
-      "symlink": "./scripts/install.sh",
+      "path": "./scripts/install.sh",
       "category": "setup",
       "platform": ["macos", "linux"],
       "description": "Install all project dependencies",
@@ -226,8 +317,7 @@
     },
     {
       "name": "quick-start.sh",
-      "path": "./scripts/setup/quick-start.sh",
-      "symlink": "./scripts/quick-start.sh",
+      "path": "./scripts/quick-start.sh",
       "category": "setup",
       "platform": ["macos", "linux"],
       "description": "Quick setup and preparation",
@@ -245,8 +335,7 @@
     },
     {
       "name": "cleanup.sh",
-      "path": "./scripts/utils/cleanup.sh",
-      "symlink": "./scripts/cleanup.sh",
+      "path": "./scripts/cleanup.sh",
       "category": "utility",
       "platform": ["macos", "linux"],
       "description": "Clean build artifacts and temporary files",
@@ -292,9 +381,34 @@
       }
     },
     {
+      "name": "test.js",
+      "path": "./scripts/test.js",
+      "category": "testing",
+      "platform": ["cross-platform"],
+      "description": "Test script functionality",
+      "usage": "cd scripts && node test.js [test-name]",
+      "parameters": [
+        {
+          "name": "test-name",
+          "type": "string",
+          "required": false,
+          "description": "Specific test to run"
+        }
+      ],
+      "dependencies": {
+        "system": ["node"],
+        "npm": []
+      },
+      "executable": true,
+      "interactive": false,
+      "exitCodes": {
+        "0": "All tests passed",
+        "1": "Tests failed"
+      }
+    },
+    {
       "name": "validate-scripts.sh",
-      "path": "./scripts/utils/validate-scripts.sh",
-      "symlink": "./scripts/validate-scripts.sh",
+      "path": "./scripts/validate-scripts.sh",
       "category": "validation",
       "platform": ["macos", "linux"],
       "description": "Validate script integrity",
@@ -315,114 +429,36 @@
         "0": "All scripts valid",
         "1": "Validation errors found"
       }
-    },
-    {
-      "name": "add-model.js",
-      "path": "./scripts/deprecated/add-model.js",
-      "category": "automation",
-      "platform": ["cross-platform"],
-      "description": "Interactive model generator (JavaScript - DEPRECATED)",
-      "usage": "DO NOT USE - See deprecated/README.md",
-      "status": "deprecated-non-functional",
-      "deprecated": true,
-      "deprecationReason": "Incomplete implementation - all code generation methods are stubs",
-      "replacement": "automation/add-model.sh",
-      "deprecationDate": "2024-12-07",
-      "dependencies": {
-        "system": ["node"],
-        "npm": ["inquirer", "chalk", "fs-extra"]
-      },
-      "executable": true,
-      "interactive": true,
-      "issues": [
-        "All code generation methods return placeholder comments",
-        "Generated files are non-functional",
-        "Approximately 30% complete"
-      ],
-      "exitCodes": {
-        "0": "Model created successfully",
-        "1": "Generation failed"
-      }
-    },
-    {
-      "name": "modify-model.js",
-      "path": "./scripts/deprecated/modify-model.js",
-      "category": "automation",
-      "platform": ["cross-platform"],
-      "description": "Interactive model modifier (JavaScript - DEPRECATED)",
-      "usage": "DO NOT USE - See deprecated/README.md",
-      "status": "deprecated-partial",
-      "deprecated": true,
-      "deprecationReason": "Partially functional, complex implementation, better alternatives available",
-      "replacement": "automation/add-field.sh",
-      "deprecationDate": "2024-12-07",
-      "dependencies": {
-        "system": ["node"],
-        "npm": ["inquirer", "chalk", "fs-extra"]
-      },
-      "executable": true,
-      "interactive": true,
-      "operations": [
-        "add-field",
-        "remove-field",
-        "modify-field",
-        "add-relationship",
-        "add-endpoint"
-      ],
-      "exitCodes": {
-        "0": "Model modified successfully",
-        "1": "Modification failed"
-      }
-    },
-    {
-      "name": "test.js",
-      "path": "./scripts/deprecated/test.js",
-      "category": "testing",
-      "platform": ["cross-platform"],
-      "description": "Script testing utility (JavaScript - DEPRECATED)",
-      "usage": "DO NOT USE - See deprecated/README.md",
-      "status": "deprecated-functional",
-      "deprecated": true,
-      "deprecationReason": "Migrated to bash for consistency and to remove Node.js dependency",
-      "replacement": "utils/test.sh",
-      "deprecationDate": "2024-12-07",
-      "dependencies": {
-        "system": ["node"],
-        "npm": []
-      },
-      "executable": true,
-      "interactive": false,
-      "exitCodes": {
-        "0": "All tests passed",
-        "1": "Tests failed"
-      }
     }
   ],
   "categories": {
+    "launch": {
+      "description": "Scripts for launching the application locally",
+      "color": "green"
+    },
+    "deployment": {
+      "description": "Scripts for deploying to production",
+      "color": "blue"
+    },
     "automation": {
-      "description": "Code generation and model management",
-      "color": "purple",
-      "directory": "automation"
+      "description": "Scripts for automating development tasks",
+      "color": "purple"
     },
     "setup": {
-      "description": "First-time configuration and installation",
-      "color": "yellow",
-      "directory": "setup"
+      "description": "Scripts for initial project setup",
+      "color": "yellow"
     },
     "utility": {
-      "description": "Maintenance and utility tools",
-      "color": "cyan",
-      "directory": "utils"
+      "description": "Utility scripts for maintenance",
+      "color": "cyan"
     },
     "testing": {
-      "description": "Testing and validation",
-      "color": "magenta",
-      "directory": "utils"
+      "description": "Scripts for testing functionality",
+      "color": "magenta"
     },
     "validation": {
-      "description": "Script integrity validation",
-      "color": "red",
-      "directory": "utils"
+      "description": "Scripts for validating project integrity",
+      "color": "red"
     }
   },
   "platforms": {
