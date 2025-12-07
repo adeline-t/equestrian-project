@@ -6,23 +6,24 @@ This catalog provides a quick reference for all scripts in the Equestrian Projec
 
 ## 📊 Quick Reference Table
 
-| Script | Category | Platform | Purpose | Location |
-|--------|----------|----------|---------|----------|
-| `start.sh` | Launch | macOS/Linux | One-command app launcher | Root |
-| `start.bat` | Launch | Windows | One-command app launcher | Root |
-| `launch-local.sh` | Launch | macOS/Linux | Full-featured launcher with monitoring | Root |
-| `launch-local.ps1` | Launch | Windows | PowerShell launcher with monitoring | Root |
-| `deploy.sh` | Deployment | macOS/Linux | Production deployment script | Root |
-| `add-model.js` | Automation | Cross-platform | Interactive model generator | scripts/ |
-| `modify-model.js` | Automation | Cross-platform | Interactive model modifier | scripts/ |
-| `setup-project.sh` | Setup | macOS/Linux | Complete project setup | scripts/ |
-| `setup-supabase.sh` | Setup | macOS/Linux | Supabase configuration | scripts/ |
-| `setup-cloudflare.sh` | Setup | macOS/Linux | Cloudflare configuration | scripts/ |
-| `install.sh` | Setup | macOS/Linux | Dependency installation | scripts/ |
-| `quick-start.sh` | Setup | macOS/Linux | Quick setup and launch | scripts/ |
-| `cleanup.sh` | Utility | macOS/Linux | Clean build artifacts | scripts/ |
-| `test.js` | Testing | Cross-platform | Script testing utility | scripts/ |
-| `validate-scripts.sh` | Validation | macOS/Linux | Script integrity checker | scripts/ |
+| Script | Category | Platform | Purpose | Status | Location |
+|--------|----------|----------|---------|--------|----------|
+| `start.sh` | Launch | macOS/Linux | One-command app launcher | ✅ Working | Root |
+| `start.bat` | Launch | Windows | One-command app launcher | ✅ Working | Root |
+| `launch-local.sh` | Launch | macOS/Linux | Full-featured launcher with monitoring | ✅ Working | Root |
+| `launch-local.ps1` | Launch | Windows | PowerShell launcher with monitoring | ✅ Working | Root |
+| `deploy.sh` | Deployment | macOS/Linux | Production deployment script | ✅ Working | Root |
+| `add-model.sh` | Automation | macOS/Linux | Interactive model generator (Bash) | ⭐ NEW | scripts/ |
+| `add-model.js` | Automation | Cross-platform | Interactive model generator (JS) | ❌ Broken | scripts/ |
+| `modify-model.js` | Automation | Cross-platform | Interactive model modifier | ⚠️ Untested | scripts/ |
+| `setup-project.sh` | Setup | macOS/Linux | Complete project setup | ✅ Working | scripts/ |
+| `setup-supabase.sh` | Setup | macOS/Linux | Supabase configuration | ✅ Working | scripts/ |
+| `setup-cloudflare.sh` | Setup | macOS/Linux | Cloudflare configuration | ✅ Working | scripts/ |
+| `install.sh` | Setup | macOS/Linux | Dependency installation | ✅ Working | scripts/ |
+| `quick-start.sh` | Setup | macOS/Linux | Quick setup and launch | ✅ Working | scripts/ |
+| `cleanup.sh` | Utility | macOS/Linux | Clean build artifacts | ✅ Working | scripts/ |
+| `test.js` | Testing | Cross-platform | Script testing utility | ✅ Working | scripts/ |
+| `validate-scripts.sh` | Validation | macOS/Linux | Script integrity checker | ✅ Working | scripts/ |
 
 ## 🗂️ Scripts by Category
 
@@ -156,38 +157,69 @@ start.bat
 
 ### 🤖 Model Automation Scripts (scripts/)
 
-#### `add-model.js`
-**Purpose**: Interactive generator for creating new data models.
+#### `add-model.sh` ⭐ NEW
+**Purpose**: Interactive generator for creating new data models (Bash version).
+
+**Status**: ✅ **Production Ready** - Complete, functional implementation
 
 **Usage**:
 ```bash
 cd scripts
-./add-model.js
+./add-model.sh
 ```
 
 **What it does**:
-- Interactive CLI prompts for model details
-- Generates database migration SQL
-- Creates backend API handler
-- Creates frontend components (List, Form)
-- Generates type definitions
+- Interactive CLI prompts with colored output
+- Generates complete, working database migration SQL
+- Creates fully functional backend API handler with validation
+- Creates complete frontend components (List, Form) with all features
+- Generates comprehensive CSS styles
 - Updates routing automatically
+- Provides clear next steps
 
 **Dependencies**:
-- Node.js 18+
-- npm packages: inquirer, chalk, fs-extra
+- bash
+- Standard Unix utilities (sed, awk, date)
 
-**Platform**: Cross-platform (Node.js)
+**Platform**: macOS, Linux
 
 **Generated Files**:
-- `backend/src/handlers/{model}.js`
-- `database/migrations/XXX_create_{model}.sql`
-- `frontend/src/components/{model}/{Model}List.jsx`
-- `frontend/src/components/{model}/{Model}Form.jsx`
-- `frontend/src/types/{model}.js`
-- `frontend/src/components/{model}/{model}.css`
+- `backend/src/handlers/{model}.js` - Complete CRUD handler
+- `database/migrations/{timestamp}_create_{model}.sql` - Full migration
+- `frontend/src/components/{model}/{Model}List.jsx` - Working list component
+- `frontend/src/components/{model}/{Model}Form.jsx` - Complete form component
+- `frontend/src/components/{model}/{model}.css` - Full styling
 
-**See Also**: [docs/02-development/adding-models.md](../docs/02-development/adding-models.md)
+**Key Features**:
+- ✅ All code generation methods implemented (not stubs)
+- ✅ Generates production-ready, working code
+- ✅ Complete CRUD functionality
+- ✅ Input validation and error handling
+- ✅ Colored terminal output
+- ✅ No external dependencies (pure bash)
+
+**See Also**: 
+- [docs/09-scripts/add-model-bash.md](../docs/09-scripts/add-model-bash.md)
+- [docs/02-development/adding-models.md](../docs/02-development/adding-models.md)
+
+---
+
+#### `add-model.js` ⚠️ DEPRECATED
+**Purpose**: Interactive generator for creating new data models (JavaScript version).
+
+**Status**: ❌ **NON-FUNCTIONAL** - Incomplete implementation (30% complete)
+
+**Issues**:
+- All code generation methods are stubs returning placeholder comments
+- Generated files are non-functional skeletons
+- Missing implementation for all critical features
+- See `ADD_MODEL_ISSUES.md` for detailed analysis
+
+**Recommendation**: **Use `add-model.sh` instead**
+
+**See Also**: 
+- [ADD_MODEL_ISSUES.md](../ADD_MODEL_ISSUES.md) - Detailed issue analysis
+- [docs/09-scripts/add-model-bash.md](../docs/09-scripts/add-model-bash.md) - Working alternative
 
 ---
 
@@ -485,9 +517,9 @@ cd equestrian-project
 
 ### Adding a New Model
 ```bash
-# 1. Generate model
+# 1. Generate model (use new bash version)
 cd scripts
-./add-model.js
+./add-model.sh
 
 # 2. Apply database migration
 # (Run SQL in Supabase dashboard)
