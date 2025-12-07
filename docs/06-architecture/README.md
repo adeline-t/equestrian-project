@@ -49,24 +49,28 @@ The Equestrian Management System is a modern, serverless web application built o
 ## 🎯 Design Principles
 
 ### 1. Serverless-First
+
 - **No servers to manage** - Cloudflare Workers handle all backend logic
 - **Auto-scaling** - Scales automatically with traffic
 - **Global distribution** - Runs on Cloudflare's edge network
 - **Cost-effective** - Pay only for what you use
 
 ### 2. Edge Computing
+
 - **Low latency** - Code runs close to users
 - **High availability** - Distributed across 200+ data centers
 - **DDoS protection** - Built-in security
 - **Global reach** - Same performance worldwide
 
 ### 3. Modern Frontend
+
 - **React 18** - Latest React features
 - **Vite** - Fast development and builds
 - **Component-based** - Reusable UI components
 - **Responsive** - Works on all devices
 
 ### 4. Managed Database
+
 - **Supabase PostgreSQL** - Fully managed database
 - **Real-time** - Built-in real-time capabilities
 - **Secure** - Row-level security
@@ -75,6 +79,7 @@ The Equestrian Management System is a modern, serverless web application built o
 ## 🔧 Technology Stack
 
 ### Frontend Layer
+
 - **Framework:** React 18
 - **Build Tool:** Vite 5
 - **Routing:** React Router 6
@@ -83,6 +88,7 @@ The Equestrian Management System is a modern, serverless web application built o
 - **Hosting:** Cloudflare Pages
 
 ### Backend Layer
+
 - **Runtime:** Cloudflare Workers
 - **Language:** JavaScript (ES6+)
 - **Database Client:** @supabase/supabase-js
@@ -90,15 +96,17 @@ The Equestrian Management System is a modern, serverless web application built o
 - **Deployment:** Wrangler CLI
 
 ### Database Layer
+
 - **Database:** PostgreSQL 15
 - **Hosting:** Supabase
-- **Features:** 
+- **Features:**
   - Foreign keys
   - Triggers
   - Indexes
   - Row-level security
 
 ### Development Tools
+
 - **Version Control:** Git
 - **Package Manager:** npm
 - **Code Editor:** VS Code (recommended)
@@ -107,6 +115,7 @@ The Equestrian Management System is a modern, serverless web application built o
 ## 📊 Data Flow
 
 ### Read Operation (GET)
+
 ```
 User → Frontend → API Request → Workers → Supabase → PostgreSQL
                                                     ↓
@@ -114,6 +123,7 @@ User ← Frontend ← JSON Response ← Workers ← Supabase ← Data
 ```
 
 ### Write Operation (POST/PUT)
+
 ```
 User → Frontend → API Request → Workers → Validate → Supabase → PostgreSQL
                                     ↓                              ↓
@@ -127,16 +137,19 @@ User ← Frontend ← Success Response ← Workers ← Supabase ← PostgreSQL
 ## 🔐 Security Architecture
 
 ### Authentication
+
 - Supabase Auth (planned)
 - JWT tokens
 - Secure session management
 
 ### Authorization
+
 - Row-level security in PostgreSQL
 - API-level validation
 - CORS configuration
 
 ### Data Protection
+
 - HTTPS everywhere
 - Environment variables for secrets
 - Input validation and sanitization
@@ -147,16 +160,19 @@ See [Security Guide](./security.md) for details.
 ## 💾 Database Design
 
 ### Core Tables
+
 1. **riders** - Horse riders/students
 2. **horses** - Horses and ponies
-3. **rider_horse_associations** - Relationships
+3. **rider_horse_pairings** - Relationships
 
 ### Relationships
-- One-to-many: Riders → Associations
-- One-to-many: Horses → Associations
-- Many-to-many: Riders ↔ Horses (through associations)
+
+- One-to-many: Riders → Pairings
+- One-to-many: Horses → Pairings
+- Many-to-many: Riders ↔ Horses (through pairings)
 
 ### Features
+
 - Automatic timestamps
 - Cascade deletes
 - Unique constraints
@@ -169,16 +185,19 @@ See [Database Schema](./database-schema.md) for complete details.
 ### Environments
 
 **Development:**
+
 - Local development servers
 - Development Supabase project
 - Cloudflare Workers dev environment
 
 **Production:**
+
 - Cloudflare Pages (frontend)
 - Cloudflare Workers (backend)
 - Production Supabase project
 
 ### CI/CD Pipeline (Planned)
+
 ```
 Git Push → GitHub Actions → Tests → Build → Deploy → Verify
 ```
@@ -186,17 +205,20 @@ Git Push → GitHub Actions → Tests → Build → Deploy → Verify
 ## 📈 Scalability
 
 ### Horizontal Scaling
+
 - **Frontend:** Cloudflare's global CDN
 - **Backend:** Workers auto-scale
 - **Database:** Supabase connection pooling
 
 ### Performance Optimization
+
 - Edge caching
 - Database indexes
 - Efficient queries
 - Lazy loading
 
 ### Monitoring
+
 - Cloudflare Analytics
 - Supabase Dashboard
 - Error tracking (planned)
@@ -205,12 +227,14 @@ Git Push → GitHub Actions → Tests → Build → Deploy → Verify
 ## 🔄 State Management
 
 ### Frontend State
+
 - **Local State:** React useState
 - **Form State:** Controlled components
 - **API State:** Axios + useEffect
 - **Future:** Consider Redux/Zustand for complex state
 
 ### Backend State
+
 - **Stateless:** Workers are stateless
 - **Database:** Single source of truth
 - **Caching:** Edge caching (planned)
@@ -218,6 +242,7 @@ Git Push → GitHub Actions → Tests → Build → Deploy → Verify
 ## 🧩 Component Architecture
 
 ### Frontend Components
+
 ```
 App
 ├── Header (Navigation)
@@ -228,24 +253,26 @@ App
 │   ├── HorsesList
 │   │   ├── HorseForm
 │   │   └── HorseCard
-│   └── AssociationsList
-│       ├── AssociationForm
-│       └── AssociationCard
+│   └── PairingsList
+│       ├── PairingForm
+│       └── PairingCard
 └── Footer (planned)
 ```
 
 ### Backend Handlers
+
 ```
 index.js (Router)
 ├── riders.js (Rider operations)
 ├── horses.js (Horse operations)
-├── associations.js (Association operations)
+├── pairings.js (Pairing operations)
 └── db.js (Database utilities)
 ```
 
 ## 📖 Design Decisions
 
 ### Why Cloudflare Workers?
+
 - ✅ Serverless (no infrastructure management)
 - ✅ Global edge network
 - ✅ Excellent performance
@@ -253,6 +280,7 @@ index.js (Router)
 - ✅ Easy deployment
 
 ### Why Supabase?
+
 - ✅ Managed PostgreSQL
 - ✅ Built-in authentication
 - ✅ Real-time capabilities
@@ -260,6 +288,7 @@ index.js (Router)
 - ✅ Great developer experience
 
 ### Why React + Vite?
+
 - ✅ Modern, fast development
 - ✅ Large ecosystem
 - ✅ Component reusability
@@ -267,6 +296,7 @@ index.js (Router)
 - ✅ Fast builds
 
 ### Why PostgreSQL?
+
 - ✅ Reliable and mature
 - ✅ ACID compliance
 - ✅ Rich feature set

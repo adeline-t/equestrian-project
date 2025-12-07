@@ -41,7 +41,7 @@ const handleError = (error) => {
     // Server responded with error status
     const message = error.response.data?.error || 'Une erreur est survenue';
     const status = error.response.status;
-    
+
     switch (status) {
       case 400:
         throw new Error(`${message} (Requête invalide)`);
@@ -142,7 +142,11 @@ export const horsesApi = {
   },
 };
 
-export const associationsApi = createCrudApi('associations');
+export const pairingsApi = createCrudApi('pairings');
+
+export const packagesApi = {
+  ...createCrudApi('packages'),
+};
 
 // Utility API
 export const utilityApi = {

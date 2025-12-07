@@ -1267,8 +1267,8 @@ update_api_service() {
         return
     fi
     
-    # Add the export before associationsApi
-    sed -i.bak "/export const associationsApi/i\\
+    # Add the export before pairingsApi
+    sed -i.bak "/export const pairingsApi/i\\
 export const ${MODEL_NAME_PLURAL}Api = createCrudApi('${MODEL_NAME_PLURAL}');\\
 " "$api_file"
     
@@ -1294,13 +1294,13 @@ update_backend_router() {
         return
     fi
     
-    # Add import after associations import
-    sed -i.bak "/import { handleAssociations }/a\\
+    # Add import after pairings import
+    sed -i.bak "/import { handlePairings }/a\\
 import { handle${MODEL_NAME} } from './handlers/${MODEL_NAME_LOWER}.js';
 " "$router_file"
     
-    # Add route handler before associations route
-    sed -i.bak "/if (path.startsWith('\/api\/associations'))/i\\
+    # Add route handler before pairings route
+    sed -i.bak "/if (path.startsWith('\/api\/pairings'))/i\\
     if (path.startsWith('/api/${MODEL_NAME_PLURAL}')) {\\
       return handle${MODEL_NAME}(request, env);\\
     }\\

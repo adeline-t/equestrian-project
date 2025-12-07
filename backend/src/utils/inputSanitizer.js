@@ -64,7 +64,7 @@ export function sanitizePhone(phone) {
 
   // Remove all non-digit and non-plus characters
   let sanitized = phone.replace(/[^\d+\s()-]/g, '');
-  
+
   // Trim and limit length
   sanitized = sanitized.trim().substring(0, 50);
 
@@ -83,10 +83,10 @@ export function sanitizeName(name) {
 
   // Allow letters, spaces, hyphens, apostrophes
   let sanitized = sanitizeString(name, { maxLength: 255 });
-  
+
   // Remove any remaining special characters except allowed ones
   sanitized = sanitized.replace(/[^a-zA-ZÀ-ÿ\s'-]/g, '');
-  
+
   // Normalize multiple spaces to single space
   sanitized = sanitized.replace(/\s+/g, ' ');
 
@@ -129,7 +129,7 @@ export function sanitizeDate(date) {
  */
 export function sanitizeId(id) {
   const parsed = parseInt(id, 10);
-  
+
   if (isNaN(parsed) || parsed < 1) {
     return null;
   }
@@ -149,7 +149,7 @@ export function sanitizeEnum(value, allowedValues) {
   }
 
   const sanitized = sanitizeString(value).toLowerCase();
-  
+
   if (!allowedValues.includes(sanitized)) {
     return null;
   }
@@ -187,16 +187,16 @@ export function sanitizeHorseData(horse) {
 }
 
 /**
- * Sanitize association data
- * @param {Object} association - Association data to sanitize
- * @returns {Object} Sanitized association data
+ * Sanitize pairing data
+ * @param {Object} pairing - Pairing data to sanitize
+ * @returns {Object} Sanitized pairing data
  */
-export function sanitizeAssociationData(association) {
+export function sanitizePairingData(pairing) {
   return {
-    rider_id: sanitizeId(association.rider_id),
-    horse_id: sanitizeId(association.horse_id),
-    association_start_date: sanitizeDate(association.association_start_date),
-    association_end_date: sanitizeDate(association.association_end_date),
+    rider_id: sanitizeId(pairing.rider_id),
+    horse_id: sanitizeId(pairing.horse_id),
+    pairing_start_date: sanitizeDate(pairing.pairing_start_date),
+    pairing_end_date: sanitizeDate(pairing.pairing_end_date),
   };
 }
 
@@ -207,12 +207,12 @@ export function sanitizeAssociationData(association) {
  */
 export function removeEmptyValues(obj) {
   const cleaned = {};
-  
+
   for (const [key, value] of Object.entries(obj)) {
     if (value !== undefined && value !== null && value !== '') {
       cleaned[key] = value;
     }
   }
-  
+
   return cleaned;
 }

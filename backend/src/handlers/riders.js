@@ -1,10 +1,19 @@
-import { getDatabase, handleDbError, jsonResponse, validateEmail, validatePhone, validateRequired, checkRateLimit, getSecurityHeaders } from '../db.js';
-import { 
-  handleDatabaseError, 
-  handleValidationError, 
-  handleNotFoundError, 
+import {
+  getDatabase,
+  handleDbError,
+  jsonResponse,
+  validateEmail,
+  validatePhone,
+  validateRequired,
+  checkRateLimit,
+  getSecurityHeaders,
+} from '../db.js';
+import {
+  handleDatabaseError,
+  handleValidationError,
+  handleNotFoundError,
   handleRateLimitError,
-  handleUnexpectedError 
+  handleUnexpectedError,
 } from '../utils/errorHandler.js';
 import { sanitizeRiderData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
@@ -27,10 +36,7 @@ export async function handleRiders(request, env) {
   try {
     // GET /api/riders - List all riders
     if (request.method === 'GET' && pathParts.length === 2) {
-      const { data, error } = await db
-        .from('riders')
-        .select('*')
-        .order('name');
+      const { data, error } = await db.from('riders').select('*').order('name');
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -39,16 +45,12 @@ export async function handleRiders(request, env) {
     // GET /api/riders/:id - Get single rider
     if (request.method === 'GET' && pathParts.length === 3) {
       const riderId = parseInt(pathParts[2]);
-      
+
       if (isNaN(riderId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
-      const { data, error } = await db
-        .from('riders')
-        .select('*')
-        .eq('id', riderId)
-        .single();
+      const { data, error } = await db.from('riders').select('*').eq('id', riderId).single();
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -57,7 +59,7 @@ export async function handleRiders(request, env) {
     // POST /api/riders - Create rider
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
-      
+
       if (!body) {
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
       }
@@ -65,12 +67,16 @@ export async function handleRiders(request, env) {
       // Validate required fields
       const missingFields = validateRequired(['name'], body);
       if (missingFields) {
-        return jsonResponse({ error: `Champs requis: ${missingFields}` }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: `Champs requis: ${missingFields}` },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       // Validate email format if provided
       if (body.email && !validateEmail(body.email)) {
-        return jsonResponse({ error: 'Format d\'email invalide' }, 400, getSecurityHeaders());
+        return jsonResponse({ error: "Format d'email invalide" }, 400, getSecurityHeaders());
       }
 
       // Validate phone format if provided
@@ -86,11 +92,7 @@ export async function handleRiders(request, env) {
         activity_end_date: body.activity_end_date || null,
       };
 
-      const { data, error } = await db
-        .from('riders')
-        .insert(riderData)
-        .select()
-        .single();
+      const { data, error } = await db.from('riders').insert(riderData).select().single();
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 201, getSecurityHeaders());
@@ -100,14 +102,18 @@ export async function handleRiders(request, env) {
     if (request.method === 'PUT' && pathParts.length === 3) {
       const riderId = parseInt(pathParts[2]);
       const body = await request.json().catch(() => null);
-      
+
       if (isNaN(riderId) || !body) {
-        return jsonResponse({ error: 'ID ou corps de requête invalide' }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: 'ID ou corps de requête invalide' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       // Validate email format if provided
       if (body.email && !validateEmail(body.email)) {
-        return jsonResponse({ error: 'Format d\'email invalide' }, 400, getSecurityHeaders());
+        return jsonResponse({ error: "Format d'email invalide" }, 400, getSecurityHeaders());
       }
 
       // Validate phone format if provided
@@ -125,8 +131,8 @@ export async function handleRiders(request, env) {
       };
 
       // Remove undefined fields
-      Object.keys(updateData).forEach(key => 
-        updateData[key] === undefined && delete updateData[key]
+      Object.keys(updateData).forEach(
+        (key) => updateData[key] === undefined && delete updateData[key]
       );
 
       const { data, error } = await db
@@ -143,22 +149,18 @@ export async function handleRiders(request, env) {
     // DELETE /api/riders/:id - Delete rider
     if (request.method === 'DELETE' && pathParts.length === 3) {
       const riderId = parseInt(pathParts[2]);
-      
+
       if (isNaN(riderId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
-      
-      const { error } = await db
-        .from('riders')
-        .delete()
-        .eq('id', riderId);
+
+      const { error } = await db.from('riders').delete().eq('id', riderId);
 
       if (error) return handleDbError(error);
       return jsonResponse({ message: 'Cavalier supprimé avec succès' }, 200, getSecurityHeaders());
     }
 
     return jsonResponse({ error: 'Route non trouvée' }, 404, getSecurityHeaders());
-
   } catch (error) {
     console.error('Unexpected error:', error);
     return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());
@@ -181,11 +183,12 @@ export async function handleRiderHorses(request, env, riderId) {
     }
 
     const { data, error } = await db
-      .from('rider_horse_associations')
-      .select(`
+      .from('rider_horse_pairings')
+      .select(
+        `
         id,
-        association_start_date,
-        association_end_date,
+        pairing_start_date,
+        pairing_end_date,
         horses (
           id,
           name,
@@ -193,9 +196,10 @@ export async function handleRiderHorses(request, env, riderId) {
           activity_start_date,
           activity_end_date
         )
-      `)
+      `
+      )
       .eq('rider_id', riderIdNum)
-      .order('association_start_date', { ascending: false });
+      .order('pairing_start_date', { ascending: false });
 
     if (error) return handleDbError(error);
     return jsonResponse(data, 200, getSecurityHeaders());

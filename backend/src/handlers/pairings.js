@@ -12,9 +12,9 @@ import {
   handleNotFoundError,
   handleRateLimitError,
 } from '../utils/errorHandler.js';
-import { sanitizeAssociationData, removeEmptyValues } from '../utils/inputSanitizer.js';
+import { sanitizePairingData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
-export async function handleAssociations(request, env) {
+export async function handlePairings(request, env) {
   const db = getDatabase(env);
   const url = new URL(request.url);
   const pathParts = url.pathname.split('/').filter(Boolean);
@@ -22,7 +22,7 @@ export async function handleAssociations(request, env) {
 
   // Rate limiting
   if (!checkRateLimit(clientIP, 60, 60000)) {
-    return handleRateLimitError('associations.rateLimit');
+    return handleRateLimitError('pairings.rateLimit');
   }
 
   if (request.method === 'OPTIONS') {
@@ -30,56 +30,56 @@ export async function handleAssociations(request, env) {
   }
 
   try {
-    // GET /api/associations - List all associations
+    // GET /api/pairings - List all pairings
     if (request.method === 'GET' && pathParts.length === 2) {
       const { data, error } = await db
-        .from('rider_horse_associations')
+        .from('rider_horse_pairings')
         .select(
           `
           id,
           rider_id,
           horse_id,
-          association_start_date,
-          association_end_date,
+          pairing_start_date,
+          pairing_end_date,
           riders (id, name),
           horses (id, name, kind, is_owned_by_laury)
         `
         )
-        .order('association_start_date', { ascending: false });
+        .order('pairing_start_date', { ascending: false });
 
-      if (error) return handleDatabaseError(error, 'associations.list');
+      if (error) return handleDatabaseError(error, 'pairings.list');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // GET /api/associations/:id - Get single association
+    // GET /api/pairings/:id - Get single pairing
     if (request.method === 'GET' && pathParts.length === 3) {
-      const associationId = parseInt(pathParts[2]);
+      const pairingId = parseInt(pathParts[2]);
 
-      if (isNaN(associationId)) {
+      if (isNaN(pairingId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
       const { data, error } = await db
-        .from('rider_horse_associations')
+        .from('rider_horse_pairings')
         .select(
           `
           id,
           rider_id,
           horse_id,
-          association_start_date,
-          association_end_date,
+          pairing_start_date,
+          pairing_end_date,
           riders (id, name, phone, email),
           horses (id, name, kind, is_owned_by_laury)
         `
         )
-        .eq('id', associationId)
+        .eq('id', pairingId)
         .single();
 
-      if (error) return handleDatabaseError(error, 'associations.get');
+      if (error) return handleDatabaseError(error, 'pairings.get');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // POST /api/associations - Create association
+    // POST /api/pairings - Create pairing
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
 
@@ -115,39 +115,39 @@ export async function handleAssociations(request, env) {
         return jsonResponse({ error: 'Cavalier ou cheval invalide' }, 400, getSecurityHeaders());
       }
 
-      const associationData = {
+      const pairingData = {
         rider_id: riderId,
         horse_id: horseId,
-        association_start_date: body.association_start_date || null,
-        association_end_date: body.association_end_date || null,
+        pairing_start_date: body.pairing_start_date || null,
+        pairing_end_date: body.pairing_end_date || null,
       };
 
       const { data, error } = await db
-        .from('rider_horse_associations')
-        .insert(associationData)
+        .from('rider_horse_pairings')
+        .insert(pairingData)
         .select(
           `
           id,
           rider_id,
           horse_id,
-          association_start_date,
-          association_end_date,
+          pairing_start_date,
+          pairing_end_date,
           riders (id, name),
           horses (id, name, kind, is_owned_by_laury)
         `
         )
         .single();
 
-      if (error) return handleDatabaseError(error, 'associations.create');
+      if (error) return handleDatabaseError(error, 'pairings.create');
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
-    // PUT /api/associations/:id - Update association
+    // PUT /api/pairings/:id - Update pairing
     if (request.method === 'PUT' && pathParts.length === 3) {
-      const associationId = parseInt(pathParts[2]);
+      const pairingId = parseInt(pathParts[2]);
       const body = await request.json().catch(() => null);
 
-      if (isNaN(associationId) || !body) {
+      if (isNaN(pairingId) || !body) {
         return jsonResponse(
           { error: 'ID ou corps de requête invalide' },
           400,
@@ -156,48 +156,44 @@ export async function handleAssociations(request, env) {
       }
 
       const updateData = {
-        association_start_date: body.association_start_date || null,
-        association_end_date: body.association_end_date || null,
+        pairing_start_date: body.pairing_start_date || null,
+        pairing_end_date: body.pairing_end_date || null,
         updated_at: new Date().toISOString(),
       };
 
       const { data, error } = await db
-        .from('rider_horse_associations')
+        .from('rider_horse_pairings')
         .update(updateData)
-        .eq('id', associationId)
+        .eq('id', pairingId)
         .select(
           `
           id,
           rider_id,
           horse_id,
-          association_start_date,
-          association_end_date,
+          pairing_start_date,
+          pairing_end_date,
           riders (id, name),
           horses (id, name, kind, is_owned_by_laury)
         `
         )
         .single();
 
-      if (error) return handleDatabaseError(error, 'associations.update');
+      if (error) return handleDatabaseError(error, 'pairings.update');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // DELETE /api/associations/:id - Delete association
+    // DELETE /api/pairings/:id - Delete pairing
     if (request.method === 'DELETE' && pathParts.length === 3) {
-      const associationId = parseInt(pathParts[2]);
+      const pairingId = parseInt(pathParts[2]);
 
-      if (isNaN(associationId)) {
+      if (isNaN(pairingId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
-      const { error } = await db.from('rider_horse_associations').delete().eq('id', associationId);
+      const { error } = await db.from('rider_horse_pairings').delete().eq('id', pairingId);
 
-      if (error) return handleDatabaseError(error, 'associations.delete');
-      return jsonResponse(
-        { message: 'Association supprimée avec succès' },
-        200,
-        getSecurityHeaders()
-      );
+      if (error) return handleDatabaseError(error, 'pairings.delete');
+      return jsonResponse({ message: 'Pairing supprimée avec succès' }, 200, getSecurityHeaders());
     }
 
     return jsonResponse({ error: 'Route non trouvée' }, 404, getSecurityHeaders());

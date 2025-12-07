@@ -45,7 +45,7 @@ class ModelGenerator {
             return 'Model name must be in PascalCase (e.g., Instructor, Horse, Rider)';
           }
           return true;
-        }
+        },
       },
       {
         type: 'input',
@@ -54,7 +54,7 @@ class ModelGenerator {
         validate: (input) => {
           if (!input.trim()) return 'Display name is required';
           return true;
-        }
+        },
       },
       {
         type: 'input',
@@ -63,26 +63,26 @@ class ModelGenerator {
         validate: (input) => {
           if (!input.trim()) return 'Plural name is required';
           return true;
-        }
+        },
       },
       {
         type: 'list',
         name: 'mainEmoji',
         message: 'Main emoji for this model:',
-        choices: ['👤', '🐴', '🏇', '🏃', '👨‍🏫', '👩‍🏫', '💰', '📅', '🏢', '🎯', '⭐', '📝', '🔧']
+        choices: ['👤', '🐴', '🏇', '🏃', '👨‍🏫', '👩‍🏫', '💰', '📅', '🏢', '🎯', '⭐', '📝', '🔧'],
       },
       {
         type: 'confirm',
         name: 'hasActivityDates',
         message: 'Does this model have activity start/end dates?',
-        default: false
+        default: false,
       },
       {
         type: 'confirm',
         name: 'needsCustomEndpoints',
         message: 'Does this model need custom API endpoints beyond basic CRUD?',
-        default: false
-      }
+        default: false,
+      },
     ]);
 
     this.modelInfo = {
@@ -93,7 +93,7 @@ class ModelGenerator {
       modelNameLower: answers.modelName.toLowerCase(),
       modelNamePlural: answers.modelNameLower + 's',
       tableName: this.toSnakeCase(answers.modelNameLower) + 's',
-      defaultSortField: 'name'
+      defaultSortField: 'name',
     };
 
     await this.gatherFields();
@@ -116,40 +116,40 @@ class ModelGenerator {
             if (!/^[a-z][a-z0-9_]*$/.test(input)) {
               return 'Field name must be in snake_case (e.g., first_name, phone_number)';
             }
-            if (fields.some(f => f.name === input.trim())) {
+            if (fields.some((f) => f.name === input.trim())) {
               return 'Field name already exists';
             }
             return true;
-          }
+          },
         },
         {
           type: 'list',
           name: 'type',
           message: 'Field type:',
-          choices: Object.keys(this.config.fieldTypes).map(key => ({
+          choices: Object.keys(this.config.fieldTypes).map((key) => ({
             name: `${key} - ${this.config.fieldTypes[key].sql}`,
-            value: key
-          }))
+            value: key,
+          })),
         },
         {
           type: 'confirm',
           name: 'required',
           message: 'Is this field required?',
-          default: false
+          default: false,
         },
         {
           type: 'confirm',
           name: 'unique',
           message: 'Should this field be unique?',
-          default: false
+          default: false,
         },
         {
           type: 'input',
           name: 'defaultValue',
           message: 'Default value (leave empty for no default):',
           when: (answers) => answers.type === 'boolean' || answers.type === 'string',
-          default: ''
-        }
+          default: '',
+        },
       ]);
 
       if (fieldAnswer.type === 'enum') {
@@ -161,17 +161,17 @@ class ModelGenerator {
             validate: (input) => {
               if (!input.trim()) return 'At least one option is required';
               return true;
-            }
-          }
+            },
+          },
         ]);
-        fieldAnswer.enumOptions = enumAnswer.options.split(',').map(opt => opt.trim());
+        fieldAnswer.enumOptions = enumAnswer.options.split(',').map((opt) => opt.trim());
       }
 
       fields.push({
         ...fieldAnswer,
         name: fieldAnswer.name.trim(),
         displayName: this.toDisplayName(fieldAnswer.name),
-        formLabel: this.toFormLabel(fieldAnswer.name)
+        formLabel: this.toFormLabel(fieldAnswer.name),
       });
 
       const continueAnswer = await inquirer.prompt([
@@ -179,8 +179,8 @@ class ModelGenerator {
           type: 'confirm',
           name: 'continue',
           message: 'Add another field?',
-          default: false
-        }
+          default: false,
+        },
       ]);
 
       addingFields = continueAnswer.continue;
@@ -224,7 +224,7 @@ class ModelGenerator {
       path.join(this.projectRoot, 'backend', 'src', 'handlers'),
       path.join(this.projectRoot, 'frontend', 'src', 'components', this.modelInfo.modelNameLower),
       path.join(this.projectRoot, 'frontend', 'src', 'types'),
-      path.join(this.projectRoot, 'database', 'migrations')
+      path.join(this.projectRoot, 'database', 'migrations'),
     ];
 
     for (const dir of dirs) {
@@ -241,16 +241,17 @@ class ModelGenerator {
     const handlerContent = this.renderTemplate(template, {
       ...this.modelInfo,
       requiredFieldsArray: this.modelInfo.fields
-        .filter(f => f.required)
-        .map(f => `'${f.name}'`)
+        .filter((f) => f.required)
+        .map((f) => `'${f.name}'`)
         .join(', '),
       validationBlocks: this.generateValidationBlocks(),
       fieldAssignments: this.generateFieldAssignments(),
       updateValidationBlocks: this.generateUpdateValidationBlocks(),
       updateFieldAssignments: this.generateUpdateFieldAssignments(),
       deleteValidationBlocks: this.generateDeleteValidationBlocks(),
-      additionalEndpoints: this.modelInfo.needsCustomEndpoints ? 
-        '// Add custom endpoints here' : ''
+      additionalEndpoints: this.modelInfo.needsCustomEndpoints
+        ? '// Add custom endpoints here'
+        : '',
     });
 
     const outputPath = path.join(
@@ -277,7 +278,7 @@ class ModelGenerator {
       indexStatements: this.generateIndexStatements(),
       triggerStatements: this.generateTriggerStatements(),
       sampleDataStatements: this.generateSampleDataStatements(),
-      foreignKeyStatements: this.generateForeignKeyStatements()
+      foreignKeyStatements: this.generateForeignKeyStatements(),
     });
 
     const timestamp = new Date().toISOString().replace(/[-:T]/g, '').split('.')[0];
@@ -296,8 +297,9 @@ class ModelGenerator {
 
     const listContent = this.renderTemplate(listTemplate, {
       ...this.modelInfo,
-      dateFnsImport: this.modelInfo.fields.some(f => f.type === 'date' || f.type === 'datetime') ?
-        "import { format } from 'date-fns';\nimport { fr } from 'date-fns/locale';" : '',
+      dateFnsImport: this.modelInfo.fields.some((f) => f.type === 'date' || f.type === 'datetime')
+        ? "import { format } from 'date-fns';\nimport { fr } from 'date-fns/locale';"
+        : '',
       additionalStates: this.generateAdditionalStates(),
       helperFunctions: this.generateHelperFunctions(),
       filteringLogic: this.generateFilteringLogic(),
@@ -305,7 +307,7 @@ class ModelGenerator {
       statsDisplay: this.generateStatsDisplay(),
       filterButtons: this.generateFilterButtons(),
       tableHeaders: this.generateTableHeaders(),
-      tableCells: this.generateTableCells()
+      tableCells: this.generateTableCells(),
     });
 
     await fs.writeFile(
@@ -331,7 +333,7 @@ class ModelGenerator {
       validationImport: `import { validate${this.modelInfo.modelName} } from '../../types/${this.modelInfo.modelNameLower}.js';`,
       initialFormState: this.generateInitialFormState(),
       editFormState: this.generateEditFormState(),
-      formFields: this.generateFormFields()
+      formFields: this.generateFormFields(),
     });
 
     await fs.writeFile(
@@ -357,7 +359,7 @@ class ModelGenerator {
       ...this.modelInfo,
       enumDefinitions: this.generateEnumDefinitions(),
       validationLogic: this.generateValidationLogic(),
-      utilityFunctions: this.generateUtilityFunctions()
+      utilityFunctions: this.generateUtilityFunctions(),
     });
 
     await fs.writeFile(
@@ -380,7 +382,7 @@ class ModelGenerator {
 
     const stylesContent = this.renderTemplate(template, {
       ...this.modelInfo,
-      badgeStyles: this.generateBadgeStyles()
+      badgeStyles: this.generateBadgeStyles(),
     });
 
     await fs.writeFile(
@@ -423,11 +425,11 @@ class ModelGenerator {
 
     // Add the API export for the new model
     const newApiExport = `export const ${this.modelInfo.modelNamePlural}Api = createCrudApi('${this.modelInfo.modelNamePlural}');`;
-    
+
     if (!apiContent.includes(newApiExport)) {
       const updatedContent = apiContent.replace(
-        'export const associationsApi = createCrudApi(\'associations\');',
-        `export const ${this.modelInfo.modelNamePlural}Api = createCrudApi('${this.modelInfo.modelNamePlural}');\n\nexport const associationsApi = createCrudApi(\'associations\');`
+        "export const pairingsApi = createCrudApi('pairings');",
+        `export const ${this.modelInfo.modelNamePlural}Api = createCrudApi('${this.modelInfo.modelNamePlural}');\n\nexport const pairingsApi = createCrudApi(\'pairings\');`
       );
       await fs.writeFile(apiPath, updatedContent);
     }
@@ -439,20 +441,20 @@ class ModelGenerator {
 
     // Add import
     const importLine = `import { handle${this.modelInfo.modelName} } from './handlers/${this.modelInfo.modelNameLower}.js';`;
-    
+
     if (!routerContent.includes(importLine)) {
       // Add import after existing handler imports
       const updatedContent = routerContent.replace(
-        'import { handleAssociations } from \'./handlers/associations.js\';',
-        `import { handleAssociations } from './handlers/associations.js';\nimport { handle${this.modelInfo.modelName} } from './handlers/${this.modelInfo.modelNameLower}.js';`
+        "import { handlePairings } from './handlers/pairings.js';",
+        `import { handlePairings } from './handlers/pairings.js';\nimport { handle${this.modelInfo.modelName} } from './handlers/${this.modelInfo.modelNameLower}.js';`
       );
 
       // Add route handler
       const routeHandler = `if (path.startsWith('/api/${this.modelInfo.modelNamePlural}')) {\n        return handle${this.modelInfo.modelName}(request, env);\n      }`;
-      
+
       const finalContent = updatedContent.replace(
-        'if (path.startsWith(\'/api/associations\')) {',
-        `${routeHandler}\n\n      if (path.startsWith('/api/associations')) {`
+        "if (path.startsWith('/api/pairings')) {",
+        `${routeHandler}\n\n      if (path.startsWith('/api/pairings')) {`
       );
 
       await fs.writeFile(routerPath, finalContent);
@@ -465,31 +467,41 @@ class ModelGenerator {
 
     // Add import
     const importLine = `import ${this.modelInfo.modelNamePlural}List from './components/${this.modelInfo.modelNameLower}/${this.modelInfo.modelNamePlural}List.jsx';`;
-    
+
     if (!appContent.includes(importLine)) {
       // Add import
       const withImport = appContent.replace(
-        'import AssociationsList from \'./components/associations/AssociationsList.jsx\';',
-        `import AssociationsList from './components/associations/AssociationsList.jsx';\nimport ${this.modelInfo.modelNamePlural}List from './components/${this.modelInfo.modelNameLower}/${this.modelInfo.modelNamePlural}List.jsx';`
+        "import PairingsList from './components/pairings/PairingsList.jsx';",
+        `import PairingsList from './components/pairings/PairingsList.jsx';\nimport ${this.modelInfo.modelNamePlural}List from './components/${this.modelInfo.modelNameLower}/${this.modelInfo.modelNamePlural}List.jsx';`
       );
 
       // Add route (this is a simplified version - you'd need to match your routing setup)
-      console.log(chalk.yellow('⚠️  Please manually add the route for the new model to your App.jsx file'));
-      console.log(chalk.gray(`   Add: <Route path="/${this.modelInfo.modelNamePlural}" element={<${this.modelInfo.modelNamePlural}List />} />`));
+      console.log(
+        chalk.yellow('⚠️  Please manually add the route for the new model to your App.jsx file')
+      );
+      console.log(
+        chalk.gray(
+          `   Add: <Route path="/${this.modelInfo.modelNamePlural}" element={<${this.modelInfo.modelNamePlural}List />} />`
+        )
+      );
     }
   }
 
   async showNextSteps() {
     console.log(chalk.green('\n✅ Model generation complete!'));
     console.log(chalk.cyan('\n📋 Next steps:'));
-    
+
     console.log(chalk.white('\n1. Database Migration:'));
     console.log(chalk.gray(`   - Run the migration file in database/migrations/`));
     console.log(chalk.gray(`   - Or add the table manually via Supabase dashboard`));
 
     console.log(chalk.white('\n2. Frontend Routing:'));
     console.log(chalk.gray(`   - Add the route to your App.jsx:`));
-    console.log(chalk.gray(`     <Route path="/${this.modelInfo.modelNamePlural}" element={<${this.modelInfo.modelNamePlural}List />} />`));
+    console.log(
+      chalk.gray(
+        `     <Route path="/${this.modelInfo.modelNamePlural}" element={<${this.modelInfo.modelNamePlural}List />} />`
+      )
+    );
 
     console.log(chalk.white('\n3. Navigation:'));
     console.log(chalk.gray(`   - Add navigation link to your menu`));
@@ -507,9 +519,9 @@ class ModelGenerator {
   // Template rendering helper methods
   renderTemplate(template, data) {
     let result = template;
-    
+
     // Simple template replacement
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       const regex = new RegExp(`{{${key}}}`, 'g');
       result = result.replace(regex, data[key]);
     });
@@ -520,8 +532,8 @@ class ModelGenerator {
   // Helper methods for generating code sections
   generateValidationBlocks() {
     return this.modelInfo.fields
-      .filter(field => field.type === 'email' || field.type === 'phone')
-      .map(field => {
+      .filter((field) => field.type === 'email' || field.type === 'phone')
+      .map((field) => {
         if (field.type === 'email') {
           return `// Email validation\n      if (body.${field.name} && !validateEmail(body.${field.name})) {\n        return jsonResponse({ error: 'Email invalide' }, 400, getSecurityHeaders());\n      }`;
         } else if (field.type === 'phone') {
@@ -533,9 +545,9 @@ class ModelGenerator {
 
   generateFieldAssignments() {
     return this.modelInfo.fields
-      .map(field => {
+      .map((field) => {
         let assignment = `        ${field.name}: body.${field.name}`;
-        
+
         if (field.type === 'string') {
           assignment += '?.trim() || null';
         } else if (field.type === 'boolean') {
@@ -547,7 +559,7 @@ class ModelGenerator {
         } else {
           assignment += ' || null';
         }
-        
+
         return assignment + ',';
       })
       .join('\n');
@@ -559,17 +571,23 @@ class ModelGenerator {
 
   generateUpdateFieldAssignments() {
     return this.modelInfo.fields
-      .map(field => {
+      .map((field) => {
         let assignment = `        ${field.name}: body.${field.name}`;
-        
+
         if (field.type === 'string') {
           assignment += '?.trim() || current' + this.modelInfo.modelName + '.' + field.name;
         } else if (field.type === 'boolean') {
-          assignment += ' !== undefined ? Boolean(body.' + field.name + ') : current' + this.modelInfo.modelName + '.' + field.name;
+          assignment +=
+            ' !== undefined ? Boolean(body.' +
+            field.name +
+            ') : current' +
+            this.modelInfo.modelName +
+            '.' +
+            field.name;
         } else {
           assignment += ' || current' + this.modelInfo.modelName + '.' + field.name;
         }
-        
+
         return assignment + ',';
       })
       .join('\n');
@@ -581,15 +599,15 @@ class ModelGenerator {
 
   generateTableColumns() {
     const columns = [];
-    
+
     // Add custom fields
-    this.modelInfo.fields.forEach(field => {
+    this.modelInfo.fields.forEach((field) => {
       let columnDef = `    ${field.name} ${this.config.fieldTypes[field.type].sql}`;
-      
+
       if (field.required) columnDef += ' NOT NULL';
       if (field.defaultValue) columnDef += ` DEFAULT ${field.defaultValue}`;
       if (field.unique) columnDef += ' UNIQUE';
-      
+
       columns.push(columnDef);
     });
 
@@ -604,17 +622,21 @@ class ModelGenerator {
 
   generateIndexStatements() {
     const indexes = [];
-    
+
     // Add index for name field if it exists
-    if (this.modelInfo.fields.some(f => f.name === 'name')) {
-      indexes.push(`CREATE INDEX idx_${this.modelInfo.tableName}_name ON ${this.modelInfo.tableName}(name);`);
+    if (this.modelInfo.fields.some((f) => f.name === 'name')) {
+      indexes.push(
+        `CREATE INDEX idx_${this.modelInfo.tableName}_name ON ${this.modelInfo.tableName}(name);`
+      );
     }
 
     // Add indexes for unique fields
     this.modelInfo.fields
-      .filter(field => field.unique && field.name !== 'name')
-      .forEach(field => {
-        indexes.push(`CREATE INDEX idx_${this.modelInfo.tableName}_${field.name} ON ${this.modelInfo.tableName}(${field.name});`);
+      .filter((field) => field.unique && field.name !== 'name')
+      .forEach((field) => {
+        indexes.push(
+          `CREATE INDEX idx_${this.modelInfo.tableName}_${field.name} ON ${this.modelInfo.tableName}(${field.name});`
+        );
       });
 
     return indexes.join('\n');
@@ -634,11 +656,14 @@ class ModelGenerator {
 
   // String manipulation helpers
   toSnakeCase(str) {
-    return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
   }
 
   toDisplayName(str) {
-    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return str
+      .split('_')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   toFormLabel(str) {
@@ -646,21 +671,51 @@ class ModelGenerator {
   }
 
   // Additional generator methods (simplified for brevity)
-  generateAdditionalStates() { return '// Add additional states here'; }
-  generateHelperFunctions() { return '// Add helper functions here'; }
-  generateFilteringLogic() { return '// Add filtering logic here'; }
-  generateStatsCalculations() { return '// Add stats calculations here'; }
-  generateStatsDisplay() { return '// Add stats display here'; }
-  generateFilterButtons() { return '// Add filter buttons here'; }
-  generateTableHeaders() { return '// Add table headers here'; }
-  generateTableCells() { return '// Add table cells here'; }
-  generateInitialFormState() { return '// Add initial form state here'; }
-  generateEditFormState() { return '// Add edit form state here'; }
-  generateFormFields() { return '// Add form fields here'; }
-  generateEnumDefinitions() { return '// Add enum definitions here'; }
-  generateValidationLogic() { return '// Add validation logic here'; }
-  generateUtilityFunctions() { return '// Add utility functions here'; }
-  generateBadgeStyles() { return '// Add badge styles here'; }
+  generateAdditionalStates() {
+    return '// Add additional states here';
+  }
+  generateHelperFunctions() {
+    return '// Add helper functions here';
+  }
+  generateFilteringLogic() {
+    return '// Add filtering logic here';
+  }
+  generateStatsCalculations() {
+    return '// Add stats calculations here';
+  }
+  generateStatsDisplay() {
+    return '// Add stats display here';
+  }
+  generateFilterButtons() {
+    return '// Add filter buttons here';
+  }
+  generateTableHeaders() {
+    return '// Add table headers here';
+  }
+  generateTableCells() {
+    return '// Add table cells here';
+  }
+  generateInitialFormState() {
+    return '// Add initial form state here';
+  }
+  generateEditFormState() {
+    return '// Add edit form state here';
+  }
+  generateFormFields() {
+    return '// Add form fields here';
+  }
+  generateEnumDefinitions() {
+    return '// Add enum definitions here';
+  }
+  generateValidationLogic() {
+    return '// Add validation logic here';
+  }
+  generateUtilityFunctions() {
+    return '// Add utility functions here';
+  }
+  generateBadgeStyles() {
+    return '// Add badge styles here';
+  }
 }
 
 // Run the generator

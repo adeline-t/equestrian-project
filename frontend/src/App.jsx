@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-rou
 import ErrorBoundary from './components/ErrorBoundary';
 import RidersList from './components/riders/RidersList';
 import HorsesList from './components/horses/HorsesList';
-import AssociationsList from './components/associations/AssociationsList';
+import PairingsList from './components/pairings/PairingsList';
+import PackagesList from './components/packages/PackagesList';
 
 function App() {
   return (
@@ -14,23 +15,17 @@ function App() {
             <div className="container">
               <h1>🐴 Gestion Centre Équestre</h1>
               <nav>
-                <NavLink 
-                  to="/" 
-                  className={({ isActive }) => isActive ? 'active' : ''}
-                >
+                <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
                   Cavaliers
                 </NavLink>
-                <NavLink 
-                  to="/horses" 
-                  className={({ isActive }) => isActive ? 'active' : ''}
-                >
+                <NavLink to="/horses" className={({ isActive }) => (isActive ? 'active' : '')}>
                   Chevaux
                 </NavLink>
-                <NavLink 
-                  to="/associations" 
-                  className={({ isActive }) => isActive ? 'active' : ''}
-                >
-                  Associations
+                <NavLink to="/pairings" className={({ isActive }) => (isActive ? 'active' : '')}>
+                  Paires
+                </NavLink>
+                <NavLink to="/packages" className={({ isActive }) => (isActive ? 'active' : '')}>
+                  Forfaits
                 </NavLink>
               </nav>
             </div>
@@ -40,7 +35,8 @@ function App() {
             <Routes>
               <Route path="/" element={<RidersList />} />
               <Route path="/horses" element={<HorsesList />} />
-              <Route path="/associations" element={<AssociationsList />} />
+              <Route path="/pairings" element={<PairingsList />} />
+              <Route path="/packages" element={<PackagesList />} />
             </Routes>
           </main>
         </div>

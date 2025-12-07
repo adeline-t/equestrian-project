@@ -3,27 +3,32 @@
 ## 🚨 Common Production Deployment Issues Checklist
 
 ### 1. **Environment Variables Missing or Incorrect**
+
 - [ ] `VITE_API_URL` not set to production URL
 - [ ] `SUPABASE_URL` not updated to production instance
 - [ ] `SUPABASE_KEY` missing or incorrect (service role key needed)
 - [ ] Environment variables not properly loaded in Cloudflare Workers
 
 ### 2. **CORS Configuration Issues**
+
 - [ ] Frontend domain not whitelisted in Supabase
 - [ ] CORS headers not properly configured in Workers
 - [ ] Production domain not matching CORS allow origin
 
 ### 3. **Build and Asset Issues**
+
 - [ ] Frontend not properly built for production
 - [ ] Static assets not correctly referenced
 - [ ] Build optimizations causing issues
 
 ### 4. **Database Connection Issues**
+
 - [ ] Supabase connection string incorrect
 - [ ] Database permissions insufficient
 - [ ] Connection pool limits reached
 
 ### 5. **Cloudflare Workers Specific Issues**
+
 - [ ] Workers not deployed to correct environment
 - [ ] Memory limits exceeded
 - [ ] Timeout configurations incorrect
@@ -35,6 +40,7 @@
 ### Step 1: Verify Environment Variables
 
 **Check Frontend Environment Variables:**
+
 ```bash
 # Check if .env.production exists
 cat frontend/.env.production
@@ -44,6 +50,7 @@ VITE_API_URL=https://your-production-workers-url.workers.dev/api
 ```
 
 **Check Backend Environment Variables:**
+
 ```bash
 # Check wrangler.toml production vars
 cat backend/wrangler.toml
@@ -121,6 +128,7 @@ npm run preview
 ### Frontend Production Configuration
 
 **Create `frontend/.env.production`:**
+
 ```env
 # Production API URL - Replace with your actual Workers URL
 VITE_API_URL=https://equestrian-api-youraccount.workers.dev/api
@@ -130,6 +138,7 @@ VITE_LOG_LEVEL=error
 ```
 
 **Update `frontend/vite.config.js`:**
+
 ```javascript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -170,6 +179,7 @@ export default defineConfig({
 ### Backend Production Configuration
 
 **Update `backend/wrangler.toml`:**
+
 ```toml
 name = "equestrian-api"
 main = "src/index.js"
@@ -182,7 +192,7 @@ SUPABASE_URL = "https://your-dev-project.supabase.co"
 # Production environment
 [env.production]
 name = "equestrian-api-prod"
-vars = { 
+vars = {
   SUPABASE_URL = "https://your-production-project.supabase.co",
   SUPABASE_KEY = "your-production-service-role-key"
 }
@@ -190,7 +200,7 @@ vars = {
 # Staging environment
 [env.staging]
 name = "equestrian-api-staging"
-vars = { 
+vars = {
   SUPABASE_URL = "https://your-staging-project.supabase.co",
   SUPABASE_KEY = "your-staging-service-role-key"
 }
@@ -199,6 +209,7 @@ vars = {
 ### Environment Variables Setup Script
 
 **Create `scripts/setup-production.sh`:**
+
 ```bash
 #!/bin/bash
 
@@ -243,9 +254,9 @@ const getAllowedOrigin = (request) => {
   const allowedOrigins = [
     'http://localhost:5173',
     'https://your-production-domain.pages.dev',
-    'https://your-staging-domain.pages.dev'
+    'https://your-staging-domain.pages.dev',
   ];
-  
+
   return allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
 };
 
@@ -257,8 +268,8 @@ if (method === 'OPTIONS') {
       'Access-Control-Allow-Origin': getAllowedOrigin(request),
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      ...getSecurityHeaders()
-    }
+      ...getSecurityHeaders(),
+    },
   });
 }
 ```
@@ -293,24 +304,20 @@ if (!validateEnvironment()) {
 ```javascript
 // In backend/src/db.js
 export function getDatabase(env) {
-  return createClient(
-    env.SUPABASE_URL,
-    env.SUPABASE_KEY,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
+  return createClient(env.SUPABASE_URL, env.SUPABASE_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+    db: {
+      schema: 'public',
+    },
+    global: {
+      headers: {
+        'User-Agent': 'equestrian-api/1.0.0',
       },
-      db: {
-        schema: 'public',
-      },
-      global: {
-        headers: {
-          'User-Agent': 'equestrian-api/1.0.0'
-        }
-      }
-    }
-  );
+    },
+  });
 }
 ```
 
@@ -333,7 +340,7 @@ export function getDatabase(env) {
 
 - [ ] Create test rider via API
 - [ ] Create test horse via API
-- [ ] Create test association via API
+- [ ] Create test pairing via API
 - [ ] Test frontend forms submit correctly
 - [ ] Verify data persists in database
 - [ ] Test error handling displays properly
@@ -345,6 +352,7 @@ export function getDatabase(env) {
 ### If Production Deployment Fails:
 
 1. **Frontend Rollback:**
+
 ```bash
 # Revert to previous build
 git checkout previous-commit-hash
@@ -353,12 +361,14 @@ npm run build
 ```
 
 2. **Backend Rollback:**
+
 ```bash
 # Deploy previous version
 wrangler deploy --env production --compatibility-date 2024-01-01
 ```
 
 3. **Database Rollback:**
+
 ```bash
 # Use Supabase dashboard to revert changes
 # Or run migration rollback scripts
@@ -369,6 +379,7 @@ wrangler deploy --env production --compatibility-date 2024-01-01
 ## 📞 Support & Troubleshooting
 
 ### Useful Commands:
+
 ```bash
 # Check Workers logs
 wrangler tail --env production
@@ -384,6 +395,7 @@ wrangler secret list --env production
 ```
 
 ### Common Error Messages:
+
 - `1009: DNS resolution failed` → Check Workers URL
 - `403: Forbidden` → Check API keys and permissions
 - `CORS error` → Update CORS configuration

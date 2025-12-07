@@ -15,6 +15,7 @@ This section contains reference materials, configuration guides, and technical s
 ### Environment Variables
 
 **Backend (Cloudflare Workers):**
+
 ```bash
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_ANON_KEY=your-anon-key
@@ -22,6 +23,7 @@ ENVIRONMENT=production
 ```
 
 **Frontend (React/Vite):**
+
 ```bash
 VITE_API_URL=https://your-api-url/api
 VITE_SUPABASE_URL=https://your-project.supabase.co
@@ -34,6 +36,7 @@ See [Environment Variables](./environment-variables.md) for complete reference.
 ### Common Commands
 
 **Development:**
+
 ```bash
 # Start backend
 cd backend && npm run dev
@@ -46,6 +49,7 @@ npm test
 ```
 
 **Deployment:**
+
 ```bash
 # Deploy to development
 ./deploy.sh dev
@@ -58,6 +62,7 @@ wrangler rollback --env prod
 ```
 
 **Database:**
+
 ```bash
 # Connect to database
 psql -h your-supabase-host -U postgres
@@ -76,6 +81,7 @@ See [CLI Commands](./cli-commands.md) for complete reference.
 ### Backend Configuration
 
 **wrangler.toml:**
+
 ```toml
 name = "equestrian-api"
 main = "src/index.js"
@@ -93,6 +99,7 @@ vars = { ENVIRONMENT = "production" }
 ### Frontend Configuration
 
 **vite.config.js:**
+
 ```javascript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -101,8 +108,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: true
-  }
+    host: true,
+  },
 });
 ```
 
@@ -111,12 +118,14 @@ See [Configuration](./configuration.md) for complete reference.
 ## 📊 API Reference
 
 ### Base URLs
+
 - **Development:** `http://localhost:8787/api`
 - **Production:** `https://your-worker.workers.dev/api`
 
 ### Endpoints Summary
 
 **Riders:**
+
 - `GET /api/riders` - List all
 - `GET /api/riders/:id` - Get one
 - `POST /api/riders` - Create
@@ -124,18 +133,20 @@ See [Configuration](./configuration.md) for complete reference.
 - `DELETE /api/riders/:id` - Delete
 
 **Horses:**
+
 - `GET /api/horses` - List all
 - `GET /api/horses/:id` - Get one
 - `POST /api/horses` - Create
 - `PUT /api/horses/:id` - Update
 - `DELETE /api/horses/:id` - Delete
 
-**Associations:**
-- `GET /api/associations` - List all
-- `GET /api/associations/:id` - Get one
-- `POST /api/associations` - Create
-- `PUT /api/associations/:id` - Update
-- `DELETE /api/associations/:id` - Delete
+**Pairings:**
+
+- `GET /api/pairings` - List all
+- `GET /api/pairings/:id` - Get one
+- `POST /api/pairings` - Create
+- `PUT /api/pairings/:id` - Update
+- `DELETE /api/pairings/:id` - Delete
 
 See [API Documentation](../05-api/README.md) for complete reference.
 
@@ -144,6 +155,7 @@ See [API Documentation](../05-api/README.md) for complete reference.
 ### Tables
 
 **riders:**
+
 ```sql
 CREATE TABLE riders (
     id SERIAL PRIMARY KEY,
@@ -158,6 +170,7 @@ CREATE TABLE riders (
 ```
 
 **horses:**
+
 ```sql
 CREATE TABLE horses (
     id SERIAL PRIMARY KEY,
@@ -170,17 +183,18 @@ CREATE TABLE horses (
 );
 ```
 
-**rider_horse_associations:**
+**rider_horse_pairings:**
+
 ```sql
-CREATE TABLE rider_horse_associations (
+CREATE TABLE rider_horse_pairings (
     id SERIAL PRIMARY KEY,
     rider_id INTEGER NOT NULL REFERENCES riders(id) ON DELETE CASCADE,
     horse_id INTEGER NOT NULL REFERENCES horses(id) ON DELETE CASCADE,
-    association_start_date DATE,
-    association_end_date DATE,
+    pairing_start_date DATE,
+    pairing_end_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(rider_id, horse_id, association_start_date)
+    UNIQUE(rider_id, horse_id, pairing_start_date)
 );
 ```
 
@@ -204,7 +218,7 @@ See [Database Schema](../06-architecture/database-schema.md) for complete refere
 
 **Vite** - Frontend build tool and development server
 
-**Association** - Relationship between a rider and a horse
+**Pairing** - Relationship between a rider and a horse
 
 See [Glossary](./glossary.md) for complete definitions.
 
@@ -248,17 +262,20 @@ See [FAQ](./faq.md) for more questions and answers.
 ## 🔗 External Resources
 
 ### Documentation
+
 - [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
 - [Supabase Documentation](https://supabase.com/docs)
 - [React Documentation](https://react.dev/)
 - [Vite Documentation](https://vitejs.dev/)
 
 ### Tools
+
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
 - [Supabase CLI](https://supabase.com/docs/guides/cli)
 - [PostgreSQL Docs](https://www.postgresql.org/docs/)
 
 ### Community
+
 - [Cloudflare Discord](https://discord.gg/cloudflaredev)
 - [Supabase Discord](https://discord.supabase.com/)
 - [React Community](https://react.dev/community)

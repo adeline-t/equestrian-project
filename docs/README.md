@@ -5,13 +5,17 @@ Welcome to the Equestrian Management System documentation!
 ## 📚 Documentation Sections
 
 ### [01. Getting Started](./01-getting-started/README.md)
+
 Everything you need to get up and running quickly.
+
 - Prerequisites and system requirements
 - Installation guide
 - Quick start tutorial
 
 ### [02. Development](./02-development/README.md)
+
 Guides for developing and extending the system.
+
 - Local development setup
 - Adding new models
 - Modifying existing models
@@ -19,7 +23,9 @@ Guides for developing and extending the system.
 - Testing guide
 
 ### [03. Deployment](./03-deployment/README.md)
+
 Complete deployment and operations guides.
+
 - Deployment procedures
 - Multi-environment setup
 - Troubleshooting
@@ -27,14 +33,18 @@ Complete deployment and operations guides.
 - Custom domains
 
 ### [04. Features](./04-features/README.md)
+
 Detailed feature documentation.
+
 - Rider management
 - Horse management
-- Rider-horse associations
+- Rider-horse pairings
 - Feature guides and tutorials
 
 ### [05. API](./05-api/README.md)
+
 Complete API reference and guides.
+
 - API endpoints
 - Authentication
 - Error codes
@@ -42,7 +52,9 @@ Complete API reference and guides.
 - Request/response examples
 
 ### [06. Architecture](./06-architecture/README.md)
+
 System architecture and design documentation.
+
 - System design overview
 - Database schema
 - Security architecture
@@ -50,7 +62,9 @@ System architecture and design documentation.
 - Design decisions
 
 ### [07. Operations](./07-operations/README.md)
+
 Production operations and maintenance.
+
 - Monitoring and alerting
 - Logging and analysis
 - Backup and recovery
@@ -58,7 +72,9 @@ Production operations and maintenance.
 - Maintenance procedures
 
 ### [08. Reference](./08-reference/README.md)
+
 Reference materials and specifications.
+
 - Environment variables
 - Configuration files
 - CLI commands
@@ -66,7 +82,9 @@ Reference materials and specifications.
 - FAQ
 
 ### [09. Scripts](./09-scripts/README.md)
+
 Complete script documentation and reference.
+
 - Script catalog and inventory
 - Detailed script reference
 - Script development guidelines
@@ -75,17 +93,20 @@ Complete script documentation and reference.
 ## 🚀 Quick Links
 
 ### New Users
+
 1. [Prerequisites](./01-getting-started/prerequisites.md)
 2. [Installation](./01-getting-started/installation.md)
 3. [Quick Start](./01-getting-started/quick-start.md)
 
 ### Developers
+
 1. [Local Development](./02-development/README.md)
 2. [Adding Models](./02-development/adding-models.md)
 3. [Scripts Reference](./09-scripts/README.md)
 4. [API Reference](./05-api/README.md)
 
 ### Operations
+
 1. [Deployment Guide](./03-deployment/deployment-guide.md)
 2. [Monitoring](./07-operations/monitoring.md)
 3. [Troubleshooting](./03-deployment/troubleshooting.md)
@@ -114,7 +135,7 @@ docs/
 │   └── ...
 ├── 04-features/
 │   ├── README.md
-│   └── associations.md
+│   └── pairings.md
 ├── 05-api/
 │   ├── README.md
 │   └── ...
@@ -138,15 +159,18 @@ docs/
 ### By Role
 
 **End Users:**
+
 - [Quick Start](./01-getting-started/quick-start.md)
 - [Features Guide](./04-features/README.md)
 
 **Developers:**
+
 - [Development Guide](./02-development/README.md)
 - [API Documentation](./05-api/README.md)
 - [Architecture](./06-architecture/README.md)
 
 **DevOps/Operations:**
+
 - [Deployment Guide](./03-deployment/README.md)
 - [Operations Guide](./07-operations/README.md)
 - [Reference](./08-reference/README.md)
@@ -154,18 +178,22 @@ docs/
 ### By Task
 
 **Setting Up:**
+
 - [Prerequisites](./01-getting-started/prerequisites.md)
 - [Installation](./01-getting-started/installation.md)
 
 **Developing:**
+
 - [Local Development](./02-development/README.md)
 - [Adding Features](./02-development/adding-models.md)
 
 **Deploying:**
+
 - [Deployment Guide](./03-deployment/deployment-guide.md)
 - [Multi-Environment](./03-deployment/multi-environment.md)
 
 **Troubleshooting:**
+
 - [Troubleshooting Guide](./03-deployment/troubleshooting.md)
 - [FAQ](./08-reference/faq.md)
 

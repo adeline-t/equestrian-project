@@ -9,6 +9,7 @@ This guide demonstrates how to modify existing models in your equestrian managem
 ## 🎯 **Example Scenario: Adding `isOwnedByLaury` to Horse Model**
 
 **Requirements:**
+
 - Add a boolean field `is_owned_by_laury` to the `horses` table
 - Default value should be `false` (center-owned)
 - Update backend API to handle the new field
@@ -22,13 +23,14 @@ This guide demonstrates how to modify existing models in your equestrian managem
 ### **1.1 Create Migration SQL**
 
 **File: `database/migrations/003_add_is_owned_by_laury_to_horses.sql`**
+
 ```sql
 -- Migration: Add is_owned_by_laury field to horses table
 -- Created: 2024-XX-XX
 -- Purpose: Track whether horses are owned by Laury or the center
 
 -- Add the new column to horses table
-ALTER TABLE horses 
+ALTER TABLE horses
 ADD COLUMN is_owned_by_laury BOOLEAN DEFAULT FALSE NOT NULL;
 
 -- Add comment for documentation
@@ -41,8 +43,8 @@ CREATE INDEX idx_horses_is_owned_by_laury ON horses(is_owned_by_laury);
 -- UPDATE horses SET is_owned_by_laury = TRUE WHERE name IN ('List specific horse names if needed');
 
 -- Add check constraint for data integrity
-ALTER TABLE horses 
-ADD CONSTRAINT chk_horses_is_owned_by_laury 
+ALTER TABLE horses
+ADD CONSTRAINT chk_horses_is_owned_by_laury
 CHECK (is_owned_by_laury IN (TRUE, FALSE));
 
 -- Update the trigger to include the new field in validation
@@ -64,16 +66,17 @@ CHECK (is_owned_by_laury IN (TRUE, FALSE));
 ### **1.3 Verify Migration**
 
 **Check the updated table structure:**
+
 ```sql
 -- Verify the column was added correctly
-SELECT column_name, data_type, is_nullable, column_default 
-FROM information_schema.columns 
-WHERE table_name = 'horses' 
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'horses'
 AND column_name = 'is_owned_by_laury';
 
 -- Test with sample data
-SELECT id, name, kind, is_owned_by_laury 
-FROM horses 
+SELECT id, name, kind, is_owned_by_laury
+FROM horses
 LIMIT 5;
 ```
 
@@ -86,82 +89,91 @@ LIMIT 5;
 **File: `backend/src/handlers/horses.js`**
 
 **BEFORE:**
+
 ```javascript
 // In handleHorses function - POST method
 const horseData = {
-    name: body.name.trim(),
-    kind: body.kind,
-    activity_start_date: body.activity_start_date || null,
-    activity_end_date: body.activity_end_date || null,
+  name: body.name.trim(),
+  kind: body.kind,
+  activity_start_date: body.activity_start_date || null,
+  activity_end_date: body.activity_end_date || null,
 };
 ```
 
 **AFTER:**
+
 ```javascript
 // In handleHorses function - POST method
 const horseData = {
-    name: body.name.trim(),
-    kind: body.kind,
-    activity_start_date: body.activity_start_date || null,
-    activity_end_date: body.activity_end_date || null,
-    is_owned_by_laury: Boolean(body.is_owned_by_laury || false),
+  name: body.name.trim(),
+  kind: body.kind,
+  activity_start_date: body.activity_start_date || null,
+  activity_end_date: body.activity_end_date || null,
+  is_owned_by_laury: Boolean(body.is_owned_by_laury || false),
 };
 ```
 
 **BEFORE:**
+
 ```javascript
 // In handleHorses function - PUT method
 const updateData = {
-    name: body.name?.trim() || horse.name,
-    kind: body.kind || horse.kind,
-    activity_start_date: body.activity_start_date || horse.activity_start_date,
-    activity_end_date: body.activity_end_date || horse.activity_end_date,
-    updated_at: new Date().toISOString(),
+  name: body.name?.trim() || horse.name,
+  kind: body.kind || horse.kind,
+  activity_start_date: body.activity_start_date || horse.activity_start_date,
+  activity_end_date: body.activity_end_date || horse.activity_end_date,
+  updated_at: new Date().toISOString(),
 };
 ```
 
 **AFTER:**
+
 ```javascript
 // In handleHorses function - PUT method
 const updateData = {
-    name: body.name?.trim() || horse.name,
-    kind: body.kind || horse.kind,
-    activity_start_date: body.activity_start_date || horse.activity_start_date,
-    activity_end_date: body.activity_end_date || horse.activity_end_date,
-    is_owned_by_laury: body.is_owned_by_laury !== undefined ? Boolean(body.is_owned_by_laury) : horse.is_owned_by_laury,
-    updated_at: new Date().toISOString(),
+  name: body.name?.trim() || horse.name,
+  kind: body.kind || horse.kind,
+  activity_start_date: body.activity_start_date || horse.activity_start_date,
+  activity_end_date: body.activity_end_date || horse.activity_end_date,
+  is_owned_by_laury:
+    body.is_owned_by_laury !== undefined
+      ? Boolean(body.is_owned_by_laury)
+      : horse.is_owned_by_laury,
+  updated_at: new Date().toISOString(),
 };
 ```
 
 ### **2.2 Add Filter Support (Optional but Recommended)**
 
 **Add filtering capability to the GET method:**
+
 ```javascript
 // In handleHorses function - GET method
 if (request.method === 'GET' && pathParts.length === 2) {
-    const lauryOwned = url.searchParams.get('laury_owned');
-    const centerOwned = url.searchParams.get('center_owned');
-    
-    let query = db.from('horses').select('*');
-    
-    // Add filtering for ownership
-    if (lauryOwned === 'true') {
-        query = query.eq('is_owned_by_laury', true);
-    }
-    if (centerOwned === 'true') {
-        query = query.eq('is_owned_by_laury', false);
-    }
-    
-    const { data, error } = await query.order('name');
-    
-    if (error) return handleDbError(error);
-    return jsonResponse(data, 200, getSecurityHeaders());
+  const lauryOwned = url.searchParams.get('laury_owned');
+  const centerOwned = url.searchParams.get('center_owned');
+
+  let query = db.from('horses').select('*');
+
+  // Add filtering for ownership
+  if (lauryOwned === 'true') {
+    query = query.eq('is_owned_by_laury', true);
+  }
+  if (centerOwned === 'true') {
+    query = query.eq('is_owned_by_laury', false);
+  }
+
+  const { data, error } = await query.order('name');
+
+  if (error) return handleDbError(error);
+  return jsonResponse(data, 200, getSecurityHeaders());
 }
 ```
 
 ### **2.3 Update API Documentation**
 
 **In `backend/src/index.js`** - update the docs endpoint:
+
 ```javascript
 // Update the horses section in /api/docs
 horses: {
@@ -183,51 +195,53 @@ horses: {
 **File: `frontend/src/services/api.js`**
 
 **BEFORE:**
+
 ```javascript
 export const horsesApi = {
-    ...createCrudApi('horses'),
-    getRiders: async (id) => {
-        try {
-            const response = await api.get(`/horses/${id}/riders`);
-            return response.data;
-        } catch (error) {
-            handleError(error);
-        }
-    },
+  ...createCrudApi('horses'),
+  getRiders: async (id) => {
+    try {
+      const response = await api.get(`/horses/${id}/riders`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 ```
 
 **AFTER:**
+
 ```javascript
 export const horsesApi = {
-    ...createCrudApi('horses'),
-    getRiders: async (id) => {
-        try {
-            const response = await api.get(`/horses/${id}/riders`);
-            return response.data;
-        } catch (error) {
-            handleError(error);
-        }
-    },
-    
-    // Add filtering methods
-    getLauryOwned: async () => {
-        try {
-            const response = await api.get('/horses?laury_owned=true');
-            return response.data;
-        } catch (error) {
-            handleError(error);
-        }
-    },
-    
-    getCenterOwned: async () => {
-        try {
-            const response = await api.get('/horses?center_owned=true');
-            return response.data;
-        } catch (error) {
-            handleError(error);
-        }
-    },
+  ...createCrudApi('horses'),
+  getRiders: async (id) => {
+    try {
+      const response = await api.get(`/horses/${id}/riders`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Add filtering methods
+  getLauryOwned: async () => {
+    try {
+      const response = await api.get('/horses?laury_owned=true');
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getCenterOwned: async () => {
+    try {
+      const response = await api.get('/horses?center_owned=true');
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 ```
 
@@ -236,6 +250,7 @@ export const horsesApi = {
 **File: `frontend/src/components/horses/HorsesList.jsx`**
 
 **BEFORE:**
+
 ```jsx
 // In the table header
 <thead>
@@ -254,6 +269,7 @@ export const horsesApi = {
 ```
 
 **AFTER:**
+
 ```jsx
 // In the table header
 <thead>
@@ -280,51 +296,49 @@ export const horsesApi = {
 ```
 
 **Add filtering controls:**
+
 ```jsx
 // Add after the existing filters section
 const [ownershipFilter, setOwnershipFilter] = useState('all');
 
 // Add filter component
 <div className="filters">
-    <div className="filter-group">
-        <label>Filtrer par propriétaire:</label>
-        <select 
-            value={ownershipFilter} 
-            onChange={(e) => setOwnershipFilter(e.target.value)}
-        >
-            <option value="all">Tous</option>
-            <option value="laury">Chevaux de Laury</option>
-            <option value="center">Chevaux du centre</option>
-        </select>
-    </div>
-</div>
+  <div className="filter-group">
+    <label>Filtrer par propriétaire:</label>
+    <select value={ownershipFilter} onChange={(e) => setOwnershipFilter(e.target.value)}>
+      <option value="all">Tous</option>
+      <option value="laury">Chevaux de Laury</option>
+      <option value="center">Chevaux du centre</option>
+    </select>
+  </div>
+</div>;
 
 // Update loadHorses function to use filter
 const loadHorses = async () => {
-    try {
-        setLoading(true);
-        let data;
-        
-        if (ownershipFilter === 'laury') {
-            data = await horsesApi.getLauryOwned();
-        } else if (ownershipFilter === 'center') {
-            data = await horsesApi.getCenterOwned();
-        } else {
-            data = await horsesApi.getAll();
-        }
-        
-        setHorses(data || []);
-        setError(null);
-    } catch (err) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
+  try {
+    setLoading(true);
+    let data;
+
+    if (ownershipFilter === 'laury') {
+      data = await horsesApi.getLauryOwned();
+    } else if (ownershipFilter === 'center') {
+      data = await horsesApi.getCenterOwned();
+    } else {
+      data = await horsesApi.getAll();
     }
+
+    setHorses(data || []);
+    setError(null);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
 };
 
 // Update useEffect to include filter dependency
 useEffect(() => {
-    loadHorses();
+  loadHorses();
 }, [ownershipFilter]);
 ```
 
@@ -333,74 +347,79 @@ useEffect(() => {
 **File: `frontend/src/components/horses/HorseForm.jsx`**
 
 **BEFORE:**
+
 ```jsx
 const [formData, setFormData] = useState({
-    name: '',
-    kind: 'horse',
-    activity_start_date: '',
-    activity_end_date: '',
+  name: '',
+  kind: 'horse',
+  activity_start_date: '',
+  activity_end_date: '',
 });
 ```
 
 **AFTER:**
+
 ```jsx
 const [formData, setFormData] = useState({
-    name: '',
-    kind: 'horse',
-    activity_start_date: '',
-    activity_end_date: '',
-    is_owned_by_laury: false,
+  name: '',
+  kind: 'horse',
+  activity_start_date: '',
+  activity_end_date: '',
+  is_owned_by_laury: false,
 });
 ```
 
 **BEFORE:**
+
 ```jsx
 // In useEffect for editing
 useEffect(() => {
-    if (horse) {
-        setFormData({
-            name: horse.name || '',
-            kind: horse.kind || 'horse',
-            activity_start_date: horse.activity_start_date || '',
-            activity_end_date: horse.activity_end_date || '',
-        });
-    }
+  if (horse) {
+    setFormData({
+      name: horse.name || '',
+      kind: horse.kind || 'horse',
+      activity_start_date: horse.activity_start_date || '',
+      activity_end_date: horse.activity_end_date || '',
+    });
+  }
 }, [horse]);
 ```
 
 **AFTER:**
+
 ```jsx
 // In useEffect for editing
 useEffect(() => {
-    if (horse) {
-        setFormData({
-            name: horse.name || '',
-            kind: horse.kind || 'horse',
-            activity_start_date: horse.activity_start_date || '',
-            activity_end_date: horse.activity_end_date || '',
-            is_owned_by_laury: horse.is_owned_by_laury || false,
-        });
-    }
+  if (horse) {
+    setFormData({
+      name: horse.name || '',
+      kind: horse.kind || 'horse',
+      activity_start_date: horse.activity_start_date || '',
+      activity_end_date: horse.activity_end_date || '',
+      is_owned_by_laury: horse.is_owned_by_laury || false,
+    });
+  }
 }, [horse]);
 ```
 
 **Add the checkbox to the form:**
+
 ```jsx
 // Add this in the form JSX, after the other fields
 <div className="form-group">
-    <label className="checkbox-label">
-        <input
-            type="checkbox"
-            name="is_owned_by_laury"
-            checked={formData.is_owned_by_laury}
-            onChange={handleChange}
-            disabled={submitting}
-        />
-        {' '} Ce cheval appartient à Laury
-    </label>
-    <small className="form-help">
-        Cochez cette case si le cheval est la propriété personnelle de Laury
-    </small>
+  <label className="checkbox-label">
+    <input
+      type="checkbox"
+      name="is_owned_by_laury"
+      checked={formData.is_owned_by_laury}
+      onChange={handleChange}
+      disabled={submitting}
+    />{' '}
+    Ce cheval appartient à Laury
+  </label>
+  <small className="form-help">
+    Cochez cette case si le cheval est la propriété personnelle de Laury
+  </small>
 </div>
 ```
 
@@ -411,83 +430,84 @@ useEffect(() => {
 ### **4.1 Add Badge Styles**
 
 **File: `frontend/src/components/horses/horses.css`**
+
 ```css
 /* Add these badge styles for ownership display */
 
 .badge-laury {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .badge-center {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Form checkbox styling */
 .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
 }
 
-.checkbox-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+.checkbox-label input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 
 .form-help {
-    color: #666;
-    font-size: 0.85rem;
-    margin-top: 4px;
-    display: block;
+  color: #666;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: block;
 }
 
 /* Filter styling */
 .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .filter-group label {
-    font-weight: 500;
-    color: #333;
-    font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
 }
 
 .filter-group select {
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 0.9rem;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 .filters {
-    display: flex;
-    gap: 20px;
-    align-items: flex-end;
-    margin: 20px 0;
-    padding: 16px;
-    background: #f8f9fa;
-    border-radius: 8px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  margin: 20px 0;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 ```
 
@@ -498,6 +518,7 @@ useEffect(() => {
 ### **5.1 Backend Testing**
 
 **Test the updated API endpoints:**
+
 ```bash
 # Test creating a horse with ownership field
 curl -X POST https://your-worker.workers.dev/api/horses \
@@ -541,24 +562,28 @@ curl -X PUT https://your-worker.workers.dev/api/horses/1 \
 ### **6.1 Production Migration Steps**
 
 1. **Backup Production Database:**
+
    ```sql
    -- Create backup before migration
    CREATE TABLE horses_backup AS SELECT * FROM horses;
    ```
 
 2. **Apply Migration:**
+
    - Use Supabase Dashboard to add the column
    - Or run the SQL migration script
 
 3. **Update Data (if needed):**
+
    ```sql
    -- Set specific horses as owned by Laury
-   UPDATE horses 
-   SET is_owned_by_laury = TRUE 
+   UPDATE horses
+   SET is_owned_by_laury = TRUE
    WHERE name IN ('Horse1', 'Horse2'); -- Replace with actual names
    ```
 
 4. **Deploy Backend:**
+
    ```bash
    cd backend
    wrangler deploy
@@ -574,6 +599,7 @@ curl -X PUT https://your-worker.workers.dev/api/horses/1 \
 ### **6.2 Rollback Plan**
 
 **If something goes wrong:**
+
 ```sql
 -- Rollback the column addition
 ALTER TABLE horses DROP COLUMN IF EXISTS is_owned_by_laury;
@@ -588,6 +614,7 @@ INSERT INTO horses SELECT * FROM horses_backup;
 ## 📋 **CHECKLIST: Complete Model Modification**
 
 ### ✅ **Database Changes:**
+
 - [ ] Migration SQL created and tested
 - [ ] Column added with proper constraints
 - [ ] Index created for performance
@@ -595,6 +622,7 @@ INSERT INTO horses SELECT * FROM horses_backup;
 - [ ] Existing data preserved
 
 ### ✅ **Backend Changes:**
+
 - [ ] Handler updated for new field
 - [ ] Create/Update operations handle new field
 - [ ] Filtering implemented if needed
@@ -602,6 +630,7 @@ INSERT INTO horses SELECT * FROM horses_backup;
 - [ ] Error handling tested
 
 ### ✅ **Frontend Changes:**
+
 - [ ] Form component updated
 - [ ] List component updated
 - [ ] API service updated
@@ -609,12 +638,14 @@ INSERT INTO horses SELECT * FROM horses_backup;
 - [ ] Validation implemented
 
 ### ✅ **Testing:**
+
 - [ ] Backend endpoints tested
 - [ ] Frontend UI tested
 - [ ] Integration tested
 - [ ] Edge cases tested
 
 ### ✅ **Deployment:**
+
 - [ ] Migration applied to production
 - [ ] Backend deployed
 - [ ] Frontend deployed
@@ -625,51 +656,51 @@ INSERT INTO horses SELECT * FROM horses_backup;
 ## 🚀 **Advanced Features (Optional Extensions)**
 
 ### **6.1 Add Ownership Statistics**
+
 ```javascript
 // Add to API service
 export const horsesApi = {
-    // ... existing methods
-    
-    getOwnershipStats: async () => {
-        try {
-            const response = await api.get('/horses/stats/ownership');
-            return response.data;
-        } catch (error) {
-            handleError(error);
-        }
+  // ... existing methods
+
+  getOwnershipStats: async () => {
+    try {
+      const response = await api.get('/horses/stats/ownership');
+      return response.data;
+    } catch (error) {
+      handleError(error);
     }
+  },
 };
 
 // Add to backend handler
 if (path === '/api/horses/stats/ownership' && method === 'GET') {
-    const { data } = await db
-        .from('horses')
-        .select('is_owned_by_laury');
-    
-    const stats = {
-        total: data.length,
-        laury_owned: data.filter(h => h.is_owned_by_laury).length,
-        center_owned: data.filter(h => !h.is_owned_by_laury).length,
-    };
-    
-    return jsonResponse(stats, 200, getSecurityHeaders());
+  const { data } = await db.from('horses').select('is_owned_by_laury');
+
+  const stats = {
+    total: data.length,
+    laury_owned: data.filter((h) => h.is_owned_by_laury).length,
+    center_owned: data.filter((h) => !h.is_owned_by_laury).length,
+  };
+
+  return jsonResponse(stats, 200, getSecurityHeaders());
 }
 ```
 
 ### **6.2 Add Bulk Ownership Update**
+
 ```javascript
 // Add to backend handler
 if (path === '/api/horses/bulk-update-ownership' && method === 'POST') {
-    const { horseIds, isOwnedByLaury } = await request.json();
-    
-    const { data, error } = await db
-        .from('horses')
-        .update({ is_owned_by_laury: isOwnedByLaury })
-        .in('id', horseIds)
-        .select();
-    
-    if (error) return handleDbError(error);
-    return jsonResponse(data, 200, getSecurityHeaders());
+  const { horseIds, isOwnedByLaury } = await request.json();
+
+  const { data, error } = await db
+    .from('horses')
+    .update({ is_owned_by_laury: isOwnedByLaury })
+    .in('id', horseIds)
+    .select();
+
+  if (error) return handleDbError(error);
+  return jsonResponse(data, 200, getSecurityHeaders());
 }
 ```
 
@@ -703,7 +734,7 @@ if (path === '/api/horses/bulk-update-ownership' && method === 'POST') {
 You've successfully modified an existing model in your equestrian management system! This pattern can be applied to any model modifications:
 
 - Adding new fields to riders (certifications, specializations, etc.)
-- Adding payment information to associations
+- Adding payment information to pairings
 - Adding health records to horses
 - Adding availability schedules to instructors
 

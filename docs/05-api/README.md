@@ -12,11 +12,13 @@ Complete API reference for the Equestrian Management System.
 ## 🌐 Base URLs
 
 ### Development
+
 ```
 http://localhost:8787/api
 ```
 
 ### Production
+
 ```
 https://your-worker.workers.dev/api
 ```
@@ -24,11 +26,13 @@ https://your-worker.workers.dev/api
 ## 🚀 Quick Start
 
 ### Health Check
+
 ```bash
 curl https://your-api-url/api/health
 ```
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -40,11 +44,13 @@ curl https://your-api-url/api/health
 ```
 
 ### List Riders
+
 ```bash
 curl https://your-api-url/api/riders
 ```
 
 **Response:**
+
 ```json
 [
   {
@@ -68,7 +74,7 @@ The API provides access to three main resources:
 
 1. **Riders** - Horse riders/students
 2. **Horses** - Horses and ponies
-3. **Associations** - Rider-horse relationships
+3. **Pairings** - Rider-horse relationships
 
 ### HTTP Methods
 
@@ -82,6 +88,7 @@ The API provides access to three main resources:
 All responses are in JSON format with appropriate HTTP status codes.
 
 **Success Response:**
+
 ```json
 {
   "id": 1,
@@ -91,6 +98,7 @@ All responses are in JSON format with appropriate HTTP status codes.
 ```
 
 **Error Response:**
+
 ```json
 {
   "error": "Error type",
@@ -109,48 +117,49 @@ See [Authentication Guide](./authentication.md) for details.
 
 ### Riders
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/riders` | List all riders |
-| GET | `/api/riders/:id` | Get single rider |
-| POST | `/api/riders` | Create rider |
-| PUT | `/api/riders/:id` | Update rider |
-| DELETE | `/api/riders/:id` | Delete rider |
-| GET | `/api/riders/:id/horses` | Get rider's horses |
+| Method | Endpoint                 | Description        |
+| ------ | ------------------------ | ------------------ |
+| GET    | `/api/riders`            | List all riders    |
+| GET    | `/api/riders/:id`        | Get single rider   |
+| POST   | `/api/riders`            | Create rider       |
+| PUT    | `/api/riders/:id`        | Update rider       |
+| DELETE | `/api/riders/:id`        | Delete rider       |
+| GET    | `/api/riders/:id/horses` | Get rider's horses |
 
 ### Horses
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/horses` | List all horses |
-| GET | `/api/horses/:id` | Get single horse |
-| POST | `/api/horses` | Create horse |
-| PUT | `/api/horses/:id` | Update horse |
-| DELETE | `/api/horses/:id` | Delete horse |
-| GET | `/api/horses/:id/riders` | Get horse's riders |
+| Method | Endpoint                 | Description        |
+| ------ | ------------------------ | ------------------ |
+| GET    | `/api/horses`            | List all horses    |
+| GET    | `/api/horses/:id`        | Get single horse   |
+| POST   | `/api/horses`            | Create horse       |
+| PUT    | `/api/horses/:id`        | Update horse       |
+| DELETE | `/api/horses/:id`        | Delete horse       |
+| GET    | `/api/horses/:id/riders` | Get horse's riders |
 
-### Associations
+### Pairings
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/associations` | List all associations |
-| GET | `/api/associations/:id` | Get single association |
-| POST | `/api/associations` | Create association |
-| PUT | `/api/associations/:id` | Update association |
-| DELETE | `/api/associations/:id` | Delete association |
+| Method | Endpoint            | Description        |
+| ------ | ------------------- | ------------------ |
+| GET    | `/api/pairings`     | List all pairings  |
+| GET    | `/api/pairings/:id` | Get single pairing |
+| POST   | `/api/pairings`     | Create pairing     |
+| PUT    | `/api/pairings/:id` | Update pairing     |
+| DELETE | `/api/pairings/:id` | Delete pairing     |
 
 ### Utility
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health` | Health check |
-| GET | `/api/docs` | API documentation |
+| Method | Endpoint      | Description       |
+| ------ | ------------- | ----------------- |
+| GET    | `/api/health` | Health check      |
+| GET    | `/api/docs`   | API documentation |
 
 ## 📝 Request Examples
 
 ### Create a Rider
 
 **Request:**
+
 ```bash
 curl -X POST https://your-api-url/api/riders \
   -H "Content-Type: application/json" \
@@ -163,6 +172,7 @@ curl -X POST https://your-api-url/api/riders \
 ```
 
 **Response:**
+
 ```json
 {
   "id": 2,
@@ -176,27 +186,29 @@ curl -X POST https://your-api-url/api/riders \
 }
 ```
 
-### Create an Association
+### Create an Pairing
 
 **Request:**
+
 ```bash
-curl -X POST https://your-api-url/api/associations \
+curl -X POST https://your-api-url/api/pairings \
   -H "Content-Type: application/json" \
   -d '{
     "rider_id": 1,
     "horse_id": 5,
-    "association_start_date": "2024-01-15"
+    "pairing_start_date": "2024-01-15"
   }'
 ```
 
 **Response:**
+
 ```json
 {
   "id": 1,
   "rider_id": 1,
   "horse_id": 5,
-  "association_start_date": "2024-01-15",
-  "association_end_date": null,
+  "pairing_start_date": "2024-01-15",
+  "pairing_end_date": null,
   "riders": {
     "id": 1,
     "name": "Jean Dupont"
@@ -243,6 +255,7 @@ See [Rate Limiting](./rate-limiting.md) for details.
 ## 🧪 Testing the API
 
 ### Using curl
+
 ```bash
 # Health check
 curl https://your-api-url/api/health
@@ -255,16 +268,18 @@ curl https://your-api-url/api/riders/1
 ```
 
 ### Using Postman
+
 1. Import the API collection (coming soon)
 2. Set base URL variable
 3. Run requests
 
 ### Using JavaScript
+
 ```javascript
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://your-api-url/api'
+  baseURL: 'https://your-api-url/api',
 });
 
 // Get riders
@@ -273,7 +288,7 @@ const riders = await api.get('/riders');
 // Create rider
 const newRider = await api.post('/riders', {
   name: 'Jean Dupont',
-  email: 'jean@example.com'
+  email: 'jean@example.com',
 });
 ```
 

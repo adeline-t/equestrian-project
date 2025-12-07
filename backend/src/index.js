@@ -1,6 +1,7 @@
 import { handleRiders, handleRiderHorses } from './handlers/riders.js';
 import { handleHorses, handleHorseRiders } from './handlers/horses.js';
-import { handleAssociations } from './handlers/associations.js';
+import { handlePairings } from './handlers/pairings.js';
+import { handlePackages } from './handlers/packages.js';
 import { jsonResponse, getSecurityHeaders } from './db.js';
 
 export default {
@@ -42,13 +43,19 @@ export default {
         const horseId = path.split('/')[3];
         return handleHorseRiders(request, env, horseId);
       }
+
       if (path.startsWith('/api/horses')) {
         return handleHorses(request, env);
       }
 
-      // Associations routes
-      if (path.startsWith('/api/associations')) {
-        return handleAssociations(request, env);
+      // Pairings routes
+      if (path.startsWith('/api/pairings')) {
+        return handlePairings(request, env);
+      }
+
+      // Packages routes
+      if (path.startsWith('/api/packages')) {
+        return handlePackages(request, env);
       }
 
       // Health check
@@ -88,12 +95,19 @@ export default {
                 'DELETE /api/horses/:id': 'Delete horse',
                 'GET /api/horses/:id/riders': 'Get riders for horse',
               },
-              associations: {
-                'GET /api/associations': 'List all associations',
-                'GET /api/associations/:id': 'Get single association',
-                'POST /api/associations': 'Create association',
-                'PUT /api/associations/:id': 'Update association',
-                'DELETE /api/associations/:id': 'Delete association',
+              pairings: {
+                'GET /api/pairings': 'List all pairings',
+                'GET /api/pairings/:id': 'Get single pairing',
+                'POST /api/pairings': 'Create pairing',
+                'PUT /api/pairings/:id': 'Update pairing',
+                'DELETE /api/pairings/:id': 'Delete pairing',
+              },
+              packages: {
+                'GET /api/packages': 'List all packages',
+                'GET /api/packages/:id': 'Get single package',
+                'POST /api/packages': 'Create package',
+                'PUT /api/packages/:id': 'Update package',
+                'DELETE /api/packages/:id': 'Delete package',
               },
               utility: {
                 'GET /api/health': 'Health check',
@@ -115,7 +129,8 @@ export default {
             '/api/docs',
             '/api/riders',
             '/api/horses',
-            '/api/associations',
+            '/api/pairings',
+            '/api/packages',
           ],
         },
         404

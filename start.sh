@@ -3,4 +3,4 @@
 # Simple one-command launcher
 # Just run: ./start.sh
 
-./script/setup/launch-local.sh
+./scripts/setup/launch-local.sh

@@ -178,12 +178,12 @@ export async function handleHorseRiders(request, env, horseId) {
     }
 
     const { data, error } = await db
-      .from('rider_horse_associations')
+      .from('rider_horse_pairings')
       .select(
         `
         id,
-        association_start_date,
-        association_end_date,
+        pairing_start_date,
+        pairing_end_date,
         riders (
           id,
           name,
@@ -195,7 +195,7 @@ export async function handleHorseRiders(request, env, horseId) {
       `
       )
       .eq('horse_id', horseIdNum)
-      .order('association_start_date', { ascending: false });
+      .order('pairing_start_date', { ascending: false });
 
     if (error) return handleDatabaseError(error, 'horses.getRiders');
     return jsonResponse(data, 200, getSecurityHeaders());

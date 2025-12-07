@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { associationsApi, ridersApi, horsesApi } from '../../services/api';
-import AssociationForm from './AssociationForm';
+import { pairingsApi, ridersApi, horsesApi } from '../../services/api';
+import PairingForm from './PairingForm';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
-function AssociationsList() {
-  const [associations, setAssociations] = useState([]);
+function PairingsList() {
+  const [pairings, setPairings] = useState([]);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [editingAssociation, setEditingAssociation] = useState(null);
+  const [editingPairing, setEditingPairing] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [filter, setFilter] = useState('all'); // all, active, inactive
 
@@ -24,12 +24,12 @@ function AssociationsList() {
     try {
       setLoading(true);
       setError(null);
-      const [associationsData, ridersData, horsesData] = await Promise.all([
-        associationsApi.getAll(),
+      const [pairingsData, ridersData, horsesData] = await Promise.all([
+        pairingsApi.getAll(),
         ridersApi.getAll(),
         horsesApi.getAll(),
       ]);
-      setAssociations(associationsData || []);
+      setPairings(pairingsData || []);
       setRiders(ridersData || []);
       setHorses(horsesData || []);
     } catch (err) {
@@ -40,23 +40,27 @@ function AssociationsList() {
   };
 
   const handleCreate = () => {
-    setEditingAssociation(null);
+    setEditingPairing(null);
     setShowModal(true);
   };
 
-  const handleEdit = (association) => {
-    setEditingAssociation(association);
+  const handleEdit = (pairing) => {
+    setEditingPairing(pairing);
     setShowModal(true);
   };
 
   const handleDelete = async (id, riderName, horseName) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer l'association entre ${riderName} et ${horseName} ?`)) {
+    if (
+      !window.confirm(
+        `Êtes-vous sûr de vouloir supprimer l'pairing entre ${riderName} et ${horseName} ?`
+      )
+    ) {
       return;
     }
 
     try {
-      await associationsApi.delete(id);
-      setSuccessMessage('Association supprimée avec succès');
+      await pairingsApi.delete(id);
+      setSuccessMessage('Pairing supprimée avec succès');
       setTimeout(() => setSuccessMessage(''), 3000);
       loadData();
     } catch (err) {
@@ -64,14 +68,14 @@ function AssociationsList() {
     }
   };
 
-  const handleFormSubmit = async (associationData) => {
+  const handleFormSubmit = async (pairingData) => {
     try {
-      if (editingAssociation) {
-        await associationsApi.update(editingAssociation.id, associationData);
-        setSuccessMessage('Association modifiée avec succès');
+      if (editingPairing) {
+        await pairingsApi.update(editingPairing.id, pairingData);
+        setSuccessMessage('Pairing modifiée avec succès');
       } else {
-        await associationsApi.create(associationData);
-        setSuccessMessage('Association créée avec succès');
+        await pairingsApi.create(pairingData);
+        setSuccessMessage('Pairing créée avec succès');
       }
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
@@ -102,7 +106,7 @@ function AssociationsList() {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
-    
+
     if (start && start > now) return false;
     if (end && end < now) return false;
     return true;
@@ -117,33 +121,33 @@ function AssociationsList() {
     );
   };
 
-  const filteredAssociations = associations.filter(association => {
+  const filteredPairings = pairings.filter((pairing) => {
     if (filter === 'all') return true;
-    const active = isActive(association.association_start_date, association.association_end_date);
+    const active = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
     return filter === 'active' ? active : !active;
   });
 
   const stats = {
-    total: associations.length,
-    active: associations.filter(a => isActive(a.association_start_date, a.association_end_date)).length,
-    inactive: associations.filter(a => !isActive(a.association_start_date, a.association_end_date)).length,
+    total: pairings.length,
+    active: pairings.filter((a) => isActive(a.pairing_start_date, a.pairing_end_date)).length,
+    inactive: pairings.filter((a) => !isActive(a.pairing_start_date, a.pairing_end_date)).length,
   };
 
   if (loading) {
-    return <div className="loading">Chargement des associations...</div>;
+    return <div className="loading">Chargement des pairings...</div>;
   }
 
   return (
     <div className="card">
       <div className="flex-between mb-20">
-        <h2>Associations Cavalier-Cheval</h2>
+        <h2>Pairings Cavalier-Cheval</h2>
         <button className="btn btn-primary" onClick={handleCreate}>
-          ➕ Nouvelle Association
+          ➕ Nouvelle Pairing
         </button>
       </div>
 
       {/* Statistics */}
-      {associations.length > 0 && (
+      {pairings.length > 0 && (
         <div className="stats-grid mb-20">
           <div className="stat-card">
             <span className="stat-number">{stats.total}</span>
@@ -161,7 +165,7 @@ function AssociationsList() {
       )}
 
       {/* Filter */}
-      {associations.length > 0 && (
+      {pairings.length > 0 && (
         <div className="filter-buttons mb-20">
           <button
             className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
@@ -187,20 +191,20 @@ function AssociationsList() {
       {error && <div className="error">{error}</div>}
       {successMessage && <div className="success">{successMessage}</div>}
 
-      {associations.length === 0 ? (
+      {pairings.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">🔗</div>
-          <h3>Aucune association enregistrée</h3>
-          <p>Commencez par créer la première association entre un cavalier et un cheval</p>
+          <h3>Aucune pairing enregistrée</h3>
+          <p>Commencez par créer la première pairing entre un cavalier et un cheval</p>
           <button className="btn btn-primary" onClick={handleCreate}>
-            Créer la première association
+            Créer la première pairing
           </button>
         </div>
-      ) : filteredAssociations.length === 0 ? (
+      ) : filteredPairings.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">🔍</div>
           <h3>Aucun résultat</h3>
-          <p>Aucune association {filter === 'active' ? 'active' : 'inactive'} trouvée</p>
+          <p>Aucune pairing {filter === 'active' ? 'active' : 'inactive'} trouvée</p>
         </div>
       ) : (
         <div className="table-responsive">
@@ -217,40 +221,37 @@ function AssociationsList() {
               </tr>
             </thead>
             <tbody>
-              {filteredAssociations.map((association) => (
-                <tr key={association.id}>
+              {filteredPairings.map((pairing) => (
+                <tr key={pairing.id}>
                   <td>
-                    <strong>👤 {association.riders?.name || 'N/A'}</strong>
+                    <strong>👤 {pairing.riders?.name || 'N/A'}</strong>
                   </td>
                   <td>
                     <strong>
-                      {getKindEmoji(association.horses?.kind)} {association.horses?.name || 'N/A'}
+                      {getKindEmoji(pairing.horses?.kind)} {pairing.horses?.name || 'N/A'}
                     </strong>
                   </td>
                   <td>
-                    <span className={`badge badge-${association.horses?.kind}`}>
-                      {getKindLabel(association.horses?.kind)}
+                    <span className={`badge badge-${pairing.horses?.kind}`}>
+                      {getKindLabel(pairing.horses?.kind)}
                     </span>
                   </td>
-                  <td>{formatDate(association.association_start_date)}</td>
-                  <td>{formatDate(association.association_end_date)}</td>
-                  <td>
-                    {getStatusBadge(association.association_start_date, association.association_end_date)}
-                  </td>
+                  <td>{formatDate(pairing.pairing_start_date)}</td>
+                  <td>{formatDate(pairing.pairing_end_date)}</td>
+                  <td>{getStatusBadge(pairing.pairing_start_date, pairing.pairing_end_date)}</td>
                   <td className="actions">
-                    <button 
-                      className="btn btn-secondary" 
-                      onClick={() => handleEdit(association)}
-                    >
+                    <button className="btn btn-secondary" onClick={() => handleEdit(pairing)}>
                       ✏️ Modifier
                     </button>
-                    <button 
-                      className="btn btn-danger" 
-                      onClick={() => handleDelete(
-                        association.id, 
-                        association.riders?.name || 'cavalier',
-                        association.horses?.name || 'cheval'
-                      )}
+                    <button
+                      className="btn btn-danger"
+                      onClick={() =>
+                        handleDelete(
+                          pairing.id,
+                          pairing.riders?.name || 'cavalier',
+                          pairing.horses?.name || 'cheval'
+                        )
+                      }
                     >
                       🗑️ Supprimer
                     </button>
@@ -266,15 +267,13 @@ function AssociationsList() {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>
-                {editingAssociation ? '✏️ Modifier l\'association' : '➕ Nouvelle association'}
-              </h3>
+              <h3>{editingPairing ? "✏️ Modifier l'pairing" : '➕ Nouvelle pairing'}</h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
               </button>
             </div>
-            <AssociationForm
-              association={editingAssociation}
+            <PairingForm
+              pairing={editingPairing}
               riders={riders}
               horses={horses}
               onSubmit={handleFormSubmit}
@@ -287,7 +286,7 @@ function AssociationsList() {
   );
 }
 
-// AssociationsList has no props, but we include PropTypes for consistency
-AssociationsList.propTypes = {};
+// PairingsList has no props, but we include PropTypes for consistency
+PairingsList.propTypes = {};
 
-export default AssociationsList;
+export default PairingsList;

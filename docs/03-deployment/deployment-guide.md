@@ -138,7 +138,7 @@ npm run dev
 ```
 
 - Opens http://localhost:3000
-- Test creating riders, horses, and associations
+- Test creating riders, horses, and pairings
 - Verify everything works before deploying
 
 4. **Build for Production**
@@ -186,7 +186,7 @@ npx wrangler pages deploy dist --project-name=equestrian-frontend
    - Test all functionality:
      - ✅ Create a rider
      - ✅ Create a horse
-     - ✅ Create an association
+     - ✅ Create an pairing
      - ✅ Edit existing records
      - ✅ Delete records
      - ✅ View lists and filters

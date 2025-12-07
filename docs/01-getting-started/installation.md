@@ -68,10 +68,11 @@ nano wrangler.toml  # or use your preferred editor
 ```
 
 Update the following in `wrangler.toml`:
+
 ```toml
 [env.dev]
 name = "equestrian-api-dev"
-vars = { 
+vars = {
   ENVIRONMENT = "development",
   SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL"  # Update this
 }
@@ -98,6 +99,7 @@ curl http://localhost:8787/api/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -127,6 +129,7 @@ nano .env.dev
 ```
 
 Update `.env.dev`:
+
 ```env
 # Use localhost for local backend testing
 VITE_API_URL=http://localhost:8787/api
@@ -177,6 +180,7 @@ Note the deployed URL (e.g., `https://equestrian-api-dev.your-subdomain.workers.
 #### 5.3 Update Frontend Configuration
 
 Update `frontend/.env.dev` with the deployed backend URL:
+
 ```env
 VITE_API_URL=https://equestrian-api-dev.your-subdomain.workers.dev/api
 ```
@@ -196,24 +200,26 @@ Note the deployed URL for your frontend.
 ### Test the Installation
 
 1. **Backend Health Check:**
+
 ```bash
 curl https://your-backend-url.workers.dev/api/health
 ```
 
 2. **Frontend Access:**
-Open your browser to the frontend URL
+   Open your browser to the frontend URL
 
 3. **Create Test Data:**
+
 - Click "Nouveau Cavalier" to create a rider
 - Click "Nouveau Cheval" to create a horse
-- Create an association between them
+- Create an pairing between them
 
 ### Expected Results
 
 - ✅ Backend responds with health check
 - ✅ Frontend loads without errors
 - ✅ Can create riders and horses
-- ✅ Can create associations
+- ✅ Can create pairings
 - ✅ Data persists in database
 
 ## 🔧 Post-Installation Configuration
@@ -238,6 +244,7 @@ See [Custom Domain Setup](../03-deployment/custom-domains.md) for instructions.
 ### Backend Won't Deploy
 
 **Error:** "Authentication required"
+
 ```bash
 # Re-authenticate
 wrangler logout
@@ -245,6 +252,7 @@ wrangler login
 ```
 
 **Error:** "Supabase connection failed"
+
 - Verify SUPABASE_URL in wrangler.toml
 - Verify SUPABASE_ANON_KEY secret is set
 - Check Supabase project is active
@@ -252,11 +260,13 @@ wrangler login
 ### Frontend Build Fails
 
 **Error:** "VITE_API_URL is not defined"
+
 - Ensure .env file exists
 - Verify VITE_API_URL is set
 - Restart dev server after changing .env
 
 **Error:** "Module not found"
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules package-lock.json
@@ -266,6 +276,7 @@ npm install
 ### Database Connection Issues
 
 **Error:** "relation does not exist"
+
 - Verify schema.sql was executed successfully
 - Check table names in Supabase Table Editor
 - Re-run schema.sql if needed
@@ -273,6 +284,7 @@ npm install
 ### CORS Errors
 
 **Error:** "CORS policy blocked"
+
 - Verify backend is deployed and accessible
 - Check VITE_API_URL points to correct backend
 - Ensure backend CORS headers are configured

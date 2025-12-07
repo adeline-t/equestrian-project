@@ -3,6 +3,7 @@
 This guide provides comprehensive instructions for setting up and managing "dev" (development) and "prod" (production) environments for your equestrian web application.
 
 ## Table of Contents
+
 1. [File Structure & Configuration Files](#1-file-structure--configuration-files)
 2. [Supabase Configuration](#2-supabase-configuration)
 3. [Cloudflare Configuration](#3-cloudflare-configuration)
@@ -36,6 +37,7 @@ equestrian-project/
 ### 1.2 Frontend Configuration Files
 
 #### Development Environment (.env.dev)
+
 ```bash
 # Development Environment Configuration
 VITE_API_URL=https://dev-api.yourdomain.com/api
@@ -46,6 +48,7 @@ VITE_LOG_LEVEL=debug
 ```
 
 #### Production Environment (.env.prod)
+
 ```bash
 # Production Environment Configuration
 VITE_API_URL=https://api.yourdomain.com/api
@@ -58,6 +61,7 @@ VITE_LOG_LEVEL=error
 ### 1.3 Backend Configuration Files
 
 #### Enhanced wrangler.toml
+
 ```toml
 name = "equestrian-api"
 main = "src/index.js"
@@ -87,6 +91,7 @@ preview_id = "your-preview-kv-id"
 ### 1.4 Environment-Specific Vite Configurations
 
 #### Development Vite Config (vite.config.dev.js)
+
 ```javascript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -113,6 +118,7 @@ export default defineConfig({
 ```
 
 #### Production Vite Config (vite.config.prod.js)
+
 ```javascript
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -143,6 +149,7 @@ export default defineConfig({
 ### 2.1 Setting Up Separate Supabase Projects
 
 #### Step 1: Create Development Supabase Project
+
 1. Go to [supabase.com](https://supabase.com)
 2. Click "Start your project"
 3. Sign in or create an account
@@ -155,6 +162,7 @@ export default defineConfig({
    - **Pricing Plan**: Free tier (for development)
 
 #### Step 2: Create Production Supabase Project
+
 1. Repeat the above process with:
    - **Project Name**: `equestrian-prod`
    - **Database Password**: Generate a different strong password
@@ -163,6 +171,7 @@ export default defineConfig({
 ### 2.2 Supabase Environment Variables
 
 #### Development Environment Variables
+
 ```bash
 # Supabase Development
 SUPABASE_DEV_URL=https://[project-ref].supabase.co
@@ -172,6 +181,7 @@ SUPABASE_DEV_DATABASE_URL=postgresql://postgres:[password]@db.[project-ref].supa
 ```
 
 #### Production Environment Variables
+
 ```bash
 # Supabase Production
 SUPABASE_PROD_URL=https://[project-ref].supabase.co
@@ -183,12 +193,14 @@ SUPABASE_PROD_DATABASE_URL=postgresql://postgres:[password]@db.[project-ref].sup
 ### 2.3 Database Configuration Differences
 
 #### Development Database
+
 - **Row Level Security (RLS)**: Enabled but less restrictive
 - **Backup Frequency**: Daily (included in free tier)
 - **Connection Pooling**: 10 connections
 - **API Rate Limits**: Standard limits
 
 #### Production Database
+
 - **Row Level Security (RLS)**: Enabled with strict policies
 - **Backup Frequency**: Point-in-time recovery enabled
 - **Connection Pooling**: 20+ connections
@@ -201,11 +213,12 @@ SUPABASE_PROD_DATABASE_URL=postgresql://postgres:[password]@db.[project-ref].sup
 ### 2.4 Security Settings
 
 #### Development Security
+
 ```sql
 -- Enable RLS but with permissive policies
 ALTER TABLE riders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE horses ENABLE ROW LEVEL SECURITY;
-ALTER TABLE associations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pairings ENABLE ROW LEVEL SECURITY;
 
 -- Development policies (allow all operations)
 CREATE POLICY "Dev - All operations on riders" ON riders
@@ -214,11 +227,12 @@ CREATE POLICY "Dev - All operations on riders" ON riders
 CREATE POLICY "Dev - All operations on horses" ON horses
     FOR ALL USING (true) WITH CHECK (true);
 
-CREATE POLICY "Dev - All operations on associations" ON associations
+CREATE POLICY "Dev - All operations on pairings" ON pairings
     FOR ALL USING (true) WITH CHECK (true);
 ```
 
 #### Production Security
+
 ```sql
 -- Strict RLS policies for production
 CREATE POLICY "Users can read riders" ON riders
@@ -241,17 +255,20 @@ CREATE POLICY "Users can delete own riders" ON riders
 ### 3.1 Domain and Subdomain Setup
 
 #### Step 1: Configure Custom Domains
+
 1. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Add your domain: `yourdomain.com`
 3. Update your nameservers to Cloudflare's nameservers
 
 #### Step 2: Create Subdomains
+
 - **Development**: `dev.yourdomain.com`
 - **Production**: `app.yourdomain.com` (or `yourdomain.com`)
 
 ### 3.2 DNS Configuration
 
 #### Development DNS Records
+
 ```
 Type: A
 Name: dev
@@ -261,6 +278,7 @@ Proxy status: Proxied (orange cloud)
 ```
 
 #### Production DNS Records
+
 ```
 Type: A
 Name: app (or @ for root)
@@ -278,6 +296,7 @@ Proxy status: Proxied (orange cloud)
 ### 3.3 Cloudflare-Specific Settings
 
 #### Development Environment Settings
+
 - **SSL/TLS**: Flexible (easier setup)
 - **Security Level**: Medium
 - **Cache Level**: No Query String
@@ -285,6 +304,7 @@ Proxy status: Proxied (orange cloud)
 - **Development Mode**: Enabled (bypass cache)
 
 #### Production Environment Settings
+
 - **SSL/TLS**: Full (Strict)
 - **Security Level**: High
 - **Cache Level**: Standard
@@ -296,6 +316,7 @@ Proxy status: Proxied (orange cloud)
 ### 3.4 Page Rules for Environment Management
 
 #### Development Page Rules
+
 ```
 dev.yourdomain.com/*:
 - Cache Level: Bypass
@@ -304,6 +325,7 @@ dev.yourdomain.com/*:
 ```
 
 #### Production Page Rules
+
 ```
 yourdomain.com/api/*:
 - Cache Level: Bypass (for API endpoints)
@@ -320,6 +342,7 @@ yourdomain.com/*:
 ### 4.1 Creating Separate Workers
 
 #### Step 1: Create Development Worker
+
 ```bash
 # Create and configure development worker
 npx wrangler env list
@@ -329,6 +352,7 @@ npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env dev
 ```
 
 #### Step 2: Create Production Worker
+
 ```bash
 # Create and configure production worker
 npx wrangler env list
@@ -342,6 +366,7 @@ npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env prod
 #### Backend Environment Variables (.env files)
 
 **backend/.env.dev**
+
 ```bash
 # Development Environment
 SUPABASE_URL=https://dev-project.supabase.co
@@ -352,6 +377,7 @@ LOG_LEVEL=debug
 ```
 
 **backend/.env.prod**
+
 ```bash
 # Production Environment
 SUPABASE_URL=https://prod-project.supabase.co
@@ -364,6 +390,7 @@ LOG_LEVEL=error
 ### 4.3 Routing and Binding Configuration
 
 #### Custom Domain Routing
+
 ```bash
 # Bind development worker to subdomain
 npx wrangler custom-devices list
@@ -376,6 +403,7 @@ npx wrangler custom-domains list api.yourdomain.com --env prod
 ### 4.4 Environment-Specific Worker Settings
 
 #### Development Worker Configuration
+
 ```javascript
 // src/index.js - Development settings
 const corsHeaders = {
@@ -389,6 +417,7 @@ console.log('Worker initialized in development mode');
 ```
 
 #### Production Worker Configuration
+
 ```javascript
 // src/index.js - Production settings
 const corsHeaders = {
@@ -410,6 +439,7 @@ if (ENVIRONMENT === 'production') {
 ### 5.1 Prerequisite Installations
 
 #### Global Dependencies
+
 ```bash
 # Install Node.js (v18+ recommended)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
@@ -428,6 +458,7 @@ wrangler --version
 ```
 
 #### Authentication Setup
+
 ```bash
 # Authenticate with Cloudflare
 wrangler auth login
@@ -441,6 +472,7 @@ wrangler whoami
 #### Step-by-Step Development Deployment
 
 **1. Prepare Development Environment**
+
 ```bash
 # Navigate to project directory
 cd equestrian-project
@@ -455,6 +487,7 @@ cp backend/.env.dev backend/.env
 ```
 
 **2. Start Development Servers**
+
 ```bash
 # Start backend development server (in terminal 1)
 cd backend
@@ -466,6 +499,7 @@ npm run dev
 ```
 
 **3. Deploy Development Backend**
+
 ```bash
 # Deploy to development environment
 cd backend
@@ -476,6 +510,7 @@ npx wrangler tail --env dev
 ```
 
 **4. Deploy Development Frontend**
+
 ```bash
 # Build development frontend
 cd frontend
@@ -486,6 +521,7 @@ npx wrangler pages deploy dist --project-name equestrian-dev
 ```
 
 **5. Development URL Access**
+
 - Frontend: `https://dev.yourdomain.com`
 - Backend API: `https://dev-api.yourdomain.com/api`
 
@@ -494,6 +530,7 @@ npx wrangler pages deploy dist --project-name equestrian-dev
 #### Step-by-Step Production Deployment
 
 **1. Prepare Production Environment**
+
 ```bash
 # Navigate to project directory
 cd equestrian-project
@@ -508,6 +545,7 @@ cat backend/.env
 ```
 
 **2. Production Build**
+
 ```bash
 # Build production frontend
 cd frontend
@@ -518,6 +556,7 @@ ls -la dist/
 ```
 
 **3. Deploy Production Backend**
+
 ```bash
 # Deploy to production environment
 cd backend
@@ -528,6 +567,7 @@ npx wrangler tail --env prod
 ```
 
 **4. Deploy Production Frontend**
+
 ```bash
 # Deploy production frontend
 cd frontend
@@ -538,12 +578,14 @@ npx wrangler pages deploy dist --project-name equestrian-prod --compatibility-da
 ```
 
 **5. Production URL Access**
+
 - Frontend: `https://app.yourdomain.com` or `https://yourdomain.com`
 - Backend API: `https://api.yourdomain.com/api`
 
 ### 5.4 Environment Switching Commands
 
 #### Switch to Development Environment
+
 ```bash
 # Load dev environment
 cp frontend/.env.dev frontend/.env
@@ -555,6 +597,7 @@ cd frontend && npm run dev
 ```
 
 #### Switch to Production Environment
+
 ```bash
 # Load prod environment
 cp frontend/.env.prod frontend/.env
@@ -566,6 +609,7 @@ cd frontend && npm run build && npx wrangler pages deploy dist --project-name eq
 ```
 
 #### Environment Management Script
+
 ```bash
 # Create deployment script: deploy.sh
 #!/bin/bash
@@ -598,6 +642,7 @@ esac
 ```
 
 **Usage:**
+
 ```bash
 chmod +x deploy.sh
 ./deploy.sh dev    # Deploy to development
@@ -609,18 +654,21 @@ chmod +x deploy.sh
 ## 🚨 Important Notes and Warnings
 
 ### Security Considerations
+
 - **Never commit** `.env` files to version control
 - **Always use** secrets for sensitive data in production
 - **Enable RLS** on all Supabase tables in production
 - **Use HTTPS** for all production endpoints
 
 ### Best Practices
+
 - **Test thoroughly** in development before production deployment
 - **Use Git branches** for environment-specific changes
 - **Monitor logs** and performance in production
 - **Keep backups** of database and configurations
 
 ### Troubleshooting
+
 - If deployment fails, check Cloudflare Workers logs: `npx wrangler tail --env [env]`
 - Verify environment variables are correctly loaded
 - Check CORS settings for API access
