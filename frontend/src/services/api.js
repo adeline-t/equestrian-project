@@ -14,11 +14,21 @@ const api = axios.create({
 // Request interceptor for debugging
 api.interceptors.request.use(
   (config) => {
-    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    console.log(`🟢 API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    if (config.data) {
+      console.log('📤 Request Data:', config.data);
+      console.log(
+        '📤 Request Data Types:',
+        Object.keys(config.data).reduce((acc, key) => {
+          acc[key] = typeof config.data[key];
+          return acc;
+        }, {})
+      );
+    }
     return config;
   },
   (error) => {
-    console.error('Request error:', error);
+    console.error('❌ Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -26,11 +36,15 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => {
-    console.log(`API Response: ${response.status} ${response.config.url}`);
+    console.log(`✅ API Response: ${response.status} ${response.config.url}`);
     return response;
   },
   (error) => {
-    console.error('Response error:', error);
+    console.error('❌ Response error:', error);
+    if (error.response) {
+      console.error('❌ Response data:', error.response.data);
+      console.error('❌ Response status:', error.response.status);
+    }
     return Promise.reject(error);
   }
 );
@@ -39,33 +53,56 @@ api.interceptors.response.use(
 const handleError = (error) => {
   if (error.response) {
     // Server responded with error status
-    const message = error.response.data?.error || 'Une erreur est survenue';
+    const message =
+      error.response.data?.error || error.response.data?.message || 'Une erreur est survenue';
     const status = error.response.status;
 
+    console.error('🔴 API Error Details:', {
+      status,
+      message,
+      data: error.response.data,
+      url: error.config?.url,
+      method: error.config?.method,
+      requestData: error.config?.data,
+    });
+
+    let errorMessage = message;
     switch (status) {
       case 400:
-        throw new Error(`${message} (Requête invalide)`);
+        errorMessage = message; // Don't add extra text, just use the backend message
+        break;
       case 401:
-        throw new Error(`${message} (Non autorisé)`);
+        errorMessage = `${message} (Non autorisé)`;
+        break;
       case 403:
-        throw new Error(`${message} (Accès refusé)`);
+        errorMessage = `${message} (Accès refusé)`;
+        break;
       case 404:
-        throw new Error(`${message} (Non trouvé)`);
+        errorMessage = `${message} (Non trouvé)`;
+        break;
       case 409:
-        throw new Error(`${message} (Conflit)`);
+        errorMessage = `${message} (Conflit)`;
+        break;
       case 429:
-        throw new Error(`${message} (Trop de requêtes)`);
+        errorMessage = `${message} (Trop de requêtes)`;
+        break;
       case 500:
-        throw new Error(`${message} (Erreur serveur)`);
+        errorMessage = `${message} (Erreur serveur)`;
+        break;
       default:
-        throw new Error(`${message} (${status})`);
+        errorMessage = `${message} (${status})`;
     }
+
+    const customError = new Error(errorMessage);
+    customError.response = error.response;
+    customError.status = status;
+    throw customError;
   } else if (error.request) {
     // Request was made but no response received
     throw new Error('Impossible de contacter le serveur. Vérifiez votre connexion.');
   } else {
     // Something else happened
-    throw new Error('Une erreur est survenue lors de la requête.');
+    throw new Error(error.message || 'Une erreur est survenue lors de la requête.');
   }
 };
 
@@ -128,7 +165,6 @@ export const ridersApi = {
       handleError(error);
     }
   },
-  // NEW: Get packages for a specific rider
   getPackages: async (id) => {
     try {
       const response = await api.get(`/riders/${id}/packages`);
@@ -154,13 +190,89 @@ export const horsesApi = {
 export const pairingsApi = createCrudApi('pairings');
 
 export const packagesApi = {
-  ...createCrudApi('packages'),
-  // NEW: Create package for a specific rider
+  getAll: async () => {
+    try {
+      const response = await api.get('/packages');
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getById: async (id) => {
+    try {
+      const response = await api.get(`/packages/${id}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  create: async (data) => {
+    console.log('📦 packagesApi.create called with:', data);
+
+    // Ensure numeric fields are numbers
+    const validatedData = {
+      rider_id: Number(data.rider_id),
+      private_lesson_count: Number(data.private_lesson_count) || 0,
+      joint_lesson_count: Number(data.joint_lesson_count) || 0,
+      activity_start_date: data.activity_start_date || null,
+      activity_end_date: data.activity_end_date || null,
+    };
+
+    console.log('📦 Validated data:', validatedData);
+    console.log('📦 Data types:', {
+      rider_id: typeof validatedData.rider_id,
+      private_lesson_count: typeof validatedData.private_lesson_count,
+      joint_lesson_count: typeof validatedData.joint_lesson_count,
+    });
+
+    try {
+      const response = await api.post('/packages', validatedData);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  update: async (id, data) => {
+    console.log('📦 packagesApi.update called with:', { id, data });
+
+    // Ensure numeric fields are numbers
+    const validatedData = {
+      rider_id: Number(data.rider_id),
+      private_lesson_count: Number(data.private_lesson_count) || 0,
+      joint_lesson_count: Number(data.joint_lesson_count) || 0,
+      activity_start_date: data.activity_start_date || null,
+      activity_end_date: data.activity_end_date || null,
+    };
+
+    console.log('📦 Validated data:', validatedData);
+
+    try {
+      const response = await api.put(`/packages/${id}`, validatedData);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await api.delete(`/packages/${id}`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   createForRider: async (riderId, packageData) => {
     try {
       const response = await api.post('/packages', {
         ...packageData,
-        rider_id: riderId,
+        rider_id: Number(riderId),
+        private_lesson_count: Number(packageData.private_lesson_count) || 0,
+        joint_lesson_count: Number(packageData.joint_lesson_count) || 0,
       });
       return response.data;
     } catch (error) {

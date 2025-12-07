@@ -79,8 +79,14 @@ export function validatePhone(phone) {
   return !phone || phoneRegex.test(phone);
 }
 
+// FIXED: Allow 0 and false as valid values
 export function validateRequired(fields, data) {
-  const missing = fields.filter((field) => !data[field]);
+  const missing = fields.filter((field) => {
+    const value = data[field];
+    // Field is missing only if undefined, null, or empty string
+    // 0 and false are considered valid values
+    return value === undefined || value === null || value === '';
+  });
   return missing.length === 0 ? null : missing.join(', ');
 }
 
