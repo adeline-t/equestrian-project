@@ -27,7 +27,7 @@ check_prerequisites() {
     fi
     
     if ! command -v wrangler &> /dev/null; then
-        echo "❌ Wrangler CLI is not installed. Installing now..."
+        echo "⚠️  Wrangler CLI is not installed. Installing now..."
         npm install -g wrangler
     fi
     
@@ -51,8 +51,19 @@ validate_environment() {
     esac
     
     if [ ! -f "$env_file" ]; then
-        echo "❌ Environment file $env_file does not exist"
-        exit 1
+        echo "⚠️  Environment file $env_file does not exist"
+        echo "📝 Creating from example file..."
+        
+        if [ -f "$env_file.example" ]; then
+            cp "$env_file.example" "$env_file"
+            echo "✅ Created $env_file from example"
+            echo "⚠️  Please edit $env_file with your actual values before deploying"
+            echo "Press Enter to continue or Ctrl+C to cancel..."
+            read
+        else
+            echo "❌ Example file $env_file.example not found"
+            exit 1
+        fi
     fi
     
     echo "✅ Environment validation passed"
@@ -63,11 +74,15 @@ install_dependencies() {
     echo "📦 Installing dependencies..."
     
     cd "$FRONTEND_DIR"
-    npm install --production=false
+    if [ ! -d "node_modules" ]; then
+        npm install --production=false
+    fi
     echo "✅ Frontend dependencies installed"
     
     cd "$BACKEND_DIR"
-    npm install --production=false
+    if [ ! -d "node_modules" ]; then
+        npm install --production=false
+    fi
     echo "✅ Backend dependencies installed"
 }
 
@@ -75,29 +90,45 @@ install_dependencies() {
 load_environment() {
     echo "🔧 Loading environment variables for $ENVIRONMENT..."
     
+    # Load frontend environment
     cd "$FRONTEND_DIR"
     case $ENVIRONMENT in
         "dev")
-            cp .env.dev .env
-            cp .env.dev .env.local
-            echo "✅ Development environment loaded"
+            if [ -f ".env.dev" ]; then
+                cp .env.dev .env
+                cp .env.dev .env.local
+                echo "✅ Frontend development environment loaded"
+            else
+                echo "❌ .env.dev not found"
+                exit 1
+            fi
             ;;
         "prod")
-            cp .env.prod .env
-            cp .env.prod .env.local
-            echo "✅ Production environment loaded"
+            if [ -f ".env.prod" ]; then
+                cp .env.prod .env
+                cp .env.prod .env.local
+                echo "✅ Frontend production environment loaded"
+            else
+                echo "❌ .env.prod not found"
+                exit 1
+            fi
             ;;
     esac
     
+    # Load backend environment
     cd "$BACKEND_DIR"
     case $ENVIRONMENT in
         "dev")
-            cp .env.dev .env
-            echo "✅ Backend development environment loaded"
+            if [ -f ".env.dev" ]; then
+                cp .env.dev .env
+                echo "✅ Backend development environment loaded"
+            fi
             ;;
         "prod")
-            cp .env.prod .env
-            echo "✅ Backend production environment loaded"
+            if [ -f ".env.prod" ]; then
+                cp .env.prod .env
+                echo "✅ Backend production environment loaded"
+            fi
             ;;
     esac
 }
@@ -110,17 +141,32 @@ build_frontend() {
     
     # Use appropriate vite config
     if [ "$ENVIRONMENT" = "prod" ]; then
-        npm run build -- --config vite.config.prod.js
+        if [ -f "vite.config.prod.js" ]; then
+            npm run build -- --config vite.config.prod.js
+        else
+            echo "⚠️  vite.config.prod.js not found, using default config"
+            npm run build
+        fi
     else
-        npm run build -- --config vite.config.dev.js
+        if [ -f "vite.config.dev.js" ]; then
+            npm run build -- --config vite.config.dev.js
+        else
+            echo "⚠️  vite.config.dev.js not found, using default config"
+            npm run build
+        fi
     fi
     
-    if [ ! -d "dist" ]; then
-        echo "❌ Frontend build failed - dist directory not created"
+    # Check for output directory (handle both dist and dist-dev)
+    if [ "$ENVIRONMENT" = "dev" ] && [ -d "dist-dev" ]; then
+        OUTPUT_DIR="dist-dev"
+    elif [ -d "dist" ]; then
+        OUTPUT_DIR="dist"
+    else
+        echo "❌ Frontend build failed - output directory not created"
         exit 1
     fi
     
-    echo "✅ Frontend build completed"
+    echo "✅ Frontend build completed (output: $OUTPUT_DIR)"
 }
 
 # Function to deploy backend
@@ -128,6 +174,21 @@ deploy_backend() {
     echo "🌐 Deploying backend to $ENVIRONMENT..."
     
     cd "$BACKEND_DIR"
+    
+    # Check if wrangler.toml exists
+    if [ ! -f "wrangler.toml" ]; then
+        echo "⚠️  wrangler.toml not found"
+        if [ -f "wrangler.toml.example" ]; then
+            echo "📝 Creating wrangler.toml from example..."
+            cp wrangler.toml.example wrangler.toml
+            echo "⚠️  Please edit wrangler.toml with your actual values"
+            echo "Press Enter to continue or Ctrl+C to cancel..."
+            read
+        else
+            echo "❌ wrangler.toml.example not found"
+            exit 1
+        fi
+    fi
     
     # Set Wrangler environment
     if [ "$ENVIRONMENT" = "dev" ]; then
@@ -145,13 +206,22 @@ deploy_frontend() {
     
     cd "$FRONTEND_DIR"
     
+    # Determine output directory
+    if [ "$ENVIRONMENT" = "dev" ] && [ -d "dist-dev" ]; then
+        OUTPUT_DIR="dist-dev"
+    else
+        OUTPUT_DIR="dist"
+    fi
+    
     # Deploy to Cloudflare Pages
     if [ "$ENVIRONMENT" = "dev" ]; then
-        npx wrangler pages deploy dist --project-name equestrian-dev
-        echo "🌍 Frontend deployed: https://dev.yourdomain.com"
+        npx wrangler pages deploy "$OUTPUT_DIR" --project-name equestrian-dev
+        echo "🌍 Development Frontend: https://dev.yourdomain.com"
+        echo "📊 Development API: https://equestrian-api-dev.your-subdomain.workers.dev"
     else
-        npx wrangler pages deploy dist --project-name equestrian-prod
-        echo "🌍 Frontend deployed: https://yourdomain.com"
+        npx wrangler pages deploy "$OUTPUT_DIR" --project-name equestrian-prod
+        echo "🌍 Production Frontend: https://yourdomain.com"
+        echo "📊 Production API: https://equestrian-api-prod.your-subdomain.workers.dev"
     fi
     
     echo "✅ Frontend deployment completed"
@@ -161,12 +231,10 @@ deploy_frontend() {
 post_deployment_checks() {
     echo "🔍 Running post-deployment checks..."
     
-    # Check if workers are responding
-    if [ "$ENVIRONMENT" = "dev" ]; then
-        echo "📊 Development API: https://equestrian-api-dev.your-subdomain.workers.dev"
-    else
-        echo "📊 Production API: https://equestrian-api-prod.your-subdomain.workers.dev"
-    fi
+    echo "📊 Deployment Summary:"
+    echo "  Environment: $ENVIRONMENT"
+    echo "  Frontend: Deployed"
+    echo "  Backend: Deployed"
     
     echo "✅ Post-deployment checks completed"
 }
@@ -186,9 +254,9 @@ main() {
     echo "🎉 Deployment to $ENVIRONMENT completed successfully!"
     echo ""
     echo "📋 Next steps:"
-    echo "1. Update your DNS records if needed"
-    echo "2. Test the application functionality"
-    echo "3. Monitor logs for any issues"
+    echo "1. Test the application functionality"
+    echo "2. Monitor logs for any issues"
+    echo "3. Update DNS records if needed (first deployment)"
     echo ""
 }
 
