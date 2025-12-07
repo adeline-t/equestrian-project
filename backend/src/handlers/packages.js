@@ -25,7 +25,11 @@ export async function handlePackages(request, env) {
   try {
     // GET /api/packages - List all packages
     if (request.method === 'GET' && pathParts.length === 2) {
-      const { data, error } = await db.from('packages').select('*').order('name');
+      // FIX: Changed order from 'name' to 'id' since packages table has no name column
+      const { data, error } = await db
+        .from('packages')
+        .select('*')
+        .order('id', { ascending: true });
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -64,11 +68,14 @@ export async function handlePackages(request, env) {
         );
       }
 
+      // FIX: Added activity_start_date and activity_end_date fields
       const packageData = {
         private_lesson_count: body.private_lesson_count
           ? parseInt(body.private_lesson_count)
-          : null,
-        joint_lesson_count: body.joint_lesson_count ? parseInt(body.joint_lesson_count) : null,
+          : 0,
+        joint_lesson_count: body.joint_lesson_count ? parseInt(body.joint_lesson_count) : 0,
+        activity_start_date: body.activity_start_date || null,
+        activity_end_date: body.activity_end_date || null,
       };
 
       const { data, error } = await db.from('packages').insert(packageData).select().single();
@@ -99,6 +106,7 @@ export async function handlePackages(request, env) {
 
       if (fetchError) return handleDbError(fetchError);
 
+      // FIX: Added activity_start_date and activity_end_date fields
       const updateData = {
         private_lesson_count:
           body.private_lesson_count !== undefined
@@ -108,6 +116,15 @@ export async function handlePackages(request, env) {
           body.joint_lesson_count !== undefined
             ? parseInt(body.joint_lesson_count)
             : currentPackage.joint_lesson_count,
+        activity_start_date:
+          body.activity_start_date !== undefined
+            ? body.activity_start_date
+            : currentPackage.activity_start_date,
+        activity_end_date:
+          body.activity_end_date !== undefined
+            ? body.activity_end_date
+            : currentPackage.activity_end_date,
+        updated_at: new Date().toISOString(),
       };
 
       const { data, error } = await db
@@ -137,7 +154,15 @@ export async function handlePackages(request, env) {
 
     return jsonResponse({ error: 'Méthode non autorisée' }, 405, getSecurityHeaders());
   } catch (error) {
-    console.error('Error in handlePackage:', error);
-    return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());
+    console.error('Error in handlePackages:', error);
+    return jsonResponse(
+      { 
+        error: 'Erreur serveur interne',
+        message: error.message,
+        details: error.stack 
+      }, 
+      500, 
+      getSecurityHeaders()
+    );
   }
 }
