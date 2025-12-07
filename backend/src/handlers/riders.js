@@ -34,12 +34,88 @@ export async function handleRiders(request, env) {
   }
 
   try {
-    // GET /api/riders - List all riders
+    // GET /api/riders - List all riders with counts
     if (request.method === 'GET' && pathParts.length === 2) {
-      const { data, error } = await db.from('riders').select('*').order('name');
+      // Get all riders
+      const { data: riders, error: ridersError } = await db
+        .from('riders')
+        .select('*')
+        .order('name');
 
-      if (error) return handleDbError(error);
-      return jsonResponse(data, 200, getSecurityHeaders());
+      if (ridersError) return handleDbError(ridersError);
+
+      const now = new Date().toISOString().split('T')[0];
+
+      // Add counts for each rider
+      const ridersWithCounts = await Promise.all(
+        riders.map(async (rider) => {
+          // Count active horses (pairings where dates are active and horse is active)
+          const { data: pairings, error: pairingsError } = await db
+            .from('rider_horse_pairings')
+            .select(`
+              id,
+              pairing_start_date,
+              pairing_end_date,
+              horses (
+                id,
+                activity_start_date,
+                activity_end_date
+              )
+            `)
+            .eq('rider_id', rider.id);
+
+          let activeHorsesCount = 0;
+          if (!pairingsError &amp;&amp; pairings) {
+            activeHorsesCount = pairings.filter((pairing) => {
+              const pairingActive =
+                (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &amp;&amp;
+                (!pairing.pairing_end_date || pairing.pairing_end_date >= now);
+
+              const horse = pairing.horses;
+              const horseActive =
+                horse &amp;&amp;
+                (!horse.activity_start_date || horse.activity_start_date <= now) &amp;&amp;
+                (!horse.activity_end_date || horse.activity_end_date >= now);
+
+              return pairingActive &amp;&amp; horseActive;
+            }).length;
+          }
+
+          // Count active packages and lesson counts
+          const { data: packages, error: packagesError } = await db
+            .from('packages')
+            .select('*')
+            .eq('rider_id', rider.id);
+
+          let activePackagesCount = 0;
+          let privateLessonsCount = 0;
+          let jointLessonsCount = 0;
+
+          if (!packagesError &amp;&amp; packages) {
+            packages.forEach((pkg) => {
+              const packageActive =
+                (!pkg.activity_start_date || pkg.activity_start_date <= now) &amp;&amp;
+                (!pkg.activity_end_date || pkg.activity_end_date >= now);
+
+              if (packageActive) {
+                activePackagesCount++;
+                privateLessonsCount += pkg.private_lesson_count || 0;
+                jointLessonsCount += pkg.joint_lesson_count || 0;
+              }
+            });
+          }
+
+          return {
+            ...rider,
+            active_horses_count: activeHorsesCount,
+            active_packages_count: activePackagesCount,
+            private_lessons_count: privateLessonsCount,
+            joint_lessons_count: jointLessonsCount,
+          };
+        })
+      );
+
+      return jsonResponse(ridersWithCounts, 200, getSecurityHeaders());
     }
 
     // GET /api/riders/:id - Get single rider

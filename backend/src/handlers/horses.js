@@ -31,12 +31,66 @@ export async function handleHorses(request, env) {
   }
 
   try {
-    // GET /api/horses - List all horses
+    // GET /api/horses - List all horses with active riders count
     if (request.method === 'GET' && pathParts.length === 2) {
-      const { data, error } = await db.from('horses').select('*').order('name');
+      // Get all horses
+      const { data: horses, error: horsesError } = await db
+        .from('horses')
+        .select('*')
+        .order('name');
 
-      if (error) return handleDatabaseError(error, 'horses.list');
-      return jsonResponse(data, 200, getSecurityHeaders());
+      if (horsesError) return handleDatabaseError(horsesError, 'horses.list');
+
+      // Get active pairings count for each horse
+      const now = new Date().toISOString().split('T')[0];
+      
+      const horsesWithCounts = await Promise.all(
+        horses.map(async (horse) => {
+          // Count active riders (pairings where dates are active and rider is active)
+          const { data: pairings, error: pairingsError } = await db
+            .from('rider_horse_pairings')
+            .select(`
+              id,
+              pairing_start_date,
+              pairing_end_date,
+              riders (
+                id,
+                activity_start_date,
+                activity_end_date
+              )
+            `)
+            .eq('horse_id', horse.id);
+
+          if (pairingsError) {
+            console.error('Error fetching pairings:', pairingsError);
+            return { ...horse, active_riders_count: 0 };
+          }
+
+          // Filter for active pairings with active riders
+          const activeCount = pairings.filter((pairing) => {
+            // Check if pairing is active
+            const pairingActive =
+              (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &amp;&amp;
+              (!pairing.pairing_end_date || pairing.pairing_end_date >= now);
+
+            // Check if rider is active
+            const rider = pairing.riders;
+            const riderActive =
+              rider &amp;&amp;
+              (!rider.activity_start_date || rider.activity_start_date <= now) &amp;&amp;
+              (!rider.activity_end_date || rider.activity_end_date >= now);
+
+            return pairingActive &amp;&amp; riderActive;
+          }).length;
+
+          return {
+            ...horse,
+            active_riders_count: activeCount,
+          };
+        })
+      );
+
+      return jsonResponse(horsesWithCounts, 200, getSecurityHeaders());
     }
 
     // GET /api/horses/:id - Get single horse

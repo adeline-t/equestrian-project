@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ridersApi } from '../../services/api';
 import RiderForm from './RiderForm';
+import RiderCard from './RiderCard';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -12,6 +13,7 @@ function RidersList() {
   const [showModal, setShowModal] = useState(false);
   const [editingRider, setEditingRider] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [selectedRiderId, setSelectedRiderId] = useState(null);
 
   useEffect(() => {
     loadRiders();
@@ -38,6 +40,10 @@ function RidersList() {
   const handleEdit = (rider) => {
     setEditingRider(rider);
     setShowModal(true);
+  };
+
+  const handleViewDetails = (riderId) => {
+    setSelectedRiderId(riderId);
   };
 
   const handleDelete = async (id, name) => {
@@ -133,6 +139,10 @@ function RidersList() {
                 <th>Nom</th>
                 <th>Téléphone</th>
                 <th>Email</th>
+                <th>🐴 Chevaux Actifs</th>
+                <th>📦 Forfaits Actifs</th>
+                <th>🎓 Cours Privés</th>
+                <th>👥 Cours Collectifs</th>
                 <th>Début d'activité</th>
                 <th>Fin d'activité</th>
                 <th>Statut</th>
@@ -147,6 +157,26 @@ function RidersList() {
                   </td>
                   <td>{rider.phone || '-'}</td>
                   <td>{rider.email || '-'}</td>
+                  <td>
+                    <span className="badge badge-info">
+                      {rider.active_horses_count || 0}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="badge badge-info">
+                      {rider.active_packages_count || 0}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="badge badge-primary">
+                      {rider.private_lessons_count || 0}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="badge badge-primary">
+                      {rider.joint_lessons_count || 0}
+                    </span>
+                  </td>
                   <td>{formatDate(rider.activity_start_date)}</td>
                   <td>{formatDate(rider.activity_end_date)}</td>
                   <td>
@@ -154,13 +184,20 @@ function RidersList() {
                   </td>
                   <td className="actions">
                     <button 
-                      className="btn btn-secondary" 
+                      className="btn btn-primary btn-sm" 
+                      onClick={() => handleViewDetails(rider.id)}
+                      title="Voir les détails"
+                    >
+                      👁️ Détails
+                    </button>
+                    <button 
+                      className="btn btn-secondary btn-sm" 
                       onClick={() => handleEdit(rider)}
                     >
                       ✏️ Modifier
                     </button>
                     <button 
-                      className="btn btn-danger" 
+                      className="btn btn-danger btn-sm" 
                       onClick={() => handleDelete(rider.id, rider.name)}
                     >
                       🗑️ Supprimer
@@ -191,6 +228,16 @@ function RidersList() {
             />
           </div>
         </div>
+      )}
+
+      {selectedRiderId && (
+        <RiderCard
+          riderId={selectedRiderId}
+          onClose={() => {
+            setSelectedRiderId(null);
+            loadRiders();
+          }}
+        />
       )}
     </div>
   );
