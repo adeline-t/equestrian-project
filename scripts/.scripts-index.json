@@ -1,7 +1,17 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "lastUpdated": "2024-12-07",
+  "changelog": {
+    "1.1.0": {
+      "date": "2024-12-07",
+      "changes": [
+        "Added add-model.sh - Complete bash implementation",
+        "Deprecated add-model.js - Non-functional JavaScript version",
+        "Updated documentation and references"
+      ]
+    }
+  },
   "scripts": [
     {
       "name": "start.sh",
@@ -123,12 +133,49 @@
       }
     },
     {
+      "name": "add-model.sh",
+      "path": "./scripts/add-model.sh",
+      "category": "automation",
+      "platform": ["macos", "linux"],
+      "description": "Interactive model generator (Bash - Production Ready)",
+      "usage": "cd scripts && ./add-model.sh",
+      "status": "production-ready",
+      "dependencies": {
+        "system": ["bash", "sed", "awk", "date"],
+        "npm": []
+      },
+      "executable": true,
+      "interactive": true,
+      "generates": [
+        "backend/src/handlers/{model}.js",
+        "database/migrations/{timestamp}_create_{model}.sql",
+        "frontend/src/components/{model}/{Model}List.jsx",
+        "frontend/src/components/{model}/{Model}Form.jsx",
+        "frontend/src/components/{model}/{model}.css"
+      ],
+      "features": [
+        "complete-code-generation",
+        "colored-output",
+        "input-validation",
+        "error-handling",
+        "production-ready-output"
+      ],
+      "exitCodes": {
+        "0": "Model created successfully",
+        "1": "Generation failed"
+      }
+    },
+    {
       "name": "add-model.js",
       "path": "./scripts/add-model.js",
       "category": "automation",
       "platform": ["cross-platform"],
-      "description": "Interactive model generator",
+      "description": "Interactive model generator (JavaScript - DEPRECATED)",
       "usage": "cd scripts && ./add-model.js",
+      "status": "deprecated-non-functional",
+      "deprecated": true,
+      "deprecationReason": "Incomplete implementation - all code generation methods are stubs",
+      "replacement": "add-model.sh",
       "dependencies": {
         "system": ["node"],
         "npm": ["inquirer", "chalk", "fs-extra"]
@@ -142,6 +189,11 @@
         "frontend/src/components/{model}/{Model}Form.jsx",
         "frontend/src/types/{model}.js",
         "frontend/src/components/{model}/{model}.css"
+      ],
+      "issues": [
+        "All code generation methods return placeholder comments",
+        "Generated files are non-functional",
+        "Approximately 30% complete"
       ],
       "exitCodes": {
         "0": "Model created successfully",
