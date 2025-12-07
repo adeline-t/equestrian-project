@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { packagesApi, ridersApi } from '../../services/api';
-import PackageForm from './PackageForm';
+import { ridersApi, packagesApi } from '../../services/api';
+import PackageForm from '../packages/PackageForm';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import './package.css';
 
-function PackagesList() {
+function RiderPackages({ riderId, riderName }) {
   const [packages, setPackages] = useState([]);
   const [riders, setRiders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,27 +13,31 @@ function PackagesList() {
   const [showModal, setShowModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [filter, setFilter] = useState('all'); // all, active, inactive
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadPackages();
+    loadRiders();
+  }, [riderId]);
 
-  const loadData = async () => {
+  const loadPackages = async () => {
     try {
       setLoading(true);
       setError(null);
-      // Load both packages and riders for the form
-      const [packagesData, ridersData] = await Promise.all([
-        packagesApi.getAll(),
-        ridersApi.getAll(),
-      ]);
-      setPackages(packagesData || []);
-      setRiders(ridersData || []);
+      const data = await ridersApi.getPackages(riderId);
+      setPackages(data || []);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRiders = async () => {
+    try {
+      const data = await ridersApi.getAll();
+      setRiders(data || []);
+    } catch (err) {
+      console.error('Error loading riders:', err);
     }
   };
 
@@ -48,12 +51,8 @@ function PackagesList() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id, riderName) => {
-    if (
-      !window.confirm(
-        `Êtes-vous sûr de vouloir supprimer ce forfait${riderName ? ` de ${riderName}` : ''} ?`
-      )
-    ) {
+  const handleDelete = async (id) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce forfait ?')) {
       return;
     }
 
@@ -61,7 +60,7 @@ function PackagesList() {
       await packagesApi.delete(id);
       setSuccessMessage('Forfait supprimé avec succès');
       setTimeout(() => setSuccessMessage(''), 3000);
-      loadData();
+      loadPackages();
     } catch (err) {
       setError(err.message);
     }
@@ -73,12 +72,13 @@ function PackagesList() {
         await packagesApi.update(editingPackage.id, packageData);
         setSuccessMessage('Forfait modifié avec succès');
       } else {
-        await packagesApi.create(packageData);
+        // Create package with rider_id automatically set
+        await packagesApi.createForRider(riderId, packageData);
         setSuccessMessage('Forfait créé avec succès');
       }
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
-      loadData();
+      loadPackages();
     } catch (err) {
       throw err;
     }
@@ -112,17 +112,9 @@ function PackagesList() {
     );
   };
 
-  const filteredPackages = packages.filter((pkg) => {
-    if (filter === 'all') return true;
-    const active = isActive(pkg.activity_start_date, pkg.activity_end_date);
-    return filter === 'active' ? active : !active;
-  });
-
   const stats = {
     total: packages.length,
     active: packages.filter((pkg) => isActive(pkg.activity_start_date, pkg.activity_end_date))
-      .length,
-    inactive: packages.filter((pkg) => !isActive(pkg.activity_start_date, pkg.activity_end_date))
       .length,
     totalPrivateLessons: packages.reduce((sum, pkg) => sum + (pkg.private_lesson_count || 0), 0),
     totalJointLessons: packages.reduce((sum, pkg) => sum + (pkg.joint_lesson_count || 0), 0),
@@ -133,17 +125,20 @@ function PackagesList() {
   }
 
   return (
-    <div className="card">
+    <div className="rider-packages-section">
       <div className="flex-between mb-20">
-        <h2>📦 Liste des Forfaits</h2>
-        <button className="btn btn-primary" onClick={handleCreate}>
+        <h3>📦 Forfaits de {riderName}</h3>
+        <button className="btn btn-primary btn-sm" onClick={handleCreate}>
           ➕ Nouveau Forfait
         </button>
       </div>
 
+      {successMessage && <div className="alert alert-success mb-20">{successMessage}</div>}
+      {error && <div className="alert alert-error mb-20">{error}</div>}
+
       {/* Statistics */}
       {packages.length > 0 && (
-        <div className="stats-grid mb-20">
+        <div className="stats-grid mb-20" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
           <div className="stat-card">
             <span className="stat-number">{stats.total}</span>
             <span className="stat-label">Total</span>
@@ -151,10 +146,6 @@ function PackagesList() {
           <div className="stat-card">
             <span className="stat-number">{stats.active}</span>
             <span className="stat-label">Actifs</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats.inactive}</span>
-            <span className="stat-label">Inactifs</span>
           </div>
           <div className="stat-card">
             <span className="stat-number">{stats.totalPrivateLessons}</span>
@@ -167,48 +158,14 @@ function PackagesList() {
         </div>
       )}
 
-      {/* Filter */}
-      {packages.length > 0 && (
-        <div className="filter-buttons mb-20">
-          <button
-            className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('all')}
-          >
-            Tous ({stats.total})
-          </button>
-          <button
-            className={`btn ${filter === 'active' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('active')}
-          >
-            ✅ Actifs ({stats.active})
-          </button>
-          <button
-            className={`btn ${filter === 'inactive' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('inactive')}
-          >
-            ⏸️ Inactifs ({stats.inactive})
-          </button>
-        </div>
-      )}
-
-      {successMessage && <div className="alert alert-success mb-20">{successMessage}</div>}
-
-      {error && <div className="alert alert-error mb-20">{error}</div>}
-
       {packages.length === 0 ? (
-        <div className="empty-state">
+        <div className="empty-state" style={{ padding: '40px 20px' }}>
           <div className="empty-state-icon">📦</div>
-          <h3>Aucun forfait enregistré</h3>
-          <p>Commencez par créer le premier forfait</p>
-          <button className="btn btn-primary" onClick={handleCreate}>
+          <h4>Aucun forfait</h4>
+          <p>Ce cavalier n'a pas encore de forfait</p>
+          <button className="btn btn-primary btn-sm" onClick={handleCreate}>
             ➕ Créer le premier forfait
           </button>
-        </div>
-      ) : filteredPackages.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">🔍</div>
-          <h3>Aucun résultat</h3>
-          <p>Aucun forfait {filter === 'active' ? 'actif' : 'inactif'} trouvé</p>
         </div>
       ) : (
         <div className="table-responsive">
@@ -216,32 +173,19 @@ function PackagesList() {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>👤 Cavalier</th>
                 <th>🎓 Cours Privés</th>
                 <th>👥 Cours Collectifs</th>
-                <th>📅 Début d'activité</th>
-                <th>📅 Fin d'activité</th>
+                <th>📅 Début</th>
+                <th>📅 Fin</th>
                 <th>Statut</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredPackages.map((pkg) => (
+              {packages.map((pkg) => (
                 <tr key={pkg.id}>
                   <td>
                     <strong>#{pkg.id}</strong>
-                  </td>
-                  <td>
-                    {pkg.riders ? (
-                      <div className="rider-info">
-                        <strong>{pkg.riders.name}</strong>
-                        {pkg.riders.email && (
-                          <small className="text-muted d-block">{pkg.riders.email}</small>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-muted">Non assigné</span>
-                    )}
                   </td>
                   <td>
                     <span className="badge badge-info">{pkg.private_lesson_count || 0}</span>
@@ -254,13 +198,10 @@ function PackagesList() {
                   <td>{getStatusBadge(pkg.activity_start_date, pkg.activity_end_date)}</td>
                   <td className="actions">
                     <button className="btn btn-sm btn-secondary" onClick={() => handleEdit(pkg)}>
-                      ✏️ Modifier
+                      ✏️
                     </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(pkg.id, pkg.riders?.name)}
-                    >
-                      🗑️ Supprimer
+                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(pkg.id)}>
+                      🗑️
                     </button>
                   </td>
                 </tr>
@@ -274,6 +215,7 @@ function PackagesList() {
         <PackageForm
           package={editingPackage}
           riders={riders}
+          riderId={riderId}
           onSubmit={handleFormSubmit}
           onCancel={() => setShowModal(false)}
         />
@@ -282,6 +224,9 @@ function PackagesList() {
   );
 }
 
-PackagesList.propTypes = {};
+RiderPackages.propTypes = {
+  riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  riderName: PropTypes.string.isRequired,
+};
 
-export default PackagesList;
+export default RiderPackages;
