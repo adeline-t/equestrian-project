@@ -1,9 +1,16 @@
-import { getDatabase, handleDbError, jsonResponse, validateRequired, checkRateLimit, getSecurityHeaders } from '../db.js';
-import { 
-  handleDatabaseError, 
-  handleValidationError, 
-  handleNotFoundError, 
-  handleRateLimitError 
+import {
+  getDatabase,
+  handleDbError,
+  jsonResponse,
+  validateRequired,
+  checkRateLimit,
+  getSecurityHeaders,
+} from '../db.js';
+import {
+  handleDatabaseError,
+  handleValidationError,
+  handleNotFoundError,
+  handleRateLimitError,
 } from '../utils/errorHandler.js';
 import { sanitizeAssociationData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
@@ -27,15 +34,17 @@ export async function handleAssociations(request, env) {
     if (request.method === 'GET' && pathParts.length === 2) {
       const { data, error } = await db
         .from('rider_horse_associations')
-        .select(`
+        .select(
+          `
           id,
           rider_id,
           horse_id,
           association_start_date,
           association_end_date,
           riders (id, name),
-          horses (id, name, kind)
-        `)
+          horses (id, name, kind, is_owned_by_laury)
+        `
+        )
         .order('association_start_date', { ascending: false });
 
       if (error) return handleDatabaseError(error, 'associations.list');
@@ -45,22 +54,24 @@ export async function handleAssociations(request, env) {
     // GET /api/associations/:id - Get single association
     if (request.method === 'GET' && pathParts.length === 3) {
       const associationId = parseInt(pathParts[2]);
-      
+
       if (isNaN(associationId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
       const { data, error } = await db
         .from('rider_horse_associations')
-        .select(`
+        .select(
+          `
           id,
           rider_id,
           horse_id,
           association_start_date,
           association_end_date,
           riders (id, name, phone, email),
-          horses (id, name, kind)
-        `)
+          horses (id, name, kind, is_owned_by_laury)
+        `
+        )
         .eq('id', associationId)
         .single();
 
@@ -71,7 +82,7 @@ export async function handleAssociations(request, env) {
     // POST /api/associations - Create association
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
-      
+
       if (!body) {
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
       }
@@ -79,13 +90,17 @@ export async function handleAssociations(request, env) {
       // Validate required fields
       const missingFields = validateRequired(['rider_id', 'horse_id'], body);
       if (missingFields) {
-        return jsonResponse({ error: `Champs requis: ${missingFields}` }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: `Champs requis: ${missingFields}` },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       // Validate IDs
       const riderId = parseInt(body.rider_id);
       const horseId = parseInt(body.horse_id);
-      
+
       if (isNaN(riderId) || isNaN(horseId)) {
         return jsonResponse({ error: 'IDs invalides' }, 400, getSecurityHeaders());
       }
@@ -93,7 +108,7 @@ export async function handleAssociations(request, env) {
       // Check if rider and horse exist
       const [riderCheck, horseCheck] = await Promise.all([
         db.from('riders').select('id').eq('id', riderId).single(),
-        db.from('horses').select('id').eq('id', horseId).single()
+        db.from('horses').select('id').eq('id', horseId).single(),
       ]);
 
       if (riderCheck.error || horseCheck.error) {
@@ -110,15 +125,17 @@ export async function handleAssociations(request, env) {
       const { data, error } = await db
         .from('rider_horse_associations')
         .insert(associationData)
-        .select(`
+        .select(
+          `
           id,
           rider_id,
           horse_id,
           association_start_date,
           association_end_date,
           riders (id, name),
-          horses (id, name, kind)
-        `)
+          horses (id, name, kind, is_owned_by_laury)
+        `
+        )
         .single();
 
       if (error) return handleDatabaseError(error, 'associations.create');
@@ -129,9 +146,13 @@ export async function handleAssociations(request, env) {
     if (request.method === 'PUT' && pathParts.length === 3) {
       const associationId = parseInt(pathParts[2]);
       const body = await request.json().catch(() => null);
-      
+
       if (isNaN(associationId) || !body) {
-        return jsonResponse({ error: 'ID ou corps de requête invalide' }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: 'ID ou corps de requête invalide' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       const updateData = {
@@ -144,15 +165,17 @@ export async function handleAssociations(request, env) {
         .from('rider_horse_associations')
         .update(updateData)
         .eq('id', associationId)
-        .select(`
+        .select(
+          `
           id,
           rider_id,
           horse_id,
           association_start_date,
           association_end_date,
           riders (id, name),
-          horses (id, name, kind)
-        `)
+          horses (id, name, kind, is_owned_by_laury)
+        `
+        )
         .single();
 
       if (error) return handleDatabaseError(error, 'associations.update');
@@ -162,22 +185,22 @@ export async function handleAssociations(request, env) {
     // DELETE /api/associations/:id - Delete association
     if (request.method === 'DELETE' && pathParts.length === 3) {
       const associationId = parseInt(pathParts[2]);
-      
+
       if (isNaN(associationId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
-      
-      const { error } = await db
-        .from('rider_horse_associations')
-        .delete()
-        .eq('id', associationId);
+
+      const { error } = await db.from('rider_horse_associations').delete().eq('id', associationId);
 
       if (error) return handleDatabaseError(error, 'associations.delete');
-      return jsonResponse({ message: 'Association supprimée avec succès' }, 200, getSecurityHeaders());
+      return jsonResponse(
+        { message: 'Association supprimée avec succès' },
+        200,
+        getSecurityHeaders()
+      );
     }
 
     return jsonResponse({ error: 'Route non trouvée' }, 404, getSecurityHeaders());
-
   } catch (error) {
     console.error('Unexpected error:', error);
     return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());

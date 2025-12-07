@@ -17,6 +17,7 @@ CREATE TABLE horses (
     kind VARCHAR(10) NOT NULL CHECK (kind IN ('horse', 'pony')),
     activity_start_date DATE,
     activity_end_date DATE,
+    is_owned_by_laury BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

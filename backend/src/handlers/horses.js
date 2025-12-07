@@ -1,10 +1,17 @@
-import { getDatabase, handleDbError, jsonResponse, validateRequired, checkRateLimit, getSecurityHeaders } from '../db.js';
-import { 
-  handleDatabaseError, 
-  handleValidationError, 
-  handleNotFoundError, 
+import {
+  getDatabase,
+  handleDbError,
+  jsonResponse,
+  validateRequired,
+  checkRateLimit,
+  getSecurityHeaders,
+} from '../db.js';
+import {
+  handleDatabaseError,
+  handleValidationError,
+  handleNotFoundError,
   handleRateLimitError,
-  handleUnexpectedError 
+  handleUnexpectedError,
 } from '../utils/errorHandler.js';
 import { sanitizeHorseData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
@@ -26,10 +33,7 @@ export async function handleHorses(request, env) {
   try {
     // GET /api/horses - List all horses
     if (request.method === 'GET' && pathParts.length === 2) {
-      const { data, error } = await db
-        .from('horses')
-        .select('*')
-        .order('name');
+      const { data, error } = await db.from('horses').select('*').order('name');
 
       if (error) return handleDatabaseError(error, 'horses.list');
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -38,16 +42,12 @@ export async function handleHorses(request, env) {
     // GET /api/horses/:id - Get single horse
     if (request.method === 'GET' && pathParts.length === 3) {
       const horseId = parseInt(pathParts[2]);
-      
+
       if (isNaN(horseId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
-      const { data, error } = await db
-        .from('horses')
-        .select('*')
-        .eq('id', horseId)
-        .single();
+      const { data, error } = await db.from('horses').select('*').eq('id', horseId).single();
 
       if (error) return handleDatabaseError(error, 'horses.get');
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -56,7 +56,7 @@ export async function handleHorses(request, env) {
     // POST /api/horses - Create horse
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
-      
+
       if (!body) {
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
       }
@@ -64,12 +64,20 @@ export async function handleHorses(request, env) {
       // Validate required fields
       const missingFields = validateRequired(['name', 'kind'], body);
       if (missingFields) {
-        return jsonResponse({ error: `Champs requis: ${missingFields}` }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: `Champs requis: ${missingFields}` },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       // Validate kind
       if (!['horse', 'pony'].includes(body.kind)) {
-        return jsonResponse({ error: 'Le type doit être "horse" ou "pony"' }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: 'Le type doit être "horse" ou "pony"' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       const horseData = {
@@ -77,13 +85,10 @@ export async function handleHorses(request, env) {
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
+        is_owned_by_laury: body.is_owned_by_laury || false,
       };
 
-      const { data, error } = await db
-        .from('horses')
-        .insert(horseData)
-        .select()
-        .single();
+      const { data, error } = await db.from('horses').insert(horseData).select().single();
 
       if (error) return handleDatabaseError(error, 'horses.create');
       return jsonResponse(data, 201, getSecurityHeaders());
@@ -93,14 +98,22 @@ export async function handleHorses(request, env) {
     if (request.method === 'PUT' && pathParts.length === 3) {
       const horseId = parseInt(pathParts[2]);
       const body = await request.json().catch(() => null);
-      
+
       if (isNaN(horseId) || !body) {
-        return jsonResponse({ error: 'ID ou corps de requête invalide' }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: 'ID ou corps de requête invalide' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       // Validate kind if provided
       if (body.kind && !['horse', 'pony'].includes(body.kind)) {
-        return jsonResponse({ error: 'Le type doit être "horse" ou "pony"' }, 400, getSecurityHeaders());
+        return jsonResponse(
+          { error: 'Le type doit être "horse" ou "pony"' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       const updateData = {
@@ -108,12 +121,13 @@ export async function handleHorses(request, env) {
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
+        is_owned_by_laury: body.is_owned_by_laury || false,
         updated_at: new Date().toISOString(),
       };
 
       // Remove undefined fields
-      Object.keys(updateData).forEach(key => 
-        updateData[key] === undefined && delete updateData[key]
+      Object.keys(updateData).forEach(
+        (key) => updateData[key] === undefined && delete updateData[key]
       );
 
       const { data, error } = await db
@@ -130,22 +144,18 @@ export async function handleHorses(request, env) {
     // DELETE /api/horses/:id - Delete horse
     if (request.method === 'DELETE' && pathParts.length === 3) {
       const horseId = parseInt(pathParts[2]);
-      
+
       if (isNaN(horseId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
-      
-      const { error } = await db
-        .from('horses')
-        .delete()
-        .eq('id', horseId);
+
+      const { error } = await db.from('horses').delete().eq('id', horseId);
 
       if (error) return handleDatabaseError(error, 'horses.delete');
       return jsonResponse({ message: 'Cheval supprimé avec succès' }, 200, getSecurityHeaders());
     }
 
     return jsonResponse({ error: 'Route non trouvée' }, 404, getSecurityHeaders());
-
   } catch (error) {
     console.error('Unexpected error:', error);
     return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());
@@ -169,7 +179,8 @@ export async function handleHorseRiders(request, env, horseId) {
 
     const { data, error } = await db
       .from('rider_horse_associations')
-      .select(`
+      .select(
+        `
         id,
         association_start_date,
         association_end_date,
@@ -181,7 +192,8 @@ export async function handleHorseRiders(request, env, horseId) {
           activity_start_date,
           activity_end_date
         )
-      `)
+      `
+      )
       .eq('horse_id', horseIdNum)
       .order('association_start_date', { ascending: false });
 

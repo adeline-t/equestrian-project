@@ -7,6 +7,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     kind: 'horse',
     activity_start_date: '',
     activity_end_date: '',
+    is_owned_by_laury: false,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -18,6 +19,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         kind: horse.kind || 'horse',
         activity_start_date: horse.activity_start_date || '',
         activity_end_date: horse.activity_end_date || '',
+        is_owned_by_laury: horse.is_owned_by_laury || false,
       });
     } else {
       setFormData({
@@ -25,6 +27,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         kind: 'horse',
         activity_start_date: '',
         activity_end_date: '',
+        is_owned_by_laury: false,
       });
     }
   }, [horse]);
@@ -35,7 +38,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       ...prev,
       [name]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (error) {
       setError('');
@@ -62,7 +65,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     if (formData.activity_start_date && formData.activity_end_date) {
       const startDate = new Date(formData.activity_start_date);
       const endDate = new Date(formData.activity_end_date);
-      
+
       if (startDate > endDate) {
         setError('La date de début doit être antérieure à la date de fin');
         return false;
@@ -88,6 +91,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         kind: formData.kind,
         activity_start_date: formData.activity_start_date || null,
         activity_end_date: formData.activity_end_date || null,
+        is_owned_by_laury: formData.is_owned_by_laury || false,
       };
       await onSubmit(submitData);
     } catch (err) {
@@ -105,11 +109,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
-      {error && (
-        <div className="error">
-          ⚠️ {error}
-        </div>
-      )}
+      {error && <div className="error">⚠️ {error}</div>}
 
       <div className="form-group">
         <label htmlFor="name">
@@ -172,20 +172,34 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <div style={{ 
-          padding: '16px', 
-          background: '#f7fafc', 
-          borderRadius: '8px',
-          border: '2px solid #e2e8f0'
-        }}>
+        <label htmlFor="is_owned_by_laury">Est-ce que ce cheval/poney appartient à Laury ?</label>
+        <input
+          type="checkbox"
+          id="is_owned_by_laury"
+          name="is_owned_by_laury"
+          checked={formData.is_owned_by_laury}
+          onChange={handleChange}
+          disabled={submitting}
+        />
+      </div>
+
+      <div className="form-group">
+        <div
+          style={{
+            padding: '16px',
+            background: '#f7fafc',
+            borderRadius: '8px',
+            border: '2px solid #e2e8f0',
+          }}
+        >
           <h4 style={{ margin: '0 0 8px 0', color: '#4a5568' }}>Récapitulatif</h4>
           <p style={{ margin: '0', color: '#718096' }}>
-            {formData.kind === 'horse' ? '🐴' : '🦄'} <strong>{formData.name || 'Nom'}</strong> - 
+            {formData.kind === 'horse' ? '🐴' : '🦄'} <strong>{formData.name || 'Nom'}</strong> -
             {formData.kind === 'horse' ? ' Cheval' : ' Poney'}
           </p>
           {formData.activity_start_date && (
             <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.9rem' }}>
-              Activité: {formData.activity_start_date} 
+              Activité: {formData.activity_start_date}
               {formData.activity_end_date && ` → ${formData.activity_end_date}`}
             </p>
           )}
@@ -193,11 +207,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="flex gap-10 mt-20">
-        <button 
-          type="submit" 
-          className="btn btn-success" 
-          disabled={submitting}
-        >
+        <button type="submit" className="btn btn-success" disabled={submitting}>
           {submitting ? (
             <>
               <span className="loading-spinner"></span>
@@ -205,13 +215,14 @@ function HorseForm({ horse, onSubmit, onCancel }) {
             </>
           ) : (
             <>
-              ✓ {horse ? 'Mettre à jour' : 'Créer'} le {formData.kind === 'horse' ? 'cheval' : 'poney'}
+              ✓ {horse ? 'Mettre à jour' : 'Créer'} le{' '}
+              {formData.kind === 'horse' ? 'cheval' : 'poney'}
             </>
           )}
         </button>
-        <button 
-          type="button" 
-          className="btn btn-secondary" 
+        <button
+          type="button"
+          className="btn btn-secondary"
           onClick={onCancel}
           disabled={submitting}
         >
