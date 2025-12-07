@@ -23,19 +23,35 @@ export async function handlePackages(request, env) {
   }
 
   try {
-    // GET /api/packages - List all packages
+    // GET /api/packages - List all packages with rider information
     if (request.method === 'GET' && pathParts.length === 2) {
-      // FIX: Changed order from 'name' to 'id' since packages table has no name column
       const { data, error } = await db
         .from('packages')
-        .select('*')
+        .select(
+          `
+          id,
+          private_lesson_count,
+          joint_lesson_count,
+          activity_start_date,
+          activity_end_date,
+          rider_id,
+          created_at,
+          updated_at,
+          riders (
+            id,
+            name,
+            email,
+            phone
+          )
+        `
+        )
         .order('id', { ascending: true });
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // GET /api/packages/:id - Get single package
+    // GET /api/packages/:id - Get single package with rider information
     if (request.method === 'GET' && pathParts.length === 3) {
       const id = parseInt(pathParts[2]);
 
@@ -43,7 +59,28 @@ export async function handlePackages(request, env) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
-      const { data, error } = await db.from('packages').select('*').eq('id', id).single();
+      const { data, error } = await db
+        .from('packages')
+        .select(
+          `
+          id,
+          private_lesson_count,
+          joint_lesson_count,
+          activity_start_date,
+          activity_end_date,
+          rider_id,
+          created_at,
+          updated_at,
+          riders (
+            id,
+            name,
+            email,
+            phone
+          )
+        `
+        )
+        .eq('id', id)
+        .single();
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -57,8 +94,8 @@ export async function handlePackages(request, env) {
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
       }
 
-      // Validate required fields
-      const requiredFields = ['private_lesson_count', 'joint_lesson_count'];
+      // Validate required fields (including rider_id)
+      const requiredFields = ['private_lesson_count', 'joint_lesson_count', 'rider_id'];
       const missingFields = validateRequired(requiredFields, body);
       if (missingFields) {
         return jsonResponse(
@@ -68,17 +105,53 @@ export async function handlePackages(request, env) {
         );
       }
 
-      // FIX: Added activity_start_date and activity_end_date fields
+      // Validate rider_id
+      const riderId = parseInt(body.rider_id);
+      if (isNaN(riderId)) {
+        return jsonResponse({ error: 'rider_id invalide' }, 400, getSecurityHeaders());
+      }
+
+      // Check if rider exists
+      const { data: riderExists, error: riderError } = await db
+        .from('riders')
+        .select('id')
+        .eq('id', riderId)
+        .single();
+
+      if (riderError || !riderExists) {
+        return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
+      }
+
       const packageData = {
-        private_lesson_count: body.private_lesson_count
-          ? parseInt(body.private_lesson_count)
-          : 0,
+        private_lesson_count: body.private_lesson_count ? parseInt(body.private_lesson_count) : 0,
         joint_lesson_count: body.joint_lesson_count ? parseInt(body.joint_lesson_count) : 0,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
+        rider_id: riderId,
       };
 
-      const { data, error } = await db.from('packages').insert(packageData).select().single();
+      const { data, error } = await db
+        .from('packages')
+        .insert(packageData)
+        .select(
+          `
+          id,
+          private_lesson_count,
+          joint_lesson_count,
+          activity_start_date,
+          activity_end_date,
+          rider_id,
+          created_at,
+          updated_at,
+          riders (
+            id,
+            name,
+            email,
+            phone
+          )
+        `
+        )
+        .single();
 
       if (error) return handleDbError(error);
       return jsonResponse(data, 201, getSecurityHeaders());
@@ -106,7 +179,25 @@ export async function handlePackages(request, env) {
 
       if (fetchError) return handleDbError(fetchError);
 
-      // FIX: Added activity_start_date and activity_end_date fields
+      // If rider_id is being updated, validate it
+      if (body.rider_id !== undefined) {
+        const riderId = parseInt(body.rider_id);
+        if (isNaN(riderId)) {
+          return jsonResponse({ error: 'rider_id invalide' }, 400, getSecurityHeaders());
+        }
+
+        // Check if rider exists
+        const { data: riderExists, error: riderError } = await db
+          .from('riders')
+          .select('id')
+          .eq('id', riderId)
+          .single();
+
+        if (riderError || !riderExists) {
+          return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
+        }
+      }
+
       const updateData = {
         private_lesson_count:
           body.private_lesson_count !== undefined
@@ -124,6 +215,7 @@ export async function handlePackages(request, env) {
           body.activity_end_date !== undefined
             ? body.activity_end_date
             : currentPackage.activity_end_date,
+        rider_id: body.rider_id !== undefined ? parseInt(body.rider_id) : currentPackage.rider_id,
         updated_at: new Date().toISOString(),
       };
 
@@ -131,7 +223,24 @@ export async function handlePackages(request, env) {
         .from('packages')
         .update(updateData)
         .eq('id', id)
-        .select()
+        .select(
+          `
+          id,
+          private_lesson_count,
+          joint_lesson_count,
+          activity_start_date,
+          activity_end_date,
+          rider_id,
+          created_at,
+          updated_at,
+          riders (
+            id,
+            name,
+            email,
+            phone
+          )
+        `
+        )
         .single();
 
       if (error) return handleDbError(error);
@@ -156,12 +265,70 @@ export async function handlePackages(request, env) {
   } catch (error) {
     console.error('Error in handlePackages:', error);
     return jsonResponse(
-      { 
+      {
         error: 'Erreur serveur interne',
         message: error.message,
-        details: error.stack 
-      }, 
-      500, 
+        details: error.stack,
+      },
+      500,
+      getSecurityHeaders()
+    );
+  }
+}
+
+// New function: Get all packages for a specific rider
+export async function handleRiderPackages(request, env, riderId) {
+  const db = getDatabase(env);
+  const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+
+  if (!checkRateLimit(clientIP, 60, 60000)) {
+    return jsonResponse({ error: 'Trop de requêtes' }, 429, getSecurityHeaders());
+  }
+
+  try {
+    const riderIdNum = parseInt(riderId);
+    if (isNaN(riderIdNum)) {
+      return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
+    }
+
+    // Check if rider exists
+    const { data: riderExists, error: riderError } = await db
+      .from('riders')
+      .select('id')
+      .eq('id', riderIdNum)
+      .single();
+
+    if (riderError || !riderExists) {
+      return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
+    }
+
+    const { data, error } = await db
+      .from('packages')
+      .select(
+        `
+        id,
+        private_lesson_count,
+        joint_lesson_count,
+        activity_start_date,
+        activity_end_date,
+        rider_id,
+        created_at,
+        updated_at
+      `
+      )
+      .eq('rider_id', riderIdNum)
+      .order('created_at', { ascending: false });
+
+    if (error) return handleDbError(error);
+    return jsonResponse(data, 200, getSecurityHeaders());
+  } catch (error) {
+    console.error('Unexpected error in handleRiderPackages:', error);
+    return jsonResponse(
+      {
+        error: 'Erreur serveur interne',
+        message: error.message,
+      },
+      500,
       getSecurityHeaders()
     );
   }

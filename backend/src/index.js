@@ -1,7 +1,7 @@
 import { handleRiders, handleRiderHorses } from './handlers/riders.js';
 import { handleHorses, handleHorseRiders } from './handlers/horses.js';
 import { handlePairings } from './handlers/pairings.js';
-import { handlePackages } from './handlers/packages.js';
+import { handlePackages, handleRiderPackages } from './handlers/packages.js';
 import { jsonResponse, getSecurityHeaders } from './db.js';
 
 export default {
@@ -33,6 +33,11 @@ export default {
       if (path.match(/^\/api\/riders\/\d+\/horses$/)) {
         const riderId = path.split('/')[3];
         return handleRiderHorses(request, env, riderId);
+      }
+      // NEW: Get packages for a specific rider
+      if (path.match(/^\/api\/riders\/\d+\/packages$/)) {
+        const riderId = path.split('/')[3];
+        return handleRiderPackages(request, env, riderId);
       }
       if (path.startsWith('/api/riders')) {
         return handleRiders(request, env);
@@ -86,6 +91,7 @@ export default {
                 'PUT /api/riders/:id': 'Update rider',
                 'DELETE /api/riders/:id': 'Delete rider',
                 'GET /api/riders/:id/horses': 'Get horses for rider',
+                'GET /api/riders/:id/packages': 'Get packages for rider',
               },
               horses: {
                 'GET /api/horses': 'List all horses',
@@ -103,9 +109,9 @@ export default {
                 'DELETE /api/pairings/:id': 'Delete pairing',
               },
               packages: {
-                'GET /api/packages': 'List all packages',
-                'GET /api/packages/:id': 'Get single package',
-                'POST /api/packages': 'Create package',
+                'GET /api/packages': 'List all packages (with rider info)',
+                'GET /api/packages/:id': 'Get single package (with rider info)',
+                'POST /api/packages': 'Create package (requires rider_id)',
                 'PUT /api/packages/:id': 'Update package',
                 'DELETE /api/packages/:id': 'Delete package',
               },

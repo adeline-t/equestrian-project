@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './package.css';
 
-function PackageForm({ package: packageData, onSubmit, onCancel }) {
+function PackageForm({ package: packageData, riders, riderId, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
+    rider_id: '',
     private_lesson_count: '',
     joint_lesson_count: '',
     activity_start_date: '',
@@ -15,6 +16,7 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
   useEffect(() => {
     if (packageData) {
       setFormData({
+        rider_id: packageData.rider_id?.toString() || riderId?.toString() || '',
         private_lesson_count: packageData.private_lesson_count?.toString() || '',
         joint_lesson_count: packageData.joint_lesson_count?.toString() || '',
         activity_start_date: packageData.activity_start_date || '',
@@ -22,13 +24,14 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
       });
     } else {
       setFormData({
+        rider_id: riderId?.toString() || '',
         private_lesson_count: '',
         joint_lesson_count: '',
         activity_start_date: '',
         activity_end_date: '',
       });
     }
-  }, [packageData]);
+  }, [packageData, riderId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,6 +47,12 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
   };
 
   const validateForm = () => {
+    // Validate rider selection
+    if (!formData.rider_id) {
+      setError('Veuillez sélectionner un cavalier');
+      return false;
+    }
+
     if (!formData.private_lesson_count && !formData.joint_lesson_count) {
       setError('Au moins un type de cours est requis');
       return false;
@@ -84,6 +93,7 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
     try {
       setSubmitting(true);
       const submitData = {
+        rider_id: parseInt(formData.rider_id),
         private_lesson_count: formData.private_lesson_count
           ? parseInt(formData.private_lesson_count)
           : 0,
@@ -105,6 +115,9 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
     }
   };
 
+  // Get selected rider info for preview
+  const selectedRider = riders?.find((r) => r.id === parseInt(formData.rider_id));
+
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -119,9 +132,36 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
           <div className="modal-body">
             {error && <div className="alert alert-error mb-20">⚠️ {error}</div>}
 
+            {/* Rider Selection */}
+            <div className="form-group">
+              <label htmlFor="rider_id">
+                👤 Cavalier <span style={{ color: '#e53e3e' }}>*</span>
+              </label>
+              <select
+                id="rider_id"
+                name="rider_id"
+                value={formData.rider_id}
+                onChange={handleChange}
+                disabled={submitting || !!riderId} // Disable if riderId is provided (creating from rider card)
+                required
+              >
+                <option value="">Sélectionner un cavalier</option>
+                {riders?.map((rider) => (
+                  <option key={rider.id} value={rider.id}>
+                    {rider.name} {rider.email && `(${rider.email})`}
+                  </option>
+                ))}
+              </select>
+              {riderId && (
+                <small className="text-muted">
+                  Ce forfait sera automatiquement assigné au cavalier sélectionné
+                </small>
+              )}
+            </div>
+
             <div className="form-group">
               <label htmlFor="private_lesson_count">
-                Nombre de cours privés <span style={{ color: '#e53e3e' }}>*</span>
+                🎓 Nombre de cours privés <span style={{ color: '#e53e3e' }}>*</span>
               </label>
               <input
                 type="number"
@@ -137,7 +177,7 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
 
             <div className="form-group">
               <label htmlFor="joint_lesson_count">
-                Nombre de cours collectifs <span style={{ color: '#e53e3e' }}>*</span>
+                👥 Nombre de cours collectifs <span style={{ color: '#e53e3e' }}>*</span>
               </label>
               <input
                 type="number"
@@ -152,7 +192,7 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="activity_start_date">Date de début</label>
+              <label htmlFor="activity_start_date">📅 Date de début</label>
               <input
                 type="date"
                 id="activity_start_date"
@@ -165,7 +205,7 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="activity_end_date">Date de fin</label>
+              <label htmlFor="activity_end_date">📅 Date de fin</label>
               <input
                 type="date"
                 id="activity_end_date"
@@ -178,7 +218,9 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
             </div>
 
             {/* Preview */}
-            {(formData.private_lesson_count || formData.joint_lesson_count) && (
+            {(formData.rider_id ||
+              formData.private_lesson_count ||
+              formData.joint_lesson_count) && (
               <div className="form-group">
                 <div
                   style={{
@@ -189,6 +231,11 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
                   }}
                 >
                   <h4 style={{ margin: '0 0 12px 0', color: '#4a5568' }}>Aperçu du forfait</h4>
+                  {selectedRider && (
+                    <p style={{ margin: '4px 0', color: '#2d3748', fontWeight: '600' }}>
+                      👤 Pour: <strong>{selectedRider.name}</strong>
+                    </p>
+                  )}
                   {formData.private_lesson_count && parseInt(formData.private_lesson_count) > 0 && (
                     <p style={{ margin: '4px 0', color: '#718096', fontWeight: '500' }}>
                       🎓 <strong>{formData.private_lesson_count}</strong> cours privé(s)
@@ -239,17 +286,28 @@ function PackageForm({ package: packageData, onSubmit, onCancel }) {
 PackageForm.propTypes = {
   package: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    rider_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     private_lesson_count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     joint_lesson_count: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     activity_start_date: PropTypes.string,
     activity_end_date: PropTypes.string,
   }),
+  riders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      email: PropTypes.string,
+    })
+  ),
+  riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Pre-selected rider ID
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
 
 PackageForm.defaultProps = {
   package: null,
+  riders: [],
+  riderId: null,
 };
 
 export default PackageForm;

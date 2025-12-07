@@ -128,6 +128,15 @@ export const ridersApi = {
       handleError(error);
     }
   },
+  // NEW: Get packages for a specific rider
+  getPackages: async (id) => {
+    try {
+      const response = await api.get(`/riders/${id}/packages`);
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 
 export const horsesApi = {
@@ -146,6 +155,18 @@ export const pairingsApi = createCrudApi('pairings');
 
 export const packagesApi = {
   ...createCrudApi('packages'),
+  // NEW: Create package for a specific rider
+  createForRider: async (riderId, packageData) => {
+    try {
+      const response = await api.post('/packages', {
+        ...packageData,
+        rider_id: riderId,
+      });
+      return response.data;
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 
 // Utility API
