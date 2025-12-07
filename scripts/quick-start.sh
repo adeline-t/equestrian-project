@@ -1,1 +1,0 @@
-setup/quick-start.sh

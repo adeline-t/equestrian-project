@@ -1,1 +1,0 @@
-utils/validate-scripts.sh
