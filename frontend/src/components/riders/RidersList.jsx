@@ -91,7 +91,7 @@ function RidersList() {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
-    
+
     if (start && start > now) return false;
     if (end && end < now) return false;
     return true;
@@ -141,10 +141,10 @@ function RidersList() {
                 <th>Email</th>
                 <th>🐴 Chevaux Actifs</th>
                 <th>📦 Forfaits Actifs</th>
-                <th>🎓 Cours Privés</th>
-                <th>👥 Cours Collectifs</th>
-                <th>Début d'activité</th>
-                <th>Fin d'activité</th>
+                <th>🎓 Cours Privés par semaine</th>
+                <th>👥 Cours Collectifs par semaine</th>
+                <th>Début</th>
+                <th>Fin</th>
                 <th>Statut</th>
                 <th>Actions</th>
               </tr>
@@ -158,46 +158,33 @@ function RidersList() {
                   <td>{rider.phone || '-'}</td>
                   <td>{rider.email || '-'}</td>
                   <td>
-                    <span className="badge badge-info">
-                      {rider.active_horses_count || 0}
-                    </span>
+                    <span className="badge badge-info">{rider.active_horses_count || 0}</span>
                   </td>
                   <td>
-                    <span className="badge badge-info">
-                      {rider.active_packages_count || 0}
-                    </span>
+                    <span className="badge badge-info">{rider.active_packages_count || 0}</span>
                   </td>
                   <td>
-                    <span className="badge badge-primary">
-                      {rider.private_lessons_count || 0}
-                    </span>
+                    <span className="badge badge-primary">{rider.private_lessons_count || 0}</span>
                   </td>
                   <td>
-                    <span className="badge badge-primary">
-                      {rider.joint_lessons_count || 0}
-                    </span>
+                    <span className="badge badge-primary">{rider.joint_lessons_count || 0}</span>
                   </td>
                   <td>{formatDate(rider.activity_start_date)}</td>
                   <td>{formatDate(rider.activity_end_date)}</td>
-                  <td>
-                    {getStatusBadge(rider.activity_start_date, rider.activity_end_date)}
-                  </td>
+                  <td>{getStatusBadge(rider.activity_start_date, rider.activity_end_date)}</td>
                   <td className="actions">
-                    <button 
-                      className="btn btn-primary btn-sm" 
+                    <button
+                      className="btn btn-primary btn-sm"
                       onClick={() => handleViewDetails(rider.id)}
                       title="Voir les détails"
                     >
                       👁️ Détails
                     </button>
-                    <button 
-                      className="btn btn-secondary btn-sm" 
-                      onClick={() => handleEdit(rider)}
-                    >
+                    <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(rider)}>
                       ✏️ Modifier
                     </button>
-                    <button 
-                      className="btn btn-danger btn-sm" 
+                    <button
+                      className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(rider.id, rider.name)}
                     >
                       🗑️ Supprimer
@@ -214,9 +201,7 @@ function RidersList() {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>
-                {editingRider ? '✏️ Modifier le cavalier' : '➕ Nouveau cavalier'}
-              </h3>
+              <h3>{editingRider ? '✏️ Modifier le cavalier' : '➕ Nouveau cavalier'}</h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
               </button>

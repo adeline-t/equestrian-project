@@ -52,7 +52,7 @@ function PairingsList() {
   const handleDelete = async (id, riderName, horseName) => {
     if (
       !window.confirm(
-        `Êtes-vous sûr de vouloir supprimer l'pairing entre ${riderName} et ${horseName} ?`
+        `Êtes-vous sûr de vouloir supprimer la DP entre ${riderName} et ${horseName} ?`
       )
     ) {
       return;
@@ -60,7 +60,7 @@ function PairingsList() {
 
     try {
       await pairingsApi.delete(id);
-      setSuccessMessage('Pairing supprimée avec succès');
+      setSuccessMessage('DP supprimée avec succès');
       setTimeout(() => setSuccessMessage(''), 3000);
       loadData();
     } catch (err) {
@@ -72,10 +72,10 @@ function PairingsList() {
     try {
       if (editingPairing) {
         await pairingsApi.update(editingPairing.id, pairingData);
-        setSuccessMessage('Pairing modifiée avec succès');
+        setSuccessMessage('DP modifiée avec succès');
       } else {
         await pairingsApi.create(pairingData);
-        setSuccessMessage('Pairing créée avec succès');
+        setSuccessMessage('DP créée avec succès');
       }
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
@@ -96,10 +96,6 @@ function PairingsList() {
 
   const getKindLabel = (kind) => {
     return kind === 'horse' ? 'Cheval' : 'Poney';
-  };
-
-  const getKindEmoji = (kind) => {
-    return kind === 'horse' ? '🐴' : '🦄';
   };
 
   const isActive = (startDate, endDate) => {
@@ -134,15 +130,15 @@ function PairingsList() {
   };
 
   if (loading) {
-    return <div className="loading">Chargement des pairings...</div>;
+    return <div className="loading">Chargement des DP...</div>;
   }
 
   return (
     <div className="card">
       <div className="flex-between mb-20">
-        <h2>Pairings Cavalier-Cheval</h2>
+        <h2>DP</h2>
         <button className="btn btn-primary" onClick={handleCreate}>
-          ➕ Nouvelle Pairing
+          ➕ Nouvelle DP
         </button>
       </div>
 
@@ -194,17 +190,17 @@ function PairingsList() {
       {pairings.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">🔗</div>
-          <h3>Aucune pairing enregistrée</h3>
-          <p>Commencez par créer la première pairing entre un cavalier et un cheval</p>
+          <h3>Aucune DP enregistrée</h3>
+          <p>Commencez par créer la première DP entre un cavalier et un cheval</p>
           <button className="btn btn-primary" onClick={handleCreate}>
-            Créer la première pairing
+            Créer la première DP
           </button>
         </div>
       ) : filteredPairings.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">🔍</div>
           <h3>Aucun résultat</h3>
-          <p>Aucune pairing {filter === 'active' ? 'active' : 'inactive'} trouvée</p>
+          <p>Aucune DP {filter === 'active' ? 'active' : 'inactive'} trouvée</p>
         </div>
       ) : (
         <div className="table-responsive">
@@ -227,9 +223,7 @@ function PairingsList() {
                     <strong>👤 {pairing.riders?.name || 'N/A'}</strong>
                   </td>
                   <td>
-                    <strong>
-                      {getKindEmoji(pairing.horses?.kind)} {pairing.horses?.name || 'N/A'}
-                    </strong>
+                    <strong>{pairing.horses?.name || 'N/A'}</strong>
                   </td>
                   <td>
                     <span className={`badge badge-${pairing.horses?.kind}`}>
@@ -267,7 +261,7 @@ function PairingsList() {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingPairing ? "✏️ Modifier l'pairing" : '➕ Nouvelle pairing'}</h3>
+              <h3>{editingPairing ? '✏️ Modifier la DP' : '➕ Nouvelle DP'}</h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
               </button>

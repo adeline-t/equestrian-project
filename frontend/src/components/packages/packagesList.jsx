@@ -118,16 +118,6 @@ function PackagesList() {
     return filter === 'active' ? active : !active;
   });
 
-  const stats = {
-    total: packages.length,
-    active: packages.filter((pkg) => isActive(pkg.activity_start_date, pkg.activity_end_date))
-      .length,
-    inactive: packages.filter((pkg) => !isActive(pkg.activity_start_date, pkg.activity_end_date))
-      .length,
-    totalPrivateLessons: packages.reduce((sum, pkg) => sum + (pkg.private_lesson_count || 0), 0),
-    totalJointLessons: packages.reduce((sum, pkg) => sum + (pkg.joint_lesson_count || 0), 0),
-  };
-
   if (loading) {
     return <div className="loading">Chargement des forfaits...</div>;
   }
@@ -141,32 +131,6 @@ function PackagesList() {
         </button>
       </div>
 
-      {/* Statistics */}
-      {packages.length > 0 && (
-        <div className="stats-grid mb-20">
-          <div className="stat-card">
-            <span className="stat-number">{stats.total}</span>
-            <span className="stat-label">Total</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats.active}</span>
-            <span className="stat-label">Actifs</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats.inactive}</span>
-            <span className="stat-label">Inactifs</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats.totalPrivateLessons}</span>
-            <span className="stat-label">🎓 Cours Privés</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-number">{stats.totalJointLessons}</span>
-            <span className="stat-label">👥 Cours Collectifs</span>
-          </div>
-        </div>
-      )}
-
       {/* Filter */}
       {packages.length > 0 && (
         <div className="filter-buttons mb-20">
@@ -174,19 +138,19 @@ function PackagesList() {
             className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilter('all')}
           >
-            Tous ({stats.total})
+            Tous
           </button>
           <button
             className={`btn ${filter === 'active' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilter('active')}
           >
-            ✅ Actifs ({stats.active})
+            ✅ Actifs
           </button>
           <button
             className={`btn ${filter === 'inactive' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilter('inactive')}
           >
-            ⏸️ Inactifs ({stats.inactive})
+            ⏸️ Inactifs
           </button>
         </div>
       )}
@@ -217,10 +181,10 @@ function PackagesList() {
               <tr>
                 <th>ID</th>
                 <th>👤 Cavalier</th>
-                <th>🎓 Cours Privés</th>
-                <th>👥 Cours Collectifs</th>
-                <th>📅 Début d'activité</th>
-                <th>📅 Fin d'activité</th>
+                <th>🎓 Cours Privés par semaine</th>
+                <th>👥 Cours Collectifs par semaine</th>
+                <th>📅 Début</th>
+                <th>📅 Fin</th>
                 <th>Statut</th>
                 <th>Actions</th>
               </tr>

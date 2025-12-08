@@ -106,10 +106,6 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
     return horses.find((h) => h.id.toString() === formData.horse_id);
   };
 
-  const getKindEmoji = (kind) => {
-    return kind === 'horse' ? '🐴' : '🦄';
-  };
-
   const getKindLabel = (kind) => {
     return kind === 'horse' ? 'Cheval' : 'Poney';
   };
@@ -154,14 +150,14 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
           <option value="">Sélectionnez un cheval</option>
           {horses.map((horse) => (
             <option key={horse.id} value={horse.id}>
-              {getKindEmoji(horse.kind)} {horse.name} ({getKindLabel(horse.kind)})
+              {horse.name} ({getKindLabel(horse.kind)})
             </option>
           ))}
         </select>
       </div>
 
       <div className="form-group">
-        <label htmlFor="pairing_start_date">Date de début d'pairing</label>
+        <label htmlFor="pairing_start_date">Date de début</label>
         <input
           type="date"
           id="pairing_start_date"
@@ -174,7 +170,7 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="pairing_end_date">Date de fin d'pairing</label>
+        <label htmlFor="pairing_end_date">Date de fin</label>
         <input
           type="date"
           id="pairing_end_date"
@@ -197,11 +193,10 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
               border: '2px solid #e2e8f0',
             }}
           >
-            <h4 style={{ margin: '0 0 12px 0', color: '#4a5568' }}>Aperçu de l'pairing</h4>
+            <h4 style={{ margin: '0 0 12px 0', color: '#4a5568' }}>Aperçu</h4>
             <p style={{ margin: '0', color: '#718096', fontWeight: '500' }}>
               👤 <strong>{getSelectedRider()?.name || 'Cavalier'}</strong>
               {' ↔ '}
-              {getKindEmoji(getSelectedHorse()?.kind)}{' '}
               <strong>{getSelectedHorse()?.name || 'Cheval'}</strong>
             </p>
             {getSelectedHorse() && (
@@ -231,7 +226,7 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
               Enregistrement...
             </>
           ) : (
-            <>✓ {pairing ? 'Mettre à jour' : 'Créer'} l'pairing</>
+            <>✓ {pairing ? 'Mettre à jour' : 'Créer'} la DP</>
           )}
         </button>
         <button

@@ -173,7 +173,7 @@ function PackageForm({
             </div>
 
             <div className="form-group">
-              <label htmlFor="private_lesson_count">🎓 Nombre de cours privés</label>
+              <label htmlFor="private_lesson_count">🎓 Nombre de cours privés par semaine</label>
               <input
                 type="number"
                 id="private_lesson_count"
@@ -187,7 +187,7 @@ function PackageForm({
             </div>
 
             <div className="form-group">
-              <label htmlFor="joint_lesson_count">👥 Nombre de cours collectifs</label>
+              <label htmlFor="joint_lesson_count">👥 Nombre de cours collectifs par semaine</label>
               <input
                 type="number"
                 id="joint_lesson_count"
@@ -256,8 +256,7 @@ function PackageForm({
                   )}
                   {formData.activity_start_date && (
                     <p style={{ margin: '4px 0', color: '#718096', fontSize: '0.9rem' }}>
-                      📅 Période: {formData.activity_start_date}
-                      {formData.activity_end_date && ` → ${formData.activity_end_date}`}
+                      📅 Dépuis: {formData.activity_start_date}
                     </p>
                   )}
                 </div>

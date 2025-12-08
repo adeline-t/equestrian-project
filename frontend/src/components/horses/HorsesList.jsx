@@ -86,15 +86,11 @@ function HorsesList() {
     return kind === 'horse' ? 'Cheval' : 'Poney';
   };
 
-  const getKindEmoji = (kind) => {
-    return kind === 'horse' ? '🐴' : '🦄';
-  };
-
   const isActive = (startDate, endDate) => {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
-    
+
     if (start && start > now) return false;
     if (end && end < now) return false;
     return true;
@@ -109,16 +105,16 @@ function HorsesList() {
     );
   };
 
-  const filteredHorses = horses.filter(horse => {
+  const filteredHorses = horses.filter((horse) => {
     if (filter === 'all') return true;
     return horse.kind === filter;
   });
 
   const stats = {
     total: horses.length,
-    horses: horses.filter(h => h.kind === 'horse').length,
-    ponies: horses.filter(h => h.kind === 'pony').length,
-    active: horses.filter(h => isActive(h.activity_start_date, h.activity_end_date)).length,
+    horses: horses.filter((h) => h.kind === 'horse').length,
+    ponies: horses.filter((h) => h.kind === 'pony').length,
+    active: horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date)).length,
   };
 
   if (loading) {
@@ -216,34 +212,23 @@ function HorsesList() {
               {filteredHorses.map((horse) => (
                 <tr key={horse.id}>
                   <td>
-                    <strong>
-                      {getKindEmoji(horse.kind)} {horse.name}
-                    </strong>
+                    <strong>{horse.name}</strong>
                   </td>
                   <td>
-                    <span className={`badge badge-${horse.kind}`}>
-                      {getKindLabel(horse.kind)}
-                    </span>
+                    <span className={`badge badge-${horse.kind}`}>{getKindLabel(horse.kind)}</span>
                   </td>
                   <td>
-                    <span className="badge badge-info">
-                      {horse.active_riders_count || 0}
-                    </span>
+                    <span className="badge badge-info">{horse.active_riders_count || 0}</span>
                   </td>
                   <td>{formatDate(horse.activity_start_date)}</td>
                   <td>{formatDate(horse.activity_end_date)}</td>
-                  <td>
-                    {getStatusBadge(horse.activity_start_date, horse.activity_end_date)}
-                  </td>
+                  <td>{getStatusBadge(horse.activity_start_date, horse.activity_end_date)}</td>
                   <td className="actions">
-                    <button 
-                      className="btn btn-secondary" 
-                      onClick={() => handleEdit(horse)}
-                    >
+                    <button className="btn btn-secondary" onClick={() => handleEdit(horse)}>
                       ✏️ Modifier
                     </button>
-                    <button 
-                      className="btn btn-danger" 
+                    <button
+                      className="btn btn-danger"
                       onClick={() => handleDelete(horse.id, horse.name)}
                     >
                       🗑️ Supprimer
@@ -260,9 +245,7 @@ function HorsesList() {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>
-                {editingHorse ? '✏️ Modifier le cheval' : '➕ Nouveau cheval'}
-              </h3>
+              <h3>{editingHorse ? '✏️ Modifier le cheval' : '➕ Nouveau cheval'}</h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
                 ×
               </button>

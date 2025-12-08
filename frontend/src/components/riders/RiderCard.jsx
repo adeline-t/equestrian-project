@@ -134,14 +134,14 @@ function RiderCard({ riderId, onClose }) {
   };
 
   const handleDeletePairing = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette association ?')) {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette DP ?')) {
       return;
     }
 
     try {
-      const pairingsApi = await import('../../services/api').then(m => m.pairingsApi);
+      const pairingsApi = await import('../../services/api').then((m) => m.pairingsApi);
       await pairingsApi.delete(id);
-      setSuccessMessage('Association supprimée avec succès');
+      setSuccessMessage('DP supprimée avec succès');
       setTimeout(() => setSuccessMessage(''), 3000);
       loadRiderData();
     } catch (err) {
@@ -151,15 +151,15 @@ function RiderCard({ riderId, onClose }) {
 
   const handlePairingSubmit = async (pairingData) => {
     try {
-      const pairingsApi = await import('../../services/api').then(m => m.pairingsApi);
-      
+      const pairingsApi = await import('../../services/api').then((m) => m.pairingsApi);
+
       if (editingPairing) {
         await pairingsApi.update(editingPairing.id, pairingData);
-        setSuccessMessage('Association modifiée avec succès');
+        setSuccessMessage('DP modifiée avec succès');
       } else {
         // Add rider_id to pairing data
         await pairingsApi.create({ ...pairingData, rider_id: riderId });
-        setSuccessMessage('Association créée avec succès');
+        setSuccessMessage('DP créée avec succès');
       }
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowPairingModal(false);
@@ -239,11 +239,11 @@ function RiderCard({ riderId, onClose }) {
                 <span className="info-value">{rider.phone || '-'}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">📅 Début d'activité:</span>
+                <span className="info-label">📅 Début:</span>
                 <span className="info-value">{formatDate(rider.activity_start_date)}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">📅 Fin d'activité:</span>
+                <span className="info-label">📅 Fin:</span>
                 <span className="info-value">{formatDate(rider.activity_end_date)}</span>
               </div>
               <div className="info-item">
@@ -267,11 +267,11 @@ function RiderCard({ riderId, onClose }) {
             </div>
             <div className="stat-card">
               <span className="stat-number">{totalPrivateLessons}</span>
-              <span className="stat-label">🎓 Cours Privés</span>
+              <span className="stat-label">🎓 Cours Privés par semaine</span>
             </div>
             <div className="stat-card">
               <span className="stat-number">{totalJointLessons}</span>
-              <span className="stat-label">👥 Cours Collectifs</span>
+              <span className="stat-label">👥 Cours Collectifs par semaine</span>
             </div>
           </div>
 
@@ -341,9 +341,9 @@ function RiderCard({ riderId, onClose }) {
           {/* Active Horse Associations Section */}
           <div className="section">
             <div className="flex-between mb-20">
-              <h3>🐴 Associations Chevaux Actives ({activePairings.length})</h3>
+              <h3>🐴 DP Chevaux Actives ({activePairings.length})</h3>
               <button className="btn btn-primary btn-sm" onClick={handleCreatePairing}>
-                ➕ Nouvelle Association
+                ➕ Nouvelle DP
               </button>
             </div>
 
@@ -351,7 +351,7 @@ function RiderCard({ riderId, onClose }) {
               <div className="empty-state-small">
                 <p>Aucune association active</p>
                 <button className="btn btn-primary btn-sm" onClick={handleCreatePairing}>
-                  Créer la première association
+                  Créer la première DP
                 </button>
               </div>
             ) : (
@@ -370,10 +370,7 @@ function RiderCard({ riderId, onClose }) {
                     {activePairings.map((pairing) => (
                       <tr key={pairing.id}>
                         <td>
-                          <strong>
-                            {pairing.horses?.kind === 'horse' ? '🐴' : '🦄'}{' '}
-                            {pairing.horses?.name || 'N/A'}
-                          </strong>
+                          <strong>{pairing.horses?.name || 'N/A'}</strong>
                         </td>
                         <td>
                           <span className={`badge badge-${pairing.horses?.kind}`}>

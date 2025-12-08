@@ -146,7 +146,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="activity_start_date">Début d'activité</label>
+        <label htmlFor="activity_start_date">Arrivée</label>
         <input
           type="date"
           id="activity_start_date"
@@ -159,7 +159,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="activity_end_date">Fin d'activité</label>
+        <label htmlFor="activity_end_date">Sortie</label>
         <input
           type="date"
           id="activity_end_date"
@@ -194,7 +194,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         >
           <h4 style={{ margin: '0 0 8px 0', color: '#4a5568' }}>Récapitulatif</h4>
           <p style={{ margin: '0', color: '#718096' }}>
-            {formData.kind === 'horse' ? '🐴' : '🦄'} <strong>{formData.name || 'Nom'}</strong> -
+            <strong>{formData.name || 'Nom'}</strong> -
             {formData.kind === 'horse' ? ' Cheval' : ' Poney'}
           </p>
           {formData.activity_start_date && (
