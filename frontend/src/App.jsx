@@ -6,6 +6,7 @@ import HorsesList from './components/horses/HorsesList';
 import PairingsList from './components/pairings/PairingsList';
 import PackagesList from './components/packages/PackagesList';
 import CalendarView from './components/calendar/CalendarView';
+import TemplateManagement from './components/templates/TemplateManagement';
 
 function App() {
   return (
@@ -31,6 +32,9 @@ function App() {
                 <NavLink to="/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
                   📅 Calendrier
                 </NavLink>
+                <NavLink to="/templates" className={({ isActive }) => (isActive ? 'active' : '')}>
+                  📋 Templates
+                </NavLink>
               </nav>
             </div>
           </header>
@@ -42,6 +46,7 @@ function App() {
               <Route path="/pairings" element={<PairingsList />} />
               <Route path="/packages" element={<PackagesList />} />
               <Route path="/calendar" element={<CalendarView />} />
+              <Route path="/templates" element={<TemplateManagement />} />
             </Routes>
           </main>
         </div>
