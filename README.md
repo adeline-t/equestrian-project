@@ -1,15 +1,26 @@
 # 🐴 Equestrian Facility Management System
 
-A modern, production-ready web application for managing horse riders and horses at equestrian facilities.
+A modern, production-ready web application for managing horse riders, horses, and lesson scheduling at equestrian facilities.
 
 ## 🌟 Features
 
+### Core Management
 - **Complete CRUD Operations** for riders, horses, and their pairings
+- **Package Management** for lesson subscriptions and pricing
 - **Historical Tracking** with date ranges for activities and pairings
 - **Modern UI** with responsive design and French language interface
 - **Real-time Updates** with instant feedback and validation
-- **Statistics Dashboard** with filtering and search capabilities
 - **Mobile-Responsive** design that works on all devices
+
+### 📅 Calendar System (NEW)
+- **Recurring Lessons** with flexible scheduling rules (daily, weekly, monthly)
+- **Blocked Periods** for rest days and maintenance (prevents all bookings)
+- **Automatic Generation** via daily cron job (4-week rolling window)
+- **Participant Management** with automatic horse assignment via half-board pairings
+- **Lesson Tracking** with indicator for lessons not given by instructor
+- **Weekly Calendar View** with visual indicators and filters
+- **5 Lesson Types**: Private, Group, Training, Competition, Event
+- **Conflict Detection** with blocked periods and availability checking
 
 ## 🏗️ Technology Stack
 
@@ -43,6 +54,13 @@ Complete documentation is available in the `docs/` directory:
 - **[Installation Guide](docs/01-getting-started/installation.md)** - Step-by-step setup instructions
 - **[Quick Start](docs/01-getting-started/quick-start.md)** - Get running in 5 minutes
 - **[macOS Launch Guide](docs/01-getting-started/macos-launch.md)** - macOS-specific instructions
+
+### Calendar System (NEW)
+
+- **[Calendar System Overview](docs/10-calendar-system/README.md)** - Complete guide to the calendar system
+- **[Cron Configuration](docs/10-calendar-system/cron-configuration.md)** - Setup and usage of automatic generation
+- **[API Reference](docs/10-calendar-system/api-reference.md)** - Complete API documentation
+- **[Implementation Guide](CALENDAR_IMPLEMENTATION.md)** - Technical implementation details
 
 ### Scripts & Tools
 

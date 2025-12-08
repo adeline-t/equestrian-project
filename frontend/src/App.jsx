@@ -5,6 +5,7 @@ import RidersList from './components/riders/RidersList';
 import HorsesList from './components/horses/HorsesList';
 import PairingsList from './components/pairings/PairingsList';
 import PackagesList from './components/packages/PackagesList';
+import CalendarView from './components/calendar/CalendarView';
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
                 <NavLink to="/packages" className={({ isActive }) => (isActive ? 'active' : '')}>
                   Forfaits
                 </NavLink>
+                <NavLink to="/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
+                  📅 Calendrier
+                </NavLink>
               </nav>
             </div>
           </header>
@@ -37,6 +41,7 @@ function App() {
               <Route path="/horses" element={<HorsesList />} />
               <Route path="/pairings" element={<PairingsList />} />
               <Route path="/packages" element={<PackagesList />} />
+              <Route path="/calendar" element={<CalendarView />} />
             </Routes>
           </main>
         </div>
