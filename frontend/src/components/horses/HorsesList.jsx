@@ -205,6 +205,7 @@ function HorsesList() {
               <tr>
                 <th>Nom</th>
                 <th>Type</th>
+                <th>👥 Cavaliers Actifs</th>
                 <th>Début d'activité</th>
                 <th>Fin d'activité</th>
                 <th>Statut</th>
@@ -222,6 +223,11 @@ function HorsesList() {
                   <td>
                     <span className={`badge badge-${horse.kind}`}>
                       {getKindLabel(horse.kind)}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="badge badge-info">
+                      {horse.active_riders_count || 0}
                     </span>
                   </td>
                   <td>{formatDate(horse.activity_start_date)}</td>
