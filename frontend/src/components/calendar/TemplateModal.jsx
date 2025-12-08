@@ -30,20 +30,43 @@ function TemplateModal({ template, onClose, onSuccess }) {
   useEffect(() => {
     loadData();
     if (template) {
-      setFormData({
+      // Parse recurrence_rule if it's a string
+      let recurrenceRule = template.recurrence_rule;
+      if (typeof recurrenceRule === 'string') {
+        try {
+          recurrenceRule = JSON.parse(recurrenceRule);
+        } catch (e) {
+          console.error('Error parsing recurrence_rule:', e);
+          recurrenceRule = {
+            frequency: 'weekly',
+            interval: 1,
+            byDay: ['monday'],
+            startTime: template.start_time || '19:00',
+            duration: template.duration_minutes || 60,
+          };
+        }
+      }
+
+      const templateData = {
         ...template,
         valid_from: template.valid_from || new Date().toISOString().split('T')[0],
         valid_until: template.valid_until || '',
-      });
+        recurrence_rule: recurrenceRule,
+      };
+
+      // Ensure blocked templates have 0 participants
+      if (template.lesson_type === 'blocked') {
+        templateData.max_participants = 0;
+        templateData.min_participants = 0;
+      }
+
+      setFormData(templateData);
     }
   }, [template]);
 
   const loadData = async () => {
     try {
-      const [ridersData, horsesData] = await Promise.all([
-        ridersApi.getAll(),
-        horsesApi.getAll(),
-      ]);
+      const [ridersData, horsesData] = await Promise.all([ridersApi.getAll(), horsesApi.getAll()]);
       setRiders(ridersData);
       setHorses(horsesData);
     } catch (err) {
@@ -52,30 +75,48 @@ function TemplateModal({ template, onClose, onSuccess }) {
   };
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Synchroniser avec recurrence_rule
-    if (field === 'start_time') {
-      setFormData((prev) => ({
+    setFormData((prev) => {
+      const updated = {
         ...prev,
-        recurrence_rule: {
+        [field]: value,
+      };
+
+      // If changing to blocked type, set participants to 0
+      if (field === 'lesson_type' && value === 'blocked') {
+        updated.max_participants = 0;
+        updated.min_participants = 0;
+      }
+
+      // If changing FROM blocked type, restore default participant values
+      if (field === 'lesson_type' && prev.lesson_type === 'blocked' && value !== 'blocked') {
+        if (value === 'private') {
+          updated.max_participants = 1;
+          updated.min_participants = 1;
+        } else if (value === 'group') {
+          updated.max_participants = 8;
+          updated.min_participants = 2;
+        } else {
+          updated.max_participants = 8;
+          updated.min_participants = 1;
+        }
+      }
+
+      // Synchroniser avec recurrence_rule
+      if (field === 'start_time') {
+        updated.recurrence_rule = {
           ...prev.recurrence_rule,
           startTime: value,
-        },
-      }));
-    }
-    if (field === 'duration_minutes') {
-      setFormData((prev) => ({
-        ...prev,
-        recurrence_rule: {
+        };
+      }
+      if (field === 'duration_minutes') {
+        updated.recurrence_rule = {
           ...prev.recurrence_rule,
-          duration: parseInt(value),
-        },
-      }));
-    }
+          duration: parseInt(value) || 60,
+        };
+      }
+
+      return updated;
+    });
   };
 
   const handleRecurrenceChange = (field, value) => {
@@ -103,12 +144,54 @@ function TemplateModal({ template, onClose, onSuccess }) {
     setError(null);
 
     try {
-      // Ajuster les valeurs pour les plages bloquées
       const submitData = { ...formData };
+
+      // Ensure recurrence_rule is properly formatted
+      if (typeof submitData.recurrence_rule === 'object') {
+        // Make sure all required fields are present
+        submitData.recurrence_rule = {
+          frequency: submitData.recurrence_rule.frequency || 'weekly',
+          interval: parseInt(submitData.recurrence_rule.interval) || 1,
+          byDay: submitData.recurrence_rule.byDay || [],
+          startTime: submitData.start_time,
+          duration: parseInt(submitData.duration_minutes) || 60,
+        };
+      }
+
+      // Force 0 participants for blocked lessons
       if (submitData.lesson_type === 'blocked') {
         submitData.max_participants = 0;
         submitData.min_participants = 0;
+      } else {
+        // Convert to integers for non-blocked lessons
+        if (submitData.max_participants !== undefined && submitData.max_participants !== null) {
+          submitData.max_participants = parseInt(submitData.max_participants);
+          // Ensure it's a valid number
+          if (isNaN(submitData.max_participants)) {
+            submitData.max_participants = null;
+          }
+        }
+
+        if (submitData.min_participants !== undefined && submitData.min_participants !== null) {
+          submitData.min_participants = parseInt(submitData.min_participants);
+          // Ensure it's a valid number, default to 1
+          if (isNaN(submitData.min_participants) || submitData.min_participants < 1) {
+            submitData.min_participants = 1;
+          }
+        }
       }
+
+      // Validate weekly recurrence has at least one day selected
+      if (
+        submitData.recurrence_rule.frequency === 'weekly' &&
+        (!submitData.recurrence_rule.byDay || submitData.recurrence_rule.byDay.length === 0)
+      ) {
+        setError('Veuillez sélectionner au moins un jour de la semaine');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Submitting template data:', submitData); // Debug
 
       if (template) {
         await templatesApi.update(template.id, submitData);
@@ -117,19 +200,22 @@ function TemplateModal({ template, onClose, onSuccess }) {
       }
       onSuccess();
     } catch (err) {
-      setError(err.response?.data?.error || err.message);
+      console.error('Submit error:', err);
+      const errorMessage =
+        err.response?.data?.error || err.message || 'Erreur lors de la sauvegarde';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const lessonTypes = [
-    { value: 'private', label: '👤 Cours Particulier' },
-    { value: 'group', label: '👥 Cours Collectif' },
-    { value: 'training', label: '🎓 Stage' },
-    { value: 'competition', label: '🏆 Concours' },
-    { value: 'event', label: '🎉 Événement' },
-    { value: 'blocked', label: '🚫 Plage Bloquée' },
+    { value: 'private', label: '👤 Cours Particulier', maxP: 1, minP: 1 },
+    { value: 'group', label: '👥 Cours Collectif', maxP: 8, minP: 2 },
+    { value: 'training', label: '🎓 Stage', maxP: 12, minP: 3 },
+    { value: 'competition', label: '🏆 Concours', maxP: null, minP: 1 },
+    { value: 'event', label: '🎉 Événement', maxP: null, minP: 1 },
+    { value: 'blocked', label: '🚫 Plage Bloquée', maxP: 0, minP: 0 },
   ];
 
   const weekDays = [
@@ -155,7 +241,11 @@ function TemplateModal({ template, onClose, onSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} className="template-form">
-          {error && <div className="alert alert-error">{error}</div>}
+          {error && (
+            <div className="alert alert-error">
+              <strong>Erreur:</strong> {error}
+            </div>
+          )}
 
           {/* Informations de base */}
           <div className="form-section">
@@ -176,7 +266,7 @@ function TemplateModal({ template, onClose, onSuccess }) {
             <div className="form-group">
               <label>Description</label>
               <textarea
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={(e) => handleChange('description', e.target.value)}
                 rows="3"
                 placeholder="Description du cours..."
@@ -217,7 +307,7 @@ function TemplateModal({ template, onClose, onSuccess }) {
                 <input
                   type="number"
                   value={formData.duration_minutes}
-                  onChange={(e) => handleChange('duration_minutes', parseInt(e.target.value))}
+                  onChange={(e) => handleChange('duration_minutes', parseInt(e.target.value) || 60)}
                   min="15"
                   step="15"
                   required
@@ -257,7 +347,9 @@ function TemplateModal({ template, onClose, onSuccess }) {
                 <input
                   type="number"
                   value={formData.recurrence_rule.interval}
-                  onChange={(e) => handleRecurrenceChange('interval', parseInt(e.target.value))}
+                  onChange={(e) =>
+                    handleRecurrenceChange('interval', parseInt(e.target.value) || 1)
+                  }
                   min="1"
                   className="form-input"
                 />
@@ -274,7 +366,7 @@ function TemplateModal({ template, onClose, onSuccess }) {
 
             {formData.recurrence_rule.frequency === 'weekly' && (
               <div className="form-group">
-                <label>Jours de la semaine</label>
+                <label>Jours de la semaine *</label>
                 <div className="day-selector">
                   {weekDays.map((day) => (
                     <button
@@ -289,6 +381,11 @@ function TemplateModal({ template, onClose, onSuccess }) {
                     </button>
                   ))}
                 </div>
+                {formData.recurrence_rule.byDay?.length === 0 && (
+                  <small className="text-danger">
+                    ⚠️ Sélectionnez au moins un jour de la semaine
+                  </small>
+                )}
               </div>
             )}
           </div>
@@ -312,11 +409,12 @@ function TemplateModal({ template, onClose, onSuccess }) {
                 <label>Date de fin (optionnelle)</label>
                 <input
                   type="date"
-                  value={formData.valid_until}
+                  value={formData.valid_until || ''}
                   onChange={(e) => handleChange('valid_until', e.target.value)}
                   min={formData.valid_from}
                   className="form-input"
                 />
+                <small className="text-muted">Laisser vide pour un template sans date de fin</small>
               </div>
             </div>
           </div>
@@ -327,25 +425,41 @@ function TemplateModal({ template, onClose, onSuccess }) {
               <h3>Capacité</h3>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Participants minimum</label>
+                  <label>Participants minimum *</label>
                   <input
                     type="number"
                     value={formData.min_participants}
-                    onChange={(e) => handleChange('min_participants', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleChange('min_participants', parseInt(e.target.value) || 1)
+                    }
                     min="1"
+                    required
                     className="form-input"
                   />
                 </div>
 
                 <div className="form-group">
-                  <label>Participants maximum</label>
+                  <label>
+                    Participants maximum {formData.lesson_type === 'competition' && '(optionnel)'}
+                  </label>
                   <input
                     type="number"
-                    value={formData.max_participants}
-                    onChange={(e) => handleChange('max_participants', parseInt(e.target.value))}
+                    value={formData.max_participants || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      handleChange('max_participants', val === '' ? null : parseInt(val));
+                    }}
                     min={formData.min_participants}
+                    placeholder={
+                      formData.lesson_type === 'competition' ? 'Illimité' : 'Nombre maximum'
+                    }
                     className="form-input"
                   />
+                  {formData.lesson_type === 'competition' && (
+                    <small className="text-muted">
+                      Laisser vide pour un nombre illimité de participants
+                    </small>
+                  )}
                 </div>
               </div>
             </div>
@@ -353,7 +467,12 @@ function TemplateModal({ template, onClose, onSuccess }) {
 
           {/* Actions */}
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={onClose}
+              disabled={loading}
+            >
               Annuler
             </button>
             <button type="submit" className="btn btn-primary" disabled={loading}>

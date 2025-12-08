@@ -59,6 +59,23 @@ export class LessonRepository {
    * Créer un nouveau template
    */
   async createTemplate(data) {
+    // Handle participants based on lesson type
+    let maxParticipants = data.max_participants;
+    let minParticipants = data.min_participants;
+
+    if (data.lesson_type === 'blocked') {
+      maxParticipants = 0;
+      minParticipants = 0;
+    } else {
+      // Only apply defaults for non-blocked lessons
+      if (maxParticipants === undefined || maxParticipants === null) {
+        maxParticipants = null;
+      }
+      if (minParticipants === undefined || minParticipants === null) {
+        minParticipants = 1;
+      }
+    }
+
     const { data: result, error } = await this.db
       .from('lesson_templates')
       .insert({
@@ -70,8 +87,9 @@ export class LessonRepository {
         duration_minutes: data.duration_minutes,
         valid_from: data.valid_from,
         valid_until: data.valid_until || null,
-        max_participants: data.max_participants || null,
-        min_participants: data.min_participants || 1,
+        max_participants: maxParticipants,
+        min_participants: minParticipants,
+        instructor_id: data.instructor_id || null,
         is_active: true,
       })
       .select()
@@ -98,9 +116,18 @@ export class LessonRepository {
     if (data.duration_minutes !== undefined) updateData.duration_minutes = data.duration_minutes;
     if (data.valid_from !== undefined) updateData.valid_from = data.valid_from;
     if (data.valid_until !== undefined) updateData.valid_until = data.valid_until;
-    if (data.max_participants !== undefined) updateData.max_participants = data.max_participants;
-    if (data.min_participants !== undefined) updateData.min_participants = data.min_participants;
+    if (data.instructor_id !== undefined) updateData.instructor_id = data.instructor_id;
     if (data.is_active !== undefined) updateData.is_active = data.is_active;
+
+    // Handle participants - check for blocked type
+    if (data.lesson_type === 'blocked') {
+      updateData.max_participants = 0;
+      updateData.min_participants = 0;
+    } else {
+      // Use !== undefined to allow 0 values
+      if (data.max_participants !== undefined) updateData.max_participants = data.max_participants;
+      if (data.min_participants !== undefined) updateData.min_participants = data.min_participants;
+    }
 
     const { data: result, error } = await this.db
       .from('lesson_templates')
@@ -137,8 +164,6 @@ export class LessonRepository {
    * Récupérer les instances dans une plage de dates
    */
   async findInstancesByDateRange(startDate, endDate, filters = {}) {
-    // Since Supabase doesn't support complex joins with counts easily,
-    // we'll do a simpler query and then fetch participants separately if needed
     let query = this.db
       .from('lesson_instances')
       .select('*')
@@ -168,7 +193,7 @@ export class LessonRepository {
     const templates =
       templateIds.length > 0
         ? await this.db.from('lesson_templates').select('id, name').in('id', templateIds)
-        : [];
+        : { data: [] };
 
     const templateMap = templates.data
       ? templates.data.reduce((acc, t) => {
@@ -177,11 +202,29 @@ export class LessonRepository {
         }, {})
       : {};
 
+    // Get participant counts
+    const instanceIds = data.map((item) => item.id);
+    const participantCounts = {};
+
+    if (instanceIds.length > 0) {
+      const { data: participantsData } = await this.db
+        .from('lesson_participants')
+        .select('lesson_instance_id')
+        .in('lesson_instance_id', instanceIds);
+
+      if (participantsData) {
+        participantsData.forEach((p) => {
+          participantCounts[p.lesson_instance_id] =
+            (participantCounts[p.lesson_instance_id] || 0) + 1;
+        });
+      }
+    }
+
     // Format the response to match expected structure
     const results = data.map((item) => ({
       ...item,
       template_name: templateMap[item.template_id] || null,
-      participant_count: 0, // Will be updated if participants are included
+      participant_count: participantCounts[item.id] || 0,
     }));
 
     return { results };
@@ -191,16 +234,11 @@ export class LessonRepository {
    * Récupérer une instance par ID
    */
   async findInstanceById(id, includeParticipants = true) {
-    let query = this.db.from('lesson_instances').select('*').eq('id', id);
-
-    if (includeParticipants) {
-      query = query.select(`
-                *,
-                lesson_participants(*)
-            `);
-    }
-
-    const { data, error } = await query.single();
+    const { data, error } = await this.db
+      .from('lesson_instances')
+      .select('*')
+      .eq('id', id)
+      .single();
 
     if (error) {
       throw error;
@@ -212,11 +250,21 @@ export class LessonRepository {
         .from('lesson_templates')
         .select('name')
         .eq('id', data.template_id)
-        .single();
+        .maybeSingle();
 
       if (template) {
         data.template_name = template.name;
       }
+    }
+
+    // Get participants if requested
+    if (includeParticipants) {
+      const { data: participants } = await this.db
+        .from('lesson_participants')
+        .select('*')
+        .eq('lesson_instance_id', id);
+
+      data.lesson_participants = participants || [];
     }
 
     return data;
@@ -226,6 +274,22 @@ export class LessonRepository {
    * Créer une nouvelle instance
    */
   async createInstance(data) {
+    // Handle participants based on lesson type
+    let maxParticipants = data.max_participants;
+    let minParticipants = data.min_participants;
+
+    if (data.lesson_type === 'blocked') {
+      maxParticipants = 0;
+      minParticipants = 0;
+    } else {
+      if (maxParticipants === undefined || maxParticipants === null) {
+        maxParticipants = null;
+      }
+      if (minParticipants === undefined || minParticipants === null) {
+        minParticipants = 1;
+      }
+    }
+
     const { data: result, error } = await this.db
       .from('lesson_instances')
       .insert({
@@ -234,15 +298,12 @@ export class LessonRepository {
         start_time: data.start_time,
         end_time: data.end_time,
         lesson_type: data.lesson_type,
-        title: data.title,
+        name: data.name || data.title, // Support both for backward compatibility
         description: data.description || null,
-        max_participants: data.max_participants || null,
-        min_participants: data.min_participants || 1,
-        location: data.location || null,
+        max_participants: maxParticipants,
+        min_participants: minParticipants,
         instructor_id: data.instructor_id || null,
         status: data.status || 'scheduled',
-        is_blocker: data.is_blocker || false,
-        notes: data.notes || null,
       })
       .select()
       .single();
@@ -251,14 +312,16 @@ export class LessonRepository {
       throw error;
     }
 
-    // Add participants if provided
-    if (data.participants && data.participants.length > 0) {
+    // Add participants if provided (only for non-blocked lessons)
+    if (data.lesson_type !== 'blocked' && data.participants && data.participants.length > 0) {
       for (const participant of data.participants) {
         await this.db.from('lesson_participants').insert({
           lesson_instance_id: result.id,
           rider_id: participant.rider_id,
           horse_id: participant.horse_id || null,
-          status: participant.status || 'registered',
+          participation_status:
+            participant.status || participant.participation_status || 'registered',
+          horse_assignment_type: participant.horse_assignment_type || 'auto',
           notes: participant.notes || null,
         });
       }
@@ -277,18 +340,28 @@ export class LessonRepository {
     if (data.start_time !== undefined) updateData.start_time = data.start_time;
     if (data.end_time !== undefined) updateData.end_time = data.end_time;
     if (data.lesson_type !== undefined) updateData.lesson_type = data.lesson_type;
-    if (data.title !== undefined) updateData.title = data.title;
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.title !== undefined) updateData.name = data.title; // Map title to name
     if (data.description !== undefined) updateData.description = data.description;
-    if (data.max_participants !== undefined) updateData.max_participants = data.max_participants;
-    if (data.min_participants !== undefined) updateData.min_participants = data.min_participants;
-    if (data.location !== undefined) updateData.location = data.location;
     if (data.instructor_id !== undefined) updateData.instructor_id = data.instructor_id;
     if (data.status !== undefined) updateData.status = data.status;
-    if (data.is_blocker !== undefined) updateData.is_blocker = data.is_blocker;
-    if (data.notes !== undefined) updateData.notes = data.notes;
     if (data.cancellation_reason !== undefined)
       updateData.cancellation_reason = data.cancellation_reason;
+    if (data.not_given_by_laury !== undefined)
+      updateData.not_given_by_laury = data.not_given_by_laury;
     if (data.not_given_reason !== undefined) updateData.not_given_reason = data.not_given_reason;
+    if (data.is_modified !== undefined) updateData.is_modified = data.is_modified;
+    if (data.modified_fields !== undefined) updateData.modified_fields = data.modified_fields;
+
+    // Handle participants - check for blocked type
+    if (data.lesson_type === 'blocked') {
+      updateData.max_participants = 0;
+      updateData.min_participants = 0;
+    } else {
+      // Use !== undefined to allow 0 values
+      if (data.max_participants !== undefined) updateData.max_participants = data.max_participants;
+      if (data.min_participants !== undefined) updateData.min_participants = data.min_participants;
+    }
 
     const { data: result, error } = await this.db
       .from('lesson_instances')
@@ -331,7 +404,9 @@ export class LessonRepository {
         lesson_instance_id: instanceId,
         rider_id: participantData.rider_id,
         horse_id: participantData.horse_id || null,
-        status: participantData.status || 'registered',
+        participation_status:
+          participantData.status || participantData.participation_status || 'registered',
+        horse_assignment_type: participantData.horse_assignment_type || 'auto',
         notes: participantData.notes || null,
       })
       .select()
@@ -352,7 +427,11 @@ export class LessonRepository {
 
     if (data.rider_id !== undefined) updateData.rider_id = data.rider_id;
     if (data.horse_id !== undefined) updateData.horse_id = data.horse_id;
-    if (data.status !== undefined) updateData.status = data.status;
+    if (data.status !== undefined) updateData.participation_status = data.status;
+    if (data.participation_status !== undefined)
+      updateData.participation_status = data.participation_status;
+    if (data.horse_assignment_type !== undefined)
+      updateData.horse_assignment_type = data.horse_assignment_type;
     if (data.notes !== undefined) updateData.notes = data.notes;
 
     const { data: result, error } = await this.db
@@ -395,10 +474,10 @@ export class LessonRepository {
       .from('lesson_participants')
       .select(
         `
-                *,
-                riders(id, first_name, last_name, email),
-                horses(id, name, breed, color)
-            `
+        *,
+        riders:rider_id(id, first_name, last_name, email),
+        horses:horse_id(id, name, breed, color)
+      `
       )
       .eq('lesson_instance_id', instanceId);
 
@@ -407,6 +486,73 @@ export class LessonRepository {
     }
 
     return data;
+  }
+
+  // ============================================
+  // DEFAULT PARTICIPANTS
+  // ============================================
+
+  /**
+   * Récupérer les participants par défaut d'un template
+   */
+  async findDefaultParticipantsByTemplateId(templateId) {
+    const { data, error } = await this.db
+      .from('template_default_participants')
+      .select(
+        `
+        *,
+        riders:rider_id(id, first_name, last_name, email),
+        horses:horse_id(id, name, breed, color)
+      `
+      )
+      .eq('template_id', templateId)
+      .order('priority_order');
+
+    if (error) {
+      throw error;
+    }
+
+    return { results: data };
+  }
+
+  /**
+   * Ajouter un participant par défaut à un template
+   */
+  async addDefaultParticipant(templateId, participantData) {
+    const { data, error } = await this.db
+      .from('template_default_participants')
+      .insert({
+        template_id: templateId,
+        rider_id: participantData.rider_id,
+        horse_id: participantData.horse_id || null,
+        auto_assign_horse: participantData.auto_assign_horse !== false,
+        priority_order: participantData.priority_order || 0,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  /**
+   * Supprimer un participant par défaut d'un template
+   */
+  async removeDefaultParticipant(templateId, participantId) {
+    const { error } = await this.db
+      .from('template_default_participants')
+      .delete()
+      .eq('id', participantId)
+      .eq('template_id', templateId);
+
+    if (error) {
+      throw error;
+    }
+
+    return true;
   }
 
   // ============================================
@@ -445,5 +591,56 @@ export class LessonRepository {
       by_status: statusCounts,
       by_type: typeCounts,
     };
+  }
+
+  /**
+   * Marquer un cours comme non donné par Laury
+   */
+  async markLessonNotGiven(instanceId, reason = null) {
+    const { data, error } = await this.db
+      .from('lesson_instances')
+      .update({
+        not_given_by_laury: true,
+        not_given_reason: reason,
+        not_given_at: new Date().toISOString(),
+      })
+      .eq('id', instanceId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  /**
+   * Vérifier les conflits avec les périodes bloquées
+   */
+  async checkBlockedPeriods(lessonDate, startTime, endTime, excludeInstanceId = null) {
+    let query = this.db
+      .from('lesson_instances')
+      .select('id, name, start_time, end_time')
+      .eq('lesson_type', 'blocked')
+      .neq('status', 'cancelled')
+      .eq('lesson_date', lessonDate);
+
+    if (excludeInstanceId) {
+      query = query.neq('id', excludeInstanceId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    // Filter for time overlaps
+    const conflicts = data.filter((blocked) => {
+      return blocked.start_time < endTime && blocked.end_time > startTime;
+    });
+
+    return conflicts;
   }
 }

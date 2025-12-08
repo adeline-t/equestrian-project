@@ -3,8 +3,8 @@ import { LessonRepository } from '../repositories/lesson-repository.js';
 import {
   generateLessonInstances,
   generateUpcomingInstances,
-  calculateOccurrences,
 } from '../services/lesson-generator.js';
+import { calculateOccurrences } from '../utils/recurrence-helper.js';
 
 /**
  * Handler principal pour les routes du calendrier
@@ -245,11 +245,13 @@ async function createTemplate(request, env, lessonRepo) {
   const endDate = new Date(today);
   endDate.setDate(today.getDate() + 28);
 
+  // Utiliser la base de données du repository et passer le template complet
+  const db = lessonRepo.db;
   await generateLessonInstances(
-    env.DB,
-    template.id,
+    template,
     today.toISOString().split('T')[0],
-    endDate.toISOString().split('T')[0]
+    endDate.toISOString().split('T')[0],
+    db
   );
 
   return jsonResponse(
@@ -291,16 +293,36 @@ async function deleteTemplate(id, request, env, lessonRepo) {
 
   if (deleteFutureInstances) {
     // Supprimer les instances futures non modifiées
-    await env.DB.prepare(
-      `
-            DELETE FROM lesson_instances
-            WHERE template_id = ?
-            AND lesson_date >= CURRENT_DATE
-            AND is_modified = FALSE
-        `
-    )
-      .bind(id)
-      .run();
+    const db = lessonRepo.db;
+    const today = new Date().toISOString().split('T')[0];
+
+    // D'abord récupérer les instances à supprimer
+    const { data: instances } = await db
+      .from('lesson_instances')
+      .select('id')
+      .eq('template_id', id)
+      .gte('lesson_date', today)
+      .eq('is_modified', false);
+
+    if (instances && instances.length > 0) {
+      // Supprimer les participants d'abord
+      await db
+        .from('lesson_participants')
+        .delete()
+        .in(
+          'lesson_instance_id',
+          instances.map((i) => i.id)
+        );
+
+      // Puis supprimer les instances
+      await db
+        .from('lesson_instances')
+        .delete()
+        .in(
+          'id',
+          instances.map((i) => i.id)
+        );
+    }
   }
 
   await lessonRepo.deleteTemplate(id);
@@ -333,7 +355,14 @@ async function generateTemplateInstances(id, request, env) {
     );
   }
 
-  const result = await generateLessonInstances(env.DB, id, data.start_date, data.end_date);
+  // Récupérer le template complet
+  const template = await lessonRepo.findTemplateById(id);
+  if (!template) {
+    return jsonResponse({ success: false, error: 'Template non trouvé' }, 404);
+  }
+
+  const db = lessonRepo.db;
+  const result = await generateLessonInstances(template, data.start_date, data.end_date, db);
 
   return jsonResponse({
     success: true,
@@ -355,9 +384,10 @@ async function previewTemplateOccurrences(id, request, env) {
     );
   }
 
-  const template = await env.DB.prepare('SELECT * FROM lesson_templates WHERE id = ?')
-    .bind(id)
-    .first();
+  // Utiliser le repository pour récupérer le template
+  const db = getDatabase(env);
+  const lessonRepo = new LessonRepository(db);
+  const template = await lessonRepo.findTemplateById(id);
 
   if (!template) {
     return jsonResponse(
@@ -830,7 +860,8 @@ async function generateAllInstances(request, env) {
   const data = await request.json();
   const weeksAhead = data.weeks_ahead || 4;
 
-  const results = await generateUpcomingInstances(env.DB, weeksAhead);
+  const db = getDatabase(env);
+  const results = await generateUpcomingInstances(weeksAhead, db);
 
   const totalGenerated = results.reduce((sum, r) => sum + (r.generated || 0), 0);
   const totalSkipped = results.reduce((sum, r) => sum + (r.skipped || 0), 0);

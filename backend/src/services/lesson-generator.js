@@ -9,8 +9,14 @@ import { calculateOccurrences } from '../utils/recurrence-helper.js';
  * Génère les instances de leçons pour un template spécifique
  */
 export async function generateLessonInstances(template, startDate, endDate, db) {
-  const occurrences = calculateOccurrences(template.recurrence_rule, startDate, endDate);
+  const recurrenceRule =
+    typeof template.recurrence_rule === 'string'
+      ? JSON.parse(template.recurrence_rule)
+      : template.recurrence_rule;
+
+  const occurrences = calculateOccurrences(recurrenceRule, startDate, endDate);
   const instances = [];
+  let skipped = 0;
 
   for (const occurrence of occurrences) {
     // Vérifier si l'instance existe déjà
@@ -20,55 +26,71 @@ export async function generateLessonInstances(template, startDate, endDate, db) 
       .eq('template_id', template.id)
       .eq('lesson_date', occurrence.date)
       .eq('start_time', template.start_time)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single()
 
-    if (checkError && checkError.code !== 'PGRST116') {
-      // PGRST116 is "not found" error
+    if (checkError) {
       throw checkError;
     }
 
-    if (!existing) {
-      // Calculer l'heure de fin
-      const [hours, minutes] = template.start_time.split(':').map(Number);
-      const endTime = new Date(2000, 0, 1, hours, minutes + template.duration_minutes);
-      const endTimeStr = `${endTime.getHours().toString().padStart(2, '0')}:${endTime
-        .getMinutes()
-        .toString()
-        .padStart(2, '0')}`;
-
-      // Créer l'instance
-      const { data: instance, error: insertError } = await db
-        .from('lesson_instances')
-        .insert({
-          template_id: template.id,
-          lesson_date: occurrence.date,
-          start_time: template.start_time,
-          end_time: endTimeStr,
-          lesson_type: template.lesson_type,
-          title: template.name,
-          description: template.description,
-          max_participants: template.max_participants,
-          min_participants: template.min_participants,
-          location: template.location || null,
-          instructor_id: template.instructor_id || null,
-          status: 'scheduled',
-          is_blocker: template.lesson_type === 'blocked',
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        throw insertError;
-      }
-
-      // Ajouter les participants par défaut
-      await addDefaultParticipants(instance.id, template, db);
-
-      instances.push(instance);
+    if (existing) {
+      skipped++;
+      continue;
     }
+
+    // Calculer l'heure de fin
+    const [hours, minutes] = template.start_time.split(':').map(Number);
+    const endTime = new Date(2000, 0, 1, hours, minutes + template.duration_minutes);
+    const endTimeStr = `${endTime.getHours().toString().padStart(2, '0')}:${endTime
+      .getMinutes()
+      .toString()
+      .padStart(2, '0')}:00`;
+
+    // Préparer les données d'insertion
+    const insertData = {
+      template_id: template.id,
+      lesson_date: occurrence.date,
+      start_time: template.start_time,
+      end_time: endTimeStr,
+      lesson_type: template.lesson_type,
+      name: template.name, // FIXED: was 'title'
+      description: template.description,
+      status: 'scheduled',
+    };
+
+    // Ajouter les participants seulement si ce n'est PAS une plage bloquée
+    if (template.lesson_type !== 'blocked') {
+      insertData.max_participants = template.max_participants;
+      insertData.min_participants = template.min_participants;
+    } else {
+      insertData.max_participants = 0;
+      insertData.min_participants = 0;
+    }
+
+    // Créer l'instance
+    const { data: instance, error: insertError } = await db
+      .from('lesson_instances')
+      .insert(insertData)
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Error creating instance:', insertError);
+      throw insertError;
+    }
+
+    // Ajouter les participants par défaut seulement si ce n'est PAS une plage bloquée
+    if (template.lesson_type !== 'blocked') {
+      await addDefaultParticipants(instance.id, template.id, db);
+    }
+
+    instances.push(instance);
   }
 
-  return instances;
+  return {
+    generated: instances.length,
+    skipped: skipped,
+    instances: instances,
+  };
 }
 
 /**
@@ -92,116 +114,48 @@ export async function generateUpcomingInstances(weeksAhead = 4, db) {
     throw templateError;
   }
 
-  const allInstances = [];
-  const errors = [];
+  const results = [];
 
   for (const template of templates) {
     try {
-      // Vérifier les périodes bloquées pour ce template
-      const { data: blockedPeriods, error: blockedError } = await db
-        .from('lesson_instances')
-        .select('*')
-        .eq('lesson_type', 'blocked')
-        .gte('lesson_date', startDate)
-        .lte('lesson_date', endDateStr);
-
-      if (blockedError) {
-        throw blockedError;
-      }
-
-      // Filtrer les occurrences qui tombent sur des périodes bloquées
-      const occurrences = calculateOccurrences(template.recurrence_rule, startDate, endDateStr);
-      const availableOccurrences = occurrences.filter((occurrence) => {
-        return !blockedPeriods.some(
-          (blocked) =>
-            blocked.lesson_date === occurrence.date &&
-            blocked.start_time <= template.start_time &&
-            blocked.end_time >= template.start_time
-        );
+      const result = await generateLessonInstances(template, startDate, endDateStr, db);
+      results.push({
+        template_id: template.id,
+        template_name: template.name,
+        ...result,
       });
-
-      // Générer les instances pour les occurrences disponibles
-      for (const occurrence of availableOccurrences) {
-        const { data: existing, error: checkError } = await db
-          .from('lesson_instances')
-          .select('id')
-          .eq('template_id', template.id)
-          .eq('lesson_date', occurrence.date)
-          .eq('start_time', template.start_time)
-          .single();
-
-        if (checkError && checkError.code !== 'PGRST116') {
-          throw checkError;
-        }
-
-        if (!existing) {
-          const [hours, minutes] = template.start_time.split(':').map(Number);
-          const endTime = new Date(2000, 0, 1, hours, minutes + template.duration_minutes);
-          const endTimeStr = `${endTime.getHours().toString().padStart(2, '0')}:${endTime
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}`;
-
-          const { data: instance, error: insertError } = await db
-            .from('lesson_instances')
-            .insert({
-              template_id: template.id,
-              lesson_date: occurrence.date,
-              start_time: template.start_time,
-              end_time: endTimeStr,
-              lesson_type: template.lesson_type,
-              title: template.name,
-              description: template.description,
-              max_participants: template.max_participants,
-              min_participants: template.min_participants,
-              location: template.location || null,
-              instructor_id: template.instructor_id || null,
-              status: 'scheduled',
-              is_blocker: template.lesson_type === 'blocked',
-            })
-            .select()
-            .single();
-
-          if (insertError) {
-            throw insertError;
-          }
-
-          await addDefaultParticipants(instance.id, template, db);
-          allInstances.push(instance);
-        }
-      }
     } catch (error) {
-      errors.push({
-        template: template.name,
+      results.push({
+        template_id: template.id,
+        template_name: template.name,
         error: error.message,
+        generated: 0,
+        skipped: 0,
       });
     }
   }
 
-  return {
-    instances: allInstances,
-    errors,
-    summary: {
-      templates_processed: templates.length,
-      instances_generated: allInstances.length,
-      errors_count: errors.length,
-    },
-  };
+  return results;
 }
 
 /**
  * Ajoute les participants par défaut à une instance
  */
-async function addDefaultParticipants(instanceId, template, db) {
-  // Récupérer les participants par défaut du template
+async function addDefaultParticipants(instanceId, templateId, db) {
+  // FIXED: Use correct table and columns
   const { data: defaultParticipants, error: participantError } = await db
-    .from('lesson_participants')
+    .from('template_default_participants')
     .select('*')
-    .eq('template_id', template.id)
-    .eq('is_default', true);
+    .eq('template_id', templateId)
+    .order('priority_order');
 
   if (participantError) {
-    throw participantError;
+    console.error('Error fetching default participants:', participantError);
+    return;
+  }
+
+  if (!defaultParticipants || defaultParticipants.length === 0) {
+    return;
   }
 
   // Ajouter chaque participant à l'instance
@@ -210,26 +164,12 @@ async function addDefaultParticipants(instanceId, template, db) {
       lesson_instance_id: instanceId,
       rider_id: participant.rider_id,
       horse_id: participant.horse_id || null,
-      status: 'registered',
-      notes: participant.notes || null,
+      participation_status: 'registered', // FIXED: was 'status'
+      notes: null,
     });
 
     if (addError) {
       console.error('Error adding participant:', addError);
-    }
-  }
-
-  // Si c'est un cours particulier, ajouter le cavalier par défaut
-  if (template.lesson_type === 'private' && template.rider_id) {
-    const { error: privateError } = await db.from('lesson_participants').insert({
-      lesson_instance_id: instanceId,
-      rider_id: template.rider_id,
-      status: 'registered',
-      notes: 'Cours privé - participant par défaut',
-    });
-
-    if (privateError) {
-      console.error('Error adding private lesson participant:', privateError);
     }
   }
 }
