@@ -2,6 +2,8 @@ import { handleRiders, handleRiderHorses } from './handlers/riders.js';
 import { handleHorses, handleHorseRiders } from './handlers/horses.js';
 import { handlePairings } from './handlers/pairings.js';
 import { handlePackages, handleRiderPackages } from './handlers/packages.js';
+import { handleCalendar } from './handlers/calendar.js';
+import { scheduledGenerateLessons } from './cron/generate-lessons.js';
 import { jsonResponse, getSecurityHeaders } from './db.js';
 
 export default {
@@ -29,6 +31,11 @@ export default {
 
     // Route to appropriate handler
     try {
+      // Calendar routes (NEW)
+      if (path.startsWith('/api/calendar')) {
+        return handleCalendar(request, env);
+      }
+
       // Riders routes
       if (path.match(/^\/api\/riders\/\d+\/horses$/)) {
         const riderId = path.split('/')[3];
@@ -70,8 +77,9 @@ export default {
             status: 'ok',
             message: 'API opérationnelle',
             timestamp: new Date().toISOString(),
-            version: '1.0.0',
+            version: '1.1.0',
             environment: env.ENVIRONMENT || 'unknown',
+            features: ['riders', 'horses', 'pairings', 'packages', 'calendar'],
           },
           200
         );
@@ -82,8 +90,24 @@ export default {
         return jsonResponse(
           {
             title: 'Equestrian Management API',
-            version: '1.0.0',
+            version: '1.1.0',
             endpoints: {
+              calendar: {
+                'GET /api/calendar/templates': 'List lesson templates',
+                'POST /api/calendar/templates': 'Create lesson template',
+                'GET /api/calendar/templates/:id': 'Get template details',
+                'PUT /api/calendar/templates/:id': 'Update template',
+                'DELETE /api/calendar/templates/:id': 'Delete template',
+                'GET /api/calendar/lessons': 'List lessons',
+                'POST /api/calendar/lessons': 'Create lesson',
+                'GET /api/calendar/lessons/:id': 'Get lesson details',
+                'PUT /api/calendar/lessons/:id': 'Update lesson',
+                'DELETE /api/calendar/lessons/:id': 'Cancel lesson',
+                'POST /api/calendar/lessons/:id/mark-not-given': 'Mark lesson as not given by Laury',
+                'GET /api/calendar/schedule/week': 'Get week schedule',
+                'GET /api/calendar/schedule/blocked-periods': 'Get blocked periods',
+                'GET /api/calendar/schedule/not-given': 'Get lessons not given',
+              },
               riders: {
                 'GET /api/riders': 'List all riders',
                 'GET /api/riders/:id': 'Get single rider',
@@ -151,6 +175,18 @@ export default {
         },
         500
       );
+    }
+  },
+
+  // Cron trigger handler for automatic lesson generation
+  async scheduled(event, env, ctx) {
+    console.log('Cron trigger fired:', event.cron);
+    
+    try {
+      const result = await scheduledGenerateLessons(env);
+      console.log('Cron job completed:', result);
+    } catch (error) {
+      console.error('Cron job failed:', error);
     }
   },
 };

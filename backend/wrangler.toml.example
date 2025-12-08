@@ -5,6 +5,11 @@ name = "equestrian-api"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
 
+# Cron Triggers for automatic lesson generation
+# Runs daily at 2 AM to generate upcoming lessons
+[triggers]
+crons = ["0 2 * * *"]
+
 # Development Environment
 [env.dev]
 name = "equestrian-api-dev"
