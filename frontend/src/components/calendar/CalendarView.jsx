@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { format, startOfWeek, addWeeks, subWeeks, addDays } from 'date-fns';
+import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { scheduleApi } from '../../services/calendarApi';
 import WeekView from './WeekView';
 import LessonModal from './LessonModal';
 import TemplateModal from './TemplateModal';
+import SingleLessonModal from './SingleLessonModal'; // ✅ ADD THIS
 import './calendar.css';
 
 function CalendarView() {
@@ -15,6 +16,7 @@ function CalendarView() {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [showLessonModal, setShowLessonModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showSingleLessonModal, setShowSingleLessonModal] = useState(false); // ✅ ADD THIS
   const [filters, setFilters] = useState({
     lessonType: 'all',
     status: 'all',
@@ -85,6 +87,17 @@ function CalendarView() {
     await loadWeekData();
   };
 
+  const handleCreateSingleLesson = () => {
+    // ✅ ADD THIS
+    setShowSingleLessonModal(true);
+  };
+
+  const handleSingleLessonCreated = async () => {
+    // ✅ ADD THIS
+    setShowSingleLessonModal(false);
+    await loadWeekData();
+  };
+
   if (loading) {
     return (
       <div className="calendar-loading">
@@ -118,8 +131,12 @@ function CalendarView() {
         <div className="calendar-header-top">
           <h2>📅 Calendrier des Cours</h2>
           <div className="calendar-actions">
+            {/* ✅ ADD THIS BUTTON */}
+            <button className="btn btn-primary" onClick={handleCreateSingleLesson}>
+              ➕ Nouveau Cours
+            </button>
             <button className="btn btn-secondary" onClick={handleCreateTemplate}>
-              ➕ Nouveau Template
+              🔄 Nouveau Template
             </button>
           </div>
         </div>
@@ -207,6 +224,15 @@ function CalendarView() {
         <TemplateModal
           onClose={() => setShowTemplateModal(false)}
           onSuccess={handleTemplateCreated}
+        />
+      )}
+
+      {/* ✅ ADD THIS: Modal de création de cours standalone */}
+      {showSingleLessonModal && (
+        <SingleLessonModal
+          onClose={() => setShowSingleLessonModal(false)}
+          onSuccess={handleSingleLessonCreated}
+          initialDate={format(currentDate, 'yyyy-MM-dd')}
         />
       )}
     </div>

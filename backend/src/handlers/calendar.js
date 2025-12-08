@@ -480,40 +480,34 @@ async function createLesson(request, env, lessonRepo) {
     !data.lesson_type ||
     !data.lesson_date ||
     !data.start_time ||
-    !data.duration_minutes
+    !data.end_time // ✅ CHANGED: Accept end_time directly instead of duration_minutes
   ) {
     return jsonResponse(
       {
         success: false,
-        error: 'Champs requis manquants',
+        error: 'Champs requis manquants: name, lesson_type, lesson_date, start_time, end_time',
       },
       400
     );
   }
 
-  // Calculer l'heure de fin
-  const [hours, minutes] = data.start_time.split(':').map(Number);
-  const totalMinutes = hours * 60 + minutes + data.duration_minutes;
-  const endHours = Math.floor(totalMinutes / 60) % 24;
-  const endMinutes = totalMinutes % 60;
-  const endTime = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
+  // ✅ REMOVED: duration_minutes calculation - we already have end_time from frontend
 
   // Vérifier tous les conflits (bloqués + double-booking)
   const conflicts = await lessonRepo.checkAllConflicts(
     data.lesson_date,
     data.start_time,
-    endTime
+    data.end_time // ✅ CHANGED: Use end_time directly
   );
 
   // Si forcé, créer quand même mais enregistrer l'audit
   if (data.force_schedule && conflicts.has_conflicts) {
     console.log(`Force scheduling lesson ${data.name} with conflicts:`, conflicts);
-    
+
     const lesson = await lessonRepo.createInstance({
       ...data,
-      end_time: endTime,
       force_scheduled: true,
-      conflict_notes: JSON.stringify(conflicts)
+      conflict_notes: JSON.stringify(conflicts),
     });
 
     return jsonResponse(
@@ -523,8 +517,8 @@ async function createLesson(request, env, lessonRepo) {
         message: 'Cours créé avec succès (forcé malgré les conflits)',
         warnings: {
           conflicts: conflicts,
-          message: 'Ce cours a été créé malgré des conflits existants'
-        }
+          message: 'Ce cours a été créé malgré des conflits existants',
+        },
       },
       201
     );
@@ -533,11 +527,11 @@ async function createLesson(request, env, lessonRepo) {
   // Sinon, vérifier les conflits et bloquer si nécessaire
   if (conflicts.has_conflicts) {
     const errors = [];
-    
+
     if (conflicts.blocked_periods.length > 0) {
       errors.push(`Conflit avec ${conflicts.blocked_periods.length} plage(s) bloquée(s)`);
     }
-    
+
     if (conflicts.lesson_conflicts.length > 0) {
       errors.push(`Conflit avec ${conflicts.lesson_conflicts.length} autre(s) cours`);
     }
@@ -553,10 +547,7 @@ async function createLesson(request, env, lessonRepo) {
     );
   }
 
-  const lesson = await lessonRepo.createInstance({
-    ...data,
-    end_time: endTime,
-  });
+  const lesson = await lessonRepo.createInstance(data); // ✅ CHANGED: Pass data directly
 
   return jsonResponse(
     {
@@ -598,11 +589,11 @@ async function updateLesson(id, request, env, lessonRepo) {
     // Si forcé, mettre à jour quand même
     if (data.force_schedule && conflicts.has_conflicts) {
       console.log(`Force updating lesson ${id} with conflicts:`, conflicts);
-      
+
       const updatedLesson = await lessonRepo.updateInstance(id, {
         ...data,
         force_scheduled: true,
-        conflict_notes: JSON.stringify(conflicts)
+        conflict_notes: JSON.stringify(conflicts),
       });
 
       return jsonResponse({
@@ -611,19 +602,19 @@ async function updateLesson(id, request, env, lessonRepo) {
         message: 'Cours mis à jour avec succès (forcé malgré les conflits)',
         warnings: {
           conflicts: conflicts,
-          message: 'Ce cours a été modifié malgré des conflits existants'
-        }
+          message: 'Ce cours a été modifié malgré des conflits existants',
+        },
       });
     }
 
     // Sinon, vérifier les conflits et bloquer si nécessaire
     if (conflicts.has_conflicts) {
       const errors = [];
-      
+
       if (conflicts.blocked_periods.length > 0) {
         errors.push(`Conflit avec ${conflicts.blocked_periods.length} plage(s) bloquée(s)`);
       }
-      
+
       if (conflicts.lesson_conflicts.length > 0) {
         errors.push(`Conflit avec ${conflicts.lesson_conflicts.length} autre(s) cours`);
       }
@@ -920,9 +911,13 @@ async function checkAvailability(request, env, lessonRepo) {
     conflicts: {
       blocked_periods: conflicts.blocked_periods,
       lesson_conflicts: conflicts.lesson_conflicts,
-      total_conflicts: conflicts.blocked_periods.length + conflicts.lesson_conflicts.length
+      total_conflicts: conflicts.blocked_periods.length + conflicts.lesson_conflicts.length,
     },
-    message: available ? 'Créneau disponible' : `${conflicts.blocked_periods.length + conflicts.lesson_conflicts.length} conflit(s) détecté(s)`
+    message: available
+      ? 'Créneau disponible'
+      : `${
+          conflicts.blocked_periods.length + conflicts.lesson_conflicts.length
+        } conflit(s) détecté(s)`,
   });
 }
 
