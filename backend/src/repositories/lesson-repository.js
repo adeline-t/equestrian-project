@@ -643,4 +643,49 @@ export class LessonRepository {
 
     return conflicts;
   }
+
+  /**
+   * Vérifier les conflits avec d'autres cours (double-booking)
+   */
+  async checkLessonConflicts(lessonDate, startTime, endTime, excludeInstanceId = null) {
+    let query = this.db
+      .from('lesson_instances')
+      .select('id, name, lesson_type, start_time, end_time, status')
+      .in('lesson_type', ['private', 'group', 'training', 'competition', 'event'])
+      .neq('status', 'cancelled')
+      .eq('lesson_date', lessonDate);
+
+    if (excludeInstanceId) {
+      query = query.neq('id', excludeInstanceId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    // Filter for time overlaps
+    const conflicts = data.filter((lesson) => {
+      return lesson.start_time < endTime && lesson.end_time > startTime;
+    });
+
+    return conflicts;
+  }
+
+  /**
+   * Vérifier tous les conflits (bloqués + double-booking)
+   */
+  async checkAllConflicts(lessonDate, startTime, endTime, excludeInstanceId = null) {
+    const [blockedPeriods, lessonConflicts] = await Promise.all([
+      this.checkBlockedPeriods(lessonDate, startTime, endTime, excludeInstanceId),
+      this.checkLessonConflicts(lessonDate, startTime, endTime, excludeInstanceId)
+    ]);
+
+    return {
+      blocked_periods: blockedPeriods,
+      lesson_conflicts: lessonConflicts,
+      has_conflicts: blockedPeriods.length > 0 || lessonConflicts.length > 0
+    };
+  }
 }

@@ -38,7 +38,9 @@ function CalendarView() {
       setWeekData(response);
     } catch (err) {
       console.error('Error loading week data:', err);
-      setError(err.response?.data?.error || err.message || 'Erreur lors du chargement du calendrier');
+      setError(
+        err.response?.data?.error || err.message || 'Erreur lors du chargement du calendrier'
+      );
     } finally {
       setLoading(false);
     }
@@ -139,12 +141,8 @@ function CalendarView() {
             Semaine du {format(new Date(weekData.period.start), 'dd MMMM yyyy', { locale: fr })}
           </h3>
           <div className="calendar-stats">
-            <span className="stat">
-              📚 {weekData.statistics.total_lessons} cours
-            </span>
-            <span className="stat">
-              👥 {weekData.statistics.total_participants} participants
-            </span>
+            <span className="stat">📚 {weekData.statistics.total_lessons} cours</span>
+            <span className="stat">👥 {weekData.statistics.total_participants} participants</span>
             {weekData.statistics.blocked_periods > 0 && (
               <span className="stat blocked">
                 🚫 {weekData.statistics.blocked_periods} plages bloquées
@@ -184,17 +182,6 @@ function CalendarView() {
               <option value="completed">Terminés</option>
               <option value="cancelled">Annulés</option>
             </select>
-          </div>
-
-          <div className="filter-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={filters.showBlocked}
-                onChange={(e) => handleFilterChange('showBlocked', e.target.checked)}
-              />
-              Afficher les plages bloquées
-            </label>
           </div>
         </div>
       </div>

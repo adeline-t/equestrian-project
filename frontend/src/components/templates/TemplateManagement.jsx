@@ -12,7 +12,7 @@ const TemplateManagement = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [filters, setFilters] = useState({
-    active: true,
+    active: 'all', // ✅ FIXED: Changed from true to 'all'
     lessonType: 'all',
   });
 
@@ -25,6 +25,7 @@ const TemplateManagement = () => {
     try {
       setLoading(true);
       const filterParams = {};
+
       if (filters.active !== 'all') {
         filterParams.active = filters.active === 'active';
       }
@@ -32,10 +33,16 @@ const TemplateManagement = () => {
         filterParams.lessonType = filters.lessonType;
       }
 
+      console.log('🔍 Loading templates with filters:', filterParams);
+
       const response = await templatesApi.getAll(filterParams);
+
+      console.log('✅ Templates loaded:', response);
+
       setTemplates(response.results || []);
+      setError(null);
     } catch (err) {
-      console.error('Error loading templates:', err);
+      console.error('❌ Error loading templates:', err);
       setError('Failed to load templates');
     } finally {
       setLoading(false);
@@ -61,6 +68,7 @@ const TemplateManagement = () => {
     try {
       await templatesApi.delete(selectedTemplate.id);
       setShowDeleteConfirm(false);
+      setSelectedTemplate(null);
       loadTemplates();
     } catch (err) {
       console.error('Error deleting template:', err);
@@ -88,18 +96,6 @@ const TemplateManagement = () => {
       blocked: 'Plage bloquée',
     };
     return types[type] || type;
-  };
-
-  const getLessonTypeColor = (type) => {
-    const colors = {
-      private: '#4CAF50',
-      group: '#2196F3',
-      training: '#FF9800',
-      competition: '#9C27B0',
-      event: '#607D8B',
-      blocked: '#F44336',
-    };
-    return colors[type] || '#666';
   };
 
   const formatRecurrenceRule = (rule) => {
@@ -202,13 +198,10 @@ const TemplateManagement = () => {
               key={template.id}
               className={`template-card ${!template.is_active ? 'inactive' : ''}`}
             >
-              <div className="template-header">
+              <div className="template-card-header">
                 <div className="template-info">
                   <h3>{template.name}</h3>
-                  <span
-                    className="lesson-type-badge"
-                    style={{ backgroundColor: getLessonTypeColor(template.lesson_type) }}
-                  >
+                  <span className={`lesson-type-badge ${template.lesson_type}`}>
                     {getLessonTypeLabel(template.lesson_type)}
                   </span>
                   {!template.is_active && <span className="status-badge inactive">Inactif</span>}
@@ -276,24 +269,25 @@ const TemplateManagement = () => {
         )}
       </div>
 
-      {/* Modals will be imported from the existing calendar components */}
-      {showCreateModal && (
+      {/* Single unified modal for create/edit */}
+      {(showCreateModal || showEditModal) && (
         <TemplateModal
-          isOpen={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
-          onSave={loadTemplates}
+          template={showEditModal ? selectedTemplate : null}
+          onClose={() => {
+            setShowCreateModal(false);
+            setShowEditModal(false);
+            setSelectedTemplate(null);
+          }}
+          onSuccess={() => {
+            setShowCreateModal(false);
+            setShowEditModal(false);
+            setSelectedTemplate(null);
+            loadTemplates();
+          }}
         />
       )}
 
-      {showEditModal && selectedTemplate && (
-        <TemplateModal
-          isOpen={showEditModal}
-          onClose={() => setShowEditModal(false)}
-          onSave={loadTemplates}
-          template={selectedTemplate}
-        />
-      )}
-
+      {/* Delete confirmation modal */}
       {showDeleteConfirm && selectedTemplate && (
         <div className="modal-overlay">
           <div className="modal">

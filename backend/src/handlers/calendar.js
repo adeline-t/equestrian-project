@@ -195,7 +195,7 @@ async function getTemplates(request, env, lessonRepo) {
 
   return jsonResponse({
     success: true,
-    data: result.results || [],
+    results: result.results || [],
   });
 }
 
@@ -498,19 +498,56 @@ async function createLesson(request, env, lessonRepo) {
   const endMinutes = totalMinutes % 60;
   const endTime = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
 
-  // Vérifier les conflits avec plages bloquées
-  const blockedPeriods = await lessonRepo.checkBlockedPeriods(
+  // Vérifier tous les conflits (bloqués + double-booking)
+  const conflicts = await lessonRepo.checkAllConflicts(
     data.lesson_date,
     data.start_time,
     endTime
   );
 
-  if (blockedPeriods.results && blockedPeriods.results.length > 0) {
+  // Si forcé, créer quand même mais enregistrer l'audit
+  if (data.force_schedule && conflicts.has_conflicts) {
+    console.log(`Force scheduling lesson ${data.name} with conflicts:`, conflicts);
+    
+    const lesson = await lessonRepo.createInstance({
+      ...data,
+      end_time: endTime,
+      force_scheduled: true,
+      conflict_notes: JSON.stringify(conflicts)
+    });
+
+    return jsonResponse(
+      {
+        success: true,
+        data: lesson,
+        message: 'Cours créé avec succès (forcé malgré les conflits)',
+        warnings: {
+          conflicts: conflicts,
+          message: 'Ce cours a été créé malgré des conflits existants'
+        }
+      },
+      201
+    );
+  }
+
+  // Sinon, vérifier les conflits et bloquer si nécessaire
+  if (conflicts.has_conflicts) {
+    const errors = [];
+    
+    if (conflicts.blocked_periods.length > 0) {
+      errors.push(`Conflit avec ${conflicts.blocked_periods.length} plage(s) bloquée(s)`);
+    }
+    
+    if (conflicts.lesson_conflicts.length > 0) {
+      errors.push(`Conflit avec ${conflicts.lesson_conflicts.length} autre(s) cours`);
+    }
+
     return jsonResponse(
       {
         success: false,
-        error: 'Conflit avec une plage bloquée',
-        blocked_by: blockedPeriods.results[0],
+        error: 'Conflits détectés',
+        conflicts: conflicts,
+        message: errors.join('. ') + '. Utilisez force_schedule pour forcer la création.',
       },
       409
     );
@@ -550,19 +587,53 @@ async function updateLesson(id, request, env, lessonRepo) {
     const startTime = data.start_time || lesson.start_time;
     const endTime = data.end_time || lesson.end_time;
 
-    const blockedPeriods = await lessonRepo.checkBlockedPeriods(
+    // Vérifier tous les conflits (bloqués + double-booking)
+    const conflicts = await lessonRepo.checkAllConflicts(
       lesson.lesson_date,
       startTime,
       endTime,
       id
     );
 
-    if (blockedPeriods.results && blockedPeriods.results.length > 0) {
+    // Si forcé, mettre à jour quand même
+    if (data.force_schedule && conflicts.has_conflicts) {
+      console.log(`Force updating lesson ${id} with conflicts:`, conflicts);
+      
+      const updatedLesson = await lessonRepo.updateInstance(id, {
+        ...data,
+        force_scheduled: true,
+        conflict_notes: JSON.stringify(conflicts)
+      });
+
+      return jsonResponse({
+        success: true,
+        data: updatedLesson,
+        message: 'Cours mis à jour avec succès (forcé malgré les conflits)',
+        warnings: {
+          conflicts: conflicts,
+          message: 'Ce cours a été modifié malgré des conflits existants'
+        }
+      });
+    }
+
+    // Sinon, vérifier les conflits et bloquer si nécessaire
+    if (conflicts.has_conflicts) {
+      const errors = [];
+      
+      if (conflicts.blocked_periods.length > 0) {
+        errors.push(`Conflit avec ${conflicts.blocked_periods.length} plage(s) bloquée(s)`);
+      }
+      
+      if (conflicts.lesson_conflicts.length > 0) {
+        errors.push(`Conflit avec ${conflicts.lesson_conflicts.length} autre(s) cours`);
+      }
+
       return jsonResponse(
         {
           success: false,
-          error: 'Conflit avec une plage bloquée',
-          blocked_by: blockedPeriods.results[0],
+          error: 'Conflits détectés',
+          conflicts: conflicts,
+          message: errors.join('. ') + '. Utilisez force_schedule pour forcer la modification.',
         },
         409
       );
@@ -838,17 +909,20 @@ async function checkAvailability(request, env, lessonRepo) {
   const endMinutes = totalMinutes % 60;
   const endTime = `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}:00`;
 
-  // Vérifier les conflits avec plages bloquées
-  const blockedPeriods = await lessonRepo.checkBlockedPeriods(data.date, data.start_time, endTime);
+  // Vérifier tous les conflits (bloqués + double-booking)
+  const conflicts = await lessonRepo.checkAllConflicts(data.date, data.start_time, endTime);
 
-  const available = !blockedPeriods.results || blockedPeriods.results.length === 0;
+  const available = !conflicts.has_conflicts;
 
   return jsonResponse({
     success: true,
     available,
     conflicts: {
-      blocked_periods: blockedPeriods.results || [],
+      blocked_periods: conflicts.blocked_periods,
+      lesson_conflicts: conflicts.lesson_conflicts,
+      total_conflicts: conflicts.blocked_periods.length + conflicts.lesson_conflicts.length
     },
+    message: available ? 'Créneau disponible' : `${conflicts.blocked_periods.length + conflicts.lesson_conflicts.length} conflit(s) détecté(s)`
   });
 }
 

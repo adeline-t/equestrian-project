@@ -1,7 +1,11 @@
 import React from 'react';
-import { format, parseISO } from 'date-fns';
 
-function LessonCard({ lesson, onClick }) {
+function LessonCard({ lesson, onClick, style }) {
+  // Add null check for lesson
+  if (!lesson) {
+    return null;
+  }
+
   const getLessonTypeIcon = (type) => {
     const icons = {
       private: '👤',
@@ -41,7 +45,7 @@ function LessonCard({ lesson, onClick }) {
 
   const getOccupancyClass = () => {
     if (!lesson.max_participants || lesson.lesson_type === 'blocked') return '';
-    const ratio = lesson.participant_count / lesson.max_participants;
+    const ratio = (lesson.participant_count || 0) / lesson.max_participants;
     if (ratio >= 1) return 'full';
     if (ratio >= 0.8) return 'almost-full';
     return '';
@@ -50,7 +54,6 @@ function LessonCard({ lesson, onClick }) {
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
     try {
-      // timeStr est au format "HH:MM:SS"
       const [hours, minutes] = timeStr.split(':');
       return `${hours}:${minutes}`;
     } catch {
@@ -58,12 +61,35 @@ function LessonCard({ lesson, onClick }) {
     }
   };
 
+  const getDuration = () => {
+    if (!lesson.start_time || !lesson.end_time) return '';
+
+    const timeToMinutes = (timeStr) => {
+      if (!timeStr) return 0;
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      return hours * 60 + (minutes || 0);
+    };
+
+    const durationMinutes = timeToMinutes(lesson.end_time) - timeToMinutes(lesson.start_time);
+    const hours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h${minutes}`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else {
+      return `${minutes}min`;
+    }
+  };
+
   return (
     <div
-      className={`lesson-card ${lesson.lesson_type} ${getOccupancyClass()} ${
+      className={`lesson-card ${lesson.lesson_type || ''} ${getOccupancyClass()} ${
         lesson.is_modified ? 'modified' : ''
       } ${lesson.not_given_by_laury ? 'not-given' : ''}`}
       onClick={onClick}
+      style={style || {}}
     >
       <div className="lesson-card-header">
         <span className="lesson-type-icon">{getLessonTypeIcon(lesson.lesson_type)}</span>
@@ -81,9 +107,10 @@ function LessonCard({ lesson, onClick }) {
       </div>
 
       <div className="lesson-card-body">
-        <div className="lesson-name">{lesson.name}</div>
+        <div className="lesson-name">{lesson.name || 'Sans nom'}</div>
         <div className="lesson-time">
           {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
+          {lesson.lesson_type === 'blocked' && <span className="duration"> ({getDuration()})</span>}
         </div>
 
         {lesson.lesson_type !== 'blocked' && (

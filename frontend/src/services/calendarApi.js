@@ -8,7 +8,7 @@ const calendarApi = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // 30 seconds for calendar operations
+  timeout: 30000,
 });
 
 // Request interceptor
@@ -48,11 +48,22 @@ export const templatesApi = {
    */
   getAll: async (filters = {}) => {
     const params = new URLSearchParams();
-    if (filters.active !== undefined) params.append('active', filters.active);
-    if (filters.lessonType) params.append('lesson_type', filters.lessonType);
-    if (filters.excludeBlocked) params.append('exclude_blocked', 'true');
 
-    const response = await calendarApi.get(`/templates?${params.toString()}`);
+    // Only add parameters if they have values
+    if (filters.active !== undefined) {
+      params.append('active', filters.active);
+    }
+    if (filters.lessonType) {
+      params.append('lesson_type', filters.lessonType);
+    }
+    if (filters.excludeBlocked) {
+      params.append('exclude_blocked', 'true');
+    }
+
+    const queryString = params.toString();
+    const url = queryString ? `/templates?${queryString}` : '/templates';
+
+    const response = await calendarApi.get(url);
     return response.data;
   },
 
