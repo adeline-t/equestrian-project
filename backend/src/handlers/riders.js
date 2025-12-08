@@ -52,7 +52,8 @@ export async function handleRiders(request, env) {
           // Count active horses (pairings where dates are active and horse is active)
           const { data: pairings, error: pairingsError } = await db
             .from('rider_horse_pairings')
-            .select(`
+            .select(
+              `
               id,
               pairing_start_date,
               pairing_end_date,
@@ -61,23 +62,24 @@ export async function handleRiders(request, env) {
                 activity_start_date,
                 activity_end_date
               )
-            `)
+            `
+            )
             .eq('rider_id', rider.id);
 
           let activeHorsesCount = 0;
-          if (!pairingsError &amp;&amp; pairings) {
+          if (!pairingsError && pairings) {
             activeHorsesCount = pairings.filter((pairing) => {
               const pairingActive =
-                (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &amp;&amp;
+                (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &&
                 (!pairing.pairing_end_date || pairing.pairing_end_date >= now);
 
               const horse = pairing.horses;
               const horseActive =
-                horse &amp;&amp;
-                (!horse.activity_start_date || horse.activity_start_date <= now) &amp;&amp;
+                horse &&
+                (!horse.activity_start_date || horse.activity_start_date <= now) &&
                 (!horse.activity_end_date || horse.activity_end_date >= now);
 
-              return pairingActive &amp;&amp; horseActive;
+              return pairingActive && horseActive;
             }).length;
           }
 
@@ -91,10 +93,10 @@ export async function handleRiders(request, env) {
           let privateLessonsCount = 0;
           let jointLessonsCount = 0;
 
-          if (!packagesError &amp;&amp; packages) {
+          if (!packagesError && packages) {
             packages.forEach((pkg) => {
               const packageActive =
-                (!pkg.activity_start_date || pkg.activity_start_date <= now) &amp;&amp;
+                (!pkg.activity_start_date || pkg.activity_start_date <= now) &&
                 (!pkg.activity_end_date || pkg.activity_end_date >= now);
 
               if (packageActive) {

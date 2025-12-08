@@ -43,13 +43,14 @@ export async function handleHorses(request, env) {
 
       // Get active pairings count for each horse
       const now = new Date().toISOString().split('T')[0];
-      
+
       const horsesWithCounts = await Promise.all(
         horses.map(async (horse) => {
           // Count active riders (pairings where dates are active and rider is active)
           const { data: pairings, error: pairingsError } = await db
             .from('rider_horse_pairings')
-            .select(`
+            .select(
+              `
               id,
               pairing_start_date,
               pairing_end_date,
@@ -58,7 +59,8 @@ export async function handleHorses(request, env) {
                 activity_start_date,
                 activity_end_date
               )
-            `)
+            `
+            )
             .eq('horse_id', horse.id);
 
           if (pairingsError) {
@@ -70,17 +72,17 @@ export async function handleHorses(request, env) {
           const activeCount = pairings.filter((pairing) => {
             // Check if pairing is active
             const pairingActive =
-              (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &amp;&amp;
+              (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &&
               (!pairing.pairing_end_date || pairing.pairing_end_date >= now);
 
             // Check if rider is active
             const rider = pairing.riders;
             const riderActive =
-              rider &amp;&amp;
-              (!rider.activity_start_date || rider.activity_start_date <= now) &amp;&amp;
+              rider &&
+              (!rider.activity_start_date || rider.activity_start_date <= now) &&
               (!rider.activity_end_date || rider.activity_end_date >= now);
 
-            return pairingActive &amp;&amp; riderActive;
+            return pairingActive && riderActive;
           }).length;
 
           return {
