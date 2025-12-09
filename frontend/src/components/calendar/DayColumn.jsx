@@ -1,5 +1,5 @@
 import React from 'react';
-import LessonCard from './LessonCard';
+import LessonCard from '../lessons/LessonCard';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

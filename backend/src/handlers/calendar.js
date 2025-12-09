@@ -738,8 +738,8 @@ async function addParticipant(lessonId, request, env, lessonRepo) {
 
   // Vérifier la capacité
   if (lesson.max_participants) {
-    const participants = await lessonRepo.findParticipantsByLessonId(lessonId);
-    if (participants.results.length >= lesson.max_participants) {
+    const participants = await lessonRepo.getInstanceParticipants(lessonId);
+    if (participants.length >= lesson.max_participants) {
       return jsonResponse(
         {
           success: false,
@@ -750,10 +750,7 @@ async function addParticipant(lessonId, request, env, lessonRepo) {
     }
   }
 
-  const participant = await lessonRepo.addParticipant({
-    lesson_instance_id: lessonId,
-    ...data,
-  });
+  const participant = await lessonRepo.addParticipant(lessonId, data);
 
   return jsonResponse(
     {
@@ -788,7 +785,7 @@ async function updateParticipant(lessonId, participantId, request, env, lessonRe
 }
 
 async function removeParticipant(lessonId, participantId, env, lessonRepo) {
-  await lessonRepo.removeParticipant(participantId);
+  await lessonRepo.removeParticipant(lessonId, participantId);
 
   return jsonResponse({
     success: true,

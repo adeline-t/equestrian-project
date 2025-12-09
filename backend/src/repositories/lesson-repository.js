@@ -259,12 +259,8 @@ export class LessonRepository {
 
     // Get participants if requested
     if (includeParticipants) {
-      const { data: participants } = await this.db
-        .from('lesson_participants')
-        .select('*')
-        .eq('lesson_instance_id', id);
-
-      data.lesson_participants = participants || [];
+      const participants = await this.getInstanceParticipants(id);
+      data.participants = participants || [];
     }
 
     return data;
@@ -475,8 +471,8 @@ export class LessonRepository {
       .select(
         `
         *,
-        riders:rider_id(id, first_name, last_name, email),
-        horses:horse_id(id, name, breed, color)
+        riders:rider_id(id, name , email),
+        horses:horse_id(id, name, kind)
       `
       )
       .eq('lesson_instance_id', instanceId);
@@ -485,7 +481,20 @@ export class LessonRepository {
       throw error;
     }
 
-    return data;
+    return (data || []).map((participant) => ({
+      id: participant.id,
+      rider_id: participant.rider_id,
+      horse_id: participant.horse_id,
+      participation_status: participant.participation_status,
+      horse_assignment_type: participant.horse_assignment_type,
+      notes: participant.notes,
+      // Flatten rider info
+      rider_name: participant.riders ? participant.riders.name : 'Unknown',
+      rider_email: participant.riders?.email || null,
+      // Flatten horse info
+      horse_name: participant.horses?.name || null,
+      horse_kind: participant.horses?.kind || null,
+    }));
   }
 
   // ============================================
@@ -679,13 +688,13 @@ export class LessonRepository {
   async checkAllConflicts(lessonDate, startTime, endTime, excludeInstanceId = null) {
     const [blockedPeriods, lessonConflicts] = await Promise.all([
       this.checkBlockedPeriods(lessonDate, startTime, endTime, excludeInstanceId),
-      this.checkLessonConflicts(lessonDate, startTime, endTime, excludeInstanceId)
+      this.checkLessonConflicts(lessonDate, startTime, endTime, excludeInstanceId),
     ]);
 
     return {
       blocked_periods: blockedPeriods,
       lesson_conflicts: lessonConflicts,
-      has_conflicts: blockedPeriods.length > 0 || lessonConflicts.length > 0
+      has_conflicts: blockedPeriods.length > 0 || lessonConflicts.length > 0,
     };
   }
 }

@@ -3,9 +3,9 @@ import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { scheduleApi } from '../../services/calendarApi';
 import WeekView from './WeekView';
-import LessonModal from './LessonModal';
-import TemplateModal from './TemplateModal';
-import SingleLessonModal from './SingleLessonModal'; // ✅ ADD THIS
+import LessonModal from '../lessons/LessonModal';
+import TemplateModal from '../templates/TemplateModal';
+import SingleLessonModal from '../lessons/SingleLessonModal'; // ✅ ADD THIS
 import './calendar.css';
 
 function CalendarView() {

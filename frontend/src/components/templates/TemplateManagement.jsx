@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { templatesApi } from '../../services/calendarApi';
-import TemplateModal from '../calendar/TemplateModal';
+import TemplateModal from './TemplateModal';
 import './TemplateManagement.css';
 
 const TemplateManagement = () => {

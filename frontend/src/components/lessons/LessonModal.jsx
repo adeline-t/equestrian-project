@@ -12,11 +12,24 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
+  const [selectedRiderId, setSelectedRiderId] = useState('');
+  const [selectedHorseId, setSelectedHorseId] = useState('');
+  const [riderPairedHorses, setRiderPairedHorses] = useState([]); // ✅ NEW: Track rider's paired horses
 
   useEffect(() => {
     loadLessonDetails();
     loadRidersAndHorses();
   }, [lesson.id]);
+
+  // ✅ UPDATED: Auto-select horse when rider is selected
+  useEffect(() => {
+    if (selectedRiderId) {
+      loadHorsesForRider(selectedRiderId);
+    } else {
+      setRiderPairedHorses([]);
+      setSelectedHorseId('');
+    }
+  }, [selectedRiderId]);
 
   const loadLessonDetails = async () => {
     try {
@@ -32,10 +45,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
 
   const loadRidersAndHorses = async () => {
     try {
-      const [ridersData, horsesData] = await Promise.all([
-        ridersApi.getAll(),
-        horsesApi.getAll(),
-      ]);
+      const [ridersData, horsesData] = await Promise.all([ridersApi.getAll(), horsesApi.getAll()]);
       setRiders(ridersData);
       setHorses(horsesData);
     } catch (err) {
@@ -43,20 +53,55 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
     }
   };
 
+  // ✅ FIXED: Properly load and auto-select rider's associated horse
+  const loadHorsesForRider = async (riderId) => {
+    try {
+      // Get rider's paired horses from API
+      const pairedHorsesRaw = await ridersApi.getHorses(riderId);
+
+      // ✅ Extract the nested horse data
+      const pairedHorses = pairedHorsesRaw.map((pairing) => ({
+        id: pairing.horses.id,
+        name: pairing.horses.name,
+        kind: pairing.horses.kind,
+        breed: pairing.horses.breed,
+        color: pairing.horses.color,
+        pairing_id: pairing.id, // Keep pairing info if needed
+      }));
+
+      setRiderPairedHorses(pairedHorses);
+
+      console.log('🐴 Paired horses for rider:', pairedHorses); // ✅ Debug
+
+      // Auto-select the first paired horse if exists
+      if (pairedHorses && pairedHorses.length > 0) {
+        setSelectedHorseId(pairedHorses[0].id.toString());
+        console.log('✅ Auto-selected horse:', pairedHorses[0]); // ✅ Debug
+      } else {
+        setSelectedHorseId('');
+        console.log('ℹ️ No paired horse found'); // ✅ Debug
+      }
+    } catch (err) {
+      console.error('Error loading rider horses:', err);
+      setRiderPairedHorses([]);
+      setSelectedHorseId('');
+    }
+  };
+
   const handleCancel = async () => {
-    const reason = prompt('Raison de l\'annulation :');
+    const reason = prompt("Raison de l'annulation :");
     if (reason === null) return;
 
     try {
       await lessonsApi.cancel(lesson.id, reason);
       onUpdate();
     } catch (err) {
-      alert(err.response?.data?.error || 'Erreur lors de l\'annulation');
+      alert(err.response?.data?.error || "Erreur lors de l'annulation");
     }
   };
 
   const handleMarkNotGiven = async () => {
-    const reason = prompt('Raison pour laquelle le cours n\'a pas été donné :');
+    const reason = prompt("Raison pour laquelle le cours n'a pas été donné :");
     if (reason === null) return;
 
     try {
@@ -80,9 +125,12 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
         horse_assignment_type: horseId ? 'manual' : 'none',
       });
       setShowAddParticipant(false);
+      setSelectedRiderId('');
+      setSelectedHorseId('');
+      setRiderPairedHorses([]); // ✅ Reset paired horses
       await loadLessonDetails();
     } catch (err) {
-      alert(err.response?.data?.error || 'Erreur lors de l\'ajout du participant');
+      alert(err.response?.data?.error || "Erreur lors de l'ajout du participant");
     }
   };
 
@@ -95,6 +143,14 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
     } catch (err) {
       alert(err.response?.data?.error || 'Erreur lors du retrait du participant');
     }
+  };
+
+  const handleRiderChange = (e) => {
+    setSelectedRiderId(e.target.value);
+  };
+
+  const handleHorseChange = (e) => {
+    setSelectedHorseId(e.target.value);
   };
 
   if (loading) {
@@ -243,7 +299,10 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                             {participant.participation_status}
                           </span>
                           {participant.horse_assignment_type === 'auto' && (
-                            <span className="badge badge-info" title="Cheval assigné automatiquement">
+                            <span
+                              className="badge badge-info"
+                              title="Cheval assigné automatiquement"
+                            >
                               Auto
                             </span>
                           )}
@@ -274,9 +333,16 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
               ) : (
                 <form onSubmit={handleAddParticipant} className="add-participant-form mt-20">
                   <h4>Ajouter un participant</h4>
+
                   <div className="form-group">
                     <label>Cavalier *</label>
-                    <select name="rider_id" required className="form-select">
+                    <select
+                      name="rider_id"
+                      required
+                      className="form-select"
+                      value={selectedRiderId}
+                      onChange={handleRiderChange}
+                    >
                       <option value="">Sélectionner un cavalier</option>
                       {riders.map((rider) => (
                         <option key={rider.id} value={rider.id}>
@@ -285,17 +351,64 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                       ))}
                     </select>
                   </div>
+
+                  {/* ✅ FIXED: Show paired horses first, then separator, then all horses */}
                   <div className="form-group">
-                    <label>Cheval (optionnel)</label>
-                    <select name="horse_id" className="form-select">
-                      <option value="">Aucun cheval</option>
-                      {horses.map((horse) => (
-                        <option key={horse.id} value={horse.id}>
-                          {horse.name} ({horse.kind})
-                        </option>
-                      ))}
+                    <label>Cheval</label>
+                    <select
+                      name="horse_id"
+                      className="form-select"
+                      value={selectedHorseId}
+                      onChange={handleHorseChange}
+                      disabled={!selectedRiderId}
+                    >
+                      <option value="">
+                        {selectedRiderId ? 'Aucun cheval' : "Sélectionnez d'abord un cavalier"}
+                      </option>
+
+                      {selectedRiderId && (
+                        <>
+                          {/* ✅ Rider's paired horses */}
+                          {riderPairedHorses.length > 0 && (
+                            <>
+                              <optgroup label="🐴 Chevaux habituels">
+                                {riderPairedHorses.map((horse) => (
+                                  <option key={`paired-${horse.id}`} value={horse.id}>
+                                    {horse.name} ({horse.kind})
+                                  </option>
+                                ))}
+                              </optgroup>
+                            </>
+                          )}
+
+                          {/* ✅ All other horses */}
+                          <optgroup label="🏥 Autres chevaux (remplacement)">
+                            {horses
+                              .filter(
+                                (horse) => !riderPairedHorses.find((ph) => ph.id === horse.id)
+                              )
+                              .map((horse) => (
+                                <option key={`other-${horse.id}`} value={horse.id}>
+                                  {horse.name} ({horse.kind || horse.breed || 'Race inconnue'})
+                                </option>
+                              ))}
+                          </optgroup>
+                        </>
+                      )}
                     </select>
+
+                    {selectedRiderId && riderPairedHorses.length > 0 && (
+                      <small className="text-info">
+                        💡 Le cheval habituel est sélectionné. Vous pouvez le changer si nécessaire.
+                      </small>
+                    )}
+                    {selectedRiderId && riderPairedHorses.length === 0 && (
+                      <small className="text-muted">
+                        ℹ️ Ce cavalier n'a pas de cheval habituel associé.
+                      </small>
+                    )}
                   </div>
+
                   <div className="form-actions">
                     <button type="submit" className="btn btn-primary">
                       Ajouter
@@ -303,7 +416,12 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setShowAddParticipant(false)}
+                      onClick={() => {
+                        setShowAddParticipant(false);
+                        setSelectedRiderId('');
+                        setSelectedHorseId('');
+                        setRiderPairedHorses([]); // ✅ Reset paired horses
+                      }}
                     >
                       Annuler
                     </button>
