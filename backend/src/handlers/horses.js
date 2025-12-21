@@ -136,12 +136,21 @@ export async function handleHorses(request, env) {
         );
       }
 
+      // Validate is_owned_by if provided
+      if (body.is_owned_by && !['Laury', 'Propriétaire', 'Club'].includes(body.is_owned_by)) {
+        return jsonResponse(
+          { error: 'Le propriétaire doit être "Laury", "Propriétaire" ou "Club"' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
       const horseData = {
         name: body.name.trim(),
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
-        is_owned_by_laury: body.is_owned_by_laury || false,
+        is_owned_by: body.is_owned_by || 'Propriétaire',
       };
 
       const { data, error } = await db.from('horses').insert(horseData).select().single();
@@ -172,12 +181,21 @@ export async function handleHorses(request, env) {
         );
       }
 
+      // Validate is_owned_by if provided
+      if (body.is_owned_by && !['Laury', 'Propriétaire', 'Club'].includes(body.is_owned_by)) {
+        return jsonResponse(
+          { error: 'Le propriétaire doit être "Laury", "Propriétaire" ou "Club"' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
       const updateData = {
         name: body.name?.trim(),
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
-        is_owned_by_laury: body.is_owned_by_laury || false,
+        is_owned_by: body.is_owned_by,
         updated_at: new Date().toISOString(),
       };
 

@@ -7,10 +7,16 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     kind: 'horse',
     activity_start_date: '',
     activity_end_date: '',
-    is_owned_by_laury: false,
+    is_owned_by: 'Propriétaire',
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const ownershipOptions = [
+    { value: 'Laury', label: 'Laury' },
+    { value: 'Propriétaire', label: 'Propriétaire' },
+    { value: 'Club', label: 'Club' },
+  ];
 
   useEffect(() => {
     if (horse) {
@@ -19,7 +25,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         kind: horse.kind || 'horse',
         activity_start_date: horse.activity_start_date || '',
         activity_end_date: horse.activity_end_date || '',
-        is_owned_by_laury: horse.is_owned_by_laury || false,
+        is_owned_by: horse.is_owned_by || 'Propriétaire',
       });
     } else {
       setFormData({
@@ -27,7 +33,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         kind: 'horse',
         activity_start_date: '',
         activity_end_date: '',
-        is_owned_by_laury: false,
+        is_owned_by: 'Propriétaire',
       });
     }
   }, [horse]);
@@ -61,6 +67,11 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       return false;
     }
 
+    if (!formData.is_owned_by) {
+      setError('Le propriétaire est requis');
+      return false;
+    }
+
     // Validate date logic
     if (formData.activity_start_date && formData.activity_end_date) {
       const startDate = new Date(formData.activity_start_date);
@@ -91,7 +102,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         kind: formData.kind,
         activity_start_date: formData.activity_start_date || null,
         activity_end_date: formData.activity_end_date || null,
-        is_owned_by_laury: formData.is_owned_by_laury || false,
+        is_owned_by: formData.is_owned_by,
       };
       await onSubmit(submitData);
     } catch (err) {
@@ -105,6 +116,10 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     if (e.key === 'Escape') {
       onCancel();
     }
+  };
+
+  const getOwnershipLabel = (value) => {
+    return ownershipOptions.find((opt) => opt.value === value)?.label || value;
   };
 
   return (
@@ -146,6 +161,26 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
+        <label htmlFor="is_owned_by">
+          Propriétaire <span style={{ color: '#e53e3e' }}>*</span>
+        </label>
+        <select
+          id="is_owned_by"
+          name="is_owned_by"
+          value={formData.is_owned_by}
+          onChange={handleChange}
+          required
+          disabled={submitting}
+        >
+          {ownershipOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
         <label htmlFor="activity_start_date">Arrivée</label>
         <input
           type="date"
@@ -172,18 +207,6 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="is_owned_by_laury">Est-ce que ce cheval/poney appartient à Laury ?</label>
-        <input
-          type="checkbox"
-          id="is_owned_by_laury"
-          name="is_owned_by_laury"
-          checked={formData.is_owned_by_laury}
-          onChange={handleChange}
-          disabled={submitting}
-        />
-      </div>
-
-      <div className="form-group">
         <div
           style={{
             padding: '16px',
@@ -195,7 +218,8 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           <h4 style={{ margin: '0 0 8px 0', color: '#4a5568' }}>Récapitulatif</h4>
           <p style={{ margin: '0', color: '#718096' }}>
             <strong>{formData.name || 'Nom'}</strong> -
-            {formData.kind === 'horse' ? ' Cheval' : ' Poney'}
+            {formData.kind === 'horse' ? ' Cheval' : ' Poney'} -{' '}
+            {getOwnershipLabel(formData.is_owned_by)}
           </p>
           {formData.activity_start_date && (
             <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.9rem' }}>
@@ -240,6 +264,7 @@ HorseForm.propTypes = {
     kind: PropTypes.oneOf(['horse', 'pony']),
     activity_start_date: PropTypes.string,
     activity_end_date: PropTypes.string,
+    is_owned_by: PropTypes.oneOf(['Laury', 'Propriétaire', 'Club']),
   }),
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,

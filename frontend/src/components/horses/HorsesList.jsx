@@ -86,6 +86,10 @@ function HorsesList() {
     return kind === 'horse' ? 'Cheval' : 'Poney';
   };
 
+  const getOwnershipLabel = (ownership) => {
+    return `${ownership}`;
+  };
+
   const isActive = (startDate, endDate) => {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
@@ -201,6 +205,7 @@ function HorsesList() {
               <tr>
                 <th>Nom</th>
                 <th>Type</th>
+                <th>Propriétaire</th>
                 <th>👥 Cavaliers Actifs</th>
                 <th>Début d'activité</th>
                 <th>Fin d'activité</th>
@@ -216,6 +221,9 @@ function HorsesList() {
                   </td>
                   <td>
                     <span className={`badge badge-${horse.kind}`}>{getKindLabel(horse.kind)}</span>
+                  </td>
+                  <td>
+                    <span className="badge badge-info">{getOwnershipLabel(horse.is_owned_by)}</span>
                   </td>
                   <td>
                     <span className="badge badge-info">{horse.active_riders_count || 0}</span>

@@ -42,7 +42,7 @@ export async function handlePairings(request, env) {
           pairing_start_date,
           pairing_end_date,
           riders (id, name),
-          horses (id, name, kind, is_owned_by_laury)
+          horses (id, name, kind, is_owned_by)
         `
         )
         .order('pairing_start_date', { ascending: false });
@@ -133,7 +133,7 @@ export async function handlePairings(request, env) {
           pairing_start_date,
           pairing_end_date,
           riders (id, name),
-          horses (id, name, kind, is_owned_by_laury)
+          horses (id, name, kind, is_owned_by)
         `
         )
         .single();
