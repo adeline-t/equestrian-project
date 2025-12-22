@@ -31,12 +31,22 @@ export async function handleHorses(request, env) {
   }
 
   try {
-    // GET /api/horses - List all horses with active riders count
+    // GET /api/horses - List all horses with active riders count and owner info
     if (request.method === 'GET' && pathParts.length === 2) {
-      // Get all horses
+      // Get all horses with owner information
       const { data: horses, error: horsesError } = await db
         .from('horses')
-        .select('*')
+        .select(
+          `
+          *,
+          riders:owner_id (
+            id,
+            name,
+            email,
+            phone
+          )
+        `
+        )
         .order('name');
 
       if (horsesError) return handleDatabaseError(horsesError, 'horses.list');
@@ -95,7 +105,7 @@ export async function handleHorses(request, env) {
       return jsonResponse(horsesWithCounts, 200, getSecurityHeaders());
     }
 
-    // GET /api/horses/:id - Get single horse
+    // GET /api/horses/:id - Get single horse with owner info
     if (request.method === 'GET' && pathParts.length === 3) {
       const horseId = parseInt(pathParts[2]);
 
@@ -103,7 +113,21 @@ export async function handleHorses(request, env) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
-      const { data, error } = await db.from('horses').select('*').eq('id', horseId).single();
+      const { data, error } = await db
+        .from('horses')
+        .select(
+          `
+          *,
+          riders:owner_id (
+            id,
+            name,
+            email,
+            phone
+          )
+        `
+        )
+        .eq('id', horseId)
+        .single();
 
       if (error) return handleDatabaseError(error, 'horses.get');
       return jsonResponse(data, 200, getSecurityHeaders());
@@ -145,12 +169,30 @@ export async function handleHorses(request, env) {
         );
       }
 
+      // Validate owner_id if provided
+      if (body.owner_id) {
+        const { data: owner, error: ownerError } = await db
+          .from('riders')
+          .select('id')
+          .eq('id', body.owner_id)
+          .single();
+
+        if (ownerError || !owner) {
+          return jsonResponse(
+            { error: "Le propriétaire spécifié n'existe pas" },
+            400,
+            getSecurityHeaders()
+          );
+        }
+      }
+
       const horseData = {
         name: body.name.trim(),
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
         is_owned_by: body.is_owned_by || 'Propriétaire',
+        owner_id: body.owner_id || null,
       };
 
       const { data, error } = await db.from('horses').insert(horseData).select().single();
@@ -190,12 +232,30 @@ export async function handleHorses(request, env) {
         );
       }
 
+      // Validate owner_id if provided
+      if (body.owner_id) {
+        const { data: owner, error: ownerError } = await db
+          .from('riders')
+          .select('id')
+          .eq('id', body.owner_id)
+          .single();
+
+        if (ownerError || !owner) {
+          return jsonResponse(
+            { error: "Le propriétaire spécifié n'existe pas" },
+            400,
+            getSecurityHeaders()
+          );
+        }
+      }
+
       const updateData = {
         name: body.name?.trim(),
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
         is_owned_by: body.is_owned_by,
+        owner_id: body.owner_id !== undefined ? body.owner_id : undefined,
         updated_at: new Date().toISOString(),
       };
 

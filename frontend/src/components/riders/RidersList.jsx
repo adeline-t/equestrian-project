@@ -14,6 +14,8 @@ function RidersList() {
   const [editingRider, setEditingRider] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [selectedRiderId, setSelectedRiderId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [riderToDelete, setRiderToDelete] = useState(null);
 
   useEffect(() => {
     loadRiders();
@@ -46,18 +48,45 @@ function RidersList() {
     setSelectedRiderId(riderId);
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
-      return;
-    }
+  const handleDeleteClick = (rider) => {
+    setRiderToDelete(rider);
+    setShowDeleteModal(true);
+  };
+
+  const handleRemoveFromInventory = async () => {
+    if (!riderToDelete) return;
 
     try {
-      await ridersApi.delete(id);
-      setSuccessMessage('Cavalier supprimé avec succès');
+      const today = new Date().toISOString().split('T')[0];
+      await ridersApi.update(riderToDelete.id, {
+        activity_end_date: today,
+      });
+      setSuccessMessage(`${riderToDelete.name} a été retiré de l'inventaire`);
       setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeleteModal(false);
+      setRiderToDelete(null);
       loadRiders();
     } catch (err) {
       setError(err.message);
+      setShowDeleteModal(false);
+      setRiderToDelete(null);
+    }
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!riderToDelete) return;
+
+    try {
+      await ridersApi.delete(riderToDelete.id);
+      setSuccessMessage(`${riderToDelete.name} a été supprimé définitivement`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeleteModal(false);
+      setRiderToDelete(null);
+      loadRiders();
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteModal(false);
+      setRiderToDelete(null);
     }
   };
 
@@ -185,7 +214,7 @@ function RidersList() {
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(rider.id, rider.name)}
+                      onClick={() => handleDeleteClick(rider)}
                     >
                       🗑️ Supprimer
                     </button>
@@ -198,8 +227,30 @@ function RidersList() {
       )}
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="modal-overlay"
+          onClick={() => setShowModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
             <div className="modal-header">
               <h3>{editingRider ? '✏️ Modifier le cavalier' : '➕ Nouveau cavalier'}</h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
@@ -211,6 +262,95 @@ function RidersList() {
               onSubmit={handleFormSubmit}
               onCancel={() => setShowModal(false)}
             />
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && riderToDelete && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowDeleteModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '500px',
+            }}
+          >
+            <div className="modal-header">
+              <h3>⚠️ Que faire avec {riderToDelete.name} ?</h3>
+              <button className="modal-close" onClick={() => setShowDeleteModal(false)}>
+                ×
+              </button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+                Choisissez l'action à effectuer :
+              </p>
+
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  📤 Retirer de l'inventaire
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  Le cavalier restera dans la base de données mais sera marqué comme inactif. La
+                  date de fin d'activité sera définie à aujourd'hui.
+                </p>
+                <button
+                  className="btn btn-warning"
+                  onClick={handleRemoveFromInventory}
+                  style={{ width: '100%' }}
+                >
+                  📤 Retirer de l'inventaire
+                </button>
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid #e2e8f0',
+                  paddingTop: '20px',
+                  marginTop: '20px',
+                }}
+              >
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  🗑️ Supprimer définitivement
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  Le cavalier sera supprimé de la base de données de manière permanente. Cette
+                  action ne peut pas être annulée.
+                </p>
+                <button
+                  className="btn btn-danger"
+                  onClick={handlePermanentDelete}
+                  style={{ width: '100%' }}
+                >
+                  🗑️ Supprimer définitivement
+                </button>
+              </div>
+
+              <div style={{ marginTop: '20px' }}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeleteModal(false)}
+                  style={{ width: '100%' }}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

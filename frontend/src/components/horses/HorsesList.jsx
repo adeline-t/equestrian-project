@@ -13,6 +13,8 @@ function HorsesList() {
   const [editingHorse, setEditingHorse] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [filter, setFilter] = useState('all'); // all, horse, pony
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [horseToDelete, setHorseToDelete] = useState(null);
 
   useEffect(() => {
     loadHorses();
@@ -41,18 +43,45 @@ function HorsesList() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer ${name} ?`)) {
-      return;
-    }
+  const handleDeleteClick = (horse) => {
+    setHorseToDelete(horse);
+    setShowDeleteModal(true);
+  };
+
+  const handleRemoveFromInventory = async () => {
+    if (!horseToDelete) return;
 
     try {
-      await horsesApi.delete(id);
-      setSuccessMessage('Cheval supprimé avec succès');
+      const today = new Date().toISOString().split('T')[0];
+      await horsesApi.update(horseToDelete.id, {
+        activity_end_date: today,
+      });
+      setSuccessMessage(`${horseToDelete.name} a été retiré de l'inventaire`);
       setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeleteModal(false);
+      setHorseToDelete(null);
       loadHorses();
     } catch (err) {
       setError(err.message);
+      setShowDeleteModal(false);
+      setHorseToDelete(null);
+    }
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!horseToDelete) return;
+
+    try {
+      await horsesApi.delete(horseToDelete.id);
+      setSuccessMessage(`${horseToDelete.name} a été supprimé définitivement`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeleteModal(false);
+      setHorseToDelete(null);
+      loadHorses();
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteModal(false);
+      setHorseToDelete(null);
     }
   };
 
@@ -235,10 +264,7 @@ function HorsesList() {
                     <button className="btn btn-secondary" onClick={() => handleEdit(horse)}>
                       ✏️ Modifier
                     </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(horse.id, horse.name)}
-                    >
+                    <button className="btn btn-danger" onClick={() => handleDeleteClick(horse)}>
                       🗑️ Supprimer
                     </button>
                   </td>
@@ -263,6 +289,95 @@ function HorsesList() {
               onSubmit={handleFormSubmit}
               onCancel={() => setShowModal(false)}
             />
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && horseToDelete && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowDeleteModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '500px',
+            }}
+          >
+            <div className="modal-header">
+              <h3>⚠️ Que faire avec {horseToDelete.name} ?</h3>
+              <button className="modal-close" onClick={() => setShowDeleteModal(false)}>
+                ×
+              </button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+                Choisissez l'action à effectuer :
+              </p>
+
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  📤 Retirer de l'inventaire
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  Le cheval restera dans la base de données mais sera marqué comme inactif. La date
+                  de fin d'activité sera définie à aujourd'hui.
+                </p>
+                <button
+                  className="btn btn-warning"
+                  onClick={handleRemoveFromInventory}
+                  style={{ width: '100%' }}
+                >
+                  📤 Retirer de l'inventaire
+                </button>
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid #e2e8f0',
+                  paddingTop: '20px',
+                  marginTop: '20px',
+                }}
+              >
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  🗑️ Supprimer définitivement
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  Le cheval sera supprimé de la base de données de manière permanente. Cette action
+                  ne peut pas être annulée.
+                </p>
+                <button
+                  className="btn btn-danger"
+                  onClick={handlePermanentDelete}
+                  style={{ width: '100%' }}
+                >
+                  🗑️ Supprimer définitivement
+                </button>
+              </div>
+
+              <div style={{ marginTop: '20px' }}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeleteModal(false)}
+                  style={{ width: '100%' }}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

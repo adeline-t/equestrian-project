@@ -20,6 +20,10 @@ function RiderCard({ riderId, onClose }) {
   const [editingPackage, setEditingPackage] = useState(null);
   const [editingPairing, setEditingPairing] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [showDeletePackageModal, setShowDeletePackageModal] = useState(false);
+  const [packageToDelete, setPackageToDelete] = useState(null);
+  const [showDeletePairingModal, setShowDeletePairingModal] = useState(false);
+  const [pairingToDelete, setPairingToDelete] = useState(null);
 
   useEffect(() => {
     loadRiderData();
@@ -90,18 +94,45 @@ function RiderCard({ riderId, onClose }) {
     setShowPackageModal(true);
   };
 
-  const handleDeletePackage = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce forfait ?')) {
-      return;
-    }
+  const handleDeletePackageClick = (pkg) => {
+    setPackageToDelete(pkg);
+    setShowDeletePackageModal(true);
+  };
+
+  const handleRemovePackageFromInventory = async () => {
+    if (!packageToDelete) return;
 
     try {
-      await packagesApi.delete(id);
-      setSuccessMessage('Forfait supprimé avec succès');
+      const today = new Date().toISOString().split('T')[0];
+      await packagesApi.update(packageToDelete.id, {
+        activity_end_date: today,
+      });
+      setSuccessMessage("Forfait retiré de l'inventaire");
       setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeletePackageModal(false);
+      setPackageToDelete(null);
       loadRiderData();
     } catch (err) {
       setError(err.message);
+      setShowDeletePackageModal(false);
+      setPackageToDelete(null);
+    }
+  };
+
+  const handlePermanentDeletePackage = async () => {
+    if (!packageToDelete) return;
+
+    try {
+      await packagesApi.delete(packageToDelete.id);
+      setSuccessMessage('Forfait supprimé définitivement');
+      setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeletePackageModal(false);
+      setPackageToDelete(null);
+      loadRiderData();
+    } catch (err) {
+      setError(err.message);
+      setShowDeletePackageModal(false);
+      setPackageToDelete(null);
     }
   };
 
@@ -133,19 +164,47 @@ function RiderCard({ riderId, onClose }) {
     setShowPairingModal(true);
   };
 
-  const handleDeletePairing = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette DP ?')) {
-      return;
-    }
+  const handleDeletePairingClick = (pairing) => {
+    setPairingToDelete(pairing);
+    setShowDeletePairingModal(true);
+  };
+
+  const handleRemovePairingFromInventory = async () => {
+    if (!pairingToDelete) return;
 
     try {
       const pairingsApi = await import('../../services/api').then((m) => m.pairingsApi);
-      await pairingsApi.delete(id);
-      setSuccessMessage('DP supprimée avec succès');
+      const today = new Date().toISOString().split('T')[0];
+      await pairingsApi.update(pairingToDelete.id, {
+        pairing_end_date: today,
+      });
+      setSuccessMessage("DP retirée de l'inventaire");
       setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeletePairingModal(false);
+      setPairingToDelete(null);
       loadRiderData();
     } catch (err) {
       setError(err.message);
+      setShowDeletePairingModal(false);
+      setPairingToDelete(null);
+    }
+  };
+
+  const handlePermanentDeletePairing = async () => {
+    if (!pairingToDelete) return;
+
+    try {
+      const pairingsApi = await import('../../services/api').then((m) => m.pairingsApi);
+      await pairingsApi.delete(pairingToDelete.id);
+      setSuccessMessage('DP supprimée définitivement');
+      setTimeout(() => setSuccessMessage(''), 3000);
+      setShowDeletePairingModal(false);
+      setPairingToDelete(null);
+      loadRiderData();
+    } catch (err) {
+      setError(err.message);
+      setShowDeletePairingModal(false);
+      setPairingToDelete(null);
     }
   };
 
@@ -255,26 +314,6 @@ function RiderCard({ riderId, onClose }) {
             </div>
           </div>
 
-          {/* Statistics */}
-          <div className="stats-grid mb-30">
-            <div className="stat-card">
-              <span className="stat-number">{activePairings.length}</span>
-              <span className="stat-label">🐴 Chevaux Actifs</span>
-            </div>
-            <div className="stat-card">
-              <span className="stat-number">{activePackages.length}</span>
-              <span className="stat-label">📦 Forfaits Actifs</span>
-            </div>
-            <div className="stat-card">
-              <span className="stat-number">{totalPrivateLessons}</span>
-              <span className="stat-label">🎓 Cours Privés par semaine</span>
-            </div>
-            <div className="stat-card">
-              <span className="stat-number">{totalJointLessons}</span>
-              <span className="stat-label">👥 Cours Collectifs par semaine</span>
-            </div>
-          </div>
-
           {/* Active Packages Section */}
           <div className="section mb-30">
             <div className="flex-between mb-20">
@@ -299,8 +338,6 @@ function RiderCard({ riderId, onClose }) {
                       <th>ID</th>
                       <th>🎓 Privés</th>
                       <th>👥 Collectifs</th>
-                      <th>📅 Début</th>
-                      <th>📅 Fin</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -314,8 +351,6 @@ function RiderCard({ riderId, onClose }) {
                         <td>
                           <span className="badge badge-info">{pkg.joint_lesson_count || 0}</span>
                         </td>
-                        <td>{formatDate(pkg.activity_start_date)}</td>
-                        <td>{formatDate(pkg.activity_end_date)}</td>
                         <td className="actions">
                           <button
                             className="btn btn-sm btn-secondary"
@@ -325,7 +360,7 @@ function RiderCard({ riderId, onClose }) {
                           </button>
                           <button
                             className="btn btn-sm btn-danger"
-                            onClick={() => handleDeletePackage(pkg.id)}
+                            onClick={() => handleDeletePackageClick(pkg)}
                           >
                             🗑️
                           </button>
@@ -341,7 +376,7 @@ function RiderCard({ riderId, onClose }) {
           {/* Active Horse Associations Section */}
           <div className="section">
             <div className="flex-between mb-20">
-              <h3>🐴 DP Chevaux Actives ({activePairings.length})</h3>
+              <h3>🐴 DP Actives ({activePairings.length})</h3>
               <button className="btn btn-primary btn-sm" onClick={handleCreatePairing}>
                 ➕ Nouvelle DP
               </button>
@@ -360,9 +395,6 @@ function RiderCard({ riderId, onClose }) {
                   <thead>
                     <tr>
                       <th>Cheval</th>
-                      <th>Type</th>
-                      <th>📅 Début</th>
-                      <th>📅 Fin</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -372,13 +404,6 @@ function RiderCard({ riderId, onClose }) {
                         <td>
                           <strong>{pairing.horses?.name || 'N/A'}</strong>
                         </td>
-                        <td>
-                          <span className={`badge badge-${pairing.horses?.kind}`}>
-                            {pairing.horses?.kind === 'horse' ? 'Cheval' : 'Poney'}
-                          </span>
-                        </td>
-                        <td>{formatDate(pairing.pairing_start_date)}</td>
-                        <td>{formatDate(pairing.pairing_end_date)}</td>
                         <td className="actions">
                           <button
                             className="btn btn-sm btn-secondary"
@@ -388,7 +413,7 @@ function RiderCard({ riderId, onClose }) {
                           </button>
                           <button
                             className="btn btn-sm btn-danger"
-                            onClick={() => handleDeletePairing(pairing.id)}
+                            onClick={() => handleDeletePairingClick(pairing)}
                           >
                             🗑️
                           </button>
@@ -430,6 +455,186 @@ function RiderCard({ riderId, onClose }) {
           onSubmit={handlePairingSubmit}
           onCancel={() => setShowPairingModal(false)}
         />
+      )}
+
+      {/* Delete Package Modal */}
+      {showDeletePackageModal && packageToDelete && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowDeletePackageModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1001,
+          }}
+        >
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '500px',
+            }}
+          >
+            <div className="modal-header">
+              <h3>⚠️ Que faire avec ce forfait ?</h3>
+              <button className="modal-close" onClick={() => setShowDeletePackageModal(false)}>
+                ×
+              </button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+                Choisissez l'action à effectuer :
+              </p>
+
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  📤 Retirer de l'inventaire
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  Le forfait restera dans la base de données mais sera marqué comme inactif. La date
+                  de fin d'activité sera définie à aujourd'hui.
+                </p>
+                <button
+                  className="btn btn-warning"
+                  onClick={handleRemovePackageFromInventory}
+                  style={{ width: '100%' }}
+                >
+                  📤 Retirer de l'inventaire
+                </button>
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid #e2e8f0',
+                  paddingTop: '20px',
+                  marginTop: '20px',
+                }}
+              >
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  🗑️ Supprimer définitivement
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  Le forfait sera supprimé de la base de données de manière permanente. Cette action
+                  ne peut pas être annulée.
+                </p>
+                <button
+                  className="btn btn-danger"
+                  onClick={handlePermanentDeletePackage}
+                  style={{ width: '100%' }}
+                >
+                  🗑️ Supprimer définitivement
+                </button>
+              </div>
+
+              <div style={{ marginTop: '20px' }}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeletePackageModal(false)}
+                  style={{ width: '100%' }}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Pairing Modal */}
+      {showDeletePairingModal && pairingToDelete && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowDeletePairingModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1001,
+          }}
+        >
+          <div
+            className="modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '500px',
+            }}
+          >
+            <div className="modal-header">
+              <h3>⚠️ Que faire avec cette DP ?</h3>
+              <button className="modal-close" onClick={() => setShowDeletePairingModal(false)}>
+                ×
+              </button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+                Choisissez l'action à effectuer :
+              </p>
+
+              <div style={{ marginBottom: '20px' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  📤 Retirer de l'inventaire
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  La DP restera dans la base de données mais sera marquée comme inactive. La date de
+                  fin sera définie à aujourd'hui.
+                </p>
+                <button
+                  className="btn btn-warning"
+                  onClick={handleRemovePairingFromInventory}
+                  style={{ width: '100%' }}
+                >
+                  📤 Retirer de l'inventaire
+                </button>
+              </div>
+
+              <div
+                style={{
+                  borderTop: '1px solid #e2e8f0',
+                  paddingTop: '20px',
+                  marginTop: '20px',
+                }}
+              >
+                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                  🗑️ Supprimer définitivement
+                </h4>
+                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                  La DP sera supprimée de la base de données de manière permanente. Cette action ne
+                  peut pas être annulée.
+                </p>
+                <button
+                  className="btn btn-danger"
+                  onClick={handlePermanentDeletePairing}
+                  style={{ width: '100%' }}
+                >
+                  🗑️ Supprimer définitivement
+                </button>
+              </div>
+
+              <div style={{ marginTop: '20px' }}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeletePairingModal(false)}
+                  style={{ width: '100%' }}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
