@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ridersApi, packagesApi, horsesApi } from '../../services/api';
 import PackageForm from '../packages/PackageForm';
 import PairingForm from '../pairings/PairingForm';
+import Portal from '../Portal';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import './RiderCard.css';
@@ -11,6 +12,7 @@ function RiderCard({ riderId, onClose }) {
   const [rider, setRider] = useState(null);
   const [packages, setPackages] = useState([]);
   const [pairings, setPairings] = useState([]);
+  const [ownedHorses, setOwnedHorses] = useState([]);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,6 @@ function RiderCard({ riderId, onClose }) {
       setLoading(true);
       setError(null);
 
-      // Load rider details, packages, pairings, and reference data
       const [riderData, packagesData, pairingsData, ridersData, horsesData] = await Promise.all([
         ridersApi.getById(riderId),
         ridersApi.getPackages(riderId),
@@ -48,6 +49,10 @@ function RiderCard({ riderId, onClose }) {
       setPairings(pairingsData || []);
       setRiders(ridersData || []);
       setHorses(horsesData || []);
+
+      // Filter horses owned by this rider
+      const owned = (horsesData || []).filter((horse) => horse.owner_id === riderId);
+      setOwnedHorses(owned);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -81,6 +86,10 @@ function RiderCard({ riderId, onClose }) {
         {active ? 'Actif' : 'Inactif'}
       </span>
     );
+  };
+
+  const getKindLabel = (kind) => {
+    return kind === 'horse' ? 'Cheval' : 'Poney';
   };
 
   // Package handlers
@@ -216,7 +225,6 @@ function RiderCard({ riderId, onClose }) {
         await pairingsApi.update(editingPairing.id, pairingData);
         setSuccessMessage('DP modifiée avec succès');
       } else {
-        // Add rider_id to pairing data
         await pairingsApi.create({ ...pairingData, rider_id: riderId });
         setSuccessMessage('DP créée avec succès');
       }
@@ -241,402 +249,478 @@ function RiderCard({ riderId, onClose }) {
     return pairingActive && horseActive;
   });
 
-  // Calculate lesson counts
-  const totalPrivateLessons = activePackages.reduce(
-    (sum, pkg) => sum + (pkg.private_lesson_count || 0),
-    0
-  );
-  const totalJointLessons = activePackages.reduce(
-    (sum, pkg) => sum + (pkg.joint_lesson_count || 0),
-    0
+  const activeOwnedHorses = ownedHorses.filter((horse) =>
+    isActive(horse.activity_start_date, horse.activity_end_date)
   );
 
   if (loading) {
     return (
-      <div className="modal-overlay">
-        <div className="modal rider-card-modal">
-          <div className="loading">Chargement des informations du cavalier...</div>
+      <Portal>
+        <div className="modal-overlay">
+          <div className="modal rider-card-modal">
+            <div className="loading">Chargement des informations du cavalier...</div>
+          </div>
         </div>
-      </div>
+      </Portal>
     );
   }
 
   if (!rider) {
     return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal rider-card-modal">
-          <div className="error">Cavalier non trouvé</div>
+      <Portal>
+        <div className="modal-overlay" onClick={onClose}>
+          <div className="modal rider-card-modal">
+            <div className="error">Cavalier non trouvé</div>
+          </div>
         </div>
-      </div>
+      </Portal>
     );
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal rider-card-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>👤 {rider.name}</h2>
-          <button className="modal-close" onClick={onClose}>
-            ✕
-          </button>
-        </div>
-
-        <div className="modal-body rider-card-content">
-          {successMessage && <div className="alert alert-success mb-20">{successMessage}</div>}
-          {error && <div className="alert alert-error mb-20">{error}</div>}
-
-          {/* Rider Information */}
-          <div className="rider-info-section mb-30">
-            <h3>Informations</h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="info-label">📧 Email:</span>
-                <span className="info-value">{rider.email || '-'}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">📞 Téléphone:</span>
-                <span className="info-value">{rider.phone || '-'}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">📅 Début:</span>
-                <span className="info-value">{formatDate(rider.activity_start_date)}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">📅 Fin:</span>
-                <span className="info-value">{formatDate(rider.activity_end_date)}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Statut:</span>
-                <span className="info-value">
-                  {getStatusBadge(rider.activity_start_date, rider.activity_end_date)}
-                </span>
-              </div>
-            </div>
+    <Portal>
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal rider-card-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h2>👤 {rider.name}</h2>
+            <button className="modal-close" onClick={onClose}>
+              ✕
+            </button>
           </div>
 
-          {/* Active Packages Section */}
-          <div className="section mb-30">
-            <div className="flex-between mb-20">
-              <h3>📦 Forfaits Actifs ({activePackages.length})</h3>
-              <button className="btn btn-primary btn-sm" onClick={handleCreatePackage}>
-                ➕ Nouveau Forfait
-              </button>
+          <div className="modal-body rider-card-content">
+            {successMessage && <div className="alert alert-success mb-20">{successMessage}</div>}
+            {error && <div className="alert alert-error mb-20">{error}</div>}
+
+            {/* Rider Information */}
+            <div className="rider-info-section mb-30">
+              <h3>Informations</h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <span className="info-label">📧 Email:</span>
+                  <span className="info-value">{rider.email || '-'}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">📞 Téléphone:</span>
+                  <span className="info-value">{rider.phone || '-'}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">📅 Début:</span>
+                  <span className="info-value">{formatDate(rider.activity_start_date)}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">📅 Fin:</span>
+                  <span className="info-value">{formatDate(rider.activity_end_date)}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">Statut:</span>
+                  <span className="info-value">
+                    {getStatusBadge(rider.activity_start_date, rider.activity_end_date)}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {activePackages.length === 0 ? (
-              <div className="empty-state-small">
-                <p>Aucun forfait actif</p>
+            {/* Owned Horses Section */}
+            {ownedHorses.length > 0 && (
+              <div className="section mb-30">
+                <h3>🐴 Chevaux Possédés ({activeOwnedHorses.length})</h3>
+
+                {activeOwnedHorses.length === 0 ? (
+                  <div className="empty-state-small">
+                    <p>Aucun cheval actif possédé</p>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <table className="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Nom</th>
+                          <th>Type</th>
+                          <th>Début</th>
+                          <th>Fin</th>
+                          <th>Statut</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activeOwnedHorses.map((horse) => (
+                          <tr key={horse.id}>
+                            <td>
+                              <strong>{horse.name}</strong>
+                            </td>
+                            <td>
+                              <span className={`badge badge-${horse.kind}`}>
+                                {getKindLabel(horse.kind)}
+                              </span>
+                            </td>
+                            <td>{formatDate(horse.activity_start_date)}</td>
+                            <td>{formatDate(horse.activity_end_date)}</td>
+                            <td>
+                              {getStatusBadge(horse.activity_start_date, horse.activity_end_date)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Active Packages Section */}
+            <div className="section mb-30">
+              <div className="flex-between mb-20">
+                <h3>📦 Forfaits Actifs ({activePackages.length})</h3>
                 <button className="btn btn-primary btn-sm" onClick={handleCreatePackage}>
-                  Créer le premier forfait
+                  ➕ Nouveau Forfait
                 </button>
               </div>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-sm">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>🎓 Privés</th>
-                      <th>👥 Collectifs</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {activePackages.map((pkg) => (
-                      <tr key={pkg.id}>
-                        <td>#{pkg.id}</td>
-                        <td>
-                          <span className="badge badge-info">{pkg.private_lesson_count || 0}</span>
-                        </td>
-                        <td>
-                          <span className="badge badge-info">{pkg.joint_lesson_count || 0}</span>
-                        </td>
-                        <td className="actions">
-                          <button
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => handleEditPackage(pkg)}
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDeletePackageClick(pkg)}
-                          >
-                            🗑️
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
 
-          {/* Active Horse Associations Section */}
-          <div className="section">
-            <div className="flex-between mb-20">
-              <h3>🐴 DP Actives ({activePairings.length})</h3>
-              <button className="btn btn-primary btn-sm" onClick={handleCreatePairing}>
-                ➕ Nouvelle DP
-              </button>
+              {activePackages.length === 0 ? (
+                <div className="empty-state-small">
+                  <p>Aucun forfait actif</p>
+                  <button className="btn btn-primary btn-sm" onClick={handleCreatePackage}>
+                    Créer le premier forfait
+                  </button>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>🎓 Privés</th>
+                        <th>👥 Collectifs</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activePackages.map((pkg) => (
+                        <tr key={pkg.id}>
+                          <td>#{pkg.id}</td>
+                          <td>
+                            <span className="badge badge-info">
+                              {pkg.private_lesson_count || 0}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="badge badge-info">{pkg.joint_lesson_count || 0}</span>
+                          </td>
+                          <td className="actions">
+                            <button
+                              className="btn btn-sm btn-secondary"
+                              onClick={() => handleEditPackage(pkg)}
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => handleDeletePackageClick(pkg)}
+                            >
+                              🗑️
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
-            {activePairings.length === 0 ? (
-              <div className="empty-state-small">
-                <p>Aucune association active</p>
+            {/* Active Horse Associations Section */}
+            <div className="section">
+              <div className="flex-between mb-20">
+                <h3>🐴 DP Actives ({activePairings.length})</h3>
                 <button className="btn btn-primary btn-sm" onClick={handleCreatePairing}>
-                  Créer la première DP
+                  ➕ Nouvelle DP
                 </button>
               </div>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-sm">
-                  <thead>
-                    <tr>
-                      <th>Cheval</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {activePairings.map((pairing) => (
-                      <tr key={pairing.id}>
-                        <td>
-                          <strong>{pairing.horses?.name || 'N/A'}</strong>
-                        </td>
-                        <td className="actions">
-                          <button
-                            className="btn btn-sm btn-secondary"
-                            onClick={() => handleEditPairing(pairing)}
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => handleDeletePairingClick(pairing)}
-                          >
-                            🗑️
-                          </button>
-                        </td>
+
+              {activePairings.length === 0 ? (
+                <div className="empty-state-small">
+                  <p>Aucune association active</p>
+                  <button className="btn btn-primary btn-sm" onClick={handleCreatePairing}>
+                    Créer la première DP
+                  </button>
+                </div>
+              ) : (
+                <div className="table-responsive">
+                  <table className="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Cheval</th>
+                        <th>Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    </thead>
+                    <tbody>
+                      {activePairings.map((pairing) => (
+                        <tr key={pairing.id}>
+                          <td>
+                            <strong>{pairing.horses?.name || 'N/A'}</strong>
+                          </td>
+                          <td className="actions">
+                            <button
+                              className="btn btn-sm btn-secondary"
+                              onClick={() => handleEditPairing(pairing)}
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => handleDeletePairingClick(pairing)}
+                            >
+                              🗑️
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onClose}>
+              Fermer
+            </button>
           </div>
         </div>
 
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
-            Fermer
-          </button>
-        </div>
+        {/* Package Form Modal */}
+        {showPackageModal && (
+          <div
+            className="modal-overlay"
+            onClick={() => setShowPackageModal(false)}
+            style={{
+              zIndex: 1001,
+            }}
+          >
+            <div
+              className="modal"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxHeight: '90vh',
+                overflowY: 'auto',
+              }}
+            >
+              <div className="modal-header">
+                <h3>{editingPackage ? '✏️ Modifier le forfait' : '➕ Nouveau forfait'}</h3>
+                <button className="modal-close" onClick={() => setShowPackageModal(false)}>
+                  ×
+                </button>
+              </div>
+              <PackageForm
+                package={editingPackage}
+                riders={riders}
+                riderId={riderId}
+                onSubmit={handlePackageSubmit}
+                onCancel={() => setShowPackageModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Pairing Form Modal */}
+        {showPairingModal && (
+          <div
+            className="modal-overlay"
+            onClick={() => setShowPairingModal(false)}
+            style={{
+              zIndex: 1001,
+            }}
+          >
+            <div
+              className="modal"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxHeight: '90vh',
+                overflowY: 'auto',
+              }}
+            >
+              <div className="modal-header">
+                <h3>{editingPairing ? '✏️ Modifier la DP' : '➕ Nouvelle DP'}</h3>
+                <button className="modal-close" onClick={() => setShowPairingModal(false)}>
+                  ×
+                </button>
+              </div>
+              <PairingForm
+                pairing={editingPairing}
+                riders={riders}
+                horses={horses}
+                riderId={riderId}
+                onSubmit={handlePairingSubmit}
+                onCancel={() => setShowPairingModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Delete Package Modal */}
+        {showDeletePackageModal && packageToDelete && (
+          <div
+            className="modal-overlay"
+            onClick={() => setShowDeletePackageModal(false)}
+            style={{
+              zIndex: 1000,
+            }}
+          >
+            <div
+              className="modal"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: '500px',
+              }}
+            >
+              <div className="modal-header">
+                <h3>⚠️ Que faire avec ce forfait ?</h3>
+                <button className="modal-close" onClick={() => setShowDeletePackageModal(false)}>
+                  ×
+                </button>
+              </div>
+              <div style={{ padding: '20px' }}>
+                <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+                  Choisissez l'action à effectuer :
+                </p>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                    📤 Retirer de l'inventaire
+                  </h4>
+                  <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                    Le forfait restera dans la base de données mais sera marqué comme inactif. La
+                    date de fin d'activité sera définie à aujourd'hui.
+                  </p>
+                  <button
+                    className="btn btn-warning"
+                    onClick={handleRemovePackageFromInventory}
+                    style={{ width: '100%' }}
+                  >
+                    📤 Retirer de l'inventaire
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    borderTop: '1px solid #e2e8f0',
+                    paddingTop: '20px',
+                    marginTop: '20px',
+                  }}
+                >
+                  <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                    🗑️ Supprimer définitivement
+                  </h4>
+                  <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                    Le forfait sera supprimé de la base de données de manière permanente. Cette
+                    action ne peut pas être annulée.
+                  </p>
+                  <button
+                    className="btn btn-danger"
+                    onClick={handlePermanentDeletePackage}
+                    style={{ width: '100%' }}
+                  >
+                    🗑️ Supprimer définitivement
+                  </button>
+                </div>
+
+                <div style={{ marginTop: '20px' }}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setShowDeletePackageModal(false)}
+                    style={{ width: '100%' }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Pairing Modal */}
+        {showDeletePairingModal && pairingToDelete && (
+          <div
+            className="modal-overlay"
+            onClick={() => setShowDeletePairingModal(false)}
+            style={{
+              zIndex: 1000,
+            }}
+          >
+            <div
+              className="modal"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: '500px',
+              }}
+            >
+              <div className="modal-header">
+                <h3>⚠️ Que faire avec cette DP ?</h3>
+                <button className="modal-close" onClick={() => setShowDeletePairingModal(false)}>
+                  ×
+                </button>
+              </div>
+              <div style={{ padding: '20px' }}>
+                <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+                  Choisissez l'action à effectuer :
+                </p>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                    📤 Retirer de l'inventaire
+                  </h4>
+                  <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                    La DP restera dans la base de données mais sera marquée comme inactive. La date
+                    de fin sera définie à aujourd'hui.
+                  </p>
+                  <button
+                    className="btn btn-warning"
+                    onClick={handleRemovePairingFromInventory}
+                    style={{ width: '100%' }}
+                  >
+                    📤 Retirer de l'inventaire
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    borderTop: '1px solid #e2e8f0',
+                    paddingTop: '20px',
+                    marginTop: '20px',
+                  }}
+                >
+                  <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+                    🗑️ Supprimer définitivement
+                  </h4>
+                  <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+                    La DP sera supprimée de la base de données de manière permanente. Cette action
+                    ne peut pas être annulée.
+                  </p>
+                  <button
+                    className="btn btn-danger"
+                    onClick={handlePermanentDeletePairing}
+                    style={{ width: '100%' }}
+                  >
+                    🗑️ Supprimer définitivement
+                  </button>
+                </div>
+
+                <div style={{ marginTop: '20px' }}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setShowDeletePairingModal(false)}
+                    style={{ width: '100%' }}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Package Form Modal */}
-      {showPackageModal && (
-        <PackageForm
-          package={editingPackage}
-          riders={riders}
-          riderId={riderId}
-          onSubmit={handlePackageSubmit}
-          onCancel={() => setShowPackageModal(false)}
-        />
-      )}
-
-      {/* Pairing Form Modal */}
-      {showPairingModal && (
-        <PairingForm
-          pairing={editingPairing}
-          riders={riders}
-          horses={horses}
-          riderId={riderId}
-          onSubmit={handlePairingSubmit}
-          onCancel={() => setShowPairingModal(false)}
-        />
-      )}
-
-      {/* Delete Package Modal */}
-      {showDeletePackageModal && packageToDelete && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowDeletePackageModal(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1001,
-          }}
-        >
-          <div
-            className="modal"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: '500px',
-            }}
-          >
-            <div className="modal-header">
-              <h3>⚠️ Que faire avec ce forfait ?</h3>
-              <button className="modal-close" onClick={() => setShowDeletePackageModal(false)}>
-                ×
-              </button>
-            </div>
-            <div style={{ padding: '20px' }}>
-              <p style={{ marginBottom: '20px', color: '#4a5568' }}>
-                Choisissez l'action à effectuer :
-              </p>
-
-              <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-                  📤 Retirer de l'inventaire
-                </h4>
-                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
-                  Le forfait restera dans la base de données mais sera marqué comme inactif. La date
-                  de fin d'activité sera définie à aujourd'hui.
-                </p>
-                <button
-                  className="btn btn-warning"
-                  onClick={handleRemovePackageFromInventory}
-                  style={{ width: '100%' }}
-                >
-                  📤 Retirer de l'inventaire
-                </button>
-              </div>
-
-              <div
-                style={{
-                  borderTop: '1px solid #e2e8f0',
-                  paddingTop: '20px',
-                  marginTop: '20px',
-                }}
-              >
-                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-                  🗑️ Supprimer définitivement
-                </h4>
-                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
-                  Le forfait sera supprimé de la base de données de manière permanente. Cette action
-                  ne peut pas être annulée.
-                </p>
-                <button
-                  className="btn btn-danger"
-                  onClick={handlePermanentDeletePackage}
-                  style={{ width: '100%' }}
-                >
-                  🗑️ Supprimer définitivement
-                </button>
-              </div>
-
-              <div style={{ marginTop: '20px' }}>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowDeletePackageModal(false)}
-                  style={{ width: '100%' }}
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Pairing Modal */}
-      {showDeletePairingModal && pairingToDelete && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowDeletePairingModal(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1001,
-          }}
-        >
-          <div
-            className="modal"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: '500px',
-            }}
-          >
-            <div className="modal-header">
-              <h3>⚠️ Que faire avec cette DP ?</h3>
-              <button className="modal-close" onClick={() => setShowDeletePairingModal(false)}>
-                ×
-              </button>
-            </div>
-            <div style={{ padding: '20px' }}>
-              <p style={{ marginBottom: '20px', color: '#4a5568' }}>
-                Choisissez l'action à effectuer :
-              </p>
-
-              <div style={{ marginBottom: '20px' }}>
-                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-                  📤 Retirer de l'inventaire
-                </h4>
-                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
-                  La DP restera dans la base de données mais sera marquée comme inactive. La date de
-                  fin sera définie à aujourd'hui.
-                </p>
-                <button
-                  className="btn btn-warning"
-                  onClick={handleRemovePairingFromInventory}
-                  style={{ width: '100%' }}
-                >
-                  📤 Retirer de l'inventaire
-                </button>
-              </div>
-
-              <div
-                style={{
-                  borderTop: '1px solid #e2e8f0',
-                  paddingTop: '20px',
-                  marginTop: '20px',
-                }}
-              >
-                <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-                  🗑️ Supprimer définitivement
-                </h4>
-                <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
-                  La DP sera supprimée de la base de données de manière permanente. Cette action ne
-                  peut pas être annulée.
-                </p>
-                <button
-                  className="btn btn-danger"
-                  onClick={handlePermanentDeletePairing}
-                  style={{ width: '100%' }}
-                >
-                  🗑️ Supprimer définitivement
-                </button>
-              </div>
-
-              <div style={{ marginTop: '20px' }}>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowDeletePairingModal(false)}
-                  style={{ width: '100%' }}
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </Portal>
   );
 }
 
