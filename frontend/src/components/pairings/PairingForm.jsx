@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Icons } from '../../utils/icons';
 
-function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
+function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
   const [formData, setFormData] = useState({
     rider_id: '',
     horse_id: '',
@@ -21,13 +22,13 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
       });
     } else {
       setFormData({
-        rider_id: '',
+        rider_id: riderId?.toString() || '',
         horse_id: '',
         pairing_start_date: '',
         pairing_end_date: '',
       });
     }
-  }, [pairing]);
+  }, [pairing, riderId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,10 +113,16 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
-      {error && <div className="error">⚠️ {error}</div>}
+      {error && (
+        <div className="error">
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          {error}
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="rider_id">
+          <Icons.User style={{ marginRight: '4px' }} />
           Cavalier <span style={{ color: '#e53e3e' }}>*</span>
         </label>
         <select
@@ -124,19 +131,28 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
           value={formData.rider_id}
           onChange={handleChange}
           required
-          disabled={submitting || !!pairing}
+          disabled={submitting || !!pairing || !!riderId}
         >
           <option value="">Sélectionnez un cavalier</option>
           {riders.map((rider) => (
             <option key={rider.id} value={rider.id}>
-              👤 {rider.name}
+              {rider.name}
             </option>
           ))}
         </select>
+        {riderId && (
+          <small
+            style={{ color: '#718096', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}
+          >
+            <Icons.Info style={{ fontSize: '0.75rem', marginRight: '4px' }} />
+            Le cavalier est pré-sélectionné
+          </small>
+        )}
       </div>
 
       <div className="form-group">
         <label htmlFor="horse_id">
+          <Icons.Horse style={{ marginRight: '4px' }} />
           Cheval <span style={{ color: '#e53e3e' }}>*</span>
         </label>
         <select
@@ -154,10 +170,21 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
             </option>
           ))}
         </select>
+        {pairing && (
+          <small
+            style={{ color: '#718096', fontSize: '0.875rem', marginTop: '4px', display: 'block' }}
+          >
+            <Icons.Info style={{ fontSize: '0.75rem', marginRight: '4px' }} />
+            Le cavalier et le cheval ne peuvent pas être modifiés
+          </small>
+        )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="pairing_start_date">Date de début</label>
+        <label htmlFor="pairing_start_date">
+          <Icons.Calendar style={{ marginRight: '4px' }} />
+          Date de début
+        </label>
         <input
           type="date"
           id="pairing_start_date"
@@ -170,7 +197,10 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="pairing_end_date">Date de fin</label>
+        <label htmlFor="pairing_end_date">
+          <Icons.Calendar style={{ marginRight: '4px' }} />
+          Date de fin
+        </label>
         <input
           type="date"
           id="pairing_end_date"
@@ -193,19 +223,45 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
               border: '2px solid #e2e8f0',
             }}
           >
-            <h4 style={{ margin: '0 0 12px 0', color: '#4a5568' }}>Aperçu</h4>
-            <p style={{ margin: '0', color: '#718096', fontWeight: '500' }}>
-              👤 <strong>{getSelectedRider()?.name || 'Cavalier'}</strong>
-              {' ↔ '}
+            <h4
+              style={{
+                margin: '0 0 12px 0',
+                color: '#4a5568',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <Icons.Info />
+              Aperçu
+            </h4>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 8px 0' }}>
+              <Icons.User style={{ color: '#4299e1' }} />
+              <strong>{getSelectedRider()?.name || 'Cavalier'}</strong>
+              <Icons.Link style={{ color: '#718096', fontSize: '0.875rem' }} />
+              <Icons.Horse style={{ color: '#48bb78' }} />
               <strong>{getSelectedHorse()?.name || 'Cheval'}</strong>
-            </p>
+            </div>
             {getSelectedHorse() && (
-              <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.9rem' }}>
-                Type: {getKindLabel(getSelectedHorse().kind)}
+              <p style={{ margin: '4px 0 0 24px', color: '#718096', fontSize: '0.9rem' }}>
+                Type:{' '}
+                <span className={`badge badge-${getSelectedHorse().kind}`}>
+                  {getKindLabel(getSelectedHorse().kind)}
+                </span>
               </p>
             )}
             {formData.pairing_start_date && (
-              <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.9rem' }}>
+              <p
+                style={{
+                  margin: '8px 0 0 24px',
+                  color: '#718096',
+                  fontSize: '0.9rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <Icons.Calendar style={{ fontSize: '0.875rem' }} />
                 Période: {formData.pairing_start_date}
                 {formData.pairing_end_date && ` → ${formData.pairing_end_date}`}
               </p>
@@ -222,11 +278,14 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
         >
           {submitting ? (
             <>
-              <span className="loading-spinner"></span>
+              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
               Enregistrement...
             </>
           ) : (
-            <>✓ {pairing ? 'Mettre à jour' : 'Créer'} la DP</>
+            <>
+              <Icons.Save style={{ marginRight: '8px' }} />
+              {pairing ? 'Mettre à jour' : 'Créer'} la pension
+            </>
           )}
         </button>
         <button
@@ -235,6 +294,7 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
           onClick={onCancel}
           disabled={submitting}
         >
+          <Icons.Cancel style={{ marginRight: '8px' }} />
           Annuler
         </button>
       </div>
@@ -244,31 +304,33 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel }) {
 
 PairingForm.propTypes = {
   pairing: PropTypes.shape({
-    id: PropTypes.string,
-    rider_id: PropTypes.string,
-    horse_id: PropTypes.string,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    rider_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    horse_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     pairing_start_date: PropTypes.string,
     pairing_end_date: PropTypes.string,
   }),
   riders: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
   horses: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       name: PropTypes.string.isRequired,
       kind: PropTypes.oneOf(['horse', 'pony']),
     })
   ).isRequired,
+  riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
 
 PairingForm.defaultProps = {
   pairing: null,
+  riderId: null,
 };
 
 export default PairingForm;

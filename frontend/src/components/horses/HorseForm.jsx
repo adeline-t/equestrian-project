@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ridersApi } from '../../services/api';
+import { Icons } from '../../utils/icons';
 
 function HorseForm({ horse, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
@@ -22,12 +23,10 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     { value: 'Club', label: 'Club' },
   ];
 
-  // Load riders when component mounts
   useEffect(() => {
     loadRiders();
   }, []);
 
-  // Load horse data when horse prop changes
   useEffect(() => {
     if (horse) {
       setFormData({
@@ -71,7 +70,6 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         [name]: value,
       };
 
-      // Reset owner_id if is_owned_by changes to something other than 'Propriétaire'
       if (name === 'is_owned_by' && value !== 'Propriétaire') {
         updated.owner_id = null;
       }
@@ -79,7 +77,6 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       return updated;
     });
 
-    // Clear error when user starts typing
     if (error) {
       setError('');
     }
@@ -106,13 +103,11 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       return false;
     }
 
-    // Validate owner_id if is_owned_by is 'Propriétaire'
     if (formData.is_owned_by === 'Propriétaire' && !formData.owner_id) {
       setError('Veuillez sélectionner un propriétaire');
       return false;
     }
 
-    // Validate date logic
     if (formData.activity_start_date && formData.activity_end_date) {
       const startDate = new Date(formData.activity_start_date);
       const endDate = new Date(formData.activity_end_date);
@@ -170,7 +165,12 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleKeyDown}>
-      {error && <div className="error">⚠️ {error}</div>}
+      {error && (
+        <div className="error">
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          {error}
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="name">
@@ -191,6 +191,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
       <div className="form-group">
         <label htmlFor="kind">
+          <Icons.Horse style={{ marginRight: '4px' }} />
           Type <span style={{ color: '#e53e3e' }}>*</span>
         </label>
         <select
@@ -201,13 +202,14 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           required
           disabled={submitting}
         >
-          <option value="horse">🐴 Cheval</option>
-          <option value="pony">🦄 Poney</option>
+          <option value="horse">Cheval</option>
+          <option value="pony">Poney</option>
         </select>
       </div>
 
       <div className="form-group">
         <label htmlFor="is_owned_by">
+          <Icons.User style={{ marginRight: '4px' }} />
           Propriétaire <span style={{ color: '#e53e3e' }}>*</span>
         </label>
         <select
@@ -229,12 +231,35 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       {formData.is_owned_by === 'Propriétaire' && (
         <div className="form-group">
           <label htmlFor="owner_id">
+            <Icons.User style={{ marginRight: '4px' }} />
             Sélectionner le propriétaire <span style={{ color: '#e53e3e' }}>*</span>
           </label>
           {loadingRiders ? (
-            <div style={{ padding: '8px', color: '#718096' }}>Chargement des cavaliers...</div>
+            <div
+              style={{
+                padding: '8px',
+                color: '#718096',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <Icons.Loading className="spin" />
+              Chargement des cavaliers...
+            </div>
           ) : riders.length === 0 ? (
-            <div style={{ padding: '8px', color: '#e53e3e' }}>Aucun cavalier disponible</div>
+            <div
+              style={{
+                padding: '8px',
+                color: '#e53e3e',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <Icons.Warning />
+              Aucun cavalier disponible
+            </div>
           ) : (
             <select
               id="owner_id"
@@ -256,7 +281,10 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       )}
 
       <div className="form-group">
-        <label htmlFor="activity_start_date">Arrivée</label>
+        <label htmlFor="activity_start_date">
+          <Icons.Calendar style={{ marginRight: '4px' }} />
+          Arrivée
+        </label>
         <input
           type="date"
           id="activity_start_date"
@@ -269,7 +297,10 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="activity_end_date">Sortie</label>
+        <label htmlFor="activity_end_date">
+          <Icons.Calendar style={{ marginRight: '4px' }} />
+          Sortie
+        </label>
         <input
           type="date"
           id="activity_end_date"
@@ -290,19 +321,50 @@ function HorseForm({ horse, onSubmit, onCancel }) {
             border: '2px solid #e2e8f0',
           }}
         >
-          <h4 style={{ margin: '0 0 8px 0', color: '#4a5568' }}>Récapitulatif</h4>
+          <h4
+            style={{
+              margin: '0 0 8px 0',
+              color: '#4a5568',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <Icons.Info />
+            Récapitulatif
+          </h4>
           <p style={{ margin: '0', color: '#718096' }}>
             <strong>{formData.name || 'Nom'}</strong> -
             {formData.kind === 'horse' ? ' Cheval' : ' Poney'} -{' '}
             {getOwnershipLabel(formData.is_owned_by)}
           </p>
           {formData.is_owned_by === 'Propriétaire' && (
-            <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.9rem' }}>
+            <p
+              style={{
+                margin: '4px 0 0 0',
+                color: '#718096',
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <Icons.User style={{ fontSize: '0.875rem' }} />
               Propriétaire: <strong>{getOwnerName(formData.owner_id)}</strong>
             </p>
           )}
           {formData.activity_start_date && (
-            <p style={{ margin: '4px 0 0 0', color: '#718096', fontSize: '0.9rem' }}>
+            <p
+              style={{
+                margin: '4px 0 0 0',
+                color: '#718096',
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <Icons.Calendar style={{ fontSize: '0.875rem' }} />
               Activité: {formData.activity_start_date}
               {formData.activity_end_date && ` → ${formData.activity_end_date}`}
             </p>
@@ -314,12 +376,13 @@ function HorseForm({ horse, onSubmit, onCancel }) {
         <button type="submit" className="btn btn-success" disabled={submitting}>
           {submitting ? (
             <>
-              <span className="loading-spinner"></span>
+              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
               Enregistrement...
             </>
           ) : (
             <>
-              ✓ {horse ? 'Mettre à jour' : 'Créer'} le{' '}
+              <Icons.Save style={{ marginRight: '8px' }} />
+              {horse ? 'Mettre à jour' : 'Créer'} le{' '}
               {formData.kind === 'horse' ? 'cheval' : 'poney'}
             </>
           )}
@@ -330,6 +393,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           onClick={onCancel}
           disabled={submitting}
         >
+          <Icons.Cancel style={{ marginRight: '8px' }} />
           Annuler
         </button>
       </div>

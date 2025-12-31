@@ -1,12 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
-import ErrorBoundary from './components/ErrorBoundary';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import ErrorBoundary from './utils/ErrorBoundary';
 import RidersList from './components/riders/RidersList';
 import HorsesList from './components/horses/HorsesList';
 import PairingsList from './components/pairings/PairingsList';
 import PackagesList from './components/packages/PackagesList';
 import CalendarView from './components/calendar/CalendarView';
 import TemplateManagement from './components/templates/TemplateManagement';
+import { Icons } from './utils/icons';
 
 function App() {
   return (
@@ -15,25 +16,27 @@ function App() {
         <div className="app">
           <header>
             <div className="container">
-              <h1>🐴 Gestion Centre Équestre</h1>
+              <h1>
+                <Icons.Horse style={{ marginRight: '12px' }} /> Gestion Centre Équestre
+              </h1>
               <nav>
                 <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  Cavaliers
+                  <Icons.User style={{ marginRight: '8px' }} /> Cavaliers
                 </NavLink>
                 <NavLink to="/horses" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  Chevaux
+                  <Icons.Horse style={{ marginRight: '8px' }} /> Chevaux
                 </NavLink>
                 <NavLink to="/pairings" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  Paires
+                  <Icons.Link style={{ marginRight: '8px' }} /> Pensions
                 </NavLink>
                 <NavLink to="/packages" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  Forfaits
+                  <Icons.Packages style={{ marginRight: '8px' }} /> Forfaits
                 </NavLink>
                 <NavLink to="/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  📅 Calendrier
+                  <Icons.Calendar style={{ marginRight: '8px' }} /> Calendrier
                 </NavLink>
                 <NavLink to="/templates" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  📋 Templates
+                  <Icons.Template style={{ marginRight: '8px' }} /> Templates
                 </NavLink>
               </nav>
             </div>

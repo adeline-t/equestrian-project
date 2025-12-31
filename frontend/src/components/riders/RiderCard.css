@@ -1,7 +1,7 @@
 /* RiderCard Modal Styles */
 .rider-card-modal {
-  max-width: 1000px;
-  width: 90%;
+  max-width: 1400px;
+  width: 95%;
   max-height: 90vh;
   overflow-y: auto;
 }
@@ -92,6 +92,18 @@
   font-size: 1.25rem;
 }
 
+/* Minimal Section Style */
+.section-minimal {
+  padding: 15px 20px;
+  background: #f9fafb;
+}
+
+.section-minimal h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2d3748;
+}
+
 /* Empty State Small */
 .empty-state-small {
   text-align: center;
@@ -116,7 +128,38 @@
   padding: 8px 12px;
 }
 
+/* Date Status Row - Single Line Display */
+.date-status-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.date-status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.date-status-item .info-label {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.date-status-item .info-value {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #2d3748;
+}
+
 /* Utility Classes */
+.mb-15 {
+  margin-bottom: 15px;
+}
+
 .mb-20 {
   margin-bottom: 20px;
 }
@@ -131,7 +174,175 @@
   align-items: center;
 }
 
+/* Button Icon Style */
+.btn-icon {
+  padding: 8px 12px !important;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 6px;
+  margin: 0 !important;
+  filter: brightness(0) saturate(100%);
+}
+
+.btn-primary.btn-icon {
+  filter: brightness(0) saturate(100%) invert(1);
+}
+
+/* Owned Horses List */
+.owned-horses-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.owned-horse-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.horse-name-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.horse-name-type strong {
+  color: #2d3748;
+}
+
+.horse-name-type .badge {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+}
+
+/* Packages List */
+.packages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.package-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.package-item:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.package-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.package-id {
+  font-weight: 600;
+  color: #2d3748;
+  min-width: 40px;
+}
+
+.package-lessons {
+  display: flex;
+  gap: 8px;
+}
+
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #edf2f7;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.package-item .btn-secondary {
+  padding: 6px 10px !important;
+  font-size: 0.9rem;
+  margin: 0 !important;
+  filter: brightness(0) saturate(100%) invert(1);
+}
+
+/* Pairings List */
+.pairings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pairing-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.pairing-item:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pairing-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.pairing-horse-name {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.pairing-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.pairing-item .btn-secondary,
+.pairing-item .btn-danger {
+  padding: 6px 10px !important;
+  font-size: 0.9rem;
+  margin: 0 !important;
+  filter: brightness(0) saturate(100%) invert(1);
+}
+
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .rider-card-modal {
+    max-width: 90%;
+    width: 90%;
+  }
+}
+
 @media (max-width: 768px) {
   .rider-card-modal {
     width: 95%;
@@ -153,10 +364,66 @@
   .table-responsive {
     overflow-x: auto;
   }
+
+  .date-status-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .date-status-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .owned-horses-list {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .owned-horse-item {
+    width: 100%;
+  }
+
+  .package-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .package-info {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .package-item .btn-secondary {
+    align-self: flex-end;
+  }
+
+  .pairing-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pairing-info {
+    width: 100%;
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 480px) {
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .rider-card-modal {
+    width: 98%;
   }
 }

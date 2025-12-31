@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Icons } from '../../utils/icons';
 import { ridersApi } from '../../services/api';
 import RiderForm from './RiderForm';
 import RiderCard from './RiderCard';
@@ -144,7 +145,7 @@ function RidersList() {
       <div className="flex-between">
         <h2>Liste des Cavaliers</h2>
         <button className="btn btn-primary" onClick={handleCreate}>
-          ➕ Nouveau Cavalier
+          <Icons.Add /> Nouveau Cavalier
         </button>
       </div>
 
@@ -153,11 +154,13 @@ function RidersList() {
 
       {riders.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-state-icon">👤</div>
+          <div className="empty-state-icon">
+            <Icons.User style={{ fontSize: '64px' }} />
+          </div>
           <h3>Aucun cavalier enregistré</h3>
           <p>Commencez par ajouter votre premier cavalier</p>
           <button className="btn btn-primary" onClick={handleCreate}>
-            Créer le premier cavalier
+            <Icons.Add /> Créer le premier cavalier
           </button>
         </div>
       ) : (
@@ -168,10 +171,10 @@ function RidersList() {
                 <th>Nom</th>
                 <th>Téléphone</th>
                 <th>Email</th>
-                <th>🐴 Chevaux Actifs</th>
-                <th>📦 Forfaits Actifs</th>
-                <th>🎓 Cours Privés par semaine</th>
-                <th>👥 Cours Collectifs par semaine</th>
+                <th>Pension</th>
+                <th>Forfaits</th>
+                <th>Cours Privés par semaine</th>
+                <th>Prestation par semaine</th>
                 <th>Début</th>
                 <th>Fin</th>
                 <th>Statut</th>
@@ -186,12 +189,8 @@ function RidersList() {
                   </td>
                   <td>{rider.phone || '-'}</td>
                   <td>{rider.email || '-'}</td>
-                  <td>
-                    <span className="badge badge-info">{rider.active_horses_count || 0}</span>
-                  </td>
-                  <td>
-                    <span className="badge badge-info">{rider.active_packages_count || 0}</span>
-                  </td>
+                  <td>{rider.active_horses_count || 0}</td>
+                  <td>{rider.active_packages_count || 0}</td>
                   <td>
                     <span className="badge badge-primary">{rider.private_lessons_count || 0}</span>
                   </td>
@@ -207,16 +206,16 @@ function RidersList() {
                       onClick={() => handleViewDetails(rider.id)}
                       title="Voir les détails"
                     >
-                      👁️ Détails
+                      <Icons.View /> Détails
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => handleEdit(rider)}>
-                      ✏️ Modifier
+                      <Icons.Edit /> Modifier
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDeleteClick(rider)}
                     >
-                      🗑️ Supprimer
+                      <Icons.Delete /> Supprimer
                     </button>
                   </td>
                 </tr>
@@ -252,9 +251,19 @@ function RidersList() {
             }}
           >
             <div className="modal-header">
-              <h3>{editingRider ? '✏️ Modifier le cavalier' : '➕ Nouveau cavalier'}</h3>
+              <h3>
+                {editingRider ? (
+                  <>
+                    <Icons.Edit style={{ marginRight: '8px' }} /> Modifier le cavalier
+                  </>
+                ) : (
+                  <>
+                    <Icons.Add style={{ marginRight: '8px' }} /> Nouveau cavalier
+                  </>
+                )}
+              </h3>
               <button className="modal-close" onClick={() => setShowModal(false)}>
-                ×
+                <Icons.Close />
               </button>
             </div>
             <RiderForm
@@ -291,9 +300,12 @@ function RidersList() {
             }}
           >
             <div className="modal-header">
-              <h3>⚠️ Que faire avec {riderToDelete.name} ?</h3>
+              <h3>
+                <Icons.Warning style={{ marginRight: '8px', color: '#ed8936' }} /> Que faire avec{' '}
+                {riderToDelete.name} ?
+              </h3>
               <button className="modal-close" onClick={() => setShowDeleteModal(false)}>
-                ×
+                <Icons.Close />
               </button>
             </div>
             <div style={{ padding: '20px' }}>
@@ -303,7 +315,7 @@ function RidersList() {
 
               <div style={{ marginBottom: '20px' }}>
                 <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-                  📤 Retirer de l'inventaire
+                  <Icons.Remove style={{ marginRight: '8px' }} /> Retirer de l'inventaire
                 </h4>
                 <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
                   Le cavalier restera dans la base de données mais sera marqué comme inactif. La
@@ -314,7 +326,7 @@ function RidersList() {
                   onClick={handleRemoveFromInventory}
                   style={{ width: '100%' }}
                 >
-                  📤 Retirer de l'inventaire
+                  <Icons.Remove /> Retirer de l'inventaire
                 </button>
               </div>
 
@@ -326,7 +338,7 @@ function RidersList() {
                 }}
               >
                 <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-                  🗑️ Supprimer définitivement
+                  <Icons.Delete style={{ marginRight: '8px' }} /> Supprimer définitivement
                 </h4>
                 <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
                   Le cavalier sera supprimé de la base de données de manière permanente. Cette
@@ -337,7 +349,7 @@ function RidersList() {
                   onClick={handlePermanentDelete}
                   style={{ width: '100%' }}
                 >
-                  🗑️ Supprimer définitivement
+                  <Icons.Delete /> Supprimer définitivement
                 </button>
               </div>
 
@@ -368,7 +380,6 @@ function RidersList() {
   );
 }
 
-// RidersList has no props, but we include PropTypes for consistency
 RidersList.propTypes = {};
 
 export default RidersList;
