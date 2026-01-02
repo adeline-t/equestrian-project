@@ -2,7 +2,7 @@ import React from 'react';
 import DayColumn from './DayColumn';
 import { Icons } from '../../utils/icons';
 
-function WeekView({ weekData, onLessonClick, filters }) {
+function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
   const filterLessons = (lessons) => {
     return lessons.filter((lesson) => {
       if (filters.lessonType !== 'all' && lesson.lesson_type !== filters.lessonType) {
@@ -45,6 +45,7 @@ function WeekView({ weekData, onLessonClick, filters }) {
             dayName={day.day_name}
             lessons={filterLessons(day.lessons)}
             onLessonClick={onLessonClick}
+            onQuickCreate={onQuickCreate}
           />
         ))}
       </div>
