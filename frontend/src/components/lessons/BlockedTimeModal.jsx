@@ -97,9 +97,7 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
               <Icons.Blocked style={{ marginRight: '8px' }} />
               Créer une plage bloquée
             </h2>
-            <button className="btn-close" onClick={onClose}>
-              <Icons.Close />
-            </button>
+            <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
 
           <form onSubmit={handleSubmit}>

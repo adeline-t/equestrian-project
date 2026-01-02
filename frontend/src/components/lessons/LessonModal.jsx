@@ -192,7 +192,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
       lesson_type: lessonData.lesson_type,
       description: lessonData.description || '',
       max_participants: lessonData.max_participants || 1,
-      status: lessonData.status || 'confirmed',
+      status: lessonData.status || 'scheduled',
     });
   };
 
@@ -350,6 +350,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                 `${lessonData.name} - ${formatTime(lessonData.start_time)}`
               )}
             </h2>
+            <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
 
           {/* Tabs */}
@@ -536,10 +537,11 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                           className="form-select"
                           style={{ fontSize: '14px' }}
                         >
+                          <option value="scheduled">Planifié</option>
                           <option value="confirmed">Confirmé</option>
-                          <option value="validated">Validé</option>
-                          <option value="pending">En attente</option>
                           <option value="completed">Terminé</option>
+                          <option value="cancelled">Annulé</option>
+                          <option value="blocked">Bloqué</option>
                         </select>
                       </div>
 
