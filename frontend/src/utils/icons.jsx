@@ -17,6 +17,8 @@ import {
   FaList,
   FaLink,
   FaChevronDown,
+  FaChevronLeft,
+  FaChevronRight,
   FaUsers,
   FaInfoCircle,
   FaSave,
@@ -25,6 +27,11 @@ import {
   FaGraduationCap,
   FaShoppingBasket,
   FaUserGraduate,
+  FaAward,
+  FaLocationArrow,
+  FaClock,
+  FaCalendarDay,
+  FaArrowCircleRight,
 } from 'react-icons/fa';
 
 export const Icons = {
@@ -47,6 +54,8 @@ export const Icons = {
   List: FaList,
   Link: FaLink,
   ChevronDown: FaChevronDown,
+  ChevronLeft: FaChevronLeft,
+  ChevronRight: FaChevronRight,
   Info: FaInfoCircle,
   Save: FaSave,
   Cancel: FaBan,
@@ -56,6 +65,13 @@ export const Icons = {
   PrivateLesson: FaUserGraduate,
   GroupLesson: FaUsers,
   Service: FaShoppingBasket,
+  Clock: FaClock,
+  Location: FaLocationArrow,
+  Competition: FaAward,
+  Training: FaGraduationCap,
+  Event: FaCalendarDay,
+  Blocked: FaBan,
+  Repeat: FaArrowCircleRight,
 };
 
 export const renderIcon = (Icon, props = {}) => {

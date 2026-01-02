@@ -475,13 +475,7 @@ async function createLesson(request, env, lessonRepo) {
   const data = await request.json();
 
   // Validation
-  if (
-    !data.name ||
-    !data.lesson_type ||
-    !data.lesson_date ||
-    !data.start_time ||
-    !data.end_time // ✅ CHANGED: Accept end_time directly instead of duration_minutes
-  ) {
+  if (!data.name || !data.lesson_type || !data.lesson_date || !data.start_time || !data.end_time) {
     return jsonResponse(
       {
         success: false,
@@ -491,13 +485,29 @@ async function createLesson(request, env, lessonRepo) {
     );
   }
 
-  // ✅ REMOVED: duration_minutes calculation - we already have end_time from frontend
+  // ✅ NEW: Validation des participants vs max_participants
+  if (data.participants && data.participants.length > 0 && data.max_participants) {
+    if (data.participants.length > data.max_participants) {
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Nombre de participants dépasse la capacité maximale',
+          details: {
+            participants_count: data.participants.length,
+            max_participants: data.max_participants,
+            message: `Vous essayez d'ajouter ${data.participants.length} participant(s) mais la capacité maximale est de ${data.max_participants}. Veuillez augmenter la capacité ou réduire le nombre de participants.`,
+          },
+        },
+        400
+      );
+    }
+  }
 
   // Vérifier tous les conflits (bloqués + double-booking)
   const conflicts = await lessonRepo.checkAllConflicts(
     data.lesson_date,
     data.start_time,
-    data.end_time // ✅ CHANGED: Use end_time directly
+    data.end_time
   );
 
   // Si forcé, créer quand même mais enregistrer l'audit
@@ -547,13 +557,20 @@ async function createLesson(request, env, lessonRepo) {
     );
   }
 
-  const lesson = await lessonRepo.createInstance(data); // ✅ CHANGED: Pass data directly
+  // ✅ UPDATED: createInstance now handles participants internally
+  const lesson = await lessonRepo.createInstance(data);
+
+  // ✅ NEW: Return with participant info
+  const lessonWithParticipants = await lessonRepo.findInstanceById(lesson.id, true);
 
   return jsonResponse(
     {
       success: true,
-      data: lesson,
-      message: 'Cours créé avec succès',
+      data: lessonWithParticipants,
+      message:
+        data.participants && data.participants.length > 0
+          ? `Cours créé avec succès avec ${data.participants.length} participant(s)`
+          : 'Cours créé avec succès',
     },
     201
   );
@@ -817,7 +834,7 @@ async function getWeekSchedule(request, env, lessonRepo) {
     { excludeBlocked }
   );
 
-  const lessons = result.results || [];
+  const lessons = (result.results || []).filter((lesson) => lesson.status !== 'cancelled');
 
   // Organiser par jour
   const days = [];

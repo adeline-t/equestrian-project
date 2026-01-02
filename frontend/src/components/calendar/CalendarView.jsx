@@ -5,7 +5,8 @@ import { scheduleApi } from '../../services/calendarApi';
 import WeekView from './WeekView';
 import LessonModal from '../lessons/LessonModal';
 import TemplateModal from '../templates/TemplateModal';
-import SingleLessonModal from '../lessons/SingleLessonModal'; // ✅ ADD THIS
+import SingleLessonModal from '../lessons/SingleLessonModal';
+import { Icons } from '../../utils/icons';
 import './calendar.css';
 
 function CalendarView() {
@@ -16,14 +17,13 @@ function CalendarView() {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [showLessonModal, setShowLessonModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [showSingleLessonModal, setShowSingleLessonModal] = useState(false); // ✅ ADD THIS
+  const [showSingleLessonModal, setShowSingleLessonModal] = useState(false);
   const [filters, setFilters] = useState({
     lessonType: 'all',
     status: 'all',
     showBlocked: true,
   });
 
-  // Charger les données de la semaine
   useEffect(() => {
     loadWeekData();
   }, [currentDate, filters]);
@@ -88,12 +88,10 @@ function CalendarView() {
   };
 
   const handleCreateSingleLesson = () => {
-    // ✅ ADD THIS
     setShowSingleLessonModal(true);
   };
 
   const handleSingleLessonCreated = async () => {
-    // ✅ ADD THIS
     setShowSingleLessonModal(false);
     await loadWeekData();
   };
@@ -101,7 +99,7 @@ function CalendarView() {
   if (loading) {
     return (
       <div className="calendar-loading">
-        <div className="spinner"></div>
+        <Icons.Loading className="spin" style={{ fontSize: '50px', color: '#007bff' }} />
         <p>Chargement du calendrier...</p>
       </div>
     );
@@ -110,10 +108,13 @@ function CalendarView() {
   if (error) {
     return (
       <div className="calendar-error">
-        <div className="error-icon">⚠️</div>
+        <div className="error-icon">
+          <Icons.Warning style={{ fontSize: '48px', color: '#dc3545' }} />
+        </div>
         <h3>Erreur de chargement</h3>
         <p>{error}</p>
         <button className="btn btn-primary" onClick={loadWeekData}>
+          <Icons.Repeat style={{ marginRight: '8px' }} />
           Réessayer
         </button>
       </div>
@@ -129,27 +130,30 @@ function CalendarView() {
       {/* En-tête avec navigation */}
       <div className="calendar-header">
         <div className="calendar-header-top">
-          <h2>📅 Calendrier des Cours</h2>
+          <h2>
+            <Icons.Calendar style={{ marginRight: '8px' }} />
+            Calendrier des Cours
+          </h2>
           <div className="calendar-actions">
-            {/* ✅ ADD THIS BUTTON */}
             <button className="btn btn-primary" onClick={handleCreateSingleLesson}>
-              ➕ Nouveau Cours
-            </button>
-            <button className="btn btn-secondary" onClick={handleCreateTemplate}>
-              🔄 Nouveau Template
+              <Icons.Add style={{ marginRight: '8px' }} />
+              Ajouter un cours
             </button>
           </div>
         </div>
 
         <div className="calendar-navigation">
           <button className="btn btn-secondary" onClick={handlePreviousWeek}>
-            ← Semaine précédente
+            <Icons.ChevronLeft style={{ marginRight: '8px' }} />
+            Semaine précédente
           </button>
           <button className="btn btn-primary" onClick={handleToday}>
+            <Icons.Calendar style={{ marginRight: '8px' }} />
             Aujourd'hui
           </button>
           <button className="btn btn-secondary" onClick={handleNextWeek}>
-            Semaine suivante →
+            Semaine suivante
+            <Icons.ChevronRight style={{ marginLeft: '8px' }} />
           </button>
         </div>
 
@@ -158,11 +162,18 @@ function CalendarView() {
             Semaine du {format(new Date(weekData.period.start), 'dd MMMM yyyy', { locale: fr })}
           </h3>
           <div className="calendar-stats">
-            <span className="stat">📚 {weekData.statistics.total_lessons} cours</span>
-            <span className="stat">👥 {weekData.statistics.total_participants} participants</span>
+            <span className="stat">
+              <Icons.List style={{ marginRight: '4px' }} />
+              {weekData.statistics.total_lessons} cours
+            </span>
+            <span className="stat">
+              <Icons.Users style={{ marginRight: '4px' }} />
+              {weekData.statistics.total_participants} participants
+            </span>
             {weekData.statistics.blocked_periods > 0 && (
               <span className="stat blocked">
-                🚫 {weekData.statistics.blocked_periods} plages bloquées
+                <Icons.Blocked style={{ marginRight: '4px' }} />
+                {weekData.statistics.blocked_periods} plages bloquées
               </span>
             )}
           </div>
@@ -178,11 +189,21 @@ function CalendarView() {
               className="form-select"
             >
               <option value="all">Tous les types</option>
-              <option value="private">👤 Cours particuliers</option>
-              <option value="group">👥 Cours collectifs</option>
-              <option value="training">🎓 Stages</option>
-              <option value="competition">🏆 Concours</option>
-              <option value="event">🎉 Événements</option>
+              <option value="private">
+                <Icons.PrivateLesson /> Cours particuliers
+              </option>
+              <option value="group">
+                <Icons.GroupLesson /> Cours collectifs
+              </option>
+              <option value="training">
+                <Icons.Training /> Stages
+              </option>
+              <option value="competition">
+                <Icons.Competition /> Concours
+              </option>
+              <option value="event">
+                <Icons.Event /> Événements
+              </option>
             </select>
           </div>
 
@@ -199,6 +220,18 @@ function CalendarView() {
               <option value="completed">Terminés</option>
               <option value="cancelled">Annulés</option>
             </select>
+          </div>
+
+          <div className="filter-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={filters.showBlocked}
+                onChange={(e) => handleFilterChange('showBlocked', e.target.checked)}
+                style={{ marginRight: '8px' }}
+              />
+              Afficher les plages bloquées
+            </label>
           </div>
         </div>
       </div>
@@ -227,7 +260,7 @@ function CalendarView() {
         />
       )}
 
-      {/* ✅ ADD THIS: Modal de création de cours standalone */}
+      {/* Modal de création de cours standalone */}
       {showSingleLessonModal && (
         <SingleLessonModal
           onClose={() => setShowSingleLessonModal(false)}

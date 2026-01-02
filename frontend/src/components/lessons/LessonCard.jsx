@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icons } from '../../utils/icons';
 
 function LessonCard({ lesson, onClick, style }) {
   // Add null check for lesson
@@ -8,14 +9,15 @@ function LessonCard({ lesson, onClick, style }) {
 
   const getLessonTypeIcon = (type) => {
     const icons = {
-      private: '👤',
-      group: '👥',
-      training: '🎓',
-      competition: '🏆',
-      event: '🎉',
-      blocked: '🚫',
+      private: Icons.PrivateLesson,
+      group: Icons.GroupLesson,
+      training: Icons.Training,
+      competition: Icons.Competition,
+      event: Icons.Event,
+      blocked: Icons.Blocked,
     };
-    return icons[type] || '📅';
+    const IconComponent = icons[type] || Icons.Calendar;
+    return <IconComponent style={{ fontSize: '14px' }} />;
   };
 
   const getLessonTypeLabel = (type) => {
@@ -32,15 +34,22 @@ function LessonCard({ lesson, onClick, style }) {
 
   const getStatusBadge = (status) => {
     const badges = {
-      scheduled: { label: 'Planifié', class: 'status-scheduled' },
-      confirmed: { label: 'Confirmé', class: 'status-confirmed' },
-      in_progress: { label: 'En cours', class: 'status-in-progress' },
-      completed: { label: 'Terminé', class: 'status-completed' },
-      cancelled: { label: 'Annulé', class: 'status-cancelled' },
-      blocked: { label: 'Bloqué', class: 'status-blocked' },
+      scheduled: { label: 'Planifié', class: 'status-scheduled', icon: Icons.Calendar },
+      confirmed: { label: 'Confirmé', class: 'status-confirmed', icon: Icons.Check },
+      in_progress: { label: 'En cours', class: 'status-in-progress', icon: Icons.Clock },
+      completed: { label: 'Terminé', class: 'status-completed', icon: Icons.Check },
+      cancelled: { label: 'Annulé', class: 'status-cancelled', icon: Icons.Close },
+      blocked: { label: 'Bloqué', class: 'status-blocked', icon: Icons.Blocked },
     };
-    const badge = badges[status] || { label: status, class: 'status-default' };
-    return <span className={`status-badge ${badge.class}`}>{badge.label}</span>;
+    const badge = badges[status] || { label: status, class: 'status-default', icon: Icons.Info };
+    const IconComponent = badge.icon;
+
+    return (
+      <span className={`status-badge ${badge.class}`}>
+        <IconComponent style={{ fontSize: '10px', marginRight: '4px' }} />
+        {badge.label}
+      </span>
+    );
   };
 
   const getOccupancyClass = () => {
@@ -96,12 +105,12 @@ function LessonCard({ lesson, onClick, style }) {
         <span className="lesson-type-label">{getLessonTypeLabel(lesson.lesson_type)}</span>
         {lesson.is_modified && (
           <span className="modified-badge" title="Cours modifié">
-            ✏️
+            <Icons.Edit style={{ fontSize: '14px' }} />
           </span>
         )}
         {lesson.not_given_by_laury && (
           <span className="not-given-badge" title="Cours non donné par Laury">
-            ⚠️
+            <Icons.Warning style={{ fontSize: '14px' }} />
           </span>
         )}
       </div>
@@ -109,6 +118,7 @@ function LessonCard({ lesson, onClick, style }) {
       <div className="lesson-card-body">
         <div className="lesson-name">{lesson.name || 'Sans nom'}</div>
         <div className="lesson-time">
+          <Icons.Clock style={{ fontSize: '11px', marginRight: '4px' }} />
           {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
           {lesson.lesson_type === 'blocked' && <span className="duration"> ({getDuration()})</span>}
         </div>
@@ -116,9 +126,20 @@ function LessonCard({ lesson, onClick, style }) {
         {lesson.lesson_type !== 'blocked' && (
           <div className="lesson-participants">
             <span className="participant-count">
-              👥 {lesson.participant_count || 0}
+              <Icons.Users style={{ fontSize: '11px', marginRight: '4px' }} />
+              {lesson.participant_count || 0}
               {lesson.max_participants && ` / ${lesson.max_participants}`}
             </span>
+          </div>
+        )}
+
+        {lesson.location && (
+          <div
+            className="lesson-location"
+            style={{ fontSize: '11px', color: '#6c757d', marginTop: '4px' }}
+          >
+            <Icons.Location style={{ fontSize: '10px', marginRight: '4px' }} />
+            {lesson.location}
           </div>
         )}
 

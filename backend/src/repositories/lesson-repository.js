@@ -294,7 +294,7 @@ export class LessonRepository {
         start_time: data.start_time,
         end_time: data.end_time,
         lesson_type: data.lesson_type,
-        name: data.name || data.title, // Support both for backward compatibility
+        name: data.name || data.title,
         description: data.description || null,
         max_participants: maxParticipants,
         min_participants: minParticipants,
@@ -308,7 +308,7 @@ export class LessonRepository {
       throw error;
     }
 
-    // Add participants if provided (only for non-blocked lessons)
+    // ✅ Add participants if provided (only for non-blocked lessons)
     if (data.lesson_type !== 'blocked' && data.participants && data.participants.length > 0) {
       for (const participant of data.participants) {
         await this.db.from('lesson_participants').insert({
