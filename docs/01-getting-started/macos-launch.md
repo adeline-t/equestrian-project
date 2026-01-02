@@ -11,37 +11,37 @@ For general launch instructions, see [Quick Start](./quick-start.md). This guide
 #### 1. Homebrew (Recommended)
 Homebrew simplifies package management on macOS.
 
-**Check if installed**:
+**Check if installed:**
 ```bash
 brew --version
 ```
 
-**Install if needed**:
+**Install if needed:**
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 #### 2. Node.js via Homebrew
-**Install**:
+**Install:**
 ```bash
 brew install node
 ```
 
-**Verify**:
+**Verify:**
 ```bash
 node --version  # Should be 18.0.0 or higher
 npm --version   # Should be 9.0.0 or higher
 ```
 
-**Alternative**: Download from [nodejs.org](https://nodejs.org/)
+**Alternative:** Download from [nodejs.org](https://nodejs.org/)
 
 #### 3. Git (Usually Pre-installed)
-**Verify**:
+**Verify:**
 ```bash
 git --version
 ```
 
-**Install if needed**:
+**Install if needed:**
 ```bash
 brew install git
 ```
@@ -53,37 +53,32 @@ brew install git
 npm install -g wrangler
 ```
 
-#### jq (for JSON parsing in scripts)
-```bash
-brew install jq
-```
-
 ## 🚀 Launching on macOS
 
-### Method 1: One-Command Launch (Recommended)
+### Method 1: Launch Script (Recommended)
 
 ```bash
 cd equestrian-project
-./start.sh
+./launch-local.sh
 ```
 
-**What happens**:
+**What happens:**
 1. Script checks prerequisites
 2. Installs dependencies if needed
 3. Launches backend on port 8787
 4. Launches frontend on port 5173
-5. Opens browser automatically (optional)
+5. Monitors both services
 
 ### Method 2: Manual Launch
 
-**Terminal 1 - Backend**:
+**Terminal 1 - Backend:**
 ```bash
 cd equestrian-project/backend
 npm install
 npm run dev
 ```
 
-**Terminal 2 - Frontend**:
+**Terminal 2 - Frontend:**
 ```bash
 cd equestrian-project/frontend
 npm install
@@ -105,7 +100,6 @@ When running scripts for the first time, macOS may block execution.
 
 **Solution 2: Remove Quarantine Attribute**
 ```bash
-xattr -d com.apple.quarantine start.sh
 xattr -d com.apple.quarantine launch-local.sh
 ```
 
@@ -129,9 +123,10 @@ When launching for the first time, macOS Firewall may prompt:
 If you get "Permission denied":
 
 ```bash
-chmod +x start.sh
 chmod +x launch-local.sh
-chmod +x scripts/*.sh
+chmod +x deploy.sh
+chmod +x scripts/setup/*.sh
+chmod +x scripts/utils/*.sh
 ```
 
 ## 🖥️ Terminal Recommendations
@@ -141,7 +136,7 @@ chmod +x scripts/*.sh
 - ✅ No additional setup needed
 - ✅ Good for most users
 
-**Tips**:
+**Tips:**
 - Use ⌘T to open new tabs
 - Use ⌘N for new windows
 - Customize colors in Preferences
@@ -152,12 +147,12 @@ chmod +x scripts/*.sh
 - ✅ Better search
 - ✅ Customizable
 
-**Install**:
+**Install:**
 ```bash
 brew install --cask iterm2
 ```
 
-**Recommended iTerm2 Settings**:
+**Recommended iTerm2 Settings:**
 1. Profiles → Colors → Color Presets → Solarized Dark
 2. Profiles → Text → Font → 14pt Monaco
 3. Profiles → Terminal → Scrollback lines → 10000
@@ -176,35 +171,35 @@ brew install --cask iterm2
 
 **Option 3: Use Launch Script (Easiest)**
 ```bash
-./start.sh  # Handles everything automatically
+./launch-local.sh  # Handles everything automatically
 ```
 
 ## 🔧 macOS-Specific Troubleshooting
 
 ### Port Already in Use
 
-**Check what's using a port**:
+**Check what's using a port:**
 ```bash
 lsof -i :5173  # Frontend
 lsof -i :8787  # Backend
 ```
 
-**Kill process on port**:
+**Kill process on port:**
 ```bash
 lsof -ti:5173 | xargs kill -9
 lsof -ti:8787 | xargs kill -9
 ```
 
-**Note**: The launch script handles this automatically.
+**Note:** The launch script handles this automatically.
 
 ### Node.js Version Issues
 
-**Check current version**:
+**Check current version:**
 ```bash
 node --version
 ```
 
-**Switch Node.js versions (using nvm)**:
+**Switch Node.js versions (using nvm):**
 ```bash
 # Install nvm
 brew install nvm
@@ -217,13 +212,13 @@ nvm alias default 18
 
 ### Homebrew Issues
 
-**Update Homebrew**:
+**Update Homebrew:**
 ```bash
 brew update
 brew upgrade
 ```
 
-**Fix Homebrew permissions**:
+**Fix Homebrew permissions:**
 ```bash
 sudo chown -R $(whoami) /usr/local/Cellar
 sudo chown -R $(whoami) /usr/local/Homebrew
@@ -233,30 +228,30 @@ sudo chown -R $(whoami) /usr/local/Homebrew
 
 Most Node.js packages work natively on Apple Silicon. If you encounter issues:
 
-**Check architecture**:
+**Check architecture:**
 ```bash
 uname -m
 # arm64 = Apple Silicon (M1/M2/M3)
 # x86_64 = Intel
 ```
 
-**Run in Rosetta mode (if needed)**:
+**Run in Rosetta mode (if needed):**
 ```bash
 arch -x86_64 zsh
 npm install
 ```
 
-**Note**: This is rarely needed for this project.
+**Note:** This is rarely needed for this project.
 
 ### Network Issues
 
-**Reset DNS cache**:
+**Reset DNS cache:**
 ```bash
 sudo dscacheutil -flushcache
 sudo killall -HUP mDNSResponder
 ```
 
-**Check localhost resolution**:
+**Check localhost resolution:**
 ```bash
 ping localhost
 # Should resolve to 127.0.0.1
@@ -289,22 +284,10 @@ Create a workflow to launch the project:
 4. Script:
 ```bash
 cd ~/path/to/equestrian-project
-./start.sh
+./launch-local.sh
 ```
 5. Save as "Launch Equestrian.app"
 6. Add to Dock or Applications
-
-### Alfred Workflow (Advanced)
-
-Create Alfred workflow for quick launch:
-1. Open Alfred Preferences → Workflows
-2. Create new workflow
-3. Add Keyword trigger: "equestrian"
-4. Add Run Script action:
-```bash
-cd ~/path/to/equestrian-project
-./start.sh
-```
 
 ## 📱 Accessing from Other Devices
 
@@ -321,7 +304,7 @@ ipconfig getifaddr en1  # Ethernet
 http://YOUR_MAC_IP:5173
 ```
 
-**Example**:
+**Example:**
 ```
 http://192.168.1.100:5173
 ```
@@ -389,20 +372,20 @@ sudo iotop
 
 ### macOS-Specific Issues
 
-1. **Check Console.app**:
+1. **Check Console.app:**
    - Open Console.app
    - Look for errors related to "node" or project
 
-2. **System Information**:
+2. **System Information:**
 ```bash
 system_profiler SPSoftwareDataType
 system_profiler SPHardwareDataType
 ```
 
-3. **Generate Diagnostic Report**:
+3. **Generate Diagnostic Report:**
 ```bash
 # Create report
-./start.sh 2>&1 | tee launch-report.txt
+./launch-local.sh 2>&1 | tee launch-report.txt
 
 # Share launch-report.txt when asking for help
 ```
@@ -432,14 +415,14 @@ Once everything is set up:
 
 ```bash
 cd equestrian-project
-./start.sh
+./launch-local.sh
 ```
 
 Your application will be available at:
-- **Frontend**: http://localhost:5173
-- **Backend**: http://localhost:8787
+- **Frontend:** http://localhost:5173
+- **Backend:** http://localhost:8787
 
 ---
 
-**macOS Version Tested**: macOS Sonoma 14.x, Ventura 13.x  
-**Last Updated**: December 2024
+**macOS Version Tested:** macOS Sonoma 14.x, Ventura 13.x  
+**Last Updated:** January 2025
