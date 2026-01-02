@@ -17,15 +17,15 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
 
   const calculateDuration = (startTime, endTime) => {
     if (!startTime || !endTime) return '0 min';
-    
+
     const [startHour, startMin] = startTime.split(':').map(Number);
     const [endHour, endMin] = endTime.split(':').map(Number);
-    
+
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
-    
+
     const duration = endMinutes - startMinutes;
-    
+
     if (duration < 60) {
       return `${duration} min`;
     } else {
@@ -204,31 +204,34 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    
+
     // If start_time is changed, calculate new end_time based on duration
     if (name === 'start_time') {
       const currentStartTime = editFormData.start_time;
       const currentEndTime = editFormData.end_time;
-      
+
       // Calculate duration in minutes
       const [startHour, startMin] = currentStartTime.split(':').map(Number);
       const [endHour, endMin] = currentEndTime.split(':').map(Number);
-      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
-      
+      const durationMinutes = endHour * 60 + endMin - (startHour * 60 + startMin);
+
       // Calculate new end time
       const [newStartHour, newStartMin] = value.split(':').map(Number);
-      const newEndTotalMinutes = (newStartHour * 60 + newStartMin) + durationMinutes;
+      const newEndTotalMinutes = newStartHour * 60 + newStartMin + durationMinutes;
       const newEndHour = Math.floor(newEndTotalMinutes / 60);
       const newEndMin = newEndTotalMinutes % 60;
-      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(2, '0')}`;
-      
-      setEditFormData(prev => ({
+      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(
+        2,
+        '0'
+      )}`;
+
+      setEditFormData((prev) => ({
         ...prev,
         [name]: value,
         end_time: newEndTime,
       }));
     } else {
-      setEditFormData(prev => ({
+      setEditFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
@@ -239,7 +242,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
     const type = e.target.value;
     const typeConfig = lessonTypes.find((t) => t.value === type);
 
-    setEditFormData(prev => ({
+    setEditFormData((prev) => ({
       ...prev,
       lesson_type: type,
       max_participants: typeConfig?.defaultMax || 1,
@@ -344,13 +347,15 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
           <div className="modal-header">
             <h2>
               <LessonIcon style={{ marginRight: '8px' }} />
-              {isEditing ? (
-                `Modifier: ${editFormData.name || lessonData.name} - ${formatTime(editFormData.start_time || lessonData.start_time)}`
-              ) : (
-                `${lessonData.name} - ${formatTime(lessonData.start_time)}`
-              )}
+              {isEditing
+                ? `Modifier: ${editFormData.name || lessonData.name} - ${formatTime(
+                    editFormData.start_time || lessonData.start_time
+                  )}`
+                : `${lessonData.name} - ${formatTime(lessonData.start_time)}`}
             </h2>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            <button className="btn-close" onClick={onClose}>
+              <Icons.Close />
+            </button>
           </div>
 
           {/* Tabs */}
@@ -390,11 +395,17 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                     {lessonData.template_id && (
                       <div className="alert alert-warning" style={{ marginBottom: '15px' }}>
                         <Icons.Warning style={{ marginRight: '8px' }} />
-                        Ce cours provient d'un template. Les modifications ne s'appliqueront qu'à cette instance spécifique et n'affecteront pas le template ni les autres cours.
+                        Ce cours provient d'un template. Les modifications ne s'appliqueront qu'à
+                        cette instance spécifique et n'affecteront pas le template ni les autres
+                        cours.
                       </div>
                     )}
 
-                    <form onSubmit={(e) => { e.preventDefault(); }}>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
                       {/* Name */}
                       <div className="form-group" style={{ marginBottom: '15px' }}>
                         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
@@ -413,9 +424,18 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                       </div>
 
                       {/* Type & Date */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '15px',
+                          marginBottom: '15px',
+                        }}
+                      >
                         <div className="form-group" style={{ margin: 0 }}>
-                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <label
+                            style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                          >
                             <Icons.List style={{ marginRight: '4px', fontSize: '12px' }} />
                             Type *
                           </label>
@@ -436,7 +456,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         </div>
 
                         <div className="form-group" style={{ margin: 0 }}>
-                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <label
+                            style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                          >
                             <Icons.Calendar style={{ marginRight: '4px', fontSize: '12px' }} />
                             Date *
                           </label>
@@ -453,9 +475,18 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                       </div>
 
                       {/* Time */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '15px',
+                          marginBottom: '15px',
+                        }}
+                      >
                         <div className="form-group" style={{ margin: 0 }}>
-                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <label
+                            style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                          >
                             <Icons.Clock style={{ marginRight: '4px', fontSize: '12px' }} />
                             Début *
                           </label>
@@ -471,7 +502,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         </div>
 
                         <div className="form-group" style={{ margin: 0 }}>
-                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <label
+                            style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                          >
                             <Icons.Clock style={{ marginRight: '4px', fontSize: '12px' }} />
                             Fin *
                           </label>
@@ -489,16 +522,18 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
 
                       {/* Duration Display */}
                       <div className="form-group" style={{ marginBottom: '15px' }}>
-                        <div style={{ 
-                          background: '#f8f9fa', 
-                          padding: '8px 12px', 
-                          borderRadius: '6px',
-                          fontSize: '13px',
-                          color: '#6c757d',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px'
-                        }}>
+                        <div
+                          style={{
+                            background: '#f8f9fa',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            color: '#6c757d',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
                           <Icons.Clock style={{ fontSize: '14px' }} />
                           Durée: {calculateDuration(editFormData.start_time, editFormData.end_time)}
                         </div>
@@ -507,7 +542,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                       {/* Max participants */}
                       {editFormData.lesson_type !== 'blocked' && (
                         <div className="form-group" style={{ marginBottom: '15px' }}>
-                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <label
+                            style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                          >
                             <Icons.Users style={{ marginRight: '4px', fontSize: '12px' }} />
                             Max participants
                           </label>
@@ -585,7 +622,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         Date :
                       </label>
                       <span>
-                        {format(parseISO(lessonData.lesson_date), 'EEEE dd MMMM yyyy', { locale: fr })}
+                        {format(parseISO(lessonData.lesson_date), 'EEEE dd MMMM yyyy', {
+                          locale: fr,
+                        })}
                       </span>
                     </div>
 
@@ -668,7 +707,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                       <div className="alert alert-warning">
                         <Icons.Warning style={{ marginRight: '8px' }} />
                         Ce cours n'a pas été donné par Laury
-                        {lessonData.not_given_reason && <p>Raison : {lessonData.not_given_reason}</p>}
+                        {lessonData.not_given_reason && (
+                          <p>Raison : {lessonData.not_given_reason}</p>
+                        )}
                       </div>
                     )}
 
@@ -882,7 +923,10 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                 >
                   {saving ? (
                     <>
-                      <Icons.Loading className="spin" style={{ marginRight: '6px', fontSize: '14px' }} />
+                      <Icons.Loading
+                        className="spin"
+                        style={{ marginRight: '6px', fontSize: '14px' }}
+                      />
                       Sauvegarde...
                     </>
                   ) : (
@@ -897,8 +941,8 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
               /* Normal mode actions */
               <div className="modal-actions-compact">
                 {lessonData.status !== 'cancelled' && (
-                  <button 
-                    className="btn btn-sm btn-primary" 
+                  <button
+                    className="btn btn-sm btn-primary"
                     onClick={handleStartEdit}
                     title="Modifier le cours"
                   >

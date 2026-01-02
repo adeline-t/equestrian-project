@@ -6,7 +6,13 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import './LessonModal.css';
 
-function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStartTime = null, initialEndTime = null }) {
+function BlockedTimeModal({
+  onClose,
+  onSuccess,
+  initialDate = null,
+  initialStartTime = null,
+  initialEndTime = null,
+}) {
   const [formData, setFormData] = useState({
     lesson_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
     start_time: initialStartTime || '09:00',
@@ -21,34 +27,36 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Auto-generate name based on date and time if not manually set
     if (name !== 'name' && !formData.name) {
-      const autoName = `Bloqué - ${format(parseISO(formData.lesson_date), 'dd/MM', { locale: fr })} ${formData.start_time}`;
-      setFormData(prev => ({
+      const autoName = `Bloqué - ${format(parseISO(formData.lesson_date), 'dd/MM', {
+        locale: fr,
+      })} ${formData.start_time}`;
+      setFormData((prev) => ({
         ...prev,
         [name]: value,
-        name: autoName
+        name: autoName,
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
 
   const calculateDuration = (startTime, endTime) => {
     if (!startTime || !endTime) return '0 min';
-    
+
     const [startHour, startMin] = startTime.split(':').map(Number);
     const [endHour, endMin] = endTime.split(':').map(Number);
-    
+
     const startMinutes = startHour * 60 + startMin;
     const endMinutes = endHour * 60 + endMin;
-    
+
     const duration = endMinutes - startMinutes;
-    
+
     if (duration < 60) {
       return `${duration} min`;
     } else {
@@ -71,7 +79,11 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
       // Ensure name is set
       const finalFormData = {
         ...formData,
-        name: formData.name || `Bloqué - ${format(parseISO(formData.lesson_date), 'dd/MM', { locale: fr })} ${formData.start_time}`
+        name:
+          formData.name ||
+          `Bloqué - ${format(parseISO(formData.lesson_date), 'dd/MM', { locale: fr })} ${
+            formData.start_time
+          }`,
       };
 
       await lessonsApi.create(finalFormData);
@@ -87,8 +99,8 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
   return (
     <Portal>
       <div className="modal-overlay" onClick={onClose}>
-        <div 
-          className="modal-content" 
+        <div
+          className="modal-content"
           onClick={(e) => e.stopPropagation()}
           style={{ maxWidth: '600px' }}
         >
@@ -97,7 +109,9 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
               <Icons.Blocked style={{ marginRight: '8px' }} />
               Créer une plage bloquée
             </h2>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            <button className="btn-close" onClick={onClose}>
+              <Icons.Close />
+            </button>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -127,7 +141,14 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
               </div>
 
               {/* Time */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '15px',
+                  marginBottom: '15px',
+                }}
+              >
                 <div className="form-group" style={{ margin: 0 }}>
                   <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
                     <Icons.Clock style={{ marginRight: '4px', fontSize: '12px' }} />
@@ -163,16 +184,18 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
 
               {/* Duration Display */}
               <div className="form-group" style={{ marginBottom: '15px' }}>
-                <div style={{ 
-                  background: '#f8f9fa', 
-                  padding: '8px 12px', 
-                  borderRadius: '6px',
-                  fontSize: '13px',
-                  color: '#6c757d',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
+                <div
+                  style={{
+                    background: '#f8f9fa',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    color: '#6c757d',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
                   <Icons.Clock style={{ fontSize: '14px' }} />
                   Durée: {calculateDuration(formData.start_time, formData.end_time)}
                 </div>
@@ -213,19 +236,23 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
               </div>
 
               {/* Preview */}
-              <div style={{
-                background: '#fff5f5',
-                border: '1px solid #feb2b2',
-                borderRadius: '6px',
-                padding: '12px',
-                fontSize: '13px',
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '6px',
-                }}>
+              <div
+                style={{
+                  background: '#fff5f5',
+                  border: '1px solid #feb2b2',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  fontSize: '13px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '6px',
+                  }}
+                >
                   <Icons.Blocked style={{ fontSize: '16px', color: '#e53e3e' }} />
                   <strong>{formData.name || 'Bloqué'}</strong>
                   <span
@@ -278,7 +305,10 @@ function BlockedTimeModal({ onClose, onSuccess, initialDate = null, initialStart
                 <button type="submit" className="btn btn-sm btn-danger" disabled={loading}>
                   {loading ? (
                     <>
-                      <Icons.Loading className="spin" style={{ marginRight: '6px', fontSize: '14px' }} />
+                      <Icons.Loading
+                        className="spin"
+                        style={{ marginRight: '6px', fontSize: '14px' }}
+                      />
                       Création...
                     </>
                   ) : (

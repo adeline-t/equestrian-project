@@ -7,7 +7,13 @@ import { format, parse } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import './LessonModal.css';
 
-function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStartTime = null, initialEndTime = null }) {
+function SingleLessonModal({
+  onClose,
+  onSuccess,
+  initialDate = null,
+  initialStartTime = null,
+  initialEndTime = null,
+}) {
   const [formData, setFormData] = useState({
     lesson_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
     start_time: initialStartTime || '09:00',
@@ -103,24 +109,27 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // If start_time is changed, calculate new end_time based on duration
     if (name === 'start_time') {
       const currentStartTime = formData.start_time;
       const currentEndTime = formData.end_time;
-      
+
       // Calculate duration in minutes
       const [startHour, startMin] = currentStartTime.split(':').map(Number);
       const [endHour, endMin] = currentEndTime.split(':').map(Number);
-      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
-      
+      const durationMinutes = endHour * 60 + endMin - (startHour * 60 + startMin);
+
       // Calculate new end time
       const [newStartHour, newStartMin] = value.split(':').map(Number);
-      const newEndTotalMinutes = (newStartHour * 60 + newStartMin) + durationMinutes;
+      const newEndTotalMinutes = newStartHour * 60 + newStartMin + durationMinutes;
       const newEndHour = Math.floor(newEndTotalMinutes / 60);
       const newEndMin = newEndTotalMinutes % 60;
-      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(2, '0')}`;
-      
+      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(
+        2,
+        '0'
+      )}`;
+
       setFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -251,7 +260,9 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
               <Icons.Add style={{ marginRight: '8px' }} />
               Créer: {generatedName} - {formData.start_time}
             </h2>
-            <button type="button" className="btn-close" onClick={onClose}></button>
+            <button className="btn-close" onClick={onClose}>
+              <Icons.Close />
+            </button>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -364,18 +375,21 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
 
               {/* Duration Display */}
               <div className="form-group" style={{ marginBottom: '15px' }}>
-                <div style={{ 
-                  background: '#f8f9fa', 
-                  padding: '8px 12px', 
-                  borderRadius: '6px',
-                  fontSize: '13px',
-                  color: '#6c757d',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
+                <div
+                  style={{
+                    background: '#f8f9fa',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    color: '#6c757d',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
                   <Icons.Clock style={{ fontSize: '14px' }} />
-                  Durée: {(() => {
+                  Durée:{' '}
+                  {(() => {
                     if (!formData.start_time || !formData.end_time) return '0 min';
                     const [startHour, startMin] = formData.start_time.split(':').map(Number);
                     const [endHour, endMin] = formData.end_time.split(':').map(Number);
@@ -668,20 +682,31 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
                     style={{
                       marginLeft: 'auto',
                       padding: '2px 8px',
-                      background: formData.status === 'scheduled' ? '#718096' :
-                                 formData.status === 'confirmed' ? '#48bb78' : 
-                                 formData.status === 'completed' ? '#4299e1' :
-                                 formData.status === 'cancelled' ? '#f56565' : '#ed8936',
+                      background:
+                        formData.status === 'scheduled'
+                          ? '#718096'
+                          : formData.status === 'confirmed'
+                          ? '#48bb78'
+                          : formData.status === 'completed'
+                          ? '#4299e1'
+                          : formData.status === 'cancelled'
+                          ? '#f56565'
+                          : '#ed8936',
                       color: 'white',
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 'bold',
                     }}
                   >
-                    {formData.status === 'scheduled' ? 'Planifié' :
-                     formData.status === 'confirmed' ? 'Confirmé' :
-                     formData.status === 'completed' ? 'Terminé' :
-                     formData.status === 'cancelled' ? 'Annulé' : 'Bloqué'}
+                    {formData.status === 'scheduled'
+                      ? 'Planifié'
+                      : formData.status === 'confirmed'
+                      ? 'Confirmé'
+                      : formData.status === 'completed'
+                      ? 'Terminé'
+                      : formData.status === 'cancelled'
+                      ? 'Annulé'
+                      : 'Bloqué'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', color: '#718096', fontSize: '12px' }}>
@@ -716,10 +741,17 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
                   <Icons.Cancel style={{ marginRight: '6px', fontSize: '14px' }} />
                   Annuler
                 </button>
-                <button type="submit" className="btn btn-sm btn-primary" disabled={loading || !canSubmit}>
+                <button
+                  type="submit"
+                  className="btn btn-sm btn-primary"
+                  disabled={loading || !canSubmit}
+                >
                   {loading ? (
                     <>
-                      <Icons.Loading className="spin" style={{ marginRight: '6px', fontSize: '14px' }} />
+                      <Icons.Loading
+                        className="spin"
+                        style={{ marginRight: '6px', fontSize: '14px' }}
+                      />
                       Création...
                     </>
                   ) : (
