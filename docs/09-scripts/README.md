@@ -17,52 +17,37 @@ Detailed documentation for each script including:
 
 ### By Task
 
-**Getting Started**:
-- [Launch the app](../../QUICK_LAUNCH.md) → Use `./start.sh`
-- [First-time setup](../01-getting-started/installation.md) → Use `./scripts/setup-project.sh`
-- [Quick start](../01-getting-started/quick-start.md) → Use `./scripts/quick-start.sh`
+**Getting Started:**
+- [Launch the app](../../README.md#quick-start) → Use `./launch-local.sh`
+- [First-time setup](../01-getting-started/installation.md) → Use `./scripts/setup/setup-project.sh`
+- [Quick start](../01-getting-started/quick-start.md) → Use `./scripts/setup/quick-start.sh`
 
-**Development**:
-- [Add new model](../02-development/adding-models.md) → Use `./scripts/add-model.js`
-- [Modify model](../02-development/modifying-models.md) → Use `./scripts/modify-model.js`
-- [Clean build artifacts](./script-reference.md#cleanup) → Use `./scripts/cleanup.sh`
+**Development:**
+- [Local development](../02-development/README.md) → Use `./launch-local.sh`
+- [Clean build artifacts](./script-reference.md#cleanup) → Use `./scripts/utils/cleanup.sh`
 
-**Deployment**:
+**Deployment:**
 - [Deploy to production](../03-deployment/deployment-guide.md) → Use `./deploy.sh`
-- [Setup Cloudflare](./script-reference.md#setup-cloudflare) → Use `./scripts/setup-cloudflare.sh`
-
-**Maintenance**:
-- [Validate scripts](./script-reference.md#validate-scripts) → Use `./scripts/validate-scripts.sh`
-- [Run tests](./script-reference.md#test) → Use `./scripts/test.js`
+- [Setup Cloudflare](./script-reference.md#setup-cloudflare) → Use `./scripts/setup/setup-cloudflare.sh`
 
 ### By Category
 
 | Category | Scripts | Purpose |
 |----------|---------|---------|
-| **Launch** | `start.sh`, `launch-local.sh` | Start the application locally |
+| **Launch** | `launch-local.sh` | Start the application locally |
 | **Deployment** | `deploy.sh` | Deploy to production |
-| **Automation** | `add-model.js`, `modify-model.js` | Generate and modify models |
 | **Setup** | `setup-*.sh`, `install.sh` | Initial project configuration |
-| **Utility** | `cleanup.sh`, `test.js` | Maintenance and testing |
-| **Validation** | `validate-scripts.sh` | Script integrity checking |
+| **Utility** | `cleanup.sh` | Maintenance and cleanup |
 
-## 📖 Script Catalog
-
-For a complete inventory of all scripts, see:
-- **[Scripts Catalog](../../scripts/SCRIPTS_CATALOG.md)** - Quick reference with usage examples
-- **[Script Reference](./script-reference.md)** - Detailed documentation
-
-## 🎨 Script Organization
+## 📖 Available Scripts
 
 ### Root Level Scripts
-Scripts at the project root are for **frequent daily use**:
+
+Scripts at the project root are for **frequent daily use:**
 
 ```
 equestrian-project/
-├── start.sh              # Launch app (most used)
-├── start.bat             # Launch app (Windows)
-├── launch-local.sh       # Full launcher with monitoring
-├── launch-local.ps1      # PowerShell launcher
+├── launch-local.sh       # Launch app locally (most used)
 └── deploy.sh             # Deploy to production
 ```
 
@@ -73,20 +58,19 @@ equestrian-project/
 - Easy to remember
 
 ### Scripts Directory
-Scripts in `scripts/` are for **development and setup**:
+
+Scripts in `scripts/` are for **development and setup:**
 
 ```
 scripts/
-├── add-model.js          # Model generator
-├── modify-model.js       # Model modifier
-├── setup-project.sh      # Complete setup
-├── setup-supabase.sh     # Supabase config
-├── setup-cloudflare.sh   # Cloudflare config
-├── install.sh            # Install dependencies
-├── quick-start.sh        # Quick setup
-├── cleanup.sh            # Clean artifacts
-├── test.js               # Test scripts
-└── validate-scripts.sh   # Validate integrity
+├── setup/
+│   ├── setup-project.sh      # Complete project setup
+│   ├── setup-supabase.sh     # Supabase configuration
+│   ├── setup-cloudflare.sh   # Cloudflare configuration
+│   ├── install.sh            # Install dependencies
+│   └── quick-start.sh        # Quick setup
+└── utils/
+    └── cleanup.sh            # Clean build artifacts
 ```
 
 **Why in scripts/?**
@@ -95,277 +79,201 @@ scripts/
 - Keeps root clean
 - Logical grouping
 
+## 🚀 Common Usage
+
+### Launch Application Locally
+
+```bash
+# From project root
+./launch-local.sh
+```
+
+This script:
+- ✅ Checks prerequisites
+- ✅ Installs dependencies if needed
+- ✅ Launches backend on port 8787
+- ✅ Launches frontend on port 5173
+- ✅ Monitors both services
+
+### Deploy to Production
+
+```bash
+# Deploy to development environment
+./deploy.sh dev
+
+# Deploy to production environment
+./deploy.sh prod
+```
+
+### Setup Scripts
+
+**Complete project setup:**
+```bash
+./scripts/setup/setup-project.sh
+```
+
+**Install dependencies only:**
+```bash
+./scripts/setup/install.sh
+```
+
+**Quick start setup:**
+```bash
+./scripts/setup/quick-start.sh
+```
+
+**Configure Supabase:**
+```bash
+./scripts/setup/setup-supabase.sh
+```
+
+**Configure Cloudflare:**
+```bash
+./scripts/setup/setup-cloudflare.sh
+```
+
+### Utility Scripts
+
+**Clean build artifacts:**
+```bash
+./scripts/utils/cleanup.sh --all        # Everything
+./scripts/utils/cleanup.sh --frontend   # Frontend only
+./scripts/utils/cleanup.sh --backend    # Backend only
+./scripts/utils/cleanup.sh --logs       # Logs only
+```
+
 ## 🔧 Script Development
 
 ### Creating New Scripts
 
-When adding a new script:
+1. **Choose the right directory:**
+   - `setup/` - Configuration and installation
+   - `utils/` - Maintenance and testing
 
-1. **Choose location**:
-   - Root: Frequent use (launch, deploy)
-   - scripts/: Development use (setup, utilities)
+2. **Create the script:**
+```bash
+cd scripts/setup  # or utils/
+nano my-script.sh
+```
 
-2. **Follow conventions**:
-   ```bash
-   #!/bin/bash
-   # Script Name
-   # Brief description
-   # Usage: ./script-name.sh [options]
-   
-   set -e  # Exit on error
-   ```
-
-3. **Make executable**:
-   ```bash
-   chmod +x script-name.sh
-   ```
-
-4. **Update documentation**:
-   - Add to [Scripts Catalog](../../scripts/SCRIPTS_CATALOG.md)
-   - Update [Script Reference](./script-reference.md)
-   - Update `.scripts-index.json`
-
-5. **Test thoroughly**:
-   ```bash
-   ./scripts/validate-scripts.sh
-   ./scripts/test.js
-   ```
-
-### Script Standards
-
-**Naming**:
-- Use kebab-case: `setup-database.sh`
-- Be descriptive: `setup-supabase.sh` not `setup.sh`
-- Include extension: `.sh`, `.js`, `.ps1`
-
-**Headers**:
+3. **Add shebang and header:**
 ```bash
 #!/bin/bash
-# Script Name
-# Description of what the script does
-# Usage: ./script-name.sh [options]
-# Exit codes: 0=success, 1=error
-```
+# my-script.sh - Brief description
+# Usage: ./my-script.sh [options]
 
-**Error Handling**:
-```bash
 set -e  # Exit on error
-set -u  # Exit on undefined variable
-set -o pipefail  # Exit on pipe failure
 ```
 
-**Output**:
+4. **Make executable:**
 ```bash
-# Use colors for clarity
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m'
-
-echo -e "${GREEN}✓ Success${NC}"
-echo -e "${RED}✗ Error${NC}"
+chmod +x my-script.sh
 ```
 
-## 🔄 Common Workflows
-
-### Daily Development
+5. **Test:**
 ```bash
-# 1. Launch app
-./start.sh
+# Syntax check
+bash -n my-script.sh
 
-# 2. Make changes (hot reload enabled)
-
-# 3. Stop app (Ctrl+C)
+# Run the script
+./my-script.sh
 ```
 
-### Adding a Feature
-```bash
-# 1. Create new model
-cd scripts
-./add-model.js
+### Best Practices
 
-# 2. Apply database migration
-# (Run SQL in Supabase dashboard)
+**Script Writing:**
+1. ✅ Always use `#!/bin/bash` shebang
+2. ✅ Use `set -e` to exit on errors
+3. ✅ Add clear comments and usage
+4. ✅ Use colored output for better UX
+5. ✅ Validate user input
+6. ✅ Handle errors gracefully
+7. ✅ Provide clear next steps
 
-# 3. Test locally
-cd ..
-./start.sh
+**Organization:**
+1. ✅ Put scripts in appropriate directories
+2. ✅ Update documentation
+3. ✅ Use consistent naming
+4. ✅ Keep scripts focused and simple
 
-# 4. Deploy
-./deploy.sh staging
-```
-
-### Maintenance
-```bash
-# Clean build artifacts
-./scripts/cleanup.sh --all
-
-# Reinstall dependencies
-./scripts/install.sh
-
-# Validate scripts
-./scripts/validate-scripts.sh
-
-# Run tests
-cd scripts
-node test.js
-```
+**Documentation:**
+1. ✅ Update this README
+2. ✅ Add inline comments
+3. ✅ Provide usage examples
+4. ✅ Document dependencies
 
 ## 🐛 Troubleshooting
 
-### Script Won't Execute
-
-**Issue**: Permission denied
-
-**Solution**:
+### Permission Denied
 ```bash
-chmod +x script-name.sh
+chmod +x scripts/script-name.sh
 ```
 
----
-
-**Issue**: Command not found
-
-**Solution**: Use correct path
+### Script Not Found
 ```bash
-./start.sh          # Correct (from project root)
-start.sh            # Wrong (unless in PATH)
+# Use relative path from project root
+./scripts/setup/script-name.sh
+
+# Or navigate to scripts directory
+cd scripts/setup
+./script-name.sh
 ```
 
 ### Dependencies Missing
-
-**Issue**: Node.js not found
-
-**Solution**:
 ```bash
-# macOS
-brew install node
-
-# Linux
-sudo apt-get install nodejs npm
+# Install all dependencies
+./scripts/setup/install.sh
 ```
 
-### Port Conflicts
+## 📊 Script Inventory
 
-**Issue**: Port already in use
+### Active Scripts
 
-**Solution**: Launch scripts handle this automatically, or:
-```bash
-# macOS/Linux
-lsof -ti:5173 | xargs kill -9
-lsof -ti:8787 | xargs kill -9
-```
+| Script | Location | Purpose |
+|--------|----------|---------|
+| `launch-local.sh` | Root | Launch application locally |
+| `deploy.sh` | Root | Deploy to production |
+| `setup-project.sh` | `scripts/setup/` | Complete project setup |
+| `setup-supabase.sh` | `scripts/setup/` | Configure Supabase |
+| `setup-cloudflare.sh` | `scripts/setup/` | Configure Cloudflare |
+| `install.sh` | `scripts/setup/` | Install dependencies |
+| `quick-start.sh` | `scripts/setup/` | Quick setup |
+| `cleanup.sh` | `scripts/utils/` | Clean build artifacts |
 
-## 📊 Script Dependencies
+## 🤝 Contributing
 
-### System Requirements
-- **Node.js**: 18.0.0 or higher
-- **npm**: 9.0.0 or higher
-- **Git**: 2.0.0 or higher
+When adding or modifying scripts:
 
-### Optional Tools
-- **wrangler**: For Cloudflare deployments
-- **jq**: For JSON parsing
-- **shellcheck**: For script validation
-
-### Installing on macOS
-```bash
-# Using Homebrew
-brew install node git jq shellcheck
-
-# Install wrangler
-npm install -g wrangler
-```
-
-## 🎯 Best Practices
-
-### When to Use Scripts
-
-**Use scripts for**:
-- ✅ Repetitive tasks
-- ✅ Complex multi-step processes
-- ✅ Environment setup
-- ✅ Deployment procedures
-- ✅ Code generation
-
-**Don't use scripts for**:
-- ❌ One-time manual tasks
-- ❌ Simple single commands
-- ❌ Tasks requiring human judgment
-- ❌ Highly variable processes
-
-### Script Maintenance
-
-**Regular tasks**:
-1. Run validation: `./scripts/validate-scripts.sh`
-2. Update documentation when scripts change
-3. Test scripts after Node.js updates
-4. Review and remove unused scripts
-5. Keep dependencies up to date
-
-**Version control**:
-- Commit scripts with descriptive messages
-- Document breaking changes
-- Tag releases that change scripts
-- Maintain changelog for script updates
+1. Follow the directory structure
+2. Use bash for new scripts
+3. Add proper documentation
+4. Update this README
+5. Test thoroughly
 
 ## 📚 Additional Resources
 
-### Internal Documentation
-- [Scripts Catalog](../../scripts/SCRIPTS_CATALOG.md) - Complete script inventory
-- [Script Reference](./script-reference.md) - Detailed documentation
-- [Model Automation](../../scripts/README.md) - Model script specifics
-- [Quick Launch](../../QUICK_LAUNCH.md) - Quick reference card
+- **Main Documentation:** [../docs/](../docs/)
+- **Development Guide:** [../docs/02-development/](../docs/02-development/)
+- **Deployment Guide:** [../docs/03-deployment/](../docs/03-deployment/)
+- **API Documentation:** [../docs/05-api/](../docs/05-api/)
 
-### External Resources
-- [Bash Scripting Guide](https://www.gnu.org/software/bash/manual/)
-- [Node.js Documentation](https://nodejs.org/docs/)
-- [ShellCheck](https://www.shellcheck.net/) - Script analysis tool
+## 💡 Tips
 
-## 🆘 Getting Help
-
-### For Script Issues
-
-1. **Check the catalog**: [Scripts Catalog](../../scripts/SCRIPTS_CATALOG.md)
-2. **Read detailed docs**: [Script Reference](./script-reference.md)
-3. **Run validation**: `./scripts/validate-scripts.sh`
-4. **Check logs**: Look in `logs/` directory
-5. **Ask for help**: Create an issue on GitHub
-
-### Reporting Script Bugs
-
-When reporting issues, include:
-- Script name and version
-- Command executed
-- Error message
-- System information (`uname -a`)
-- Node.js version (`node --version`)
-
-## 🔄 Keeping Scripts Updated
-
-### Check for Updates
-```bash
-# Pull latest changes
-git pull origin master
-
-# Verify scripts
-./scripts/validate-scripts.sh
-
-# Update dependencies
-./scripts/install.sh
-```
-
-### Script Versioning
-
-Scripts follow the project version. Check:
-```bash
-# Project version
-cat package.json | grep version
-
-# Script metadata
-cat scripts/.scripts-index.json | grep version
-```
+1. **Use tab completion:** Makes finding scripts easier
+2. **Check documentation:** Each script has usage instructions
+3. **Follow examples:** Look at existing scripts for patterns
+4. **Test locally first:** Always test before deploying
 
 ---
 
-**Last Updated**: December 2024  
-**Maintained by**: Equestrian Project Team
+**Questions?** Check [Script Reference](./script-reference.md) or the main [Documentation](../docs/)
+
+**Issues?** Open an issue on GitHub
+
+**Need Help?** See the detailed documentation in [docs/](../docs/)
+
+---
+
+**Last Updated:** January 2025  
+**Version:** 2.0.0  
+**Status:** Production Ready ✅

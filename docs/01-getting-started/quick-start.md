@@ -1,213 +1,271 @@
 # Quick Start Guide
 
-This guide provides the fastest way to get your equestrian application running in both development and production environments.
+This guide provides the fastest way to get your equestrian application running locally.
 
 ## 🚀 Quick Start (5 minutes)
 
 ### 1. Prerequisites
+
+Ensure you have the following installed:
+
 ```bash
-# Install Node.js (v18+)
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
+# Check Node.js version (v18+)
+node --version
 
-# Install Wrangler CLI
-npm install -g wrangler
+# Check npm version
+npm --version
 
-# Authenticate with Cloudflare
-wrangler auth login
+# Check Git
+git --version
 ```
 
-### 2. Setup Supabase (2 minutes)
-```bash
-# Run the Supabase setup script
-./scripts/setup-supabase.sh
+If you need to install these tools, see the [Prerequisites Guide](./prerequisites.md).
 
-# Or manually:
-# 1. Create dev project at https://supabase.com/dashboard
-# 2. Create prod project at https://supabase.com/dashboard
-# 3. Update .env files with your credentials
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/adeline-t/equestrian-project.git
+cd equestrian-project
 ```
 
-### 3. Setup Cloudflare (2 minutes)
-```bash
-# Run the Cloudflare setup script
-./scripts/setup-cloudflare.sh
+### 3. Set Up Supabase Database
 
-# Or manually:
-# 1. Add your domain to Cloudflare
-# 2. Configure DNS records
-# 3. Deploy workers and bind custom domains
+1. **Create a Supabase project:**
+   - Go to [supabase.com/dashboard](https://supabase.com/dashboard)
+   - Click "New Project"
+   - Fill in project details and create
+
+2. **Run the database schema:**
+   - In Supabase dashboard, go to "SQL Editor"
+   - Copy contents of `database/schema.sql`
+   - Paste and run in SQL Editor
+
+3. **Run migrations:**
+   - Run each migration file from `database/migrations/` in order
+   - Start with the oldest date first
+
+4. **Get your credentials:**
+   - Go to Settings → API
+   - Copy your Project URL and anon key
+
+### 4. Configure Environment Files
+
+**Frontend configuration:**
+
+Create `frontend/.env`:
+
+```bash
+VITE_API_URL=http://localhost:8787/api
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_ENVIRONMENT=development
+VITE_LOG_LEVEL=debug
 ```
 
-### 4. Deploy Application (1 minute)
+**Backend configuration:**
 
-#### Development Environment
+Create `backend/.dev.vars`:
+
 ```bash
-# Deploy to development
-./deploy.sh dev
-
-# Access: https://dev.yourdomain.com
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-#### Production Environment
-```bash
-# Deploy to production
-./deploy.sh prod
+### 5. Launch the Application
 
-# Access: https://yourdomain.com
+**Option 1: Using the launch script (Recommended)**
+
+```bash
+./launch-local.sh
 ```
 
-## 📋 Environment Files Quick Reference
+The script will:
+- ✅ Check prerequisites
+- ✅ Install dependencies
+- ✅ Launch backend on port 8787
+- ✅ Launch frontend on port 5173
+- ✅ Monitor both services
 
-### Frontend Environment Variables
-| Variable | Development | Production |
-|----------|-------------|------------|
-| `VITE_API_URL` | `https://dev-api.yourdomain.com/api` | `https://api.yourdomain.com/api` |
-| `VITE_SUPABASE_URL` | Dev Supabase URL | Prod Supabase URL |
-| `VITE_ENVIRONMENT` | `development` | `production` |
-| `VITE_LOG_LEVEL` | `debug` | `error` |
+**Option 2: Manual launch**
 
-### Backend Environment Variables
-| Variable | Development | Production |
-|----------|-------------|------------|
-| `SUPABASE_URL` | Dev Supabase URL | Prod Supabase URL |
-| `ENVIRONMENT` | `development` | `production` |
-| `LOG_LEVEL` | `debug` | `error` |
-| `CORS_ORIGIN` | `*` | `https://yourdomain.com` |
-
-## 🛠️ Development Workflow
-
-### Local Development
 ```bash
-# Start development servers
-cd backend && npm run dev &
-cd frontend && npm run dev
+# Terminal 1 - Backend
+cd backend
+npm install
+npm run dev
 
-# Access:
-# Frontend: http://localhost:5173
-# Backend: http://localhost:8787
+# Terminal 2 - Frontend
+cd frontend
+npm install
+npm run dev
 ```
 
-### Environment Switching
-```bash
-# Switch to development
-cp frontend/.env.dev frontend/.env
-cp backend/.env.dev backend/.env
+### 6. Access the Application
 
-# Switch to production
-cp frontend/.env.prod frontend/.env
-cp backend/.env.prod backend/.env
-```
+Open your browser and navigate to:
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:8787/api
 
 ## 🔧 Common Commands
 
-### Backend Commands
+### Development
+
 ```bash
-cd backend
+# Start development servers
+./launch-local.sh
 
-# Development server
-npm run dev
+# Backend only
+cd backend && npm run dev
 
-# Deploy to development
-npx wrangler deploy --env dev
-
-# Deploy to production
-npx wrangler deploy --env prod
-
-# View logs (development)
-npx wrangler tail --env dev
-
-# View logs (production)
-npx wrangler tail --env prod
+# Frontend only
+cd frontend && npm run dev
 ```
 
-### Frontend Commands
+### Building
+
 ```bash
+# Build frontend
 cd frontend
+npm run build
 
-# Development server
-npm run dev
-
-# Build for development
-npm run build -- --config vite.config.dev.js
-
-# Build for production
-npm run build -- --config vite.config.prod.js
-
-# Preview build
+# Preview production build
 npm run preview
 ```
 
-## 🌍 URLs After Setup
+### Testing
 
-| Environment | Frontend | Backend API |
-|-------------|----------|-------------|
-| Development | `https://dev.yourdomain.com` | `https://dev-api.yourdomain.com/api` |
-| Production | `https://yourdomain.com` | `https://api.yourdomain.com/api` |
-| Local | `http://localhost:5173` | `http://localhost:8787/api` |
-
-## 🚨 Important Security Notes
-
-### Never Commit These Files
-- `.env` files
-- `.env.local` files
-- Any files containing secrets or API keys
-
-### Always Use Secrets in Production
 ```bash
-# Set secrets for production
-npx wrangler secret put SUPABASE_URL --env prod
-npx wrangler secret put SUPABASE_ANON_KEY --env prod
-npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env prod
+# Frontend tests
+cd frontend
+npm test
+
+# Backend tests
+cd backend
+npm test
 ```
 
-### Enable RLS in Production
-Make sure Row Level Security is enabled on all Supabase tables in production.
+## 🌐 URLs After Setup
 
-## 🔍 Testing Checklist
+| Service | URL | Description |
+|---------|-----|-------------|
+| Frontend | `http://localhost:5173` | React application |
+| Backend API | `http://localhost:8787/api` | API endpoints |
+| API Health | `http://localhost:8787/api/health` | Health check |
 
-### Development Tests
-- [ ] Frontend loads at `http://localhost:5173`
-- [ ] Backend API responds at `http://localhost:8787/api`
-- [ ] Database operations work correctly
-- [ ] Authentication flows work
+## 🔍 Testing Your Setup
 
-### Production Tests
-- [ ] HTTPS redirects work properly
-- [ ] Custom domains resolve correctly
-- [ ] API endpoints are accessible
-- [ ] Database operations work correctly
-- [ ] No console errors in production
+### 1. Backend Health Check
 
-### Security Tests
-- [ ] RLS policies are enforced
-- [ ] CORS headers are correct
-- [ ] No sensitive data in frontend bundle
-- [ ] All secrets are properly configured
+```bash
+curl http://localhost:8787/api/health
+```
 
-## 📞 Troubleshooting
+Expected response:
+```json
+{
+  "status": "ok",
+  "message": "API opérationnelle",
+  "timestamp": "2024-12-01T...",
+  "version": "1.0.0"
+}
+```
 
-### Common Issues
-1. **Build fails**: Check environment variables are correctly set
-2. **API not responding**: Check Wrangler deployment logs
-3. **Database errors**: Verify Supabase connection and RLS policies
-4. **Domain not working**: Check DNS propagation (24-48 hours)
+### 2. Frontend Access
 
-### Get Help
-- Check the main guide: `MULTI_ENVIRONMENT_DEPLOYMENT_GUIDE.md`
-- View Wrangler logs: `npx wrangler tail --env [dev|prod]`
-- Check Cloudflare dashboard for errors
-- Review Supabase logs and settings
+Open http://localhost:5173 in your browser. You should see the application interface.
+
+### 3. Create Test Data
+
+- Click "Nouveau Cavalier" to create a rider
+- Click "Nouveau Cheval" to create a horse
+- Create a pairing between them
+- Verify data persists in the database
+
+## ✅ Verification Checklist
+
+- [ ] Node.js 18+ installed
+- [ ] Supabase project created
+- [ ] Database schema applied
+- [ ] Migrations run successfully
+- [ ] Environment files configured
+- [ ] Backend starts without errors
+- [ ] Frontend starts without errors
+- [ ] Can access frontend at localhost:5173
+- [ ] Can access backend at localhost:8787
+- [ ] Health check returns OK
+- [ ] Can create and view data
+
+## 🚨 Troubleshooting
+
+### Port Already in Use
+
+If you get "port already in use" errors:
+
+```bash
+# Check what's using the port
+lsof -i :5173  # Frontend
+lsof -i :8787  # Backend
+
+# Kill the process
+lsof -ti:5173 | xargs kill -9
+lsof -ti:8787 | xargs kill -9
+```
+
+### Backend Connection Errors
+
+**Error:** "Supabase connection failed"
+
+- Verify `SUPABASE_URL` in `.dev.vars`
+- Verify `SUPABASE_ANON_KEY` is correct
+- Check Supabase project is active
+- Ensure database schema was applied
+
+### Frontend Build Errors
+
+**Error:** "VITE_API_URL is not defined"
+
+- Ensure `.env` file exists in `frontend/`
+- Verify all required variables are set
+- Restart dev server after changing `.env`
+
+**Error:** "Module not found"
+
+```bash
+# Clear cache and reinstall
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Database Errors
+
+**Error:** "relation does not exist"
+
+- Verify `schema.sql` was executed successfully
+- Check table names in Supabase Table Editor
+- Run migrations in correct order
+- Re-run schema if needed
 
 ## 🎯 Next Steps
 
 After completing the quick start:
-1. **Customize domains** to your actual domain name
-2. **Set up analytics** and monitoring
-3. **Configure backup** strategies
-4. **Set up CI/CD** pipelines
-5. **Add team members** to Cloudflare and Supabase
+
+1. **Explore Features** - See [Features Documentation](../04-features/README.md)
+2. **Learn Development** - Check [Development Guide](../02-development/README.md)
+3. **Deploy Your App** - Read [Deployment Guide](../03-deployment/README.md)
+4. **API Reference** - Review [API Documentation](../05-api/README.md)
+
+## 📚 Additional Resources
+
+- [Full Installation Guide](./installation.md) - Detailed setup instructions
+- [Prerequisites Guide](./prerequisites.md) - System requirements
+- [Troubleshooting Guide](../03-deployment/troubleshooting.md) - Common issues
+- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Vite Documentation](https://vitejs.dev/)
+- [React Documentation](https://react.dev/)
 
 ---
 
-For detailed configuration and advanced setup, see the full `MULTI_ENVIRONMENT_DEPLOYMENT_GUIDE.md`.
+**Ready to develop?** Continue to the [Development Guide](../02-development/README.md)
