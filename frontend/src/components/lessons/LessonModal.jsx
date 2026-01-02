@@ -294,21 +294,6 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
               <LessonIcon style={{ marginRight: '8px' }} />
               {lessonData.name}
             </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {lessonData.status !== 'cancelled' && !isEditing && (
-                <button 
-                  className="btn btn-sm btn-primary" 
-                  onClick={handleStartEdit}
-                  title="Modifier le cours"
-                >
-                  <Icons.Edit style={{ marginRight: '4px' }} />
-                  Modifier
-                </button>
-              )}
-              <button className="btn-close" onClick={onClose}>
-                <Icons.Close />
-              </button>
-            </div>
           </div>
 
           {/* Tabs */}
@@ -352,7 +337,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                       </div>
                     )}
 
-                    <form onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}>
+                    <form onSubmit={(e) => { e.preventDefault(); }}>
                       {/* Name */}
                       <div className="form-group" style={{ marginBottom: '15px' }}>
                         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
@@ -482,35 +467,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         />
                       </div>
 
-                      {/* Form actions */}
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          onClick={handleCancelEdit}
-                          disabled={saving}
-                        >
-                          <Icons.Cancel style={{ marginRight: '8px' }} />
-                          Annuler
-                        </button>
-                        <button
-                          type="submit"
-                          className="btn btn-primary"
-                          disabled={saving}
-                        >
-                          {saving ? (
-                            <>
-                              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
-                              Sauvegarde...
-                            </>
-                          ) : (
-                            <>
-                              <Icons.Check style={{ marginRight: '8px' }} />
-                              Sauvegarder
-                            </>
-                          )}
-                        </button>
-                      </div>
+                      {/* Form actions removed - moved to footer */}
                     </form>
                   </div>
                 ) : (
@@ -810,24 +767,66 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
 
           {/* Actions */}
           <div className="modal-footer">
-            {lessonData.status !== 'cancelled' && (
+            {isEditing ? (
+              /* Edit mode actions */
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleCancelEdit}
+                  disabled={saving}
+                >
+                  <Icons.Cancel style={{ marginRight: '8px' }} />
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSaveEdit}
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
+                      Sauvegarde...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.Check style={{ marginRight: '8px' }} />
+                      Sauvegarder
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              /* Normal mode actions */
               <>
-                {!isBlocked && !lessonData.not_given_by_laury && (
-                  <button className="btn btn-warning" onClick={handleMarkNotGiven}>
-                    <Icons.Warning style={{ marginRight: '8px' }} />
-                    Marquer comme non donné
+                {lessonData.status !== 'cancelled' && (
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={handleStartEdit}
+                    title="Modifier le cours"
+                  >
+                    <Icons.Edit style={{ marginRight: '8px' }} />
+                    Modifier le cours
                   </button>
                 )}
-                <button className="btn btn-danger" onClick={handleCancel}>
-                  <Icons.Close style={{ marginRight: '8px' }} />
-                  Annuler le cours
-                </button>
+                {lessonData.status !== 'cancelled' && (
+                  <>
+                    {!isBlocked && !lessonData.not_given_by_laury && (
+                      <button className="btn btn-warning" onClick={handleMarkNotGiven}>
+                        <Icons.Warning style={{ marginRight: '8px' }} />
+                        Marquer comme non donné
+                      </button>
+                    )}
+                    <button className="btn btn-danger" onClick={handleCancel}>
+                      <Icons.Close style={{ marginRight: '8px' }} />
+                      Annuler le cours
+                    </button>
+                  </>
+                )}
               </>
             )}
-            <button className="btn btn-secondary" onClick={onClose}>
-              <Icons.Close style={{ marginRight: '8px' }} />
-              Fermer
-            </button>
           </div>
         </div>
       </div>
