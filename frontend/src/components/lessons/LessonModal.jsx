@@ -192,7 +192,11 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
       lesson_type: lessonData.lesson_type,
       description: lessonData.description || '',
       max_participants: lessonData.max_participants || 1,
+      min_participants: lessonData.min_participants || '',
       status: lessonData.status || 'scheduled',
+      cancellation_reason: lessonData.cancellation_reason || '',
+      not_given_by_laury: lessonData.not_given_by_laury || false,
+      not_given_reason: lessonData.not_given_reason || '',
     });
   };
 
@@ -203,7 +207,8 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
   };
 
   const handleEditChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    const fieldValue = type === 'checkbox' ? checked : value;
 
     // If start_time is changed, calculate new end_time based on duration
     if (name === 'start_time') {
@@ -233,7 +238,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
     } else {
       setEditFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name]: fieldValue,
       }));
     }
   };
@@ -548,25 +553,54 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         </div>
                       </div>
 
-                      {/* Max participants */}
+                      {/* Participants - Min and Max */}
                       {editFormData.lesson_type !== 'blocked' && (
-                        <div className="form-group" style={{ marginBottom: '15px' }}>
-                          <label
-                            style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
-                          >
-                            <Icons.Users style={{ marginRight: '4px', fontSize: '12px' }} />
-                            Max participants
-                          </label>
-                          <input
-                            type="number"
-                            name="max_participants"
-                            value={editFormData.max_participants}
-                            onChange={handleEditChange}
-                            className="form-input"
-                            min="1"
-                            max="50"
-                            style={{ fontSize: '14px' }}
-                          />
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: '15px',
+                            marginBottom: '15px',
+                          }}
+                        >
+                          <div className="form-group" style={{ margin: 0 }}>
+                            <label
+                              style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                            >
+                              <Icons.Users style={{ marginRight: '4px', fontSize: '12px' }} />
+                              Min participants
+                            </label>
+                            <input
+                              type="number"
+                              name="min_participants"
+                              value={editFormData.min_participants}
+                              onChange={handleEditChange}
+                              className="form-input"
+                              min="1"
+                              max="50"
+                              placeholder="Optionnel"
+                              style={{ fontSize: '14px' }}
+                            />
+                          </div>
+
+                          <div className="form-group" style={{ margin: 0 }}>
+                            <label
+                              style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}
+                            >
+                              <Icons.Users style={{ marginRight: '4px', fontSize: '12px' }} />
+                              Max participants
+                            </label>
+                            <input
+                              type="number"
+                              name="max_participants"
+                              value={editFormData.max_participants}
+                              onChange={handleEditChange}
+                              className="form-input"
+                              min="1"
+                              max="50"
+                              style={{ fontSize: '14px' }}
+                            />
+                          </div>
                         </div>
                       )}
 
@@ -590,6 +624,59 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                           <option value="blocked">Bloqué</option>
                         </select>
                       </div>
+
+                      {/* Cancellation Reason - Only show if status is cancelled */}
+                      {editFormData.status === 'cancelled' &amp;&amp; (
+                        <div className="form-group" style={{ marginBottom: '15px' }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.Close style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Raison de l'annulation
+                          </label>
+                          <textarea
+                            name="cancellation_reason"
+                            value={editFormData.cancellation_reason}
+                            onChange={handleEditChange}
+                            className="form-textarea"
+                            rows="2"
+                            placeholder="Pourquoi ce cours est-il annulé ?"
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Not Given by Laury */}
+                      <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <label style={{ fontSize: '14px', marginBottom: '5px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            name="not_given_by_laury"
+                            checked={editFormData.not_given_by_laury}
+                            onChange={handleEditChange}
+                            style={{ marginRight: '8px', cursor: 'pointer' }}
+                          />
+                          <Icons.Warning style={{ marginRight: '4px', fontSize: '12px' }} />
+                          Cours non donné par Laury
+                        </label>
+                      </div>
+
+                      {/* Not Given Reason - Only show if checkbox is checked */}
+                      {editFormData.not_given_by_laury &amp;&amp; (
+                        <div className="form-group" style={{ marginBottom: '15px' }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Raison
+                          </label>
+                          <textarea
+                            name="not_given_reason"
+                            value={editFormData.not_given_reason}
+                            onChange={handleEditChange}
+                            className="form-textarea"
+                            rows="2"
+                            placeholder="Pourquoi ce cours n'a-t-il pas été donné par Laury ?"
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                      )}
 
                       {/* Description */}
                       <div className="form-group" style={{ marginBottom: '15px' }}>
