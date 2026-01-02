@@ -73,6 +73,19 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
 
   const validLessons = (lessons || []).filter((lesson) => lesson.start_time && lesson.end_time);
 
+  const roundToQuarterHour = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    
+    // Round to nearest 15 minutes
+    const roundedMinutes = Math.round(totalMinutes / 15) * 15;
+    
+    const roundedHours = Math.floor(roundedMinutes / 60);
+    const roundedMins = roundedMinutes % 60;
+    
+    return `${String(roundedHours).padStart(2, '0')}:${String(roundedMins).padStart(2, '0')}`;
+  };
+
   const handleMouseDown = (e) => {
     // Only start selection if clicking on empty space (not on a lesson)
     if (e.target === e.currentTarget || e.target.classList.contains('day-grid') || e.target.classList.contains('lessons-container') || e.target.classList.contains('no-lessons')) {
@@ -86,7 +99,8 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
       const hour = Math.floor(y / HOUR_HEIGHT) + START_HOUR;
       const minute = Math.floor(((y % HOUR_HEIGHT) / HOUR_HEIGHT) * 60);
       
-      const startTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      const rawTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+      const startTime = roundToQuarterHour(rawTime);
       setSelectionStart(startTime);
       setSelectionEnd(startTime);
     }
@@ -102,7 +116,8 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     const hour = Math.floor(y / HOUR_HEIGHT) + START_HOUR;
     const minute = Math.floor(((y % HOUR_HEIGHT) / HOUR_HEIGHT) * 60);
     
-    const endTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    const rawEndTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    const endTime = roundToQuarterHour(rawEndTime);
     setSelectionEnd(endTime);
   };
 

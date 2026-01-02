@@ -15,7 +15,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
     lesson_type: 'private',
     description: '',
     max_participants: 1,
-    status: 'confirmed',
+    status: 'scheduled',
   });
 
   const [participants, setParticipants] = useState([]);
@@ -97,14 +97,9 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
   };
 
   const generatedName = useMemo(() => {
-    try {
-      const date = parse(formData.lesson_date, 'yyyy-MM-dd', new Date());
-      const formattedDate = format(date, 'dd/MM', { locale: fr });
-      return `Cours du ${formattedDate} à ${formData.start_time}`;
-    } catch {
-      return 'Cours';
-    }
-  }, [formData.lesson_date, formData.start_time]);
+    const typeConfig = lessonTypes.find((t) => t.value === formData.lesson_type);
+    return typeConfig ? typeConfig.label : 'Cours';
+  }, [formData.lesson_type, lessonTypes]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -256,9 +251,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
               <Icons.Add style={{ marginRight: '8px' }} />
               Créer: {generatedName} - {formData.start_time}
             </h2>
-            <button className="btn-close" onClick={onClose}>
-              <Icons.Close />
-            </button>
+            <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -626,10 +619,11 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
                   className="form-select"
                   style={{ fontSize: '13px', padding: '6px 8px' }}
                 >
+                  <option value="scheduled">Planifié</option>
                   <option value="confirmed">Confirmé</option>
-                  <option value="validated">Validé</option>
-                  <option value="pending">En attente</option>
                   <option value="completed">Terminé</option>
+                  <option value="cancelled">Annulé</option>
+                  <option value="blocked">Bloqué</option>
                 </select>
               </div>
 
@@ -674,18 +668,20 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStar
                     style={{
                       marginLeft: 'auto',
                       padding: '2px 8px',
-                      background: formData.status === 'confirmed' ? '#48bb78' : 
-                                 formData.status === 'validated' ? '#4299e1' :
-                                 formData.status === 'pending' ? '#ed8936' : '#718096',
+                      background: formData.status === 'scheduled' ? '#718096' :
+                                 formData.status === 'confirmed' ? '#48bb78' : 
+                                 formData.status === 'completed' ? '#4299e1' :
+                                 formData.status === 'cancelled' ? '#f56565' : '#ed8936',
                       color: 'white',
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 'bold',
                     }}
                   >
-                    {formData.status === 'confirmed' ? 'Confirmé' :
-                     formData.status === 'validated' ? 'Validé' :
-                     formData.status === 'pending' ? 'En attente' : 'Terminé'}
+                    {formData.status === 'scheduled' ? 'Planifié' :
+                     formData.status === 'confirmed' ? 'Confirmé' :
+                     formData.status === 'completed' ? 'Terminé' :
+                     formData.status === 'cancelled' ? 'Annulé' : 'Bloqué'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', color: '#718096', fontSize: '12px' }}>
