@@ -178,10 +178,35 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setEditFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // If start_time is changed, calculate new end_time based on duration
+    if (name === 'start_time') {
+      const currentStartTime = editFormData.start_time;
+      const currentEndTime = editFormData.end_time;
+      
+      // Calculate duration in minutes
+      const [startHour, startMin] = currentStartTime.split(':').map(Number);
+      const [endHour, endMin] = currentEndTime.split(':').map(Number);
+      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+      
+      // Calculate new end time
+      const [newStartHour, newStartMin] = value.split(':').map(Number);
+      const newEndTotalMinutes = (newStartHour * 60 + newStartMin) + durationMinutes;
+      const newEndHour = Math.floor(newEndTotalMinutes / 60);
+      const newEndMin = newEndTotalMinutes % 60;
+      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(2, '0')}`;
+      
+      setEditFormData(prev => ({
+        ...prev,
+        [name]: value,
+        end_time: newEndTime,
+      }));
+    } else {
+      setEditFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleTypeChange = (e) => {

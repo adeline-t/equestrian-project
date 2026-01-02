@@ -5,6 +5,7 @@ import Portal from '../../utils/Portal';
 import { Icons } from '../../utils/icons';
 import { format, parse } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import './LessonModal.css';
 
 function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
   const [formData, setFormData] = useState({
@@ -101,10 +102,35 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // If start_time is changed, calculate new end_time based on duration
+    if (name === 'start_time') {
+      const currentStartTime = formData.start_time;
+      const currentEndTime = formData.end_time;
+      
+      // Calculate duration in minutes
+      const [startHour, startMin] = currentStartTime.split(':').map(Number);
+      const [endHour, endMin] = currentEndTime.split(':').map(Number);
+      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+      
+      // Calculate new end time
+      const [newStartHour, newStartMin] = value.split(':').map(Number);
+      const newEndTotalMinutes = (newStartHour * 60 + newStartMin) + durationMinutes;
+      const newEndHour = Math.floor(newEndTotalMinutes / 60);
+      const newEndMin = newEndTotalMinutes % 60;
+      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(2, '0')}`;
+      
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        end_time: newEndTime,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleTypeChange = (e) => {
@@ -256,7 +282,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                 }}
               >
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                  <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
                     <Icons.List style={{ marginRight: '4px', fontSize: '12px' }} />
                     Type *
                   </label>
@@ -266,7 +292,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     onChange={handleTypeChange}
                     className="form-select"
                     required
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '13px', padding: '6px 8px' }}
                   >
                     {lessonTypes.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -277,7 +303,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                  <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
                     <Icons.Calendar style={{ marginRight: '4px', fontSize: '12px' }} />
                     Date *
                   </label>
@@ -288,7 +314,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     onChange={handleChange}
                     className="form-input"
                     required
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '13px', padding: '6px 8px' }}
                   />
                 </div>
               </div>
@@ -314,12 +340,15 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     onChange={handleChange}
                     className="form-input"
                     required
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '13px', padding: '6px 8px' }}
                   />
+                  <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                    La durée sera conservée
+                  </small>
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
-                  <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                  <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
                     <Icons.Clock style={{ marginRight: '4px', fontSize: '12px' }} />
                     Fin *
                   </label>
@@ -330,8 +359,18 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     onChange={handleChange}
                     className="form-input"
                     required
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '13px', padding: '6px 8px' }}
                   />
+                  <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                    {(() => {
+                      const [startHour, startMin] = formData.start_time.split(':').map(Number);
+                      const [endHour, endMin] = formData.end_time.split(':').map(Number);
+                      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+                      const hours = Math.floor(durationMinutes / 60);
+                      const minutes = durationMinutes % 60;
+                      return `Durée: ${hours}h${minutes > 0 ? minutes : ''}`;
+                    })()}
+                  </small>
                 </div>
               </div>
 
@@ -357,8 +396,8 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
 
               {/* Max participants */}
               {!isBlocked && (
-                <div className="form-group" style={{ margin: '0 0 15px 0' }}>
-                  <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                <div className="form-group" style={{ margin: '0 0 12px 0' }}>
+                  <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
                     <Icons.Users style={{ marginRight: '4px', fontSize: '12px' }} />
                     Max participants
                   </label>
@@ -370,7 +409,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     className="form-input"
                     min="1"
                     max="50"
-                    style={{ fontSize: '14px' }}
+                    style={{ fontSize: '13px', padding: '6px 8px' }}
                   />
                 </div>
               )}
@@ -549,8 +588,8 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
               )}
 
               {/* Description */}
-              <div className="form-group" style={{ margin: '0 0 15px 0' }}>
-                <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+              <div className="form-group" style={{ margin: '0 0 12px 0' }}>
+                <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
                   <Icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
                   Description
                 </label>
@@ -561,7 +600,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                   className="form-textarea"
                   rows="2"
                   placeholder="Optionnel..."
-                  style={{ fontSize: '14px' }}
+                  style={{ fontSize: '13px', padding: '6px 8px' }}
                 />
               </div>
 
@@ -620,29 +659,31 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
               </div>
             </div>
 
-            <div className="modal-footer" style={{ padding: '15px 20px' }}>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={onClose}
-                disabled={loading}
-              >
-                <Icons.Cancel style={{ marginRight: '8px' }} />
-                Annuler
-              </button>
-              <button type="submit" className="btn btn-primary" disabled={loading || !canSubmit}>
-                {loading ? (
-                  <>
-                    <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
-                    Création...
-                  </>
-                ) : (
-                  <>
-                    <Icons.Check style={{ marginRight: '8px' }} />
-                    Créer
-                  </>
-                )}
-              </button>
+            <div className="modal-footer">
+              <div className="modal-actions-compact">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
+                  onClick={onClose}
+                  disabled={loading}
+                >
+                  <Icons.Cancel style={{ marginRight: '6px', fontSize: '14px' }} />
+                  Annuler
+                </button>
+                <button type="submit" className="btn btn-sm btn-primary" disabled={loading || !canSubmit}>
+                  {loading ? (
+                    <>
+                      <Icons.Loading className="spin" style={{ marginRight: '6px', fontSize: '14px' }} />
+                      Création...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.Check style={{ marginRight: '6px', fontSize: '14px' }} />
+                      Créer
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </form>
         </div>
