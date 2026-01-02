@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { lessonsApi } from '../../services/calendarApi';
 import { ridersApi, horsesApi } from '../../services/api';
 import Portal from '../../utils/Portal';
@@ -12,6 +12,10 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
   const [showAddParticipant, setShowAddParticipant] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState(null);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
   const [selectedRiderId, setSelectedRiderId] = useState('');
@@ -150,6 +154,67 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
     setSelectedHorseId(e.target.value);
   };
 
+  // Edit mode handlers
+  const handleStartEdit = () => {
+    setIsEditing(true);
+    setEditError(null);
+    setEditFormData({
+      name: lessonData.name,
+      lesson_date: lessonData.lesson_date,
+      start_time: lessonData.start_time,
+      end_time: lessonData.end_time,
+      lesson_type: lessonData.lesson_type,
+      description: lessonData.description || '',
+      max_participants: lessonData.max_participants || 1,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditFormData({});
+    setEditError(null);
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleTypeChange = (e) => {
+    const type = e.target.value;
+    const typeConfig = lessonTypes.find((t) => t.value === type);
+
+    setEditFormData(prev => ({
+      ...prev,
+      lesson_type: type,
+      max_participants: typeConfig?.defaultMax || 1,
+    }));
+  };
+
+  const handleSaveEdit = async () => {
+    setSaving(true);
+    setEditError(null);
+
+    try {
+      // Validation
+      if (editFormData.start_time >= editFormData.end_time) {
+        throw new Error("L'heure de fin doit être après l'heure de début");
+      }
+
+      await lessonsApi.update(lesson.id, editFormData);
+      await loadLessonDetails(); // Reload lesson data
+      setIsEditing(false);
+      onUpdate(); // Notify parent component
+    } catch (err) {
+      setEditError(err.response?.data?.error || err.message || 'Erreur lors de la mise à jour');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getLessonTypeIcon = (type) => {
     const icons = {
       private: Icons.PrivateLesson,
@@ -173,6 +238,15 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
     };
     return labels[type] || type;
   };
+
+  const lessonTypes = [
+    { value: 'private', label: 'Cours particulier', icon: Icons.PrivateLesson, defaultMax: 1 },
+    { value: 'group', label: 'Cours collectif', icon: Icons.GroupLesson, defaultMax: 6 },
+    { value: 'training', label: 'Stage', icon: Icons.Training, defaultMax: 10 },
+    { value: 'competition', label: 'Concours', icon: Icons.Competition, defaultMax: 20 },
+    { value: 'event', label: 'Événement', icon: Icons.Event, defaultMax: 50 },
+    { value: 'blocked', label: 'Période bloquée', icon: Icons.Blocked, defaultMax: null },
+  ];
 
   if (loading) {
     return (
@@ -220,9 +294,21 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
               <LessonIcon style={{ marginRight: '8px' }} />
               {lessonData.name}
             </h2>
-            <button className="btn-close" onClick={onClose}>
-              <Icons.Close />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {lessonData.status !== 'cancelled' && !isEditing && (
+                <button 
+                  className="btn btn-sm btn-primary" 
+                  onClick={handleStartEdit}
+                  title="Modifier le cours"
+                >
+                  <Icons.Edit style={{ marginRight: '4px' }} />
+                  Modifier
+                </button>
+              )}
+              <button className="btn-close" onClick={onClose}>
+                <Icons.Close />
+              </button>
+            </div>
           </div>
 
           {/* Tabs */}
@@ -232,9 +318,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
               onClick={() => setActiveTab('details')}
             >
               <Icons.Info style={{ marginRight: '4px' }} />
-              Détails
+              {isEditing ? 'Modifier' : 'Détails'}
             </button>
-            {!isBlocked && (
+            {!isBlocked && !isEditing && (
               <button
                 className={`tab ${activeTab === 'participants' ? 'active' : ''}`}
                 onClick={() => setActiveTab('participants')}
@@ -249,108 +335,298 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
             {/* Tab Détails */}
             {activeTab === 'details' && (
               <div className="details-tab">
-                <div className="detail-row">
-                  <label>
-                    <Icons.List style={{ marginRight: '4px' }} />
-                    Type :
-                  </label>
-                  <span className={`lesson-type-badge ${lessonData.lesson_type}`}>
-                    <LessonIcon style={{ marginRight: '4px', fontSize: '12px' }} />
-                    {getLessonTypeLabel(lessonData.lesson_type)}
-                  </span>
-                </div>
-
-                <div className="detail-row">
-                  <label>
-                    <Icons.Calendar style={{ marginRight: '4px' }} />
-                    Date :
-                  </label>
-                  <span>
-                    {format(parseISO(lessonData.lesson_date), 'EEEE dd MMMM yyyy', { locale: fr })}
-                  </span>
-                </div>
-
-                <div className="detail-row">
-                  <label>
-                    <Icons.Clock style={{ marginRight: '4px' }} />
-                    Horaire :
-                  </label>
-                  <span>
-                    {lessonData.start_time} - {lessonData.end_time}
-                  </span>
-                </div>
-
-                <div className="detail-row">
-                  <label>
-                    <Icons.Info style={{ marginRight: '4px' }} />
-                    Statut :
-                  </label>
-                  <span className={`status-badge status-${lessonData.status}`}>
-                    {lessonData.status === 'confirmed' && (
-                      <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
+                {isEditing ? (
+                  <div className="edit-form">
+                    {editError && (
+                      <div className="alert alert-error" style={{ marginBottom: '15px' }}>
+                        <Icons.Warning style={{ marginRight: '8px' }} />
+                        {editError}
+                      </div>
                     )}
-                    {lessonData.status === 'cancelled' && (
-                      <Icons.Close style={{ marginRight: '4px', fontSize: '10px' }} />
+
+                    {/* Template warning for template-derived lessons */}
+                    {lessonData.template_id && (
+                      <div className="alert alert-warning" style={{ marginBottom: '15px' }}>
+                        <Icons.Warning style={{ marginRight: '8px' }} />
+                        Ce cours provient d'un template. Les modifications ne s'appliqueront qu'à cette instance spécifique et n'affecteront pas le template ni les autres cours.
+                      </div>
                     )}
-                    {lessonData.status === 'completed' && (
-                      <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
+
+                    <form onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}>
+                      {/* Name */}
+                      <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <Icons.Edit style={{ marginRight: '4px', fontSize: '12px' }} />
+                          Nom du cours *
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={editFormData.name}
+                          onChange={handleEditChange}
+                          className="form-input"
+                          required
+                          style={{ fontSize: '14px' }}
+                        />
+                      </div>
+
+                      {/* Type & Date */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.List style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Type *
+                          </label>
+                          <select
+                            name="lesson_type"
+                            value={editFormData.lesson_type}
+                            onChange={handleTypeChange}
+                            className="form-select"
+                            required
+                            style={{ fontSize: '14px' }}
+                          >
+                            {lessonTypes.map((type) => (
+                              <option key={type.value} value={type.value}>
+                                {type.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.Calendar style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Date *
+                          </label>
+                          <input
+                            type="date"
+                            name="lesson_date"
+                            value={editFormData.lesson_date}
+                            onChange={handleEditChange}
+                            className="form-input"
+                            required
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Time */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.Clock style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Début *
+                          </label>
+                          <input
+                            type="time"
+                            name="start_time"
+                            value={editFormData.start_time}
+                            onChange={handleEditChange}
+                            className="form-input"
+                            required
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.Clock style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Fin *
+                          </label>
+                          <input
+                            type="time"
+                            name="end_time"
+                            value={editFormData.end_time}
+                            onChange={handleEditChange}
+                            className="form-input"
+                            required
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Max participants */}
+                      {editFormData.lesson_type !== 'blocked' && (
+                        <div className="form-group" style={{ marginBottom: '15px' }}>
+                          <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                            <Icons.Users style={{ marginRight: '4px', fontSize: '12px' }} />
+                            Max participants
+                          </label>
+                          <input
+                            type="number"
+                            name="max_participants"
+                            value={editFormData.max_participants}
+                            onChange={handleEditChange}
+                            className="form-input"
+                            min="1"
+                            max="50"
+                            style={{ fontSize: '14px' }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Description */}
+                      <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <Icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
+                          Description
+                        </label>
+                        <textarea
+                          name="description"
+                          value={editFormData.description}
+                          onChange={handleEditChange}
+                          className="form-textarea"
+                          rows="3"
+                          placeholder="Optionnel..."
+                          style={{ fontSize: '14px' }}
+                        />
+                      </div>
+
+                      {/* Form actions */}
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={handleCancelEdit}
+                          disabled={saving}
+                        >
+                          <Icons.Cancel style={{ marginRight: '8px' }} />
+                          Annuler
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          disabled={saving}
+                        >
+                          {saving ? (
+                            <>
+                              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
+                              Sauvegarde...
+                            </>
+                          ) : (
+                            <>
+                              <Icons.Check style={{ marginRight: '8px' }} />
+                              Sauvegarder
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                ) : (
+                  /* View mode */
+                  <>
+                    <div className="detail-row">
+                      <label>
+                        <Icons.List style={{ marginRight: '4px' }} />
+                        Type :
+                      </label>
+                      <span className={`lesson-type-badge ${lessonData.lesson_type}`}>
+                        <LessonIcon style={{ marginRight: '4px', fontSize: '12px' }} />
+                        {getLessonTypeLabel(lessonData.lesson_type)}
+                      </span>
+                    </div>
+
+                    <div className="detail-row">
+                      <label>
+                        <Icons.Calendar style={{ marginRight: '4px' }} />
+                        Date :
+                      </label>
+                      <span>
+                        {format(parseISO(lessonData.lesson_date), 'EEEE dd MMMM yyyy', { locale: fr })}
+                      </span>
+                    </div>
+
+                    <div className="detail-row">
+                      <label>
+                        <Icons.Clock style={{ marginRight: '4px' }} />
+                        Horaire :
+                      </label>
+                      <span>
+                        {lessonData.start_time} - {lessonData.end_time}
+                      </span>
+                    </div>
+
+                    <div className="detail-row">
+                      <label>
+                        <Icons.Info style={{ marginRight: '4px' }} />
+                        Statut :
+                      </label>
+                      <span className={`status-badge status-${lessonData.status}`}>
+                        {lessonData.status === 'confirmed' && (
+                          <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
+                        )}
+                        {lessonData.status === 'cancelled' && (
+                          <Icons.Close style={{ marginRight: '4px', fontSize: '10px' }} />
+                        )}
+                        {lessonData.status === 'completed' && (
+                          <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
+                        )}
+                        {lessonData.status}
+                      </span>
+                    </div>
+
+                    {!isBlocked && lessonData.max_participants && (
+                      <div className="detail-row">
+                        <label>
+                          <Icons.Users style={{ marginRight: '4px' }} />
+                          Capacité :
+                        </label>
+                        <span>
+                          {lessonData.participants?.length || 0} / {lessonData.max_participants}
+                        </span>
+                      </div>
                     )}
-                    {lessonData.status}
-                  </span>
-                </div>
 
-                {!isBlocked && lessonData.max_participants && (
-                  <div className="detail-row">
-                    <label>
-                      <Icons.Users style={{ marginRight: '4px' }} />
-                      Capacité :
-                    </label>
-                    <span>
-                      {lessonData.participants?.length || 0} / {lessonData.max_participants}
-                    </span>
-                  </div>
-                )}
+                    {lessonData.location && (
+                      <div className="detail-row">
+                        <label>
+                          <Icons.Location style={{ marginRight: '4px' }} />
+                          Lieu :
+                        </label>
+                        <span>{lessonData.location}</span>
+                      </div>
+                    )}
 
-                {lessonData.location && (
-                  <div className="detail-row">
-                    <label>
-                      <Icons.Location style={{ marginRight: '4px' }} />
-                      Lieu :
-                    </label>
-                    <span>{lessonData.location}</span>
-                  </div>
-                )}
+                    {lessonData.description && (
+                      <div className="detail-row">
+                        <label>
+                          <Icons.Info style={{ marginRight: '4px' }} />
+                          Description :
+                        </label>
+                        <p>{lessonData.description}</p>
+                      </div>
+                    )}
 
-                {lessonData.description && (
-                  <div className="detail-row">
-                    <label>
-                      <Icons.Info style={{ marginRight: '4px' }} />
-                      Description :
-                    </label>
-                    <p>{lessonData.description}</p>
-                  </div>
-                )}
+                    {lessonData.template_id && (
+                      <div className="alert alert-info">
+                        <Icons.Info style={{ marginRight: '8px' }} />
+                        Ce cours a été créé à partir d'un template récurrent
+                      </div>
+                    )}
 
-                {lessonData.is_modified && (
-                  <div className="alert alert-info">
-                    <Icons.Edit style={{ marginRight: '8px' }} />
-                    Ce cours a été modifié par rapport au template original
-                  </div>
-                )}
+                    {lessonData.is_modified && (
+                      <div className="alert alert-info">
+                        <Icons.Edit style={{ marginRight: '8px' }} />
+                        Ce cours a été modifié par rapport au template original
+                      </div>
+                    )}
 
-                {lessonData.not_given_by_laury && (
-                  <div className="alert alert-warning">
-                    <Icons.Warning style={{ marginRight: '8px' }} />
-                    Ce cours n'a pas été donné par Laury
-                    {lessonData.not_given_reason && <p>Raison : {lessonData.not_given_reason}</p>}
-                  </div>
-                )}
+                    {lessonData.not_given_by_laury && (
+                      <div className="alert alert-warning">
+                        <Icons.Warning style={{ marginRight: '8px' }} />
+                        Ce cours n'a pas été donné par Laury
+                        {lessonData.not_given_reason && <p>Raison : {lessonData.not_given_reason}</p>}
+                      </div>
+                    )}
 
-                {lessonData.cancellation_reason && (
-                  <div className="alert alert-error">
-                    <Icons.Close style={{ marginRight: '8px' }} />
-                    Cours annulé : {lessonData.cancellation_reason}
-                  </div>
+                    {lessonData.cancellation_reason && (
+                      <div className="alert alert-error">
+                        <Icons.Close style={{ marginRight: '8px' }} />
+                        Cours annulé : {lessonData.cancellation_reason}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
