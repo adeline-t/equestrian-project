@@ -5,6 +5,7 @@ import Portal from '../../utils/Portal';
 import { Icons } from '../../utils/icons';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import './LessonModal.css';
 
 function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
   const [lessonData, setLessonData] = useState(null);
@@ -769,30 +770,30 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
           <div className="modal-footer">
             {isEditing ? (
               /* Edit mode actions */
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <div className="modal-actions-compact">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="btn btn-sm btn-secondary"
                   onClick={handleCancelEdit}
                   disabled={saving}
                 >
-                  <Icons.Cancel style={{ marginRight: '8px' }} />
+                  <Icons.Cancel style={{ marginRight: '6px', fontSize: '14px' }} />
                   Annuler
                 </button>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-sm btn-primary"
                   onClick={handleSaveEdit}
                   disabled={saving}
                 >
                   {saving ? (
                     <>
-                      <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
+                      <Icons.Loading className="spin" style={{ marginRight: '6px', fontSize: '14px' }} />
                       Sauvegarde...
                     </>
                   ) : (
                     <>
-                      <Icons.Check style={{ marginRight: '8px' }} />
+                      <Icons.Check style={{ marginRight: '6px', fontSize: '14px' }} />
                       Sauvegarder
                     </>
                   )}
@@ -800,32 +801,32 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
               </div>
             ) : (
               /* Normal mode actions */
-              <>
+              <div className="modal-actions-compact">
                 {lessonData.status !== 'cancelled' && (
                   <button 
-                    className="btn btn-primary" 
+                    className="btn btn-sm btn-primary" 
                     onClick={handleStartEdit}
                     title="Modifier le cours"
                   >
-                    <Icons.Edit style={{ marginRight: '8px' }} />
-                    Modifier le cours
+                    <Icons.Edit style={{ marginRight: '6px', fontSize: '14px' }} />
+                    Modifier
                   </button>
                 )}
                 {lessonData.status !== 'cancelled' && (
                   <>
                     {!isBlocked && !lessonData.not_given_by_laury && (
-                      <button className="btn btn-warning" onClick={handleMarkNotGiven}>
-                        <Icons.Warning style={{ marginRight: '8px' }} />
-                        Marquer comme non donné
+                      <button className="btn btn-sm btn-warning" onClick={handleMarkNotGiven}>
+                        <Icons.Warning style={{ marginRight: '6px', fontSize: '14px' }} />
+                        Non donné
                       </button>
                     )}
-                    <button className="btn btn-danger" onClick={handleCancel}>
-                      <Icons.Close style={{ marginRight: '8px' }} />
-                      Annuler le cours
+                    <button className="btn btn-sm btn-danger" onClick={handleCancel}>
+                      <Icons.Close style={{ marginRight: '6px', fontSize: '14px' }} />
+                      Annuler
                     </button>
                   </>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>
