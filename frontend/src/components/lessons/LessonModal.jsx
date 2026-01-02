@@ -34,6 +34,18 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
       return minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`;
     }
   };
+
+  // Safe date formatter that handles null/undefined values
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      return format(parseISO(dateString), 'dd/MM/yyyy à HH:mm', { locale: fr });
+    } catch (error) {
+      console.error('Date formatting error:', error, dateString);
+      return 'N/A';
+    }
+  };
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
@@ -718,9 +730,9 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         Date :
                       </label>
                       <span>
-                        {format(parseISO(lessonData.lesson_date), 'EEEE dd MMMM yyyy', {
+                        {lessonData.lesson_date ? format(parseISO(lessonData.lesson_date), 'EEEE dd MMMM yyyy', {
                           locale: fr,
-                        })}
+                        }) : 'N/A'}
                       </span>
                     </div>
 
@@ -1021,37 +1033,41 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                             <strong>Raison :</strong> {lessonData.not_given_reason}
                           </p>
                         )}
-                        {lessonData.not_given_at &amp;&amp; (
+                        {lessonData.not_given_at ? (
                           <small style={{ display: 'block', marginTop: '8px', opacity: 0.8 }}>
-                            Marqué le : {format(parseISO(lessonData.not_given_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                            Marqué le : {formatDate(lessonData.not_given_at)}
                           </small>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   )}
 
                   {/* Modification Info - Only show if modified */}
-                  {lessonData.is_modified &amp;&amp; (
+                  {lessonData.is_modified &amp;&amp; lessonData.modified_fields ? (
                     <div className="alert alert-info">
                       <Icons.Edit style={{ marginRight: '8px' }} />
                       <div>
                         <strong>Cours modifié</strong>
-                        <p style={{ marginTop: '8px' }}>Ce cours a été modifié par rapport au template original.</p>
-                        {lessonData.modified_fields &amp;&amp; Object.keys(lessonData.modified_fields).length > 0 &amp;&amp; (
+                        <p style={{ marginTop: '8px' }}>
+                          Ce cours a été modifié par rapport au template original.
+                        </p>
+                        {Object.keys(lessonData.modified_fields).length > 0 &amp;&amp; (
                           <div style={{ marginTop: '12px' }}>
                             <strong>Champs modifiés :</strong>
                             <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                              {Object.entries(lessonData.modified_fields).map(([field, value]) => (
-                                <li key={field} style={{ marginBottom: '4px' }}>
-                                  <strong>{field}:</strong> {JSON.stringify(value)}
-                                </li>
-                              ))}
+                              {Object.entries(lessonData.modified_fields).map(
+                                ([field, value]) => (
+                                  <li key={`modified-${field}`} style={{ marginBottom: '4px' }}>
+                                    <strong>{field}:</strong> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                  </li>
+                                )
+                              )}
                             </ul>
                           </div>
                         )}
                       </div>
                     </div>
-                  )}
+                  ) : null}
                 </div>
 
                 <div className="advanced-section">
@@ -1060,31 +1076,31 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                     Métadonnées
                   </h3>
 
-                  {lessonData.created_at &amp;&amp; (
+                  {lessonData.created_at ? (
                     <div className="detail-row">
                       <label>
                         <Icons.Calendar style={{ marginRight: '4px' }} />
                         Créé le :
                       </label>
                       <span>
-                        {format(parseISO(lessonData.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                        {formatDate(lessonData.created_at)}
                       </span>
                     </div>
-                  )}
+                  ) : null}
 
-                  {lessonData.updated_at &amp;&amp; (
+                  {lessonData.updated_at ? (
                     <div className="detail-row">
                       <label>
                         <Icons.Clock style={{ marginRight: '4px' }} />
                         Dernière modification :
                       </label>
                       <span>
-                        {format(parseISO(lessonData.updated_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                        {formatDate(lessonData.updated_at)}
                       </span>
                     </div>
-                  )}
+                  ) : null}
 
-                  {lessonData.instructor_id &amp;&amp; (
+                  {lessonData.instructor_id ? (
                     <div className="detail-row">
                       <label>
                         <Icons.User style={{ marginRight: '4px' }} />
