@@ -9,6 +9,31 @@ import './LessonModal.css';
 
 function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
   const [lessonData, setLessonData] = useState(null);
+
+  const formatTime = (time) => {
+    if (!time) return '';
+    return time.substring(0, 5); // HH:MM format
+  };
+
+  const calculateDuration = (startTime, endTime) => {
+    if (!startTime || !endTime) return '0 min';
+    
+    const [startHour, startMin] = startTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
+    
+    const startMinutes = startHour * 60 + startMin;
+    const endMinutes = endHour * 60 + endMin;
+    
+    const duration = endMinutes - startMinutes;
+    
+    if (duration < 60) {
+      return `${duration} min`;
+    } else {
+      const hours = Math.floor(duration / 60);
+      const minutes = duration % 60;
+      return minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`;
+    }
+  };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
@@ -167,6 +192,7 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
       lesson_type: lessonData.lesson_type,
       description: lessonData.description || '',
       max_participants: lessonData.max_participants || 1,
+      status: lessonData.status || 'confirmed',
     });
   };
 
@@ -318,7 +344,11 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
           <div className="modal-header">
             <h2>
               <LessonIcon style={{ marginRight: '8px' }} />
-              {lessonData.name}
+              {isEditing ? (
+                `Modifier: ${editFormData.name || lessonData.name} - ${formatTime(editFormData.start_time || lessonData.start_time)}`
+              ) : (
+                `${lessonData.name} - ${formatTime(lessonData.start_time)}`
+              )}
             </h2>
           </div>
 
@@ -456,6 +486,23 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                         </div>
                       </div>
 
+                      {/* Duration Display */}
+                      <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <div style={{ 
+                          background: '#f8f9fa', 
+                          padding: '8px 12px', 
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          color: '#6c757d',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          <Icons.Clock style={{ fontSize: '14px' }} />
+                          Durée: {calculateDuration(editFormData.start_time, editFormData.end_time)}
+                        </div>
+                      </div>
+
                       {/* Max participants */}
                       {editFormData.lesson_type !== 'blocked' && (
                         <div className="form-group" style={{ marginBottom: '15px' }}>
@@ -475,6 +522,26 @@ function LessonModal({ lesson, onClose, onUpdate, onRefresh }) {
                           />
                         </div>
                       )}
+
+                      {/* Status */}
+                      <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
+                          <Icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
+                          Statut
+                        </label>
+                        <select
+                          name="status"
+                          value={editFormData.status || lessonData.status}
+                          onChange={handleEditChange}
+                          className="form-select"
+                          style={{ fontSize: '14px' }}
+                        >
+                          <option value="confirmed">Confirmé</option>
+                          <option value="validated">Validé</option>
+                          <option value="pending">En attente</option>
+                          <option value="completed">Terminé</option>
+                        </select>
+                      </div>
 
                       {/* Description */}
                       <div className="form-group" style={{ marginBottom: '15px' }}>

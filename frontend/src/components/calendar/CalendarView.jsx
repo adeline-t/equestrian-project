@@ -6,6 +6,7 @@ import WeekView from './WeekView';
 import LessonModal from '../lessons/LessonModal';
 import TemplateModal from '../templates/TemplateModal';
 import SingleLessonModal from '../lessons/SingleLessonModal';
+import BlockedTimeModal from '../lessons/BlockedTimeModal';
 import { Icons } from '../../utils/icons';
 import './calendar.css';
 
@@ -18,6 +19,7 @@ function CalendarView() {
   const [showLessonModal, setShowLessonModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showSingleLessonModal, setShowSingleLessonModal] = useState(false);
+  const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false);
   const [filters, setFilters] = useState({
     lessonType: 'all',
     status: 'all',
@@ -96,6 +98,15 @@ function CalendarView() {
     await loadWeekData();
   };
 
+  const handleCreateBlockedTime = () => {
+    setShowBlockedTimeModal(true);
+  };
+
+  const handleBlockedTimeCreated = async () => {
+    setShowBlockedTimeModal(false);
+    await loadWeekData();
+  };
+
   if (loading) {
     return (
       <div className="calendar-loading">
@@ -135,6 +146,10 @@ function CalendarView() {
             Calendrier des Cours
           </h2>
           <div className="calendar-actions">
+            <button className="btn btn-outline-danger" onClick={() => setShowBlockedTimeModal(true)}>
+              <Icons.Blocked style={{ marginRight: '8px' }} />
+              Bloquer un créneau
+            </button>
             <button className="btn btn-primary" onClick={handleCreateSingleLesson}>
               <Icons.Add style={{ marginRight: '8px' }} />
               Ajouter un cours
@@ -237,7 +252,7 @@ function CalendarView() {
       </div>
 
       {/* Vue hebdomadaire */}
-      <WeekView weekData={weekData} onLessonClick={handleLessonClick} filters={filters} />
+      <WeekView weekData={weekData} onLessonClick={handleLessonClick} onQuickCreate={loadWeekData} filters={filters} />
 
       {/* Modal de détails/édition de cours */}
       {showLessonModal && selectedLesson && (
@@ -265,6 +280,15 @@ function CalendarView() {
         <SingleLessonModal
           onClose={() => setShowSingleLessonModal(false)}
           onSuccess={handleSingleLessonCreated}
+          initialDate={format(currentDate, 'yyyy-MM-dd')}
+        />
+      )}
+
+      {/* Modal de création de plage bloquée */}
+      {showBlockedTimeModal && (
+        <BlockedTimeModal
+          onClose={() => setShowBlockedTimeModal(false)}
+          onSuccess={handleBlockedTimeCreated}
           initialDate={format(currentDate, 'yyyy-MM-dd')}
         />
       )}

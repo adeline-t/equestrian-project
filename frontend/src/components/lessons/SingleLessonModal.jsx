@@ -7,11 +7,11 @@ import { format, parse } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import './LessonModal.css';
 
-function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
+function SingleLessonModal({ onClose, onSuccess, initialDate = null, initialStartTime = null, initialEndTime = null }) {
   const [formData, setFormData] = useState({
     lesson_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
-    start_time: '09:00',
-    end_time: '10:00',
+    start_time: initialStartTime || '09:00',
+    end_time: initialEndTime || '10:00',
     lesson_type: 'private',
     description: '',
     max_participants: 1,
@@ -37,6 +37,12 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
     { value: 'event', label: 'Événement', icon: Icons.Event, defaultMax: 50 },
     { value: 'blocked', label: 'Période bloquée', icon: Icons.Blocked, defaultMax: null },
   ];
+
+  // Helper function to format time
+  const formatTime = (time) => {
+    if (!time) return '';
+    return time.substring(0, 5); // HH:MM format
+  };
 
   // Load riders and horses on mount
   useEffect(() => {
@@ -248,7 +254,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
           <div className="modal-header">
             <h2>
               <Icons.Add style={{ marginRight: '8px' }} />
-              Créer un cours
+              Créer: {generatedName} - {formData.start_time}
             </h2>
             <button className="btn-close" onClick={onClose}>
               <Icons.Close />
@@ -342,9 +348,7 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     required
                     style={{ fontSize: '13px', padding: '6px 8px' }}
                   />
-                  <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
-                    La durée sera conservée
-                  </small>
+                  {/* Duration display will be added below */}
                 </div>
 
                 <div className="form-group" style={{ margin: 0 }}>
@@ -361,16 +365,38 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     required
                     style={{ fontSize: '13px', padding: '6px 8px' }}
                   />
-                  <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
-                    {(() => {
-                      const [startHour, startMin] = formData.start_time.split(':').map(Number);
-                      const [endHour, endMin] = formData.end_time.split(':').map(Number);
-                      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
-                      const hours = Math.floor(durationMinutes / 60);
-                      const minutes = durationMinutes % 60;
-                      return `Durée: ${hours}h${minutes > 0 ? minutes : ''}`;
-                    })()}
-                  </small>
+                  {/* Individual duration display removed - now shown in dedicated section above */}
+                </div>
+              </div>
+
+              {/* Duration Display */}
+              <div className="form-group" style={{ marginBottom: '15px' }}>
+                <div style={{ 
+                  background: '#f8f9fa', 
+                  padding: '8px 12px', 
+                  borderRadius: '6px',
+                  fontSize: '13px',
+                  color: '#6c757d',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <Icons.Clock style={{ fontSize: '14px' }} />
+                  Durée: {(() => {
+                    if (!formData.start_time || !formData.end_time) return '0 min';
+                    const [startHour, startMin] = formData.start_time.split(':').map(Number);
+                    const [endHour, endMin] = formData.end_time.split(':').map(Number);
+                    const startMinutes = startHour * 60 + startMin;
+                    const endMinutes = endHour * 60 + endMin;
+                    const duration = endMinutes - startMinutes;
+                    if (duration < 60) {
+                      return `${duration} min`;
+                    } else {
+                      const hours = Math.floor(duration / 60);
+                      const minutes = duration % 60;
+                      return minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`;
+                    }
+                  })()}
                 </div>
               </div>
 
@@ -587,6 +613,26 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                 </div>
               )}
 
+              {/* Status */}
+              <div className="form-group" style={{ margin: '0 0 12px 0' }}>
+                <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
+                  <Icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
+                  Statut
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="form-select"
+                  style={{ fontSize: '13px', padding: '6px 8px' }}
+                >
+                  <option value="confirmed">Confirmé</option>
+                  <option value="validated">Validé</option>
+                  <option value="pending">En attente</option>
+                  <option value="completed">Terminé</option>
+                </select>
+              </div>
+
               {/* Description */}
               <div className="form-group" style={{ margin: '0 0 12px 0' }}>
                 <label style={{ fontSize: '13px', marginBottom: '4px', display: 'block' }}>
@@ -628,14 +674,18 @@ function SingleLessonModal({ onClose, onSuccess, initialDate = null }) {
                     style={{
                       marginLeft: 'auto',
                       padding: '2px 8px',
-                      background: '#48bb78',
+                      background: formData.status === 'confirmed' ? '#48bb78' : 
+                                 formData.status === 'validated' ? '#4299e1' :
+                                 formData.status === 'pending' ? '#ed8936' : '#718096',
                       color: 'white',
                       borderRadius: '12px',
                       fontSize: '11px',
                       fontWeight: 'bold',
                     }}
                   >
-                    Confirmé
+                    {formData.status === 'confirmed' ? 'Confirmé' :
+                     formData.status === 'validated' ? 'Validé' :
+                     formData.status === 'pending' ? 'En attente' : 'Terminé'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '15px', color: '#718096', fontSize: '12px' }}>
