@@ -1,7 +1,5 @@
-/* Reusable Modal Styles */
-@import '../../../styles/common/index.css';
+/* Common Modal Styles - Shared across all modals */
 
-/* Modal-specific overrides if needed */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -91,22 +89,44 @@
   gap: 12px;
 }
 
-/* Loading state */
-.modal-loading {
+.modal-tabs {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  text-align: center;
+  gap: 8px;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0 24px;
 }
 
-.modal-loading p {
-  margin-top: 12px;
+.modal-tabs .tab {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
   color: #6c757d;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
 }
 
-/* Error state */
+.modal-tabs .tab:hover {
+  color: #007bff;
+}
+
+.modal-tabs .tab.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.modal-actions-compact {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Loading and Error States */
+.modal-loading,
 .modal-error {
   display: flex;
   flex-direction: column;
@@ -116,12 +136,13 @@
   text-align: center;
 }
 
+.modal-loading p,
+.modal-error p {
+  margin-top: 12px;
+  color: #6c757d;
+}
+
 .modal-error h3 {
   margin: 16px 0 8px;
   color: #dc3545;
-}
-
-.modal-error p {
-  color: #6c757d;
-  margin-bottom: 20px;
 }

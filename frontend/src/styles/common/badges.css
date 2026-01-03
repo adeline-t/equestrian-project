@@ -1,0 +1,109 @@
+/* Common Badge Styles - Shared across all components */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-scheduled {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-confirmed {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-completed {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.status-cancelled {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-blocked {
+  background-color: #fafafa;
+  color: #616161;
+}
+
+/* Lesson type badges */
+.lesson-type-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lesson-type-badge.private {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.lesson-type-badge.group {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.lesson-type-badge.training {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.lesson-type-badge.competition {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+.lesson-type-badge.event {
+  background-color: #e0f2f1;
+  color: #00695c;
+}
+
+.lesson-type-badge.blocked {
+  background-color: #fafafa;
+  color: #616161;
+}
+
+/* Participation badges */
+.badge-confirmed {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.badge-pending {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.badge-cancelled {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.badge-info {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
