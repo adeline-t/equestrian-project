@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icons } from '../../../utils/icons';
-import { LESSON_TYPES } from '../../../constants';
-import { calculateDuration } from '../../../utils/formatters';
+import { LESSON_TYPES } from '../../../constants/index.js';
+import { calculateDuration } from '../../../utils/formatters/index.js';
 
 /**
  * Lesson Edit Form Component

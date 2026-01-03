@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icons } from '../../../utils/icons';
-import { useRiderHorses } from '../../../hooks';
+import { useRiderHorses } from '../../../hooks/index.js';
 
 /**
  * Lesson Participants Tab Component

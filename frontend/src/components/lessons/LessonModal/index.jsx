@@ -7,12 +7,12 @@ import {
   getLessonTypeIcon,
   isBlockedLesson,
   LESSON_TYPES,
-} from '../../../constants';
+} from '../../../constants/index.js';
 import {
   useLessonData,
   useLessonEdit,
   useParticipants,
-} from '../../../hooks';
+} from '../../../hooks/index.js';
 import LessonDetailsTab from './LessonDetailsTab';
 import LessonEditForm from './LessonEditForm';
 import LessonParticipantsTab from './LessonParticipantsTab';
