@@ -1,0 +1,125 @@
+/* TemplateModal specific styles */
+.template-modal {
+  max-width: 700px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.template-form {
+  padding: 20px;
+}
+
+.form-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+.form-section h3 {
+  margin: 0 0 20px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Day Selector */
+.day-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.day-button {
+  padding: 8px 16px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #4a5568;
+  transition: all 0.2s;
+}
+
+.day-button:hover {
+  border-color: #cbd5e0;
+  background: #f7fafc;
+}
+
+.day-button.active {
+  border-color: #4299e1;
+  background: #4299e1;
+  color: white;
+}
+
+.day-button.active:hover {
+  border-color: #3182ce;
+  background: #3182ce;
+}
+
+/* Text helpers */
+.text-muted {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.text-danger {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: #e53e3e;
+}
+
+/* Modal specific overrides */
+.template-modal .modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.template-modal .modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2d3748;
+}
+
+.template-modal .btn-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #718096;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.template-modal .btn-close:hover {
+  background: #f7fafc;
+  color: #2d3748;
+}
+
+.template-modal .modal-footer {
+  padding: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
