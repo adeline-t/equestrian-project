@@ -253,10 +253,10 @@ const LessonEditForm = ({
           <label
             style={{
               fontSize: '14px',
-              marginBottom: '5px',
               display: 'flex',
               alignItems: 'center',
               cursor: 'pointer',
+              gap: '8px',
             }}
           >
             <input
@@ -264,10 +264,12 @@ const LessonEditForm = ({
               name="not_given_by_laury"
               checked={editFormData.not_given_by_laury}
               onChange={handleEditChange}
-              style={{ marginRight: '8px', cursor: 'pointer' }}
+              style={{ cursor: 'pointer', width: '16px', height: '16px', margin: 0 }}
             />
-            <Icons.Warning style={{ marginRight: '4px', fontSize: '12px' }} />
-            Cours non donné par Laury
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Icons.Warning style={{ fontSize: '14px' }} />
+              Cours non donné par Laury
+            </span>
           </label>
         </div>
 

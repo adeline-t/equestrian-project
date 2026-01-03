@@ -18,11 +18,11 @@ export const useLessonEdit = (lessonData, onSaveSuccess) => {
     setIsEditing(true);
     setEditError(null);
     setEditFormData({
-      name: lessonData.name,
-      lesson_date: lessonData.lesson_date,
-      start_time: lessonData.start_time,
-      end_time: lessonData.end_time,
-      lesson_type: lessonData.lesson_type,
+      name: lessonData.name || '',
+      lesson_date: lessonData.lesson_date || '',
+      start_time: lessonData.start_time || '',
+      end_time: lessonData.end_time || '',
+      lesson_type: lessonData.lesson_type || 'private',
       description: lessonData.description || '',
       max_participants: lessonData.max_participants || 1,
       min_participants: lessonData.min_participants || '',

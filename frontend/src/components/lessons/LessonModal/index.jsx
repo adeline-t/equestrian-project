@@ -39,12 +39,18 @@ function LessonModal({ lesson, onClose, onUpdate }) {
     editFormData,
     saving,
     editError,
-    handleStartEdit,
+    handleStartEdit: baseHandleStartEdit,
     handleCancelEdit,
     handleEditChange,
     handleTypeChange: baseHandleTypeChange,
     handleSaveEdit,
   } = useLessonEdit(lessonData, handleSaveSuccess);
+
+  // Wrap handleStartEdit to switch to details tab
+  const handleStartEdit = () => {
+    setActiveTab('details');
+    baseHandleStartEdit();
+  };
 
   const {
     riders,
