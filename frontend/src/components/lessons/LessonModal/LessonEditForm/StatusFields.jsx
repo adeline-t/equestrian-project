@@ -7,7 +7,7 @@ const StatusFields = ({ editFormData, lessonData, handleEditChange }) => {
       {/* Status */}
       <div className="form-group" style={{ marginBottom: '15px' }}>
         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
-          <Icons.Status style={{ marginRight: '4px', fontSize: '12px' }} />
+          <Icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
           Statut
         </label>
         <select

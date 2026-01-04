@@ -164,7 +164,7 @@ function LessonModal({ lesson, onClose, onUpdate }) {
                 Participants ({lessonData.participants?.length || 0})
               </button>
             )}
-            {!isEditing && (
+            {!isBlocked && !isEditing && (
               <button
                 className={`tab ${activeTab === 'advanced' ? 'active' : ''}`}
                 onClick={() => setActiveTab('advanced')}

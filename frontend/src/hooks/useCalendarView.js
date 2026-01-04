@@ -136,12 +136,15 @@ export function useCalendarView() {
   };
 
   const getCalendarStats = () => {
-    if (!weekData) return { total: 0, confirmed: 0, blocked: 0 };
+    if (!weekData || !weekData.days) return { total: 0, confirmed: 0, blocked: 0 };
+    
+    // Flatten all lessons from all days
+    const allLessons = weekData.days.flatMap(day => day.lessons || []);
     
     return {
-      total: weekData.lessons?.length || 0,
-      confirmed: weekData.lessons?.filter(l => l.status === 'confirmed').length || 0,
-      blocked: weekData.lessons?.filter(l => l.is_blocked).length || 0,
+      total: allLessons.length,
+      confirmed: allLessons.filter(l => l.status === 'confirmed').length,
+      blocked: allLessons.filter(l => l.is_blocked || l.lesson_type === 'blocked').length,
     };
   };
 

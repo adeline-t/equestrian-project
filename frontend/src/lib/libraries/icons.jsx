@@ -33,6 +33,7 @@ import {
   FaCalendarDay,
   FaArrowCircleRight,
   FaCog,
+  FaTag,
 } from 'react-icons/fa';
 
 export const Icons = {
@@ -74,6 +75,7 @@ export const Icons = {
   Blocked: FaBan,
   Repeat: FaArrowCircleRight,
   Settings: FaCog,
+  Tag: FaTag,
 };
 
 export const renderIcon = (Icon, props = {}) => {

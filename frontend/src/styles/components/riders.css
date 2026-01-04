@@ -65,6 +65,18 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
+.stat-content h3 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+}
+
+.stat-content p {
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
 .stat-number {
   display: block;
   font-size: 2rem;

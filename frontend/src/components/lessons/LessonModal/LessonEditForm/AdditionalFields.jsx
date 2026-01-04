@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AdditionalFields = ({ formData, handleChange }) => {
+const AdditionalFields = ({ editFormData, handleEditChange }) => {
   return (
     <>
       {/* Description */}
@@ -11,8 +11,8 @@ const AdditionalFields = ({ formData, handleChange }) => {
         <input
           type="text"
           name="description"
-          value={formData.description || ''}
-          onChange={handleChange}
+          value={editFormData.description || ''}
+          onChange={handleEditChange}
           className="form-control"
           placeholder="Entrez la description de la leçon"
         />
@@ -28,8 +28,8 @@ const AdditionalFields = ({ formData, handleChange }) => {
           <input
             type="checkbox"
             name="option_double"
-            checked={formData.option_double || false}
-            onChange={handleChange}
+            checked={editFormData.option_double || false}
+            onChange={handleEditChange}
             className="form-check-input"
             style={{ marginRight: '8px', transform: 'translateY(2px)' }}
           />
@@ -42,8 +42,8 @@ const AdditionalFields = ({ formData, handleChange }) => {
           <input
             type="checkbox"
             name="option_sdj"
-            checked={formData.option_sdj || false}
-            onChange={handleChange}
+            checked={editFormData.option_sdj || false}
+            onChange={handleEditChange}
             className="form-check-input"
             style={{ marginRight: '8px', transform: 'translateY(2px)' }}
           />

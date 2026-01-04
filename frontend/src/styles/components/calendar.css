@@ -137,12 +137,16 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: calc(100vh - 320px);
+  display: flex;
+  flex-direction: column;
 }
 
 .week-grid {
   display: grid;
   grid-template-columns: 80px repeat(7, 1fr);
-  min-height: 800px;
+  flex: 1;
+  overflow: hidden;
 }
 
 /* ============================================
