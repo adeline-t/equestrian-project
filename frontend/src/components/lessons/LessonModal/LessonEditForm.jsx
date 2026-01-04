@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import BasicInfoFields from './LessonEditForm/BasicInfoFields';
 import StatusFields from './LessonEditForm/StatusFields';
 import SpecialFields from './LessonEditForm/SpecialFields';
@@ -29,8 +29,8 @@ const LessonEditForm = ({
       {lessonData.template_id && (
         <div className="alert alert-warning" style={{ marginBottom: '15px' }}>
           <Icons.Warning style={{ marginRight: '8px' }} />
-          Ce cours provient d'un template. Les modifications ne s'appliqueront qu'à cette
-          instance spécifique et n'affecteront pas le template ni les autres cours.
+          Ce cours provient d'un template. Les modifications ne s'appliqueront qu'à cette instance
+          spécifique et n'affecteront pas le template ni les autres cours.
         </div>
       )}
 
@@ -55,16 +55,10 @@ const LessonEditForm = ({
         />
 
         {/* Special Fields (Not Given by Laury) */}
-        <SpecialFields
-          editFormData={editFormData}
-          handleEditChange={handleEditChange}
-        />
+        <SpecialFields editFormData={editFormData} handleEditChange={handleEditChange} />
 
         {/* Additional Fields */}
-        <AdditionalFields
-          editFormData={editFormData}
-          handleEditChange={handleEditChange}
-        />
+        <AdditionalFields editFormData={editFormData} handleEditChange={handleEditChange} />
       </form>
     </div>
   );

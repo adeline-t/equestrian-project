@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Portal from '../../../components/common/Portal';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import { pairingsApi } from '../../../services/api';
 import PairingForm from '../PairingForm';
 import PairingsFilterButtons from './PairingsFilterButtons';

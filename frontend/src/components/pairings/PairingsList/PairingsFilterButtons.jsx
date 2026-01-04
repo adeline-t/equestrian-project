@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import '../../../styles/common/buttons.css';
 
 function PairingsFilterButtons({ filter, stats, onFilterChange }) {

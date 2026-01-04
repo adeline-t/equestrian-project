@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { lessonsApi } from '../services/calendarApi';
-import { calculateDurationInMinutes, addMinutesToTime } from '../utils/formatters/index.js';
+import { calculateDurationInMinutes, addMinutesToTime } from '../lib/helpers/formatters';
 
 /**
  * Custom hook for managing lesson edit mode
@@ -87,7 +87,7 @@ export const useLessonEdit = (lessonData, onSaveSuccess) => {
 
       await lessonsApi.update(lessonId, editFormData);
       setIsEditing(false);
-      
+
       if (onSaveSuccess) {
         await onSaveSuccess();
       }

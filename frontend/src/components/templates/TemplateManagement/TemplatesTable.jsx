@@ -1,12 +1,7 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
-const TemplatesTable = ({ 
-  templates, 
-  onEdit, 
-  onDelete, 
-  loading 
-}) => {
+const TemplatesTable = ({ templates, onEdit, onDelete, loading }) => {
   if (loading) {
     return (
       <div className="loading" style={{ textAlign: 'center', padding: '40px' }}>
@@ -57,7 +52,10 @@ const TemplatesTable = ({
                 </span>
               </td>
               <td>
-                <div className="days-list" style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                <div
+                  className="days-list"
+                  style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}
+                >
                   {template.recurrence_rule?.byDay?.map((day) => (
                     <span key={day} className="badge badge-info" style={{ fontSize: '0.75rem' }}>
                       {day.substring(0, 3).toUpperCase()}
@@ -68,7 +66,9 @@ const TemplatesTable = ({
               <td>{template.recurrence_rule?.startTime}</td>
               <td>{template.recurrence_rule?.duration} min</td>
               <td>
-                <span className={`badge ${template.is_active ? 'badge-success' : 'badge-secondary'}`}>
+                <span
+                  className={`badge ${template.is_active ? 'badge-success' : 'badge-secondary'}`}
+                >
                   {template.isActiveLabel}
                 </span>
               </td>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';
@@ -45,10 +45,7 @@ function RidersModal({ isOpen, onClose, horseRiders, loading }) {
         <div style={{ padding: '20px' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '20px' }}>
-              <Icons.Loading
-                className="spin"
-                style={{ fontSize: '32px', marginBottom: '12px' }}
-              />
+              <Icons.Loading className="spin" style={{ fontSize: '32px', marginBottom: '12px' }} />
               <div className="loading">Chargement des cavaliers...</div>
             </div>
           ) : horseRiders?.riders.length === 0 ? (

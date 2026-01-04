@@ -7,7 +7,7 @@ import RidersTable from './RidersTable';
 import RidersStats from './RidersStats';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import Portal from '../../components/common/Portal';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function RidersList() {
   const {
@@ -31,19 +31,19 @@ function RidersList() {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
-    
+
     // Modal handlers
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
-    
+
     // Utility functions
     formatDate,
     getStatusBadge,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   } = useRidersList();
 
   if (loading) {
@@ -74,7 +74,7 @@ function RidersList() {
           </button>
         </div>
       )}
-      
+
       {successMessage && (
         <div className="success">
           <Icons.Check /> {successMessage}
@@ -149,12 +149,7 @@ function RidersList() {
       )}
 
       {/* Rider Card Modal */}
-      {selectedRiderId && (
-        <RiderCard
-          riderId={selectedRiderId}
-          onClose={closeRiderCard}
-        />
-      )}
+      {selectedRiderId && <RiderCard riderId={selectedRiderId} onClose={closeRiderCard} />}
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

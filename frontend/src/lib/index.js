@@ -3,7 +3,7 @@
  */
 
 // Libraries
-export * from './libraries/icons';
+export * from './libraries/icons.jsx';
 
 // Helpers
 export * from './helpers/validators';

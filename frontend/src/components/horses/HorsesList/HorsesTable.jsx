@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import { formatDate } from '../../../lib/helpers/formatters/dateFormatters';
 import { isActive } from '../../../utils/activityFilters';
 import { HORSE_KIND_LABELS } from '../../../constants/horseConstants';
@@ -52,9 +52,7 @@ function HorsesTable({ horses, onEdit, onDelete, onRidersClick }) {
               </td>
               <td>
                 <span
-                  className={`badge badge-info ${
-                    horse.active_riders_count > 0 ? 'clickable' : ''
-                  }`}
+                  className={`badge badge-info ${horse.active_riders_count > 0 ? 'clickable' : ''}`}
                   onClick={() => onRidersClick(horse)}
                   style={{
                     cursor: horse.active_riders_count > 0 ? 'pointer' : 'default',

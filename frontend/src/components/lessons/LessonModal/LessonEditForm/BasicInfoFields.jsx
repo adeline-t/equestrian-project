@@ -1,13 +1,8 @@
 import React from 'react';
-import { Icons } from '../../../../lib/libraries/icons';
+import { Icons } from '../../../../lib/libraries/icons.jsx';
 import { LESSON_TYPES } from '../../../../constants/index.js';
 
-const BasicInfoFields = ({ 
-  editFormData, 
-  lessonData, 
-  handleEditChange, 
-  handleTypeChange 
-}) => {
+const BasicInfoFields = ({ editFormData, lessonData, handleEditChange, handleTypeChange }) => {
   return (
     <>
       {/* Name */}

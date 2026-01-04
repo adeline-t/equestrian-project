@@ -1,13 +1,7 @@
 import React from 'react';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
-const PackagesTable = ({ 
-  packages, 
-  onEdit, 
-  onDelete, 
-  formatDate, 
-  getStatusBadge 
-}) => {
+const PackagesTable = ({ packages, onEdit, onDelete, formatDate, getStatusBadge }) => {
   if (packages.length === 0) {
     return (
       <div className="empty-state">
@@ -43,25 +37,27 @@ const PackagesTable = ({
               </td>
               <td>{pkg.type || 'Standard'}</td>
               <td>
-                <span className="lesson-badge">
-                  {pkg.private_lesson_count || 0}
-                </span>
+                <span className="lesson-badge">{pkg.private_lesson_count || 0}</span>
               </td>
               <td>
-                <span className="lesson-badge">
-                  {pkg.joint_lesson_count || 0}
-                </span>
+                <span className="lesson-badge">{pkg.joint_lesson_count || 0}</span>
               </td>
               <td>{formatDate(pkg.activity_start_date)}</td>
               <td>{formatDate(pkg.activity_end_date)}</td>
               <td>
-                <span className={`badge ${getStatusBadge(pkg.activity_start_date, pkg.activity_end_date) === 'Actif' ? 'badge-success' : 'badge-secondary'}`}>
+                <span
+                  className={`badge ${
+                    getStatusBadge(pkg.activity_start_date, pkg.activity_end_date) === 'Actif'
+                      ? 'badge-success'
+                      : 'badge-secondary'
+                  }`}
+                >
                   {getStatusBadge(pkg.activity_start_date, pkg.activity_end_date)}
                 </span>
               </td>
               <td className="actions">
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   onClick={() => onEdit(pkg)}
                   title="Modifier"
                 >

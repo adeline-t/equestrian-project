@@ -4,7 +4,7 @@ import { useHorseForm } from '../../hooks/useHorseForm';
 import BasicInfoFields from './HorseForm/BasicInfoFields';
 import OwnershipFields from './HorseForm/OwnershipFields';
 import FormActions from './HorseForm/FormActions';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function HorseForm({ horse, onSubmit, onCancel }) {
   const {
@@ -20,9 +20,9 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     handleChange,
     handleSubmit,
     handleCancel,
-    
+
     // State setters
-    setError
+    setError,
   } = useHorseForm(horse);
 
   // Handle form submission
@@ -37,7 +37,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     }
 
     if (!formData.activity_start_date) {
-      setError('La date de début d\'activité est requise');
+      setError("La date de début d'activité est requise");
       return;
     }
 
@@ -57,21 +57,17 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="horse-form">
-      <BasicInfoFields 
-        formData={formData} 
-        onChange={handleChange} 
-        error={error} 
+      <BasicInfoFields formData={formData} onChange={handleChange} error={error} />
+
+      <OwnershipFields
+        formData={formData}
+        onChange={handleChange}
+        riders={riders}
+        loadingRiders={loadingRiders}
+        ownershipOptions={ownershipOptions}
       />
-      
-      <OwnershipFields 
-        formData={formData} 
-        onChange={handleChange} 
-        riders={riders} 
-        loadingRiders={loadingRiders} 
-        ownershipOptions={ownershipOptions} 
-      />
-      
-      <FormActions 
+
+      <FormActions
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
         submitting={submitting}

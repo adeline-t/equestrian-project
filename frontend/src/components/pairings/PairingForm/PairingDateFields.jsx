@@ -1,11 +1,11 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 const PairingDateFields = ({ formData, onChange, error }) => {
   return (
     <div className="form-section">
       <h3>Période du pairing</h3>
-      
+
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="pairing_start_date">Date de début *</label>
@@ -30,9 +30,7 @@ const PairingDateFields = ({ formData, onChange, error }) => {
             onChange={onChange}
             className={`form-input ${error?.includes('postérieure') ? 'error' : ''}`}
           />
-          <small className="form-help">
-            Laissez vide si le pairing est toujours actif
-          </small>
+          <small className="form-help">Laissez vide si le pairing est toujours actif</small>
         </div>
       </div>
 
@@ -44,8 +42,8 @@ const PairingDateFields = ({ formData, onChange, error }) => {
 
       <div className="alert alert-info" style={{ marginTop: '16px' }}>
         <Icons.Info style={{ marginRight: '8px' }} />
-        Le pairing permettra à ce cavalier de monter ce cheval pendant la période spécifiée.
-        Les dates ne sont pas strictes - elles servent principalement de référence pour l'organisation.
+        Le pairing permettra à ce cavalier de monter ce cheval pendant la période spécifiée. Les
+        dates ne sont pas strictes - elles servent principalement de référence pour l'organisation.
       </div>
     </div>
   );

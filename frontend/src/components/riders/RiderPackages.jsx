@@ -5,7 +5,7 @@ import PackageForm from '../packages/PackageForm';
 import PackagesTable from './PackagesTable';
 import PackageDeleteModal from './PackageDeleteModal';
 import Portal from '../../components/common/Portal';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function RiderPackages({ riderId, riderName }) {
   const {
@@ -28,18 +28,18 @@ function RiderPackages({ riderId, riderName }) {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
-    
+
     // Modal handlers
     closePackageModal,
     closeDeleteModal,
-    
+
     // Utility functions
     formatDate,
     getStatusBadge,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   } = useRiderPackages(riderId);
 
   if (loading) {
@@ -72,7 +72,7 @@ function RiderPackages({ riderId, riderName }) {
           </button>
         </div>
       )}
-      
+
       {successMessage && (
         <div className="success">
           <Icons.Check /> {successMessage}

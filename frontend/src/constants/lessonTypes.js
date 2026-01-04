@@ -1,4 +1,4 @@
-import { Icons } from '../utils/icons.jsx';
+import { Icons } from '../lib/libraries/icons.jsx';
 
 /**
  * Lesson type configurations

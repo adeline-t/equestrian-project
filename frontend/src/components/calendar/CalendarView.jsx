@@ -7,7 +7,7 @@ import SingleLessonModal from '../lessons/SingleLessonModal';
 import BlockedTimeModal from '../lessons/BlockedTimeModal';
 import CalendarHeader from './CalendarView/CalendarHeader';
 import CalendarFilters from './CalendarView/CalendarFilters';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import './calendar.css';
 
 function CalendarView() {
@@ -32,19 +32,19 @@ function CalendarView() {
     handleCreateLesson,
     handleCreateBlockedTime,
     handleFilterChange,
-    
+
     // Modal handlers
     closeLessonModal,
     closeTemplateModal,
     closeSingleLessonModal,
     closeBlockedTimeModal,
     handleModalSuccess,
-    
+
     // Utility functions
     loadWeekData,
-    
+
     // State setters
-    clearError
+    clearError,
   } = useCalendarView();
 
   if (loading) {
@@ -82,16 +82,10 @@ function CalendarView() {
         stats={stats}
       />
 
-      <CalendarFilters
-        filters={useCalendarView().filters}
-        onFilterChange={handleFilterChange}
-      />
+      <CalendarFilters filters={useCalendarView().filters} onFilterChange={handleFilterChange} />
 
       <div className="calendar-content">
-        <WeekView
-          weekData={weekData}
-          onLessonClick={handleLessonClick}
-        />
+        <WeekView weekData={weekData} onLessonClick={handleLessonClick} />
       </div>
 
       {/* Lesson Modal */}

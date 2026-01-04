@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import '../../../styles/common/buttons.css';
 
 function PairingsList({ pairings, onAdd, onEdit, onDelete }) {
@@ -11,19 +11,13 @@ function PairingsList({ pairings, onAdd, onEdit, onDelete }) {
           <Icons.Horse style={{ marginRight: '8px' }} />
           Pension ({pairings.length})
         </h3>
-        <button
-          className="btn btn-primary btn-icon"
-          onClick={onAdd}
-          title="Ajouter une pension"
-        >
+        <button className="btn btn-primary btn-icon" onClick={onAdd} title="Ajouter une pension">
           <Icons.Add />
         </button>
       </div>
 
       {pairings.length === 0 ? (
-        <p style={{ color: '#718096', margin: '0', fontSize: '0.9rem' }}>
-          Aucune pension active
-        </p>
+        <p style={{ color: '#718096', margin: '0', fontSize: '0.9rem' }}>Aucune pension active</p>
       ) : (
         <div className="pairings-list">
           {pairings.map((pairing) => (

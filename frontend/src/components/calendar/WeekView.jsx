@@ -1,6 +1,6 @@
 import React from 'react';
 import DayColumn from './DayColumn';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
   const filterLessons = (lessons) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Portal from '../../../components/common/Portal';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import './Modal.css';
 
 /**
@@ -14,24 +14,13 @@ import './Modal.css';
  * @param {string} props.size - Modal size ('small', 'medium', 'large')
  * @param {string} props.className - Additional CSS classes
  */
-const Modal = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  footer,
-  size = 'medium',
-  className = '',
-}) => {
+const Modal = ({ isOpen, onClose, title, children, footer, size = 'medium', className = '' }) => {
   if (!isOpen) return null;
 
   return (
     <Portal>
       <div className="modal-overlay" onClick={onClose}>
-        <div
-          className={`modal-content ${size} ${className}`}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className={`modal-content ${size} ${className}`} onClick={(e) => e.stopPropagation()}>
           {title && (
             <div className="modal-header">
               <h2>{title}</h2>

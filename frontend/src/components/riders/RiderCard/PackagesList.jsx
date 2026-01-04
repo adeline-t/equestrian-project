@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import '../../../styles/common/buttons.css';
 
 function PackagesList({ packages, onAdd, onEdit }) {
@@ -11,19 +11,13 @@ function PackagesList({ packages, onAdd, onEdit }) {
           <Icons.Packages style={{ marginRight: '8px' }} />
           Forfaits ({packages.length})
         </h3>
-        <button
-          className="btn btn-primary btn-icon"
-          onClick={onAdd}
-          title="Ajouter un forfait"
-        >
+        <button className="btn btn-primary btn-icon" onClick={onAdd} title="Ajouter un forfait">
           <Icons.Add />
         </button>
       </div>
 
       {packages.length === 0 ? (
-        <p style={{ color: '#718096', margin: '0', fontSize: '0.9rem' }}>
-          Aucun forfait actif
-        </p>
+        <p style={{ color: '#718096', margin: '0', fontSize: '0.9rem' }}>Aucun forfait actif</p>
       ) : (
         <div className="packages-list">
           {packages.map((pkg) => (
@@ -33,8 +27,7 @@ function PackagesList({ packages, onAdd, onEdit }) {
                 <div className="package-lessons">
                   Cours particuliers :
                   <span className="lesson-badge">{pkg.private_lesson_count || 0}</span>
-                  Prestations :
-                  <span className="lesson-badge">{pkg.joint_lesson_count || 0}</span>
+                  Prestations :<span className="lesson-badge">{pkg.joint_lesson_count || 0}</span>
                 </div>
               </div>
               <button

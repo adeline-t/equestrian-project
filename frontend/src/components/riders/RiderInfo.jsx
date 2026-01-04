@@ -1,6 +1,6 @@
 import React from 'react';
 import { CurrencyDollarIcon, UserPlusIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import * as commonStyles from '../../styles/common/common.module.css';
 
 const RiderInfo = ({ rider, stats }) => {
@@ -36,7 +36,7 @@ const RiderInfo = ({ rider, stats }) => {
           <p>{rider.activity_end_date || 'Non spécifié'}</p>
         </div>
       </div>
-      
+
       <div className={commonStyles.statsContainer}>
         <h3>Statistiques</h3>
         <div className={commonStyles.statsGrid}>

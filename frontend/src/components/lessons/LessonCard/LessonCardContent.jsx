@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 // Constants
 const LESSON_TYPE_ICONS = {
@@ -42,18 +42,21 @@ const getLessonTypeLabel = (type) => {
 const getStatusBadge = (status) => {
   const badgeConfig = STATUS_BADGES[status] || STATUS_BADGES.scheduled;
   const IconComponent = badgeConfig.icon;
-  
+
   return (
-    <span className={`status-badge ${badgeConfig.class}`} style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '4px',
-      padding: '2px 6px',
-      borderRadius: '10px',
-      fontSize: '10px',
-      fontWeight: '500',
-      marginTop: '4px'
-    }}>
+    <span
+      className={`status-badge ${badgeConfig.class}`}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        padding: '2px 6px',
+        borderRadius: '10px',
+        fontSize: '10px',
+        fontWeight: '500',
+        marginTop: '4px',
+      }}
+    >
       <IconComponent style={{ fontSize: '10px' }} />
       {badgeConfig.label}
     </span>
@@ -65,7 +68,7 @@ const getLessonColor = (lessonType, status) => {
   if (status === 'cancelled') return '#dc3545';
   if (status === 'completed') return '#28a745';
   if (status === 'confirmed') return '#007bff';
-  
+
   const colors = {
     private: '#007bff',
     group: '#28a745',
@@ -73,22 +76,24 @@ const getLessonColor = (lessonType, status) => {
     competition: '#dc3545',
     event: '#6f42c1',
   };
-  
+
   return colors[lessonType] || '#6c757d';
 };
 
 const LessonCardContent = ({ lesson, isCompact = false }) => {
   const backgroundColor = getLessonColor(lesson.lesson_type, lesson.status);
-  
+
   if (isCompact) {
     return (
-      <div style={{
-        padding: '6px',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between'
-      }}>
+      <div
+        style={{
+          padding: '6px',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
             {getLessonTypeIcon(lesson.lesson_type)}
@@ -97,7 +102,7 @@ const LessonCardContent = ({ lesson, isCompact = false }) => {
             </span>
           </div>
         </div>
-        
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>
             {lesson.start_time}
@@ -114,12 +119,14 @@ const LessonCardContent = ({ lesson, isCompact = false }) => {
   }
 
   return (
-    <div style={{
-      padding: '8px',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
+    <div
+      style={{
+        padding: '8px',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {/* Header */}
       <div style={{ marginBottom: '6px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>

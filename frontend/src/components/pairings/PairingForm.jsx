@@ -4,7 +4,7 @@ import { usePairingForm } from '../../hooks/usePairingForm';
 import PairingSelectionFields from './PairingForm/PairingSelectionFields';
 import PairingDateFields from './PairingForm/PairingDateFields';
 import PairingFormActions from './PairingForm/PairingFormActions';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
   const {
@@ -18,9 +18,9 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
     handleSubmit,
     handleCancel,
     validateForm,
-    
+
     // State setters
-    setError
+    setError,
   } = usePairingForm(pairing, riderId);
 
   // Handle form submission
@@ -43,22 +43,18 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="pairing-form">
-      <PairingSelectionFields 
-        formData={formData} 
-        onChange={handleChange} 
-        riders={riders} 
-        horses={horses} 
+      <PairingSelectionFields
+        formData={formData}
+        onChange={handleChange}
+        riders={riders}
+        horses={horses}
         error={error}
         riderId={riderId}
       />
-      
-      <PairingDateFields 
-        formData={formData} 
-        onChange={handleChange} 
-        error={error} 
-      />
-      
-      <PairingFormActions 
+
+      <PairingDateFields formData={formData} onChange={handleChange} error={error} />
+
+      <PairingFormActions
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
         submitting={submitting}

@@ -1,24 +1,14 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 const FormActions = ({ onSubmit, onCancel, submitting, isEdit }) => {
   return (
     <div className="modal-footer">
-      <button
-        type="button"
-        className="btn btn-secondary"
-        onClick={onCancel}
-        disabled={submitting}
-      >
+      <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={submitting}>
         <Icons.Cancel style={{ marginRight: '8px' }} />
         Annuler
       </button>
-      <button
-        type="submit"
-        className="btn btn-primary"
-        onClick={onSubmit}
-        disabled={submitting}
-      >
+      <button type="submit" className="btn btn-primary" onClick={onSubmit} disabled={submitting}>
         {submitting ? (
           <>
             <Icons.Loading className="spin" style={{ marginRight: '8px' }} />

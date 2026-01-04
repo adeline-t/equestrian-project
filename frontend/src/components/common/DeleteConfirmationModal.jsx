@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from './Modal/Modal';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import '../../styles/common/buttons.css';
 
 /**
@@ -45,7 +45,7 @@ function DeleteConfirmationModal({
       title: 'Que faire avec cette pension ?',
       removeText: "Retirer de l'inventaire",
       removeDescription:
-        'La pension restera dans la base de données mais sera marquée comme inactive. La date de fin sera définie à aujourd\'hui.',
+        "La pension restera dans la base de données mais sera marquée comme inactive. La date de fin sera définie à aujourd'hui.",
       deleteDescription:
         'La pension sera supprimée de la base de données de manière permanente. Cette action ne peut pas être annulée.',
     },
@@ -81,21 +81,13 @@ function DeleteConfirmationModal({
         <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
           {label.deleteDescription}
         </p>
-        <button
-          className="btn btn-danger"
-          onClick={onPermanentDelete}
-          style={{ width: '100%' }}
-        >
+        <button className="btn btn-danger" onClick={onPermanentDelete} style={{ width: '100%' }}>
           <Icons.Delete style={{ marginRight: '8px' }} />
           Supprimer définitivement
         </button>
       </div>
 
-      <button
-        className="btn btn-secondary"
-        onClick={onClose}
-        style={{ width: '100%' }}
-      >
+      <button className="btn btn-secondary" onClick={onClose} style={{ width: '100%' }}>
         <Icons.Cancel style={{ marginRight: '8px' }} />
         Annuler
       </button>
@@ -115,9 +107,7 @@ function DeleteConfirmationModal({
       footer={footer}
       size="small"
     >
-      <p style={{ marginBottom: '20px', color: '#4a5568' }}>
-        Choisissez l'action à effectuer :
-      </p>
+      <p style={{ marginBottom: '20px', color: '#4a5568' }}>Choisissez l'action à effectuer :</p>
     </Modal>
   );
 }

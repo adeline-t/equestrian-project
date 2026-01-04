@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 const EmptyState = ({ type, onAction, filter }) => {
   if (type === 'no-horses') {
@@ -24,9 +24,7 @@ const EmptyState = ({ type, onAction, filter }) => {
           <Icons.List style={{ fontSize: '64px' }} />
         </div>
         <h3>Aucun résultat</h3>
-        <p>
-          Aucun {filter === 'horse' ? 'cheval' : 'poney'} trouvé avec ce filtre
-        </p>
+        <p>Aucun {filter === 'horse' ? 'cheval' : 'poney'} trouvé avec ce filtre</p>
       </div>
     );
   }

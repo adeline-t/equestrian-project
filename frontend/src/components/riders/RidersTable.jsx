@@ -1,14 +1,7 @@
 import React from 'react';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
-const RidersTable = ({ 
-  riders, 
-  onViewDetails, 
-  onEdit, 
-  onDelete, 
-  formatDate, 
-  getStatusBadge 
-}) => {
+const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, formatDate, getStatusBadge }) => {
   if (riders.length === 0) {
     return (
       <div className="empty-state">
@@ -46,20 +39,26 @@ const RidersTable = ({
               <td>{formatDate(rider.activity_start_date)}</td>
               <td>{formatDate(rider.activity_end_date)}</td>
               <td>
-                <span className={`badge ${getStatusBadge(rider.activity_start_date, rider.activity_end_date) === 'Actif' ? 'badge-success' : 'badge-secondary'}`}>
+                <span
+                  className={`badge ${
+                    getStatusBadge(rider.activity_start_date, rider.activity_end_date) === 'Actif'
+                      ? 'badge-success'
+                      : 'badge-secondary'
+                  }`}
+                >
                   {getStatusBadge(rider.activity_start_date, rider.activity_end_date)}
                 </span>
               </td>
               <td className="actions">
-                <button 
-                  className="btn btn-info btn-sm" 
+                <button
+                  className="btn btn-info btn-sm"
                   onClick={() => onViewDetails(rider.id)}
                   title="Voir les détails"
                 >
                   <Icons.View /> Détails
                 </button>
-                <button 
-                  className="btn btn-secondary btn-sm" 
+                <button
+                  className="btn btn-secondary btn-sm"
                   onClick={() => onEdit(rider)}
                   title="Modifier"
                 >

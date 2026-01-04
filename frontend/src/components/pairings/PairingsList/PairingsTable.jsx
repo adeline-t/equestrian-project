@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import { formatDate } from '../../../lib/helpers/formatters/dateFormatters';
 import { isActive } from '../../../utils/activityFilters';
 import { HORSE_KIND_LABELS } from '../../../constants/horseConstants';

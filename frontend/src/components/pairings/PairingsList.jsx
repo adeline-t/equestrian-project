@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { pairingsApi, ridersApi, horsesApi } from '../../services/api';
 import PairingForm from './PairingForm';
 import Portal from '../../components/common/Portal';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import HorseForm from '../HorseForm';
 import FilterButtons from './FilterButtons';
 import HorsesTable from './HorsesTable';

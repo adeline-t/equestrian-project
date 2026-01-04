@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHorsesList } from '../../hooks/useHorsesList';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import HorseForm from './HorseForm';
 import HorsesTable from './HorsesTable';
 import EmptyState from './EmptyState';
@@ -35,21 +35,21 @@ function HorsesList() {
     handlePermanentDelete,
     handleFormSubmit,
     setFilter,
-    
+
     // Modal handlers
     closeHorseModal,
     closeRidersModal,
     closeDeleteModal,
-    
+
     // Utility functions
     formatDate,
     getStatusBadge,
     getKindLabel,
     getOwnershipLabel,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   } = useHorsesList();
 
   if (loading) {
@@ -70,11 +70,7 @@ function HorsesList() {
       </div>
 
       {horses.length > 0 && (
-        <FilterButtons
-          filter={filter}
-          onFilterChange={setFilter}
-          stats={stats}
-        />
+        <FilterButtons filter={filter} onFilterChange={setFilter} stats={stats} />
       )}
 
       {error && (
@@ -85,7 +81,7 @@ function HorsesList() {
           </button>
         </div>
       )}
-      
+
       {successMessage && (
         <div className="success">
           <Icons.Check /> {successMessage}

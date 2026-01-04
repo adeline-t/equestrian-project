@@ -1,13 +1,7 @@
 import React from 'react';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
-const RidersModal = ({ 
-  isOpen, 
-  onClose, 
-  horseName, 
-  riders, 
-  loading 
-}) => {
+const RidersModal = ({ isOpen, onClose, horseName, riders, loading }) => {
   if (!isOpen) return null;
 
   return (
@@ -47,10 +41,7 @@ const RidersModal = ({
         <div style={{ padding: '20px' }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '20px' }}>
-              <Icons.Loading
-                className="spin"
-                style={{ fontSize: '32px', marginBottom: '12px' }}
-              />
+              <Icons.Loading className="spin" style={{ fontSize: '32px', marginBottom: '12px' }} />
               <div className="loading">Chargement des cavaliers...</div>
             </div>
           ) : riders?.length === 0 ? (
@@ -94,24 +85,16 @@ const RidersModal = ({
                   >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Icons.User style={{ marginRight: '12px', color: '#4299e1' }} />
-                      <div style={{ fontWeight: '500', color: '#2d3748' }}>
-                        {rider.name}
-                      </div>
+                      <div style={{ fontWeight: '500', color: '#2d3748' }}>{rider.name}</div>
                     </div>
-                    {rider.level && (
-                      <span className="badge badge-secondary">{rider.level}</span>
-                    )}
+                    {rider.level && <span className="badge badge-secondary">{rider.level}</span>}
                   </li>
                 ))}
               </ul>
             </div>
           )}
           <div style={{ marginTop: '20px' }}>
-            <button
-              className="btn btn-secondary"
-              onClick={onClose}
-              style={{ width: '100%' }}
-            >
+            <button className="btn btn-secondary" onClick={onClose} style={{ width: '100%' }}>
               <Icons.Close style={{ marginRight: '4px' }} /> Fermer
             </button>
           </div>

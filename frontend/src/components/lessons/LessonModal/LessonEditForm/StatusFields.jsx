@@ -1,11 +1,7 @@
 import React from 'react';
-import { Icons } from '../../../../lib/libraries/icons';
+import { Icons } from '../../../../lib/libraries/icons.jsx';
 
-const StatusFields = ({ 
-  editFormData, 
-  lessonData, 
-  handleEditChange 
-}) => {
+const StatusFields = ({ editFormData, lessonData, handleEditChange }) => {
   return (
     <>
       {/* Status */}

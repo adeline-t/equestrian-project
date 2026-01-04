@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons';
-import { formatDate } from '../../../lib/helpers/formatters/dateFormatters';
-import { isActive } from '../../../utils/activityFilters';
+import { Icons } from '../../../lib/libraries/icons.jsx';
+import { formatDate } from '../../../lib/helpers/formatters';
+import { isActive } from '../../../lib/helpers/filters/activityFilters.js';
 import '../../../styles/common/badges.css';
 
 function RiderInfo({ rider }) {

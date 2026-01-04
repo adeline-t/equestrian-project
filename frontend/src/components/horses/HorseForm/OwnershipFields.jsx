@@ -1,17 +1,11 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
-const OwnershipFields = ({ 
-  formData, 
-  onChange, 
-  riders, 
-  loadingRiders, 
-  ownershipOptions 
-}) => {
+const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipOptions }) => {
   return (
     <div className="form-section">
       <h3>Propriétaire</h3>
-      
+
       <div className="form-group">
         <label>Possession *</label>
         <select
@@ -46,7 +40,9 @@ const OwnershipFields = ({
           ) : (
             <select
               value={formData.owner_id || ''}
-              onChange={(e) => onChange('owner_id', e.target.value ? parseInt(e.target.value) : null)}
+              onChange={(e) =>
+                onChange('owner_id', e.target.value ? parseInt(e.target.value) : null)
+              }
               className="form-select"
               required
             >

@@ -1,7 +1,7 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 /**
  * Lesson Advanced Tab Component
@@ -69,19 +69,18 @@ const LessonAdvancedTab = ({ lessonData }) => {
               <p style={{ marginTop: '8px' }}>
                 Ce cours a été modifié par rapport au template original.
               </p>
-              {lessonData.modified_fields &&
-                Object.keys(lessonData.modified_fields).length > 0 && (
-                  <div style={{ marginTop: '12px' }}>
-                    <strong>Champs modifiés :</strong>
-                    <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
-                      {Object.entries(lessonData.modified_fields).map(([field, value]) => (
-                        <li key={field} style={{ marginBottom: '4px' }}>
-                          <strong>{field}:</strong> {JSON.stringify(value)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+              {lessonData.modified_fields && Object.keys(lessonData.modified_fields).length > 0 && (
+                <div style={{ marginTop: '12px' }}>
+                  <strong>Champs modifiés :</strong>
+                  <ul style={{ marginTop: '8px', paddingLeft: '20px' }}>
+                    {Object.entries(lessonData.modified_fields).map(([field, value]) => (
+                      <li key={field} style={{ marginBottom: '4px' }}>
+                        <strong>{field}:</strong> {JSON.stringify(value)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         )}

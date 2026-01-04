@@ -1,15 +1,15 @@
 import React from 'react';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
-const HorsesTable = ({ 
-  horses, 
-  onEdit, 
-  onDelete, 
-  onRidersClick, 
-  formatDate, 
-  getStatusBadge, 
-  getKindLabel, 
-  getOwnershipLabel 
+const HorsesTable = ({
+  horses,
+  onEdit,
+  onDelete,
+  onRidersClick,
+  formatDate,
+  getStatusBadge,
+  getKindLabel,
+  getOwnershipLabel,
 }) => {
   return (
     <div className="table-responsive">
@@ -33,20 +33,14 @@ const HorsesTable = ({
                 <strong>{horse.name}</strong>
               </td>
               <td>
-                <span className={`badge badge-${horse.kind}`}>
-                  {getKindLabel(horse.kind)}
-                </span>
+                <span className={`badge badge-${horse.kind}`}>{getKindLabel(horse.kind)}</span>
               </td>
               <td>
-                <span className="badge badge-info">
-                  {getOwnershipLabel(horse.is_owned_by)}
-                </span>
+                <span className="badge badge-info">{getOwnershipLabel(horse.is_owned_by)}</span>
               </td>
               <td>
                 <span
-                  className={`badge badge-info ${
-                    horse.active_riders_count > 0 ? 'clickable' : ''
-                  }`}
+                  className={`badge badge-info ${horse.active_riders_count > 0 ? 'clickable' : ''}`}
                   onClick={() => handleRidersClick(horse)}
                   style={{
                     cursor: horse.active_riders_count > 0 ? 'pointer' : 'default',
@@ -68,10 +62,7 @@ const HorsesTable = ({
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(horse)}>
                   <Icons.Edit /> Modifier
                 </button>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => onDelete(horse)}
-                >
+                <button className="btn btn-danger btn-sm" onClick={() => onDelete(horse)}>
                   <Icons.Delete /> Supprimer
                 </button>
               </td>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Portal from '../../../components/common/Portal';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import PackageForm from '../../packages/PackageForm';
 import PairingForm from '../../pairings/PairingForm';
 import Modal from '../../common/Modal';
@@ -17,7 +17,7 @@ import {
   filterActivePackages,
   filterActivePairings,
   filterActiveHorses,
-} from '../../../utils/activityFilters';
+} from '../../../lib/helpers/filters/activityFilters.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';

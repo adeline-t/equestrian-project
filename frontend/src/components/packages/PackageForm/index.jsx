@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Portal from '../../../components/common/Portal';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import PackagePreview from './PackagePreview';
 import { usePackageForm } from '../../../hooks/usePackageForm';
 import '../../../styles/common/modal.css';
@@ -10,7 +10,13 @@ import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
 import '../package.css';
 
-function PackageForm({ package: packageData = null, riders = [], riderId = null, onSubmit, onCancel }) {
+function PackageForm({
+  package: packageData = null,
+  riders = [],
+  riderId = null,
+  onSubmit,
+  onCancel,
+}) {
   const { formData, error, submitting, handleChange, handleSubmit } = usePackageForm(
     packageData,
     riderId,

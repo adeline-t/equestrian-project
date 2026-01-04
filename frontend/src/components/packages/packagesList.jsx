@@ -6,7 +6,7 @@ import PackagesTable from './PackagesTable';
 import PackageFilterButtons from './PackageFilterButtons';
 import PackageDeleteModal from '../riders/PackageDeleteModal';
 import Portal from '../../components/common/Portal';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function PackagesList() {
   const {
@@ -32,19 +32,19 @@ function PackagesList() {
     handlePermanentDelete,
     handleFormSubmit,
     setFilter,
-    
+
     // Modal handlers
     closePackageModal,
     closeDeleteModal,
-    
+
     // Utility functions
     formatDate,
     getStatusBadge,
     getRiderName,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   } = usePackagesList();
 
   if (loading) {
@@ -65,11 +65,7 @@ function PackagesList() {
       </div>
 
       {packages.length > 0 && (
-        <PackageFilterButtons
-          filter={filter}
-          onFilterChange={setFilter}
-          stats={stats}
-        />
+        <PackageFilterButtons filter={filter} onFilterChange={setFilter} stats={stats} />
       )}
 
       {error && (
@@ -80,7 +76,7 @@ function PackagesList() {
           </button>
         </div>
       )}
-      
+
       {successMessage && (
         <div className="success">
           <Icons.Check /> {successMessage}

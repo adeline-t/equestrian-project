@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../../lib/libraries/icons';
+import { Icons } from '../../../../lib/libraries/icons.jsx';
 
 const SpecialFields = ({ editFormData, handleEditChange }) => {
   return (

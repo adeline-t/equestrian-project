@@ -4,7 +4,7 @@ import TemplateModal from './TemplateModal';
 import TemplateFilters from './TemplateManagement/TemplateFilters';
 import TemplatesTable from './TemplateManagement/TemplatesTable';
 import DeleteConfirmationModal from './TemplateManagement/DeleteConfirmationModal';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import './TemplateManagement.css';
 
 const TemplateManagement = () => {
@@ -28,18 +28,18 @@ const TemplateManagement = () => {
     handleConfirmDelete,
     handleTemplateSuccess,
     handleFilterChange,
-    
+
     // Modal handlers
     closeCreateModal,
     closeEditModal,
     closeDeleteModal,
-    
+
     // Utility functions
     formatTemplateInfo,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   } = useTemplateManagement();
 
   // Format templates for display
@@ -55,31 +55,21 @@ const TemplateManagement = () => {
           </button>
         </div>
 
-        <TemplateFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          stats={stats}
-        />
+        <TemplateFilters filters={filters} onFilterChange={handleFilterChange} stats={stats} />
 
         {error && (
           <div className="error" style={{ marginBottom: '20px' }}>
             <Icons.Warning /> {error}
-            <button 
-              className="btn btn-sm btn-secondary ml-10" 
-              onClick={clearError}
-            >
+            <button className="btn btn-sm btn-secondary ml-10" onClick={clearError}>
               Effacer
             </button>
           </div>
         )}
-        
+
         {successMessage && (
           <div className="success" style={{ marginBottom: '20px' }}>
             <Icons.Check /> {successMessage}
-            <button 
-              className="btn btn-sm btn-secondary ml-10" 
-              onClick={clearSuccessMessage}
-            >
+            <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
               Effacer
             </button>
           </div>

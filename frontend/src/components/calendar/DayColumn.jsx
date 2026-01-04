@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import SingleLessonModal from '../lessons/SingleLessonModal';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 import DayHeader from './DayColumn/DayHeader';
 import DayGrid from './DayColumn/DayGrid';
 
@@ -134,21 +134,31 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     setSelectionEnd(null);
   };
 
-  const validLessons = lessons?.filter(lesson => {
-    if (!lesson.start_time || !lesson.end_time) return false;
-    const startMinutes = timeToMinutes(lesson.start_time);
-    const endMinutes = timeToMinutes(lesson.end_time);
-    const dayStartMinutes = START_HOUR * 60;
-    const dayEndMinutes = END_HOUR * 60;
-    return !(endMinutes < dayStartMinutes || startMinutes > dayEndMinutes);
-  }) || [];
+  const validLessons =
+    lessons?.filter((lesson) => {
+      if (!lesson.start_time || !lesson.end_time) return false;
+      const startMinutes = timeToMinutes(lesson.start_time);
+      const endMinutes = timeToMinutes(lesson.end_time);
+      const dayStartMinutes = START_HOUR * 60;
+      const dayEndMinutes = END_HOUR * 60;
+      return !(endMinutes < dayStartMinutes || startMinutes > dayEndMinutes);
+    }) || [];
 
   return (
-    <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}
-         style={{ flex: 1, minWidth: '200px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', margin: '0 4px' }}>
+    <div
+      className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}
+      style={{
+        flex: 1,
+        minWidth: '200px',
+        backgroundColor: 'white',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        margin: '0 4px',
+      }}
+    >
       <DayHeader date={date} dayName={dayName} />
 
-      <div 
+      <div
         ref={dayGridRef}
         className="day-grid-container"
         onMouseUp={handleMouseUp}
@@ -173,7 +183,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
             right: 0,
             bottom: 0,
             zIndex: isPastDay ? -1 : 20,
-            cursor: isPastDay ? 'not-allowed' : 'crosshair'
+            cursor: isPastDay ? 'not-allowed' : 'crosshair',
           }}
           onMouseDown={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();

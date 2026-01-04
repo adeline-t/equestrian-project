@@ -1,26 +1,19 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
-const PairingSelectionFields = ({ 
-  formData, 
-  onChange, 
-  riders, 
-  horses, 
-  error,
-  riderId 
-}) => {
-  const availableHorses = horses?.filter(horse => horse.statut === 'actif') || [];
+const PairingSelectionFields = ({ formData, onChange, riders, horses, error, riderId }) => {
+  const availableHorses = horses?.filter((horse) => horse.statut === 'actif') || [];
 
   return (
     <div className="form-section">
       <h3>Sélection du cavalier et du cheval</h3>
-      
+
       <div className="form-group">
         <label htmlFor="rider_id">Cavalier *</label>
         {riderId ? (
           <div className="form-input-static">
             <Icons.User style={{ marginRight: '8px' }} />
-            {riders?.find(r => r.id === parseInt(riderId))?.name || 'Cavalier sélectionné'}
+            {riders?.find((r) => r.id === parseInt(riderId))?.name || 'Cavalier sélectionné'}
           </div>
         ) : (
           <select

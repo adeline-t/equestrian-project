@@ -4,7 +4,7 @@ import { useRiderForm } from '../../hooks/useRiderForm';
 import BasicInfoFields from './RiderForm/BasicInfoFields';
 import ActivityFields from './RiderForm/ActivityFields';
 import FormActions from './RiderForm/FormActions';
-import { Icons } from '../../lib/libraries/icons';
+import { Icons } from '../../lib/libraries/icons.jsx';
 
 function RiderForm({ rider, onSubmit, onCancel }) {
   const {
@@ -18,9 +18,9 @@ function RiderForm({ rider, onSubmit, onCancel }) {
     handleSubmit,
     handleCancel,
     validateForm,
-    
+
     // State setters
-    setError
+    setError,
   } = useRiderForm(rider);
 
   // Handle form submission
@@ -43,18 +43,11 @@ function RiderForm({ rider, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="rider-form">
-      <BasicInfoFields 
-        formData={formData} 
-        onChange={handleChange} 
-        error={error} 
-      />
-      
-      <ActivityFields 
-        formData={formData} 
-        onChange={handleChange} 
-      />
-      
-      <FormActions 
+      <BasicInfoFields formData={formData} onChange={handleChange} error={error} />
+
+      <ActivityFields formData={formData} onChange={handleChange} />
+
+      <FormActions
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
         submitting={submitting}

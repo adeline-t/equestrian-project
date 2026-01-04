@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import LessonCardContent from './LessonCardContent';
 
 const getLessonColor = (lessonType, status) => {
@@ -7,7 +7,7 @@ const getLessonColor = (lessonType, status) => {
   if (status === 'cancelled') return '#dc3545';
   if (status === 'completed') return '#28a745';
   if (status === 'confirmed') return '#007bff';
-  
+
   const colors = {
     private: '#007bff',
     group: '#28a745',
@@ -15,7 +15,7 @@ const getLessonColor = (lessonType, status) => {
     competition: '#dc3545',
     event: '#6f42c1',
   };
-  
+
   return colors[lessonType] || '#6c757d';
 };
 
@@ -41,7 +41,7 @@ const LessonCardWrapper = ({ lesson, onClick, style = {} }) => {
     transition: 'all 0.2s ease',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     minHeight: isCompact ? '40px' : 'auto',
-    ...style
+    ...style,
   };
 
   const handleClick = (e) => {
@@ -66,12 +66,11 @@ const LessonCardWrapper = ({ lesson, onClick, style = {} }) => {
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`Lesson: ${lesson.name || 'Unnamed lesson'}, ${lesson.start_time} - ${lesson.end_time}`}
+      aria-label={`Lesson: ${lesson.name || 'Unnamed lesson'}, ${lesson.start_time} - ${
+        lesson.end_time
+      }`}
     >
-      <LessonCardContent 
-        lesson={lesson} 
-        isCompact={isCompact} 
-      />
+      <LessonCardContent lesson={lesson} isCompact={isCompact} />
     </div>
   );
 };

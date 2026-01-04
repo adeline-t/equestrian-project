@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import { useRiderHorses } from '../../../hooks/index.js';
 
 /**
@@ -59,10 +59,7 @@ const LessonParticipantsTab = ({
                     {participant.participation_status}
                   </span>
                   {participant.horse_assignment_type === 'auto' && (
-                    <span
-                      className="badge badge-info"
-                      title="Cheval assigné automatiquement"
-                    >
+                    <span className="badge badge-info" title="Cheval assigné automatiquement">
                       <Icons.Info style={{ fontSize: '10px', marginRight: '2px' }} />
                       Auto
                     </span>
@@ -86,10 +83,7 @@ const LessonParticipantsTab = ({
       )}
 
       {!showAddParticipant ? (
-        <button
-          className="btn btn-primary mt-20"
-          onClick={() => setShowAddParticipant(true)}
-        >
+        <button className="btn btn-primary mt-20" onClick={() => setShowAddParticipant(true)}>
           <Icons.Add style={{ marginRight: '8px' }} />
           Ajouter un participant
         </button>

@@ -1,9 +1,17 @@
 import React from 'react';
-import { UsersIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { UsersIcon, CheckCircleIcon, XCircleIcon } from '../../lib/libraries/icons.jsx';
 
 const RidersStats = ({ stats }) => {
   return (
-    <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+    <div
+      className="stats-grid"
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px',
+      }}
+    >
       <div className="stat-card">
         <div className="stat-icon">
           <UsersIcon className="h-8 w-8 text-blue-500" />
@@ -13,7 +21,7 @@ const RidersStats = ({ stats }) => {
           <p>Total des cavaliers</p>
         </div>
       </div>
-      
+
       <div className="stat-card">
         <div className="stat-icon">
           <CheckCircleIcon className="h-8 w-8 text-green-500" />
@@ -23,7 +31,7 @@ const RidersStats = ({ stats }) => {
           <p>Cavaliers actifs</p>
         </div>
       </div>
-      
+
       <div className="stat-card">
         <div className="stat-icon">
           <XCircleIcon className="h-8 w-8 text-gray-500" />
