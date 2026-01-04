@@ -13,7 +13,6 @@ export function useCalendarView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedLesson, setSelectedLesson] = useState(null);
-  const [showLessonModal, setShowLessonModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showSingleLessonModal, setShowSingleLessonModal] = useState(false);
   const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false);
@@ -75,7 +74,7 @@ export function useCalendarView() {
     } else if (lesson.is_blocked) {
       setShowBlockedTimeModal(true);
     } else {
-      setShowLessonModal(true);
+      setShowSingleLessonModal(true);
     }
   };
 
@@ -97,11 +96,6 @@ export function useCalendarView() {
   };
 
   // Modal handlers
-  const closeLessonModal = () => {
-    setShowLessonModal(false);
-    setSelectedLesson(null);
-  };
-
   const closeTemplateModal = () => {
     setShowTemplateModal(false);
     setSelectedLesson(null);
@@ -119,7 +113,6 @@ export function useCalendarView() {
 
   const handleModalSuccess = () => {
     // Close all modals
-    closeLessonModal();
     closeTemplateModal();
     closeSingleLessonModal();
     closeBlockedTimeModal();
@@ -166,7 +159,6 @@ export function useCalendarView() {
     loading,
     error,
     selectedLesson,
-    showLessonModal,
     showTemplateModal,
     showSingleLessonModal,
     showBlockedTimeModal,
@@ -184,7 +176,6 @@ export function useCalendarView() {
     handleFilterChange,
     
     // Modal handlers
-    closeLessonModal,
     closeTemplateModal,
     closeSingleLessonModal,
     closeBlockedTimeModal,

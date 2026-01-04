@@ -1,7 +1,6 @@
 import React from 'react';
 import { useCalendarView } from '../../../hooks/useCalendarView';
 import WeekView from '../WeekView.jsx';
-import LessonModal from '../../lessons/LessonModal';
 import TemplateModal from '../../templates/TemplateModal';
 import SingleLessonModal from '../../lessons/SingleLessonModal';
 import BlockedTimeModal from '../../lessons/BlockedTimeModal.jsx';
@@ -17,7 +16,6 @@ function CalendarView() {
     loading,
     error,
     selectedLesson,
-    showLessonModal,
     showTemplateModal,
     showSingleLessonModal,
     showBlockedTimeModal,
@@ -35,7 +33,6 @@ function CalendarView() {
     handleFilterChange,
 
     // Modal handlers
-    closeLessonModal,
     closeTemplateModal,
     closeSingleLessonModal,
     closeBlockedTimeModal,
@@ -93,15 +90,6 @@ function CalendarView() {
           filters={filters} 
         />
       </div>
-
-      {/* Lesson Modal */}
-      {showLessonModal && selectedLesson && (
-        <LessonModal
-          lesson={selectedLesson}
-          onClose={closeLessonModal}
-          onSuccess={handleModalSuccess}
-        />
-      )}
 
       {/* Template Modal */}
       {showTemplateModal && selectedLesson && (
