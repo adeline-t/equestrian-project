@@ -5,7 +5,7 @@ import FilterButtons from './FilterButtons';
 import HorsesTable from './HorsesTable';
 import RidersModal from './RidersModal';
 import EmptyState from './EmptyState';
-import DeleteConfirmationModal from '../../riders/RiderCard/DeleteConfirmationModal';
+import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import { useHorsesList } from '../../../hooks/useHorsesList';
 import { useHorseActions } from '../../../hooks/useHorseActions';
 import { useHorseRiders } from '../../../hooks/useHorseRiders';

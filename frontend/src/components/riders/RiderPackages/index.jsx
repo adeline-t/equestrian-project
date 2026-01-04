@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { useRiderPackages } from '../../hooks/useRiderPackages';
 import PackageForm from '../packages/PackageForm';
-import PackagesTable from './PackagesTable';
-import PackageDeleteModal from './PackageDeleteModal';
+import PackagesTable from '../RiderCard/PackagesList/PackagesTable';
+import PackageDeleteModal from '../common/DeleteConfirmationModal';
 import Portal from '../../components/common/Portal';
 import { Icons } from '../../lib/libraries/icons.jsx';
 
