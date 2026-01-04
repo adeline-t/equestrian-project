@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Portal from '../../../components/common/Portal';
+import Portal from '../../common/Portal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import PackageForm from '../../packages/PackageForm';
 import PairingForm from '../../pairings/PairingForm';
 import Modal from '../../common/Modal';
 import RiderInfo from './RiderInfo';
 import OwnedHorsesList from './OwnedHorsesList';
-import PackagesList from './PackagesList';
-import PairingsList from './PairingsList';
+import PackagesList from './PackagesList.jsx';
+import PairingsList from './PairingsList.jsx';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import { useRiderCard } from '../../../hooks/useRiderCard';
 import { usePackageActions } from '../../../hooks/usePackageActions';

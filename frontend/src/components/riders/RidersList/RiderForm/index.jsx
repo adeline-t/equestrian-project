@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { useRiderForm } from '../../hooks/useRiderForm';
-import BasicInfoFields from './RiderForm/BasicInfoFields';
-import ActivityFields from './RiderForm/ActivityFields';
-import FormActions from './RiderForm/FormActions';
+import { useRiderForm } from '../../../../hooks/useRiderForm';
+import BasicInfoFields from './BasicInfoFields';
+import ActivityFields from './ActivityFields';
+import FormActions from './FormActions';
 
 function RiderForm({ rider, onSubmit, onCancel }) {
   const {

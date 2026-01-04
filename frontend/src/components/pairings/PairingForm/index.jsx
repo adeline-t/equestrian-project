@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { usePairingForm } from '../../hooks/usePairingForm';
-import PairingSelectionFields from './PairingForm/PairingSelectionFields';
-import PairingDateFields from './PairingForm/PairingDateFields';
-import PairingFormActions from './PairingForm/PairingFormActions';
+import { usePairingForm } from '../../../hooks/usePairingForm';
+import PairingSelectionFields from './PairingSelectionFields';
+import PairingDateFields from './PairingDateFields';
+import PairingFormActions from './PairingFormActions';
 
 function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
   const {

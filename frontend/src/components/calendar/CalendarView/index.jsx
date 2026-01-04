@@ -1,14 +1,14 @@
 import React from 'react';
-import { useCalendarView } from '../../hooks/useCalendarView';
-import WeekView from '../WeekView';
+import { useCalendarView } from '../../../hooks/useCalendarView';
+import WeekView from '../WeekView.jsx';
 import LessonModal from '../../lessons/LessonModal';
 import TemplateModal from '../../templates/TemplateModal';
 import SingleLessonModal from '../../lessons/SingleLessonModal';
-import BlockedTimeModal from '../../lessons/BlockedTimeModal';
-import CalendarHeader from './CalendarHeader';
-import CalendarFilters from './CalendarFilters';
-import { Icons } from '../../lib/libraries/icons.jsx';
-import '../../styles/components/calendar.css';
+import BlockedTimeModal from '../../lessons/BlockedTimeModal.jsx';
+import CalendarHeader from './CalendarHeader.jsx';
+import CalendarFilters from './CalendarFilters.jsx';
+import { Icons } from '../../../lib/libraries/icons.jsx';
+import '../../../styles/components/calendar.css';
 
 function CalendarView() {
   const {

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { lessonsApi } from '../../../services/calendarApi';
-import Portal from '../../../components/common/Portal';
+import Portal from '../../common/Portal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import { formatTime } from '../../../lib/helpers/formatters';
 import { getLessonTypeIcon, isBlockedLesson, LESSON_TYPES } from '../../../constants/index.js';
 import { useLessonData, useLessonEdit, useParticipants } from '../../../hooks/index.js';
 import LessonDetailsTab from './LessonDetailsTab';
-import LessonEditForm from './LessonEditForm';
+import LessonEditForm from './LessonEditForm/index.jsx';
 import LessonParticipantsTab from './LessonParticipantsTab';
 import LessonAdvancedTab from './LessonAdvancedTab';
 import '../../../styles/components/lessons.css';

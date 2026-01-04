@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { lessonsApi } from '../../../services/calendarApi';
-import Modal from '../../common/Modal';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import { calculateDuration } from '../../../lib/helpers/formatters/index.js';
-import { validateLessonTime } from '../../../lib/helpers/validators/index.js';
-import '../../../styles/components/lessons.css';
+import { lessonsApi } from '../../services/calendarApi.js';
+import Modal from '../common/Modal/index.js';
+import { Icons } from '../../lib/libraries/icons.jsx';
+import { calculateDuration } from '../../lib/helpers/formatters/index.js';
+import { validateLessonTime } from '../../lib/helpers/validators/index.js';
+import '../../styles/components/lessons.css';
 
 /**
  * Refactored BlockedTimeModal Component
@@ -83,7 +83,9 @@ function BlockedTimeModal({
     } catch (err) {
       console.error('Error creating blocked time:', err);
       setError(
-        err.response?.data?.error || err.message || 'Erreur lors de la création de la période bloquée'
+        err.response?.data?.error ||
+          err.message ||
+          'Erreur lors de la création de la période bloquée'
       );
     } finally {
       setLoading(false);
@@ -103,12 +105,7 @@ function BlockedTimeModal({
       size="medium"
       footer={
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', width: '100%' }}>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={onClose}
-            disabled={loading}
-          >
+          <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
             <Icons.Cancel style={{ marginRight: '8px' }} />
             Annuler
           </button>

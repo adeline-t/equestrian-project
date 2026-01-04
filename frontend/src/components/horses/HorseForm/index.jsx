@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useHorseForm } from '../../hooks/useHorseForm';
-import BasicInfoFields from './HorseForm/BasicInfoFields';
-import OwnershipFields from './HorseForm/OwnershipFields';
-import FormActions from './HorseForm/FormActions';
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { useHorseForm } from '../../../hooks/useHorseForm';
+import BasicInfoFields from './BasicInfoFields';
+import OwnershipFields from './OwnershipFields';
+import FormActions from './FormActions';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 function HorseForm({ horse, onSubmit, onCancel }) {
   const {

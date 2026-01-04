@@ -1,15 +1,11 @@
 import React from 'react';
-import * as Icons from 'react-icons/fa';
 
 const AdditionalFields = ({ formData, handleChange }) => {
-  const icons = Icons;
-
   return (
     <>
       {/* Description */}
       <div className="form-group" style={{ marginBottom: '15px' }}>
         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
-          <icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
           Description
         </label>
         <input
@@ -25,7 +21,6 @@ const AdditionalFields = ({ formData, handleChange }) => {
       {/* Lesson Options */}
       <div className="form-group" style={{ marginBottom: '15px' }}>
         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
-          <icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
           Options de la leçon
         </label>
 
@@ -61,7 +56,6 @@ const AdditionalFields = ({ formData, handleChange }) => {
       {/* Instructor Status */}
       <div className="form-group" style={{ marginBottom: '15px' }}>
         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
-          <icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
           Statut de l'instructeur
         </label>
 

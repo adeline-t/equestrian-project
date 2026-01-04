@@ -1,11 +1,11 @@
 import React from 'react';
-import { useTemplateManagement } from '../../hooks/useTemplateManagement';
-import TemplateModal from './TemplateModal';
-import TemplateFilters from './TemplateManagement/TemplateFilters';
-import TemplatesTable from './TemplateManagement/TemplatesTable';
-import DeleteConfirmationModal from './TemplateManagement/DeleteConfirmationModal';
-import { Icons } from '../../lib/libraries/icons.jsx';
-import '../../styles/components/templates.css';
+import { useTemplateManagement } from '../../../hooks/useTemplateManagement';
+import TemplateModal from '../TemplateModal';
+import TemplateFilters from './TemplateFilters';
+import TemplatesTable from './TemplatesTable';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
+import { Icons } from '../../../lib/libraries/icons.jsx';
+import '../../../styles/components/templates.css';
 
 const TemplateManagement = () => {
   const {

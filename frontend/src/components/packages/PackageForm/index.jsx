@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Portal from '../../../components/common/Portal';
+import Portal from '../../common/Portal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import PackagePreview from './PackagePreview';
 import { usePackageForm } from '../../../hooks/usePackageForm';

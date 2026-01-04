@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import SingleLessonModal from '../../../lessons/SingleLessonModal';
+import SingleLessonModal from '../../lessons/SingleLessonModal';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Icons } from '../../../lib/libraries/icons.jsx';

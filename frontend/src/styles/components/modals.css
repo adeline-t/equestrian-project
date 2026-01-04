@@ -1,5 +1,5 @@
 /* Reusable Modal Styles */
-@import '../../../styles/common/index.css';
+@import '../common/index.css';
 
 /* Modal-specific overrides if needed */
 .modal-overlay {

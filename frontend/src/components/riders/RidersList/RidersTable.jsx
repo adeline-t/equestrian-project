@@ -1,4 +1,4 @@
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }) => {
   if (riders.length === 0) {

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import BasicInfoFields from './LessonEditForm/BasicInfoFields';
-import StatusFields from './LessonEditForm/StatusFields';
-import SpecialFields from './LessonEditForm/SpecialFields';
-import AdditionalFields from './LessonEditForm/AdditionalFields';
+import { Icons } from '../../../../lib/libraries/icons.jsx';
+import BasicInfoFields from './BasicInfoFields.jsx';
+import StatusFields from './StatusFields.jsx';
+import SpecialFields from './SpecialFields.jsx';
+import AdditionalFields from './AdditionalFields.jsx';
 
 /**
  * Lesson Edit Form Component - Refactored into modular sections
