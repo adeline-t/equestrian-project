@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import SingleLessonModal from '../lessons/SingleLessonModal';
+import SingleLessonModal from '../../../lessons/SingleLessonModal';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Icons } from '../../lib/libraries/icons.jsx';
-import DayHeader from './DayColumn/DayHeader';
-import DayGrid from './DayColumn/DayGrid';
+import { Icons } from '../../../lib/libraries/icons.jsx';
+import DayHeader from './DayHeader';
+import DayGrid from './DayGrid';
 
 function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   const [isSelecting, setIsSelecting] = useState(false);

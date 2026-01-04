@@ -122,10 +122,15 @@ export function useCalendarView() {
 
   // Utility functions
   const getWeekTitle = () => {
-    if (!weekData) return 'Chargement...';
+    if (!weekData || !weekData.week_start || !weekData.week_end) return 'Chargement...';
     
     const start = new Date(weekData.week_start);
     const end = new Date(weekData.week_end);
+    
+    // Validate dates before formatting
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return 'Semaine en cours';
+    }
     
     return `Semaine du ${format(start, 'dd MMMM', { locale: fr })} au ${format(end, 'dd MMMM yyyy', { locale: fr })}`;
   };

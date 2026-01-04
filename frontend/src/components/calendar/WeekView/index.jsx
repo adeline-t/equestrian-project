@@ -1,5 +1,5 @@
 import React from 'react';
-import DayColumn from './DayColumn';
+import DayColumn from './CalendarView/DayColumn';
 import { Icons } from '../../lib/libraries/icons.jsx';
 
 function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
