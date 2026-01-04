@@ -20,16 +20,15 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="email">Email *</label>
+        <label htmlFor="email">Email</label>
         <input
           type="email"
           id="email"
           name="email"
           value={formData.email}
           onChange={onChange}
-          className={`form-input ${error && !formData.email.trim() ? 'error' : ''}`}
+          className="form-input"
           placeholder="cavalier@exemple.com"
-          required
         />
       </div>
 

@@ -8,15 +8,14 @@ const PairingDateFields = ({ formData, onChange, error }) => {
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="pairing_start_date">Date de début *</label>
+          <label htmlFor="pairing_start_date">Date de début</label>
           <input
             type="date"
             id="pairing_start_date"
             name="pairing_start_date"
             value={formData.pairing_start_date}
             onChange={onChange}
-            className={`form-input ${error && !formData.pairing_start_date ? 'error' : ''}`}
-            required
+            className="form-input"
           />
         </div>
 

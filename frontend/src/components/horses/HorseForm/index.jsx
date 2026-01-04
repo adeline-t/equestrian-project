@@ -36,10 +36,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       return;
     }
 
-    if (!formData.activity_start_date) {
-      setError("La date de début d'activité est requise");
-      return;
-    }
+    
 
     if (formData.is_owned_by === 'Propriétaire' && !formData.owner_id) {
       setError('Veuillez sélectionner un propriétaire');

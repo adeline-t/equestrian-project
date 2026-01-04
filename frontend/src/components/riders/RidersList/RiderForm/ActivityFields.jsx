@@ -7,7 +7,7 @@ const ActivityFields = ({ formData, onChange }) => {
       
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="activity_start_date">Date de début *</label>
+          <label htmlFor="activity_start_date">Date de début</label>
           <input
             type="date"
             id="activity_start_date"
@@ -15,7 +15,6 @@ const ActivityFields = ({ formData, onChange }) => {
             value={formData.activity_start_date}
             onChange={onChange}
             className="form-input"
-            required
           />
         </div>
 

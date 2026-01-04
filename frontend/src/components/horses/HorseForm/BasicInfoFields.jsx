@@ -32,13 +32,12 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
 
       <div className="form-row">
         <div className="form-group">
-          <label>Date de début d'activité *</label>
+          <label>Date de début d'activité</label>
           <input
             type="date"
             value={formData.activity_start_date}
             onChange={(e) => onChange('activity_start_date', e.target.value)}
-            className={`form-input ${error && !formData.activity_start_date ? 'error' : ''}`}
-            required
+            className="form-input"
           />
         </div>
 

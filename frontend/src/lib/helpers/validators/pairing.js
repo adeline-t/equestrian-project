@@ -20,10 +20,10 @@ export const validatePairingForm = (formData) => {
     errors.horse_id = 'Le cheval est requis';
   }
 
-  // Start date validation
-  if (!formData.pairing_start_date) {
-    errors.pairing_start_date = 'La date de début du pairing est requise';
-  }
+  // Start date validation - now optional
+  // if (!formData.pairing_start_date) {
+  //   errors.pairing_start_date = 'La date de début du pairing est requise';
+  // }
 
   // Optional end date validation
   if (formData.pairing_end_date && formData.pairing_start_date) {
