@@ -210,8 +210,8 @@ function PairingsList() {
         isOpen={showDeleteModal}
         pairing={pairingToDelete}
         onClose={() => setShowDeleteModal(false)}
-        onRemove={handleRemoveFromInventory}
-        onDelete={handlePermanentDelete}
+        onRemoveFromInventory={handleRemoveFromInventory}
+        onPermanentDelete={handlePermanentDelete}
       />
     </div>
   );

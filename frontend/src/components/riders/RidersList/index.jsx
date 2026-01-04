@@ -150,8 +150,10 @@ function RidersList() {
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
         onClose={closeDeleteModal}
-        onConfirm={handleRemoveFromInventory}
-        riderName={riderToDelete?.name}
+        onRemoveFromInventory={handleRemoveFromInventory}
+        onPermanentDelete={handlePermanentDelete}
+        itemType="cheval"
+        itemName={riderToDelete?.name}
       />
     </div>
   );

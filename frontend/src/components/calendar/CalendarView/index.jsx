@@ -21,6 +21,7 @@ function CalendarView() {
     showTemplateModal,
     showSingleLessonModal,
     showBlockedTimeModal,
+    filters,
     weekTitle,
     stats,
 
@@ -82,7 +83,7 @@ function CalendarView() {
         stats={stats}
       />
 
-      <CalendarFilters filters={useCalendarView().filters} onFilterChange={handleFilterChange} />
+      <CalendarFilters filters={filters} onFilterChange={handleFilterChange} />
 
       <div className="calendar-content">
         <WeekView weekData={weekData} onLessonClick={handleLessonClick} />
