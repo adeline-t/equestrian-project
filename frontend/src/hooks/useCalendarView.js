@@ -48,11 +48,19 @@ export function useCalendarView() {
   };
 
   const handlePrevWeek = () => {
-    setCurrentDate(prev => new Date(prev.setDate(prev.getDate() - 7)));
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() - 7);
+      return newDate;
+    });
   };
 
   const handleNextWeek = () => {
-    setCurrentDate(prev => new Date(prev.setDate(prev.getDate() + 7)));
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() + 7);
+      return newDate;
+    });
   };
 
   const handleToday = () => {

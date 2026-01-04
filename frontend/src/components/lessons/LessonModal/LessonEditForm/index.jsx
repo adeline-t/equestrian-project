@@ -15,6 +15,8 @@ const LessonEditForm = ({
   handleEditChange,
   handleTypeChange,
 }) => {
+  const isBlocked = lessonData.lesson_type === 'blocked' || lessonData.is_blocked;
+  
   return (
     <div className="edit-form">
       {/* Error Display */}
@@ -47,12 +49,14 @@ const LessonEditForm = ({
           handleTypeChange={handleTypeChange}
         />
 
-        {/* Status Fields */}
-        <StatusFields
-          editFormData={editFormData}
-          lessonData={lessonData}
-          handleEditChange={handleEditChange}
-        />
+        {/* Status Fields - Hide for blocked lessons */}
+        {!isBlocked && (
+          <StatusFields
+            editFormData={editFormData}
+            lessonData={lessonData}
+            handleEditChange={handleEditChange}
+          />
+        )}
 
         {/* Special Fields (Not Given by Laury) */}
         <SpecialFields editFormData={editFormData} handleEditChange={handleEditChange} />

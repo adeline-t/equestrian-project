@@ -51,10 +51,10 @@ export const validateParticipantCount = (currentCount, maxParticipants) => {
 export const validateLessonForm = (formData) => {
   const errors = {};
 
-  // Name validation
-  if (!formData.name || formData.name.trim() === '') {
-    errors.name = 'Le nom du cours est requis';
-  }
+  // Name validation - now optional, will be auto-generated if empty
+  // if (!formData.name || formData.name.trim() === '') {
+  //   errors.name = 'Le nom du cours est requis';
+  // }
 
   // Date validation
   if (!formData.lesson_date) {

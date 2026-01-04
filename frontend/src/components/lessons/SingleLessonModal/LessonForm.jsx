@@ -13,7 +13,7 @@ const LessonForm = ({ formData, handleFormChange, handleTypeChange }) => {
       <div className="form-group" style={{ marginBottom: '15px' }}>
         <label style={{ fontSize: '14px', marginBottom: '5px', display: 'block' }}>
           <Icons.Edit style={{ marginRight: '4px', fontSize: '12px' }} />
-          Nom du cours *
+          Nom du cours
         </label>
         <input
           type="text"
@@ -21,10 +21,12 @@ const LessonForm = ({ formData, handleFormChange, handleTypeChange }) => {
           value={formData.name}
           onChange={handleFormChange}
           className="form-input"
-          required
-          placeholder="Ex: Cours de dressage"
+          placeholder="Généré automatiquement si vide"
           style={{ fontSize: '14px' }}
         />
+        <small className="text-muted">
+          Si vide, le nom sera généré automatiquement à partir du type de cours
+        </small>
       </div>
 
       {/* Type & Date */}

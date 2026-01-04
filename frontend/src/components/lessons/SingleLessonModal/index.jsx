@@ -54,10 +54,34 @@ function SingleLessonModal({
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    // Auto-update end time when start time changes
+    if (name === 'start_time' &amp;&amp; formData.start_time &amp;&amp; formData.end_time) {
+      // Calculate current duration in minutes
+      const [oldStartHour, oldStartMin] = formData.start_time.split(':').map(Number);
+      const [oldEndHour, oldEndMin] = formData.end_time.split(':').map(Number);
+      const durationMinutes = (oldEndHour * 60 + oldEndMin) - (oldStartHour * 60 + oldStartMin);
+      
+      // Calculate new end time
+      const [newStartHour, newStartMin] = value.split(':').map(Number);
+      const newEndMinutes = (newStartHour * 60 + newStartMin) + durationMinutes;
+      const newEndHour = Math.floor(newEndMinutes / 60);
+      const newEndMin = newEndMinutes % 60;
+      
+      // Format new end time
+      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(2, '0')}`;
+      
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        end_time: newEndTime,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleTypeChange = (e) => {
@@ -112,10 +136,11 @@ function SingleLessonModal({
       return;
     }
 
-    // Check if lesson name is provided
-    if (!formData.name || formData.name.trim() === '') {
-      setError('Le nom du cours est requis');
-      return;
+    // Auto-generate lesson name if empty
+    let lessonName = formData.name?.trim();
+    if (!lessonName) {
+      const lessonType = LESSON_TYPES.find(t => t.value === formData.lesson_type);
+      lessonName = lessonType ? lessonType.label : 'Cours';
     }
 
     try {
@@ -124,7 +149,7 @@ function SingleLessonModal({
       // Create lesson
       const lessonResponse = await lessonsApi.create({
         ...formData,
-        name: formData.name.trim(),
+        name: lessonName,
       });
 
       const lessonId = lessonResponse.data.id;
