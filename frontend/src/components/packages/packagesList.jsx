@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { usePackagesList } from '../../hooks/usePackagesList';
 import PackageForm from './PackageForm';
 import PackagesTable from './PackagesTable';
@@ -38,7 +36,6 @@ function PackagesList() {
     closeDeleteModal,
 
     // Utility functions
-    formatDate,
     getStatusBadge,
     getRiderName,
 
@@ -90,7 +87,6 @@ function PackagesList() {
         packages={filteredPackages}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
-        formatDate={formatDate}
         getStatusBadge={getStatusBadge}
         getRiderName={getRiderName}
       />

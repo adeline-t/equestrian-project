@@ -1,14 +1,6 @@
-import React from 'react';
 import { Icons } from '../../lib/libraries/icons.jsx';
 
-const PackagesTable = ({
-  packages,
-  onEdit,
-  onDelete,
-  formatDate,
-  getStatusBadge,
-  getRiderName,
-}) => {
+const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderName }) => {
   if (packages.length === 0) {
     return (
       <div className="empty-state">
@@ -56,8 +48,8 @@ const PackagesTable = ({
               <td>
                 <span className="lesson-badge">{pkg.joint_lesson_count || 0}</span>
               </td>
-              <td>{formatDate(pkg.activity_start_date)}</td>
-              <td>{formatDate(pkg.activity_end_date)}</td>
+              <td></td>
+              <td></td>
               <td>
                 <span
                   className={`badge ${

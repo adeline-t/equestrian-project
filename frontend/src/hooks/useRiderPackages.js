@@ -64,7 +64,7 @@ export function useRiderPackages(riderId) {
       await packagesApi.update(packageToDelete.id, {
         activity_end_date: today,
       });
-      setSuccessMessage('Forfait retiré de l\'inventaire');
+      setSuccessMessage("Forfait retiré de l'inventaire");
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setPackageToDelete(null);
@@ -107,15 +107,6 @@ export function useRiderPackages(riderId) {
       loadPackages();
     } catch (err) {
       throw err;
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    try {
-      return format(new Date(dateString), 'dd/MM/yyyy', { locale: fr });
-    } catch {
-      return dateString;
     }
   };
 
@@ -186,18 +177,17 @@ export function useRiderPackages(riderId) {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
-    
+
     // Modal handlers
     closePackageModal,
     closeDeleteModal,
-    
+
     // Utility functions
-    formatDate,
     isActive,
     getStatusBadge,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   };
 }

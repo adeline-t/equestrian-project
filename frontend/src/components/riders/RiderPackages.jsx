@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { useRiderPackages } from '../../hooks/useRiderPackages';
 import PackageForm from '../packages/PackageForm';
@@ -34,7 +33,6 @@ function RiderPackages({ riderId, riderName }) {
     closeDeleteModal,
 
     // Utility functions
-    formatDate,
     getStatusBadge,
 
     // State setters
@@ -86,7 +84,6 @@ function RiderPackages({ riderId, riderName }) {
         packages={packages}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
-        formatDate={formatDate}
         getStatusBadge={getStatusBadge}
       />
 

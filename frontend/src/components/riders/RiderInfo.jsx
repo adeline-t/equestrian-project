@@ -1,5 +1,4 @@
 import React from 'react';
-import { CurrencyDollarIcon, UserPlusIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Icons } from '../../lib/libraries/icons.jsx';
 import * as commonStyles from '../../styles/common/common.module.css';
 
@@ -41,21 +40,18 @@ const RiderInfo = ({ rider, stats }) => {
         <h3>Statistiques</h3>
         <div className={commonStyles.statsGrid}>
           <div className={commonStyles.statCard}>
-            <CurrencyDollarIcon className={commonStyles.statIcon} />
             <div>
               <p className={commonStyles.statValue}>{stats.activePackages}</p>
               <p className={commonStyles.statLabel}>Forfaits actifs</p>
             </div>
           </div>
           <div className={commonStyles.statCard}>
-            <UserPlusIcon className={commonStyles.statIcon} />
             <div>
               <p className={commonStyles.statValue}>{stats.activePairings}</p>
               <p className={commonStyles.statLabel}>Pairings actifs</p>
             </div>
           </div>
           <div className={commonStyles.statCard}>
-            <CheckCircleIcon className={commonStyles.statIcon} />
             <div>
               <p className={commonStyles.statValue}>{stats.activeHorses}</p>
               <p className={commonStyles.statLabel}>Chevaux actifs</p>

@@ -1,4 +1,4 @@
-import { isActive } from './activityFilters';
+import { isActive } from '../filters/activityFilters.js';
 
 /**
  * Calculate statistics for pairings list

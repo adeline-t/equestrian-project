@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { horsesApi } from '../services';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 /**
  * Custom hook for managing horses list data and operations
@@ -134,15 +132,6 @@ export function useHorsesList() {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    try {
-      return format(new Date(dateString), 'dd/MM/yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
-
   const isActive = (startDate, endDate) => {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
@@ -233,21 +222,20 @@ export function useHorsesList() {
     handlePermanentDelete,
     handleFormSubmit,
     setFilter,
-    
+
     // Modal handlers
     closeHorseModal,
     closeRidersModal,
     closeDeleteModal,
-    
+
     // Utility functions
-    formatDate,
     isActive,
     getStatusBadge,
     getKindLabel,
     getOwnershipLabel,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   };
 }

@@ -1,10 +1,8 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { useRiderForm } from '../../hooks/useRiderForm';
 import BasicInfoFields from './RiderForm/BasicInfoFields';
 import ActivityFields from './RiderForm/ActivityFields';
 import FormActions from './RiderForm/FormActions';
-import { Icons } from '../../lib/libraries/icons.jsx';
 
 function RiderForm({ rider, onSubmit, onCancel }) {
   const {

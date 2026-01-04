@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { packagesApi, ridersApi } from '../services';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 /**
  * Custom hook for managing packages list data and operations
@@ -60,7 +58,7 @@ export function usePackagesList() {
       await packagesApi.update(packageToDelete.id, {
         activity_end_date: today,
       });
-      setSuccessMessage('Forfait retiré de l\'inventaire');
+      setSuccessMessage("Forfait retiré de l'inventaire");
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setPackageToDelete(null);
@@ -106,15 +104,6 @@ export function usePackagesList() {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    try {
-      return format(new Date(dateString), 'dd/MM/yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
-
   const isActive = (startDate, endDate) => {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
@@ -131,7 +120,7 @@ export function usePackagesList() {
   };
 
   const getRiderName = (riderId) => {
-    const rider = riders.find(r => r.id === riderId);
+    const rider = riders.find((r) => r.id === riderId);
     return rider ? rider.name : `Cavalier #${riderId}`;
   };
 
@@ -145,8 +134,8 @@ export function usePackagesList() {
 
   const stats = {
     total: packages.length,
-    active: packages.filter(p => isActive(p.activity_start_date, p.activity_end_date)).length,
-    inactive: packages.filter(p => !isActive(p.activity_start_date, p.activity_end_date)).length,
+    active: packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date)).length,
+    inactive: packages.filter((p) => !isActive(p.activity_start_date, p.activity_end_date)).length,
   };
 
   // Modal handlers
@@ -196,19 +185,18 @@ export function usePackagesList() {
     handlePermanentDelete,
     handleFormSubmit,
     setFilter,
-    
+
     // Modal handlers
     closePackageModal,
     closeDeleteModal,
-    
+
     // Utility functions
-    formatDate,
     isActive,
     getStatusBadge,
     getRiderName,
-    
+
     // State setters
     clearSuccessMessage,
-    clearError
+    clearError,
   };
 }

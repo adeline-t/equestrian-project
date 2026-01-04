@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
-import { formatDate } from '../../../lib/helpers/formatters/dateFormatters';
-import { isActive } from '../../../utils/activityFilters';
-import { HORSE_KIND_LABELS } from '../../../constants/horseConstants';
+import { isActive } from '../../../lib/helpers/filters/activityFilters.js';
+import { HORSE_KIND_LABELS } from '../../../constants/horses.js';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';
 
@@ -67,8 +66,8 @@ function HorsesTable({ horses, onEdit, onDelete, onRidersClick }) {
                   {horse.active_riders_count || 0}
                 </span>
               </td>
-              <td>{formatDate(horse.activity_start_date)}</td>
-              <td>{formatDate(horse.activity_end_date)}</td>
+              <td></td>
+              <td></td>
               <td>{getStatusBadge(horse.activity_start_date, horse.activity_end_date)}</td>
               <td className="actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(horse)}>

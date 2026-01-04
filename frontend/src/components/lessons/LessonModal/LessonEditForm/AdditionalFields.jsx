@@ -1,6 +1,5 @@
 import React from 'react';
 import * as Icons from 'react-icons/fa';
-import { UI_CONFIG } from '../../../../lib/config/ui';
 
 const AdditionalFields = ({ formData, handleChange }) => {
   const icons = Icons;
@@ -29,7 +28,7 @@ const AdditionalFields = ({ formData, handleChange }) => {
           <icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
           Options de la leçon
         </label>
-        
+
         <div className="form-check" style={{ marginBottom: '8px' }}>
           <input
             type="checkbox"
@@ -65,7 +64,7 @@ const AdditionalFields = ({ formData, handleChange }) => {
           <icons.Info style={{ marginRight: '4px', fontSize: '12px' }} />
           Statut de l'instructeur
         </label>
-        
+
         <div className="form-check" style={{ marginBottom: '8px' }}>
           <input
             type="checkbox"

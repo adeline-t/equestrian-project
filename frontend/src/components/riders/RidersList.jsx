@@ -1,5 +1,3 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useRidersList } from '../../hooks/useRidersList';
 import RiderForm from './RiderForm';
 import RiderCard from './RiderCard';
@@ -8,7 +6,6 @@ import RidersStats from './RidersStats';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import Portal from '../../components/common/Portal';
 import { Icons } from '../../lib/libraries/icons.jsx';
-
 function RidersList() {
   const {
     // State
@@ -38,7 +35,6 @@ function RidersList() {
     closeRiderCard,
 
     // Utility functions
-    formatDate,
     getStatusBadge,
 
     // State setters
@@ -89,7 +85,6 @@ function RidersList() {
         onViewDetails={handleViewDetails}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
-        formatDate={formatDate}
         getStatusBadge={getStatusBadge}
       />
 

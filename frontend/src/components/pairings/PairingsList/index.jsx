@@ -8,7 +8,10 @@ import PairingsTable from './PairingsTable';
 import PairingsEmptyState from './PairingsEmptyState';
 import PairingDeleteModal from './PairingDeleteModal';
 import { usePairingsList } from '../../../hooks/usePairingsList';
-import { calculatePairingStats, filterPairingsByStatus } from '../../../utils/pairingStats';
+import {
+  calculatePairingStats,
+  filterPairingsByStatus,
+} from '../../../lib/helpers/stats/pairingStats.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';

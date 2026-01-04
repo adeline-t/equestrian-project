@@ -7,18 +7,29 @@
 export { api } from './apiService';
 
 // Domain-specific services
-export { default as horseService } from './horseService';
-export { default as riderService } from './riderService';
-export { default as lessonService } from './lessonService';
-export { default as packageService } from './packageService';
-export { default as pairingService } from './pairingService';
-export { default as templateService } from './templateService';
+import horseServiceDefault from './horseService';
+export const horseService = horseServiceDefault;
+
+import riderServiceDefault from './riderService';
+export const riderService = riderServiceDefault;
+
+import lessonServiceDefault from './lessonService';
+export const lessonService = lessonServiceDefault;
+
+import packageServiceDefault from './packageService';
+export const packageService = packageServiceDefault;
+
+import pairingServiceDefault from './pairingService';
+export const pairingService = pairingServiceDefault;
+
+import templateServiceDefault from './templateService';
+export const templateService = templateServiceDefault;
 
 // Legacy exports for backward compatibility
-export const ridersApi = riderService;
-export const horsesApi = horseService;
-export const pairingsApi = pairingService;
-export const packagesApi = packageService;
+export const ridersApi = riderServiceDefault;
+export const horsesApi = horseServiceDefault;
+export const pairingsApi = pairingServiceDefault;
+export const packagesApi = packageServiceDefault;
 export const utilityApi = {
   health: async () => {
     const { api } = await import('./apiService');

@@ -1,10 +1,8 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { usePairingForm } from '../../hooks/usePairingForm';
 import PairingSelectionFields from './PairingForm/PairingSelectionFields';
 import PairingDateFields from './PairingForm/PairingDateFields';
 import PairingFormActions from './PairingForm/PairingFormActions';
-import { Icons } from '../../lib/libraries/icons.jsx';
 
 function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
   const {

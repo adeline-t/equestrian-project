@@ -1,7 +1,6 @@
-import React from 'react';
 import { Icons } from '../../lib/libraries/icons.jsx';
 
-const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, formatDate, getStatusBadge }) => {
+const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }) => {
   if (riders.length === 0) {
     return (
       <div className="empty-state">
@@ -36,8 +35,8 @@ const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, formatDate, getS
               </td>
               <td>{rider.email || '-'}</td>
               <td>{rider.phone || '-'}</td>
-              <td>{formatDate(rider.activity_start_date)}</td>
-              <td>{formatDate(rider.activity_end_date)}</td>
+              <td></td>
+              <td></td>
               <td>
                 <span
                   className={`badge ${

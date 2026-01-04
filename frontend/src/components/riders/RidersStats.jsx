@@ -1,5 +1,4 @@
 import React from 'react';
-import { UsersIcon, CheckCircleIcon, XCircleIcon } from '../../lib/libraries/icons.jsx';
 
 const RidersStats = ({ stats }) => {
   return (
@@ -13,9 +12,6 @@ const RidersStats = ({ stats }) => {
       }}
     >
       <div className="stat-card">
-        <div className="stat-icon">
-          <UsersIcon className="h-8 w-8 text-blue-500" />
-        </div>
         <div className="stat-content">
           <h3>{stats.total}</h3>
           <p>Total des cavaliers</p>
@@ -23,9 +19,6 @@ const RidersStats = ({ stats }) => {
       </div>
 
       <div className="stat-card">
-        <div className="stat-icon">
-          <CheckCircleIcon className="h-8 w-8 text-green-500" />
-        </div>
         <div className="stat-content">
           <h3>{stats.active}</h3>
           <p>Cavaliers actifs</p>
@@ -33,9 +26,6 @@ const RidersStats = ({ stats }) => {
       </div>
 
       <div className="stat-card">
-        <div className="stat-icon">
-          <XCircleIcon className="h-8 w-8 text-gray-500" />
-        </div>
         <div className="stat-content">
           <h3>{stats.inactive}</h3>
           <p>Cavaliers inactifs</p>

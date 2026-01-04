@@ -1,4 +1,4 @@
-import { isActive } from './activityFilters';
+import { isActive } from '../filters/activityFilters';
 
 /**
  * Calculate statistics for horses list

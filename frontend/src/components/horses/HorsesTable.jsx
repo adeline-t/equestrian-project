@@ -6,7 +6,6 @@ const HorsesTable = ({
   onEdit,
   onDelete,
   onRidersClick,
-  formatDate,
   getStatusBadge,
   getKindLabel,
   getOwnershipLabel,
@@ -55,8 +54,8 @@ const HorsesTable = ({
                   {horse.active_riders_count || 0}
                 </span>
               </td>
-              <td>{formatDate(horse.activity_start_date)}</td>
-              <td>{formatDate(horse.activity_end_date)}</td>
+              <td></td>
+              <td></td>
               <td>{getStatusBadge(horse.activity_start_date, horse.activity_end_date)}</td>
               <td className="actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(horse)}>

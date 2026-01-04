@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { ridersApi, packagesApi, pairingsApi, horsesApi } from '../services';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 /**
  * Custom hook for managing rider card data and operations
@@ -20,7 +18,7 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
   const [loading, setLoading] = useState({
     packages: false,
     pairings: false,
-    horses: false
+    horses: false,
   });
   const [error, setError] = useState(null);
 
@@ -33,11 +31,7 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
   const fetchRiderData = async () => {
     try {
       setError(null);
-      await Promise.all([
-        fetchPackages(),
-        fetchPairings(),
-        fetchHorses()
-      ]);
+      await Promise.all([fetchPackages(), fetchPairings(), fetchHorses()]);
     } catch (error) {
       console.error('Error fetching rider data:', error);
       setError('Erreur lors du chargement des données');
@@ -46,42 +40,42 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
 
   const fetchPackages = async () => {
     try {
-      setLoading(prev => ({ ...prev, packages: true }));
+      setLoading((prev) => ({ ...prev, packages: true }));
       const response = await ridersApi.getPackages(rider.id);
       setPackages(response.data || []);
     } catch (error) {
       console.error('Error fetching packages:', error);
       throw error;
     } finally {
-      setLoading(prev => ({ ...prev, packages: false }));
+      setLoading((prev) => ({ ...prev, packages: false }));
     }
   };
 
   const fetchPairings = async () => {
     try {
-      setLoading(prev => ({ ...prev, pairings: true }));
+      setLoading((prev) => ({ ...prev, pairings: true }));
       const response = await ridersApi.getHorses(rider.id);
       setPairings(response.data || []);
     } catch (error) {
       console.error('Error fetching pairings:', error);
       throw error;
     } finally {
-      setLoading(prev => ({ ...prev, pairings: false }));
+      setLoading((prev) => ({ ...prev, pairings: false }));
     }
   };
 
   const fetchHorses = async () => {
     try {
-      setLoading(prev => ({ ...prev, horses: true }));
+      setLoading((prev) => ({ ...prev, horses: true }));
       const response = await horsesApi.getAll();
       // Filter horses owned by this rider
-      const owned = (response.data || []).filter(horse => horse.owner_id === rider.id);
+      const owned = (response.data || []).filter((horse) => horse.owner_id === rider.id);
       setHorses(owned);
     } catch (error) {
       console.error('Error fetching horses:', error);
       throw error;
     } finally {
-      setLoading(prev => ({ ...prev, horses: false }));
+      setLoading((prev) => ({ ...prev, horses: false }));
     }
   };
 
@@ -130,15 +124,6 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    try {
-      return format(new Date(dateString), 'dd/MM/yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
-
   const isActive = (startDate, endDate) => {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
@@ -159,23 +144,23 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
   };
 
   const getRiderStats = () => {
-    const activePackages = packages.filter(p => 
+    const activePackages = packages.filter((p) =>
       isActive(p.activity_start_date, p.activity_end_date)
     ).length;
-    const activePairings = pairings.filter(p => 
+    const activePairings = pairings.filter((p) =>
       isActive(p.pairing_start_date, p.pairing_end_date)
     ).length;
-    const activeHorses = horses.filter(h => 
+    const activeHorses = horses.filter((h) =>
       isActive(h.activity_start_date, h.activity_end_date)
     ).length;
-    
+
     return {
       totalPackages: packages.length,
       activePackages,
       totalPairings: pairings.length,
       activePairings,
       totalHorses: horses.length,
-      activeHorses
+      activeHorses,
     };
   };
 
@@ -188,7 +173,7 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
     horses,
     loading,
     error,
-    
+
     // Actions
     setActiveTab,
     setShowDeleteModal,
@@ -198,12 +183,11 @@ export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
     handlePackageAdd,
     handlePairingAdd,
     fetchRiderData,
-    
+
     // Utilities
-    formatDate,
     isActive,
     getStatusBadge,
     getKindLabel,
-    getRiderStats
+    getRiderStats,
   };
 }

@@ -58,7 +58,7 @@ export function useRidersList() {
       await ridersApi.update(riderToDelete.id, {
         activity_end_date: today,
       });
-      setSuccessMessage('Cavalier retiré de l\'inventaire');
+      setSuccessMessage("Cavalier retiré de l'inventaire");
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setRiderToDelete(null);
@@ -104,15 +104,6 @@ export function useRidersList() {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    try {
-      return format(new Date(dateString), 'dd/MM/yyyy', { locale: fr });
-    } catch {
-      return dateString;
-    }
-  };
-
   const isActive = (startDate, endDate) => {
     const now = new Date();
     const start = startDate ? new Date(startDate) : null;
@@ -131,8 +122,8 @@ export function useRidersList() {
   const getStats = () => {
     return {
       total: riders.length,
-      active: riders.filter(r => isActive(r.activity_start_date, r.activity_end_date)).length,
-      inactive: riders.filter(r => !isActive(r.activity_start_date, r.activity_end_date)).length,
+      active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
+      inactive: riders.filter((r) => !isActive(r.activity_start_date, r.activity_end_date)).length,
     };
   };
 
@@ -176,17 +167,16 @@ export function useRidersList() {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
-    
+
     // Modal handlers
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
-    
+
     // Utility functions
-    formatDate,
     getStatusBadge,
     isActive,
-    
+
     // State setters
     clearSuccessMessage,
     clearError,

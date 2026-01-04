@@ -9,7 +9,7 @@ import DeleteConfirmationModal from '../../riders/RiderCard/DeleteConfirmationMo
 import { useHorsesList } from '../../../hooks/useHorsesList';
 import { useHorseActions } from '../../../hooks/useHorseActions';
 import { useHorseRiders } from '../../../hooks/useHorseRiders';
-import { calculateHorseStats, filterHorsesByKind } from '../../../utils/horseStats';
+import { calculateHorseStats, filterHorsesByKind } from '../../../lib/helpers/stats/horseStats.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';

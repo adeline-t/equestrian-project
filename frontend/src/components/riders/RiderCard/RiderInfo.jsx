@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
-import { formatDate } from '../../../lib/helpers/formatters';
 import { isActive } from '../../../lib/helpers/filters/activityFilters.js';
 import '../../../styles/common/badges.css';
 
@@ -43,14 +42,14 @@ function RiderInfo({ rider }) {
             <Icons.Calendar style={{ marginRight: '4px' }} />
             Début:
           </span>
-          <span className="info-value">{formatDate(rider.activity_start_date)}</span>
+          <span className="info-value"></span>
         </div>
         <div className="date-status-item">
           <span className="info-label">
             <Icons.Calendar style={{ marginRight: '4px' }} />
             Fin:
           </span>
-          <span className="info-value">{formatDate(rider.activity_end_date)}</span>
+          <span className="info-value"></span>
         </div>
         <div className="date-status-item">
           <span className="info-label">Statut:</span>
