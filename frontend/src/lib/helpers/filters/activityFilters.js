@@ -20,6 +20,7 @@ export function isActive(startDate, endDate) {
  * @returns {Array} Filtered array of active packages
  */
 export function filterActivePackages(packages) {
+  if (!packages || !Array.isArray(packages)) return [];
   return packages.filter((pkg) =>
     isActive(pkg.activity_start_date, pkg.activity_end_date)
   );
@@ -31,6 +32,7 @@ export function filterActivePackages(packages) {
  * @returns {Array} Filtered array of active pairings
  */
 export function filterActivePairings(pairings) {
+  if (!pairings || !Array.isArray(pairings)) return [];
   return pairings.filter((pairing) => {
     const pairingActive = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
     const horseActive =
@@ -46,6 +48,7 @@ export function filterActivePairings(pairings) {
  * @returns {Array} Filtered array of active horses
  */
 export function filterActiveHorses(horses) {
+  if (!horses || !Array.isArray(horses)) return [];
   return horses.filter((horse) =>
     isActive(horse.activity_start_date, horse.activity_end_date)
   );

@@ -3,191 +3,118 @@ import { ridersApi, packagesApi, pairingsApi, horsesApi } from '../services';
 
 /**
  * Custom hook for managing rider card data and operations
- * @param {Object} rider - The rider object
- * @param {Function} onPackageAdd - Callback for adding package
- * @param {Function} onPairingAdd - Callback for adding pairing
- * @param {Function} onUpdate - Callback for updates
+ * @param {number} riderId - The rider ID
  * @returns {Object} Rider data, loading state, error, and handler functions
  */
-export function useRiderCard({ rider, onPackageAdd, onPairingAdd, onUpdate }) {
-  const [activeTab, setActiveTab] = useState('info');
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+export function useRiderCard(riderId) {
+  const [rider, setRider] = useState(null);
   const [packages, setPackages] = useState([]);
   const [pairings, setPairings] = useState([]);
+  const [ownedHorses, setOwnedHorses] = useState([]);
+  const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
-  const [loading, setLoading] = useState({
-    packages: false,
-    pairings: false,
-    horses: false,
-  });
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (rider?.id) {
+    if (riderId) {
       fetchRiderData();
     }
-  }, [rider]);
+  }, [riderId]);
 
   const fetchRiderData = async () => {
     try {
+      setLoading(true);
       setError(null);
-      await Promise.all([fetchPackages(), fetchPairings(), fetchHorses()]);
+      
+      // Fetch rider details
+      const riderResponse = await ridersApi.getById(riderId);
+      setRider(riderResponse);
+      
+      // Fetch all data in parallel
+      await Promise.all([
+        fetchPackages(),
+        fetchPairings(),
+        fetchOwnedHorses(),
+        fetchAllRiders(),
+        fetchAllHorses()
+      ]);
     } catch (error) {
       console.error('Error fetching rider data:', error);
       setError('Erreur lors du chargement des données');
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchPackages = async () => {
     try {
-      setLoading((prev) => ({ ...prev, packages: true }));
-      const response = await ridersApi.getPackages(rider.id);
+      const response = await ridersApi.getPackages(riderId);
       setPackages(response.data || []);
     } catch (error) {
       console.error('Error fetching packages:', error);
       throw error;
-    } finally {
-      setLoading((prev) => ({ ...prev, packages: false }));
     }
   };
 
   const fetchPairings = async () => {
     try {
-      setLoading((prev) => ({ ...prev, pairings: true }));
-      const response = await ridersApi.getHorses(rider.id);
+      const response = await ridersApi.getHorses(riderId);
       setPairings(response.data || []);
     } catch (error) {
       console.error('Error fetching pairings:', error);
       throw error;
-    } finally {
-      setLoading((prev) => ({ ...prev, pairings: false }));
     }
   };
 
-  const fetchHorses = async () => {
+  const fetchOwnedHorses = async () => {
     try {
-      setLoading((prev) => ({ ...prev, horses: true }));
       const response = await horsesApi.getAll();
       // Filter horses owned by this rider
-      const owned = (response.data || []).filter((horse) => horse.owner_id === rider.id);
-      setHorses(owned);
+      const owned = (response.data || []).filter((horse) => horse.owner_id === riderId);
+      setOwnedHorses(owned);
     } catch (error) {
-      console.error('Error fetching horses:', error);
+      console.error('Error fetching owned horses:', error);
       throw error;
-    } finally {
-      setLoading((prev) => ({ ...prev, horses: false }));
     }
   };
 
-  const handleDelete = async () => {
+  const fetchAllRiders = async () => {
     try {
-      await ridersApi.delete(rider.id);
-      setShowDeleteModal(false);
-      // onDelete callback would be passed from parent
+      const response = await ridersApi.getAll();
+      setRiders(response || []);
     } catch (error) {
-      console.error('Error deleting rider:', error);
-      setError('Erreur lors de la suppression du cavalier');
+      console.error('Error fetching all riders:', error);
+      throw error;
     }
   };
 
-  const handlePackageStatusChange = async (packageId, newStatus) => {
+  const fetchAllHorses = async () => {
     try {
-      await packagesApi.update(packageId, { status: newStatus });
-      fetchPackages();
-      if (onUpdate) onUpdate();
+      const response = await horsesApi.getAll();
+      setHorses(response.data || []);
     } catch (error) {
-      console.error('Error updating package status:', error);
-      setError('Erreur lors de la mise à jour du statut');
+      console.error('Error fetching all horses:', error);
+      throw error;
     }
   };
 
-  const handlePairingStatusChange = async (pairingId, newStatus) => {
-    try {
-      await pairingsApi.update(pairingId, { status: newStatus });
-      fetchPairings();
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      console.error('Error updating pairing status:', error);
-      setError('Erreur lors de la mise à jour du statut');
-    }
-  };
-
-  const handlePackageAdd = () => {
-    if (onPackageAdd) {
-      onPackageAdd(rider);
-    }
-  };
-
-  const handlePairingAdd = () => {
-    if (onPairingAdd) {
-      onPairingAdd(rider);
-    }
-  };
-
-  const isActive = (startDate, endDate) => {
-    const now = new Date();
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-
-    if (start && start > now) return false;
-    if (end && end < now) return false;
-    return true;
-  };
-
-  const getStatusBadge = (startDate, endDate) => {
-    const active = isActive(startDate, endDate);
-    return active ? 'Actif' : 'Inactif';
-  };
-
-  const getKindLabel = (kind) => {
-    return kind === 'horse' ? 'Cheval' : 'Poney';
-  };
-
-  const getRiderStats = () => {
-    const activePackages = packages.filter((p) =>
-      isActive(p.activity_start_date, p.activity_end_date)
-    ).length;
-    const activePairings = pairings.filter((p) =>
-      isActive(p.pairing_start_date, p.pairing_end_date)
-    ).length;
-    const activeHorses = horses.filter((h) =>
-      isActive(h.activity_start_date, h.activity_end_date)
-    ).length;
-
-    return {
-      totalPackages: packages.length,
-      activePackages,
-      totalPairings: pairings.length,
-      activePairings,
-      totalHorses: horses.length,
-      activeHorses,
-    };
+  const reload = () => {
+    fetchRiderData();
   };
 
   return {
     // State
-    activeTab,
-    showDeleteModal,
+    rider,
     packages,
     pairings,
+    ownedHorses,
+    riders,
     horses,
     loading,
     error,
 
     // Actions
-    setActiveTab,
-    setShowDeleteModal,
-    handleDelete,
-    handlePackageStatusChange,
-    handlePairingStatusChange,
-    handlePackageAdd,
-    handlePairingAdd,
-    fetchRiderData,
-
-    // Utilities
-    isActive,
-    getStatusBadge,
-    getKindLabel,
-    getRiderStats,
+    reload,
   };
 }
