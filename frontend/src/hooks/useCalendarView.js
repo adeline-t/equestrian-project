@@ -122,10 +122,10 @@ export function useCalendarView() {
 
   // Utility functions
   const getWeekTitle = () => {
-    if (!weekData || !weekData.week_start || !weekData.week_end) return 'Chargement...';
+    if (!weekData || !weekData.period) return 'Chargement...';
     
-    const start = new Date(weekData.week_start);
-    const end = new Date(weekData.week_end);
+    const start = new Date(weekData.period.start);
+    const end = new Date(weekData.period.end);
     
     // Validate dates before formatting
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
