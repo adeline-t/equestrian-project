@@ -146,7 +146,8 @@
   display: grid;
   grid-template-columns: 80px repeat(7, 1fr);
   flex: 1;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 /* ============================================
