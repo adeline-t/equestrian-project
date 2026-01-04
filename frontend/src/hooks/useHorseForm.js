@@ -74,34 +74,18 @@ export function useHorseForm(horse) {
     setError(''); // Clear error on any change
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-
+  const validateForm = () => {
     // Use centralized validation
     const validation = validateHorseForm(formData);
     if (!validation.isValid) {
       const firstError = Object.values(validation.errors)[0];
       setError(firstError);
-      return;
+      return false;
     }
-
-    try {
-      setSubmitting(true);
-      await onSubmit(formData);
-    } catch (err) {
-      setError(err.message || 'Une erreur est survenue');
-    } finally {
-      setSubmitting(false);
-    }
+    return true;
   };
 
-  const handleCancel = () => {
-    setError('');
-    if (onCancel) {
-      onCancel();
-    }
-  };
+  
 
   const resetForm = () => {
     setFormData({
@@ -126,8 +110,7 @@ export function useHorseForm(horse) {
 
     // Actions
     handleChange,
-    handleSubmit,
-    handleCancel,
+    validateForm,
     resetForm,
     
     // State setters

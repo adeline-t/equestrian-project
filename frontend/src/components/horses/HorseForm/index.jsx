@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHorseForm } from '../../../hooks/useHorseForm';
 import BasicInfoFields from './BasicInfoFields';
@@ -18,35 +18,38 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
     // Actions
     handleChange,
-    handleSubmit,
-    handleCancel,
+    validateForm,
+    resetForm,
 
     // State setters
     setError,
   } = useHorseForm(horse);
+  const [localSubmitting, setLocalSubmitting] = useState(false);
 
   // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    // Basic validation
-    if (!formData.name.trim()) {
-      setError('Le nom du cheval est requis');
-      return;
-    }
-
     
-
-    if (formData.is_owned_by === 'Propriétaire' && !formData.owner_id) {
-      setError('Veuillez sélectionner un propriétaire');
+    // Validate form using the hook's validation
+    if (!validateForm()) {
       return;
     }
 
     try {
+      setLocalSubmitting(true);
       await onSubmit(formData);
     } catch (err) {
       setError(err.message || 'Une erreur est survenue');
+      throw err;
+    } finally {
+      setLocalSubmitting(false);
+    }
+  };
+
+  const handleCancelClick = () => {
+    resetForm();
+    if (onCancel) {
+      onCancel();
     }
   };
 
@@ -66,8 +69,8 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
       <FormActions
         onSubmit={handleFormSubmit}
-        onCancel={handleCancel}
-        submitting={submitting}
+        onCancel={handleCancelClick}
+        submitting={localSubmitting}
         isEdit={isEdit}
       />
     </form>
