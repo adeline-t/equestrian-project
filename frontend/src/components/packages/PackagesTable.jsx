@@ -48,8 +48,8 @@ const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderNam
               <td>
                 <span className="lesson-badge">{pkg.joint_lesson_count || 0}</span>
               </td>
-              <td></td>
-              <td></td>
+              <td>{pkg.activity_start_date || '-'}</td>
+              <td>{pkg.activity_end_date || '-'}</td>
               <td>
                 <span
                   className={`badge ${

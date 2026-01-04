@@ -35,8 +35,8 @@ const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }
               </td>
               <td>{rider.email || '-'}</td>
               <td>{rider.phone || '-'}</td>
-              <td></td>
-              <td></td>
+              <td>{rider.activity_start_date || '-'}</td>
+              <td>{rider.activity_end_date || '-'}</td>
               <td>
                 <span
                   className={`badge ${

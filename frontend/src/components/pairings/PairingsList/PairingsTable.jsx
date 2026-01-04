@@ -48,8 +48,8 @@ function PairingsTable({ pairings, onEdit, onDelete }) {
                   {HORSE_KIND_LABELS[pairing.horses?.kind] || pairing.horses?.kind}
                 </span>
               </td>
-              <td></td>
-              <td></td>
+              <td>{pairing.pairing_start_date || '-'}</td>
+              <td>{pairing.pairing_end_date || '-'}</td>
               <td>{getStatusBadge(pairing.pairing_start_date, pairing.pairing_end_date)}</td>
               <td className="actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(pairing)}>

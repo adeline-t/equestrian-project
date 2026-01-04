@@ -66,8 +66,8 @@ function HorsesTable({ horses, onEdit, onDelete, onRidersClick }) {
                   {horse.active_riders_count || 0}
                 </span>
               </td>
-              <td></td>
-              <td></td>
+              <td>{horse.activity_start_date || '-'}</td>
+              <td>{horse.activity_end_date || '-'}</td>
               <td>{getStatusBadge(horse.activity_start_date, horse.activity_end_date)}</td>
               <td className="actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(horse)}>
