@@ -34,6 +34,7 @@ import {
   FaArrowCircleRight,
   FaCog,
   FaTag,
+  FaFilter,
 } from 'react-icons/fa';
 
 export const Icons = {
@@ -76,6 +77,7 @@ export const Icons = {
   Repeat: FaArrowCircleRight,
   Settings: FaCog,
   Tag: FaTag,
+  Filter: FaFilter,
 };
 
 export const renderIcon = (Icon, props = {}) => {

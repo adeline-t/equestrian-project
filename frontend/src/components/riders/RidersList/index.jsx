@@ -1,12 +1,20 @@
+import { useState } from 'react';
 import { useRidersList } from '../../../hooks/useRidersList';
 import RiderForm from './RiderForm';
 import RiderCard from '../RiderCard';
 import RidersTable from './RidersTable';
-import RidersStats from './RidersStats';
+import FilterButtons from './FilterButtons';
 import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import Portal from '../../common/Portal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import '../../../styles/common/modal.css';
+import '../../../styles/common/alerts.css';
+import '../../../styles/common/buttons.css';
+import { calculateRiderStats, filterRidersByStatus } from '../../../lib/helpers/stats/riderStats.js';
+
 function RidersList() {
+  const [filter, setFilter] = useState('all');
+
   const {
     // State
     riders,
@@ -18,7 +26,6 @@ function RidersList() {
     selectedRiderId,
     showDeleteModal,
     riderToDelete,
-    stats,
 
     // Actions
     handleCreate,
@@ -42,6 +49,10 @@ function RidersList() {
     clearError,
   } = useRidersList();
 
+  // Calculate statistics and filter riders
+  const stats = calculateRiderStats(riders);
+  const filteredRiders = filterRidersByStatus(riders, filter);
+
   if (loading) {
     return (
       <div className="loading">
@@ -59,8 +70,7 @@ function RidersList() {
         </button>
       </div>
 
-      {/* Stats Dashboard */}
-      <RidersStats stats={stats} />
+      {riders.length > 0 && <FilterButtons filter={filter} stats={stats} onFilterChange={setFilter} />}
 
       {error && (
         <div className="error">
@@ -80,13 +90,28 @@ function RidersList() {
         </div>
       )}
 
-      <RidersTable
-        riders={riders}
-        onViewDetails={handleViewDetails}
-        onEdit={handleEdit}
-        onDelete={handleDeleteClick}
-        getStatusBadge={getStatusBadge}
-      />
+      {riders.length === 0 ? (
+        <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+          <Icons.Users style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <p>Aucun cavalier trouvé</p>
+          <button className="btn btn-primary mt-20" onClick={handleCreate}>
+            <Icons.Add /> Ajouter un cavalier
+          </button>
+        </div>
+      ) : filteredRiders.length === 0 ? (
+        <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+          <Icons.Filter style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <p>Aucun cavalier ne correspond au filtre sélectionné</p>
+        </div>
+      ) : (
+        <RidersTable
+          riders={filteredRiders}
+          onViewDetails={handleViewDetails}
+          onEdit={handleEdit}
+          onDelete={handleDeleteClick}
+          getStatusBadge={getStatusBadge}
+        />
+      )}
 
       {/* Rider Form Modal */}
       {showModal && (
@@ -133,11 +158,7 @@ function RidersList() {
                   <Icons.Close />
                 </button>
               </div>
-              <RiderForm
-                rider={editingRider}
-                onSubmit={handleFormSubmit}
-                onCancel={closeRiderModal}
-              />
+              <RiderForm rider={editingRider} onSubmit={handleFormSubmit} onCancel={closeRiderModal} />
             </div>
           </div>
         </Portal>
@@ -152,7 +173,7 @@ function RidersList() {
         onClose={closeDeleteModal}
         onRemoveFromInventory={handleRemoveFromInventory}
         onPermanentDelete={handlePermanentDelete}
-        itemType="cheval"
+        itemType="cavalier"
         itemName={riderToDelete?.name}
       />
     </div>
