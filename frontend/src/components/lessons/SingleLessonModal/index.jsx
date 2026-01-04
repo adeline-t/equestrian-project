@@ -9,7 +9,7 @@ import { validateLessonForm } from '../../../lib/helpers/validators';
 import { useParticipants } from '../../../hooks/index.js';
 import ParticipantsList from './ParticipantsList';
 import LessonForm from './LessonForm';
-import './styles.css';
+import '../../../styles/components/lessons.css';
 
 /**
  * Refactored SingleLessonModal Component

@@ -13,7 +13,7 @@ import { calculateHorseStats, filterHorsesByKind } from '../../../lib/helpers/st
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import './HorsesList.css';
+import '../../../styles/components/horses.css';
 
 function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');

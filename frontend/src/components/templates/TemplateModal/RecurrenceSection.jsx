@@ -6,7 +6,7 @@ import {
   getRecurrenceIntervalText,
 } from '../../../constants/templateConstants';
 import '../../../styles/common/forms.css';
-import './TemplateModal.css';
+import '../../../styles/components/templates.css';
 
 function RecurrenceSection({ recurrenceRule, onRecurrenceChange, onDayToggle }) {
   return (

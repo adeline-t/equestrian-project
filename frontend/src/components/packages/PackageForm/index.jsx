@@ -8,7 +8,7 @@ import '../../../styles/common/modal.css';
 import '../../../styles/common/forms.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import '../package.css';
+import '../../../styles/components/packages.css';
 
 function PackageForm({
   package: packageData = null,

@@ -427,3 +427,229 @@
     width: 98%;
   }
 }
+
+/* ============================================
+   ADDITIONAL RIDER CARD STYLES (from RiderCard/RiderCard.css)
+   ============================================ */
+
+  padding: 20px;
+}
+
+/* Rider Info Section */
+.rider-info-section {
+  background: #f7fafc;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.rider-info-section h3 {
+  margin: 0 0 15px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.info-value {
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.date-status-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.date-status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Section Styles */
+.section {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.section-minimal {
+  padding: 15px;
+}
+
+.section h3 {
+  margin: 0 0 15px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Owned Horses List */
+.owned-horses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.owned-horse-item {
+  padding: 10px;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.horse-name-type {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Packages List */
+.packages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.package-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.package-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.package-id {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.package-lessons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.lesson-badge {
+  background: #4299e1;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* Pairings List */
+.pairings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pairing-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.pairing-info {
+  display: flex;
+  align-items: center;
+}
+
+.pairing-horse-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.pairing-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Utility Classes */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mb-15 {
+  margin-bottom: 15px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mb-30 {
+  margin-bottom: 30px;
+}
+
+/* Loading and Error States */
+.loading,
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #4a5568;
+  font-size: 1rem;
+}
+
+.error {
+  color: #e53e3e;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

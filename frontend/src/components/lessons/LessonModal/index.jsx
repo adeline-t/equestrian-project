@@ -9,7 +9,7 @@ import LessonDetailsTab from './LessonDetailsTab';
 import LessonEditForm from './LessonEditForm';
 import LessonParticipantsTab from './LessonParticipantsTab';
 import LessonAdvancedTab from './LessonAdvancedTab';
-import './styles.css';
+import '../../../styles/components/lessons.css';
 
 /**
  * Refactored LessonModal Component

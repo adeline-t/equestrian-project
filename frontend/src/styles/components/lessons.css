@@ -138,4 +138,322 @@
 /* Edit form */
 .edit-form {
   /* Edit form specific styles */
+}/* ============================================
+   MODAL ACTIONS - COMPACT LAYOUT
+   ============================================ */
+
+.modal-actions-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.modal-actions-compact .btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  line-height: 1.2;
+  min-height: auto;
+  white-space: nowrap;
+}
+
+.modal-actions-compact .btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.modal-actions-compact .btn svg {
+  font-size: 14px !important;
+}
+
+/* ============================================
+   EDIT FORM - COMPACT ADJUSTMENTS
+   ============================================ */
+
+.edit-form .form-group {
+  margin-bottom: 12px !important;
+}
+
+.edit-form .form-input,
+.edit-form .form-select,
+.edit-form .form-textarea {
+  font-size: 13px !important;
+  padding: 6px 8px !important;
+}
+
+.edit-form label {
+  font-size: 13px !important;
+  margin-bottom: 4px !important;
+}
+
+/* ============================================
+   ULTRA-COMPACT LESSON CARD (< 1h)
+   ============================================ */
+
+.lesson-card-ultra-compact {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid;
+  background-color: #f3f4f6;
+  min-height: auto;
+  gap: 4px;
+  position: relative;
+}
+
+.lesson-card-ultra-compact:hover {
+  background-color: #e5e7eb;
+}
+
+/* ============================================
+   ULTRA-COMPACT - TYPE SPECIFIC BACKGROUNDS
+   ============================================ */
+
+.lesson-card-ultra-compact.private {
+  border-left-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.lesson-card-ultra-compact.private:hover {
+  background-color: #dbeafe;
+}
+
+.lesson-card-ultra-compact.group {
+  border-left-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.lesson-card-ultra-compact.group:hover {
+  background-color: #dcfce7;
+}
+
+.lesson-card-ultra-compact.training {
+  border-left-color: #f59e0b;
+  background-color: #fffbeb;
+}
+
+.lesson-card-ultra-compact.training:hover {
+  background-color: #fef3c7;
+}
+
+.lesson-card-ultra-compact.competition {
+  border-left-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.lesson-card-ultra-compact.competition:hover {
+  background-color: #fee2e2;
+}
+
+.lesson-card-ultra-compact.event {
+  border-left-color: #8b5cf6;
+  background-color: #faf5ff;
+}
+
+.lesson-card-ultra-compact.event:hover {
+  background-color: #f3e8ff;
+}
+
+.lesson-card-ultra-compact.blocked {
+  border-left-color: #6b7280;
+  background-color: #f3f4f6;
+}
+
+.lesson-card-ultra-compact.blocked:hover {
+  background-color: #e5e7eb;
+}
+
+/* ============================================
+   ULTRA-COMPACT - TITLE (2 lines with icon)
+   ============================================ */
+
+.ultra-compact-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.3;
+  width: 100%;
+}
+
+.ultra-compact-title span {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+/* ============================================
+   ULTRA-COMPACT - COUNT
+   ============================================ */
+
+.ultra-compact-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #4b5563;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.ultra-compact-count svg {
+  font-size: 12px !important;
+  color: #6b7280;
+}
+
+/* ============================================
+   ULTRA-COMPACT - STATES
+   ============================================ */
+
+.lesson-card-ultra-compact.modified {
+  opacity: 0.9;
+}
+
+.lesson-card-ultra-compact.not-given {
+  opacity: 0.8;
+}
+
+.lesson-card-ultra-compact.full {
+  background-color: #fef3c7 !important;
+}
+
+.lesson-card-ultra-compact.almost-full {
+  background-color: #fef3c7 !important;
+}
+
+/* ============================================
+   RESPONSIVE - TABLET (< 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  .modal-actions-compact {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .modal-actions-compact .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .lesson-card-ultra-compact {
+    padding: 5px 6px;
+    gap: 3px;
+  }
+
+  .ultra-compact-title {
+    font-size: 11px;
+  }
+
+  .ultra-compact-count {
+    font-size: 10px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE (< 600px)
+   ============================================ */
+
+@media (max-width: 600px) {
+  .modal-actions-compact {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .modal-actions-compact .btn {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* ============================================
+   ADVANCED TAB STYLES
+   ============================================ */
+
+.advanced-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.advanced-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.advanced-section .section-title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.advanced-section .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.advanced-section .detail-row:last-child {
+  border-bottom: none;
+}
+
+.advanced-section .detail-row label {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.advanced-section .detail-row span {
+  color: #1f2937;
+  font-size: 14px;
+  text-align: right;
+  flex: 1;
+}
+
+.advanced-section .alert {
+  margin-bottom: 16px;
+}
+
+.advanced-section .alert:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   ADVANCED TAB - RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .advanced-section .detail-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .advanced-section .detail-row label {
+    min-width: auto;
+  }
+
+  .advanced-section .detail-row span {
+    text-align: left;
+  }
 }

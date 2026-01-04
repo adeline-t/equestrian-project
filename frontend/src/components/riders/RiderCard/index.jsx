@@ -21,7 +21,7 @@ import {
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import './RiderCard.css';
+import '../../../styles/components/riders.css';
 
 function RiderCard({ riderId, onClose }) {
   const [successMessage, setSuccessMessage] = useState('');

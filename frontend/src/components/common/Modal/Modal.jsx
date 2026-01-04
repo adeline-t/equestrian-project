@@ -1,7 +1,7 @@
 import React from 'react';
 import Portal from '../../../components/common/Portal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
-import './Modal.css';
+import '../../../styles/components/modals.css';
 
 /**
  * Reusable Modal component

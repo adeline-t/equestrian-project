@@ -8,7 +8,7 @@ import BlockedTimeModal from '../lessons/BlockedTimeModal';
 import CalendarHeader from './CalendarView/CalendarHeader';
 import CalendarFilters from './CalendarView/CalendarFilters';
 import { Icons } from '../../lib/libraries/icons.jsx';
-import './calendar.css';
+import '../../styles/components/calendar.css';
 
 function CalendarView() {
   const {

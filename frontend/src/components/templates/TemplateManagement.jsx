@@ -5,7 +5,7 @@ import TemplateFilters from './TemplateManagement/TemplateFilters';
 import TemplatesTable from './TemplateManagement/TemplatesTable';
 import DeleteConfirmationModal from './TemplateManagement/DeleteConfirmationModal';
 import { Icons } from '../../lib/libraries/icons.jsx';
-import './TemplateManagement.css';
+import '../../styles/components/templates.css';
 
 const TemplateManagement = () => {
   const {

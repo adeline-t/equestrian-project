@@ -15,7 +15,7 @@ import {
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import './PairingsList.css';
+import '../../../styles/components/pairings.css';
 
 function PairingsList() {
   const [successMessage, setSuccessMessage] = useState('');

@@ -9,7 +9,7 @@ import '../../../styles/common/modal.css';
 import '../../../styles/common/forms.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import './TemplateModal.css';
+import '../../../styles/components/templates.css';
 
 function TemplateModal({ template, onClose, onSuccess }) {
   const {

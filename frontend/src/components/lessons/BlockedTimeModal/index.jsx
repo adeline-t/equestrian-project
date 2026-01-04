@@ -6,7 +6,7 @@ import Modal from '../../common/Modal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import { calculateDuration } from '../../../lib/helpers/formatters/index.js';
 import { validateLessonTime } from '../../../lib/helpers/validators/index.js';
-import './styles.css';
+import '../../../styles/components/lessons.css';
 
 /**
  * Refactored BlockedTimeModal Component
