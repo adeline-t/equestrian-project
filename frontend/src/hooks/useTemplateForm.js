@@ -33,6 +33,25 @@ export function useTemplateForm(template, onSuccess) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const lessonTypes = [
+    { value: 'private', label: '👤 Cours Particulier', maxP: 1, minP: 1 },
+    { value: 'group', label: '👥 Cours Collectif', maxP: 8, minP: 2 },
+    { value: 'training', label: '🎓 Stage', maxP: 12, minP: 3 },
+    { value: 'competition', label: '🏆 Concours', maxP: null, minP: 1 },
+    { value: 'event', label: '🎉 Événement', maxP: null, minP: 1 },
+    { value: 'blocked', label: '🚫 Plage Bloquée', maxP: 0, minP: 0 },
+  ];
+
+  const weekDays = [
+    { value: 'monday', label: 'Lun' },
+    { value: 'tuesday', label: 'Mar' },
+    { value: 'wednesday', label: 'Mer' },
+    { value: 'thursday', label: 'Jeu' },
+    { value: 'friday', label: 'Ven' },
+    { value: 'saturday', label: 'Sam' },
+    { value: 'sunday', label: 'Dim' },
+  ];
+
   useEffect(() => {
     loadData();
     if (template) {
@@ -42,7 +61,10 @@ export function useTemplateForm(template, onSuccess) {
 
   const loadData = async () => {
     try {
-      const [ridersData, horsesData] = await Promise.all([ridersApi.getAll(), horsesApi.getAll()]);
+      const [ridersData, horsesData] = await Promise.all([
+        ridersApi.getAll(), 
+        horsesApi.getAll()
+      ]);
       setRiders(ridersData);
       setHorses(horsesData);
     } catch (err) {
@@ -96,15 +118,10 @@ export function useTemplateForm(template, onSuccess) {
           updated.min_participants = 0;
         } else if (prev.lesson_type === 'blocked') {
           // Restore default values when changing from blocked
-          if (value === 'private') {
-            updated.max_participants = 1;
-            updated.min_participants = 1;
-          } else if (value === 'group') {
-            updated.max_participants = 8;
-            updated.min_participants = 2;
-          } else {
-            updated.max_participants = 8;
-            updated.min_participants = 1;
+          const lessonType = lessonTypes.find(type => type.value === value);
+          if (lessonType) {
+            updated.max_participants = lessonType.maxP || 8;
+            updated.min_participants = lessonType.minP || 1;
           }
         }
       }
@@ -146,29 +163,66 @@ export function useTemplateForm(template, onSuccess) {
     handleRecurrenceChange('byDay', newDays);
   };
 
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      setError('Le nom du cours est requis');
+      return false;
+    }
+
+    if (!formData.start_time) {
+      setError('L\'heure de début est requise');
+      return false;
+    }
+
+    if (!formData.duration_minutes || formData.duration_minutes < 15) {
+      setError('La durée doit être d\'au moins 15 minutes');
+      return false;
+    }
+
+    if (!formData.valid_from) {
+      setError('La date de début est requise');
+      return false;
+    }
+
+    if (!formData.recurrence_rule.byDay || formData.recurrence_rule.byDay.length === 0) {
+      setError('Veuillez sélectionner au moins un jour de la semaine');
+      return false;
+    }
+
+    if (formData.lesson_type !== 'blocked') {
+      if (!formData.min_participants || formData.min_participants < 1) {
+        setError('Le nombre minimum de participants doit être d\'au moins 1');
+        return false;
+      }
+
+      if (formData.max_participants && formData.max_participants < formData.min_participants) {
+        setError('Le nombre maximum ne peut pas être inférieur au minimum');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
       const submitData = prepareSubmitData();
 
-      // Validate
-      if (
-        submitData.recurrence_rule.frequency === 'weekly' &&
-        (!submitData.recurrence_rule.byDay || submitData.recurrence_rule.byDay.length === 0)
-      ) {
-        setError('Veuillez sélectionner au moins un jour de la semaine');
-        setLoading(false);
-        return;
-      }
-
       if (template) {
         await templatesApi.update(template.id, submitData);
       } else {
         await templatesApi.create(submitData);
       }
+      
       onSuccess();
     } catch (err) {
       console.error('Submit error:', err);
@@ -217,15 +271,55 @@ export function useTemplateForm(template, onSuccess) {
     return submitData;
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      lesson_type: 'group',
+      start_time: '19:00',
+      duration_minutes: 60,
+      valid_from: new Date().toISOString().split('T')[0],
+      valid_until: '',
+      max_participants: 8,
+      min_participants: 2,
+      recurrence_rule: {
+        frequency: 'weekly',
+        interval: 1,
+        byDay: ['monday'],
+        startTime: '19:00',
+        duration: 60,
+      },
+    });
+    setError(null);
+  };
+
+  const isBlocked = formData.lesson_type === 'blocked';
+
   return {
+    // State
     formData,
     riders,
     horses,
     loading,
     error,
+    lessonTypes,
+    weekDays,
+    isBlocked,
+
+    // Handlers
     handleChange,
     handleRecurrenceChange,
     handleDayToggle,
     handleSubmit,
+    clearError,
+    resetForm,
+
+    // Utility
+    validateForm,
+    prepareSubmitData
   };
 }
