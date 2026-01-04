@@ -86,7 +86,12 @@ function CalendarView() {
       <CalendarFilters filters={filters} onFilterChange={handleFilterChange} />
 
       <div className="calendar-content">
-        <WeekView weekData={weekData} onLessonClick={handleLessonClick} />
+        <WeekView 
+          weekData={weekData} 
+          onLessonClick={handleLessonClick} 
+          onQuickCreate={handleCreateLesson}
+          filters={filters} 
+        />
       </div>
 
       {/* Lesson Modal */}

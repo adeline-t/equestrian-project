@@ -18,6 +18,10 @@ export function useRidersList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [riderToDelete, setRiderToDelete] = useState(null);
 
+  useEffect(() => {
+    loadRiders();
+  }, []);
+
   const loadRiders = async () => {
     try {
       setLoading(true);
