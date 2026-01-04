@@ -71,11 +71,11 @@ export function useRiderCard(riderId) {
     try {
       const response = await horsesApi.getAll();
       // Filter horses owned by this rider
-      const owned = (response.data || []).filter((horse) => horse.owner_id === riderId);
+      const owned = (response || []).filter((horse) => horse.owner_id === riderId);
       setOwnedHorses(owned);
     } catch (error) {
       console.error('Error fetching owned horses:', error);
-      throw error;
+      setOwnedHorses([]); // Set empty array on error to prevent undefined issues
     }
   };
 
@@ -85,14 +85,14 @@ export function useRiderCard(riderId) {
       setRiders(response || []);
     } catch (error) {
       console.error('Error fetching all riders:', error);
-      throw error;
+      setRiders([]); // Set empty array on error to prevent undefined issues
     }
   };
 
   const fetchAllHorses = async () => {
     try {
       const response = await horsesApi.getAll();
-      setHorses(response.data || []);
+      setHorses(response || []);
     } catch (error) {
       console.error('Error fetching all horses:', error);
       throw error;
