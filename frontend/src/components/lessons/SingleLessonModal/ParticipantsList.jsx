@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import { useRiderHorses } from '../../../hooks/index.js';
 
@@ -28,6 +28,15 @@ const ParticipantsList = ({
   const handleHorseChange = (e) => {
     setSelectedHorseId(e.target.value);
   };
+
+  // Auto-select the first paired horse when rider changes
+  useEffect(() => {
+    if (selectedRiderId && riderPairedHorses.length > 0 && !selectedHorseId) {
+      setSelectedHorseId(riderPairedHorses[0].id.toString());
+    } else if (!selectedRiderId) {
+      setSelectedHorseId('');
+    }
+  }, [selectedRiderId, riderPairedHorses, selectedHorseId, setSelectedHorseId]);
 
   return (
     <div className="participants-tab">
