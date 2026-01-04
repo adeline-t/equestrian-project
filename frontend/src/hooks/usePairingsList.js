@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { pairingsApi, ridersApi, horsesApi } from '../services/api';
+import { pairingsApi, ridersApi, horsesApi } from '../services';
 
 /**
  * Custom hook for managing pairings list data

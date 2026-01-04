@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { horsesApi } from '../services/api';
+import { horsesApi } from '../services';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

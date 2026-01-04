@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../utils/icons';
+import { Icons } from '../../lib/libraries/icons';
 
 const EmptyState = ({ type, onAction, filter }) => {
   if (type === 'no-horses') {

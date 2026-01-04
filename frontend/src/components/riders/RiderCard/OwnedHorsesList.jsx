@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../utils/icons';
+import { Icons } from '../../../lib/libraries/icons';
 import { HORSE_KIND_LABELS } from '../../../constants/horseConstants';
 import '../../../styles/common/badges.css';
 

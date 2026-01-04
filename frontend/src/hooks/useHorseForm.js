@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ridersApi } from '../services/api';
+import { riderService, horseService } from '../services';
+import { validateHorseForm } from '../lib/helpers/validators';
 
 /**
  * Custom hook for managing horse form data and operations
@@ -29,7 +30,7 @@ export function useHorseForm(horse) {
   const loadRiders = async () => {
     try {
       setLoadingRiders(true);
-      const ridersData = await ridersApi.getAll();
+      const ridersData = await riderService.getAll();
       setRiders(ridersData || []);
     } catch (err) {
       console.error('Error loading riders:', err);
@@ -77,19 +78,11 @@ export function useHorseForm(horse) {
     e.preventDefault();
     setError('');
 
-    // Basic validation
-    if (!formData.name.trim()) {
-      setError('Le nom du cheval est requis');
-      return;
-    }
-
-    if (!formData.activity_start_date) {
-      setError('La date de début d\'activité est requise');
-      return;
-    }
-
-    if (formData.is_owned_by === 'Propriétaire' && !formData.owner_id) {
-      setError('Veuillez sélectionner un propriétaire');
+    // Use centralized validation
+    const validation = validateHorseForm(formData);
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      setError(firstError);
       return;
     }
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Portal from '../../../utils/Portal';
-import { Icons } from '../../../utils/icons';
+import Portal from '../../../components/common/Portal';
+import { Icons } from '../../../lib/libraries/icons';
 import PackageForm from '../../packages/PackageForm';
 import PairingForm from '../../pairings/PairingForm';
 import Modal from '../../common/Modal';

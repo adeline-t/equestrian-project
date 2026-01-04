@@ -8,8 +8,8 @@ import { PackagesList } from './PackagesList';
 import { PairingsList } from './PairingsList';
 import { OwnedHorsesList } from './OwnedHorsesList';
 import { DeleteConfirmationModal } from './DeleteConfirmationModal';
-import Portal from '../../utils/Portal';
-import { Icons } from '../../utils/icons';
+import Portal from '../../components/common/Portal';
+import { Icons } from '../../lib/libraries/icons';
 import * as commonStyles from '../../styles/common/common.module.css';
 
 function RiderCard({ riderId, onClose }) {

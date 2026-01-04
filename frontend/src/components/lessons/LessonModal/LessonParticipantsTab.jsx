@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../utils/icons';
+import { Icons } from '../../../lib/libraries/icons';
 import { useRiderHorses } from '../../../hooks/index.js';
 
 /**

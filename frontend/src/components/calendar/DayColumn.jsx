@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import LessonCard from '../lessons/LessonCard';
 import SingleLessonModal from '../lessons/SingleLessonModal';
 import { format, isToday, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Icons } from '../../utils/icons';
+import { Icons } from '../../lib/libraries/icons';
+import DayHeader from './DayColumn/DayHeader';
+import DayGrid from './DayColumn/DayGrid';
 
 function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   const [isSelecting, setIsSelecting] = useState(false);
@@ -16,12 +17,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   if (!date) {
     return (
       <div className="day-column">
-        <div className="day-header">
-          <div className="day-name">
-            <Icons.Warning style={{ marginRight: '4px' }} />
-            Invalid Date
-          </div>
-        </div>
+        <DayHeader date={date} dayName={dayName} />
         <div className="day-grid">
           <div className="no-lessons">
             <Icons.Warning style={{ fontSize: '32px', marginBottom: '8px' }} />
@@ -48,214 +44,155 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
 
   const calculateLessonStyle = (lesson) => {
     if (!lesson.start_time || !lesson.end_time) {
-      return {
-        top: '0px',
-        height: '60px',
-        minHeight: '60px',
-      };
+      return { display: 'none' };
     }
 
     const startMinutes = timeToMinutes(lesson.start_time);
     const endMinutes = timeToMinutes(lesson.end_time);
+    const dayStartMinutes = START_HOUR * 60;
 
-    const startHour = startMinutes / 60;
-    const top = (startHour - START_HOUR) * HOUR_HEIGHT;
+    if (endMinutes < dayStartMinutes || startMinutes > END_HOUR * 60) {
+      return { display: 'none' };
+    }
 
-    const durationMinutes = endMinutes - startMinutes;
-    const height = (durationMinutes / 60) * HOUR_HEIGHT;
+    const top = Math.max(0, (startMinutes - dayStartMinutes) * (HOUR_HEIGHT / 60));
+    const height = Math.min(
+      (endMinutes - startMinutes) * (HOUR_HEIGHT / 60),
+      (END_HOUR - START_HOUR) * HOUR_HEIGHT - top
+    );
 
     return {
-      top: `${Math.max(0, top)}px`,
-      height: `${Math.max(30, height)}px`,
-      minHeight: `${Math.max(30, height)}px`,
+      top: `${top}px`,
+      left: '8px',
+      right: '8px',
+      height: `${height}px`,
+      zIndex: lesson.is_blocked ? 5 : 1,
     };
   };
 
-  const validLessons = (lessons || []).filter((lesson) => lesson.start_time && lesson.end_time);
+  const calculateSelectionStyle = () => {
+    if (!selectionStart || !selectionEnd) return null;
 
-  const roundToQuarterHour = (time) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes;
-    
-    // Round to nearest 15 minutes
-    const roundedMinutes = Math.round(totalMinutes / 15) * 15;
-    
-    const roundedHours = Math.floor(roundedMinutes / 60);
-    const roundedMins = roundedMinutes % 60;
-    
-    return `${String(roundedHours).padStart(2, '0')}:${String(roundedMins).padStart(2, '0')}`;
-  };
+    const startMinutes = timeToMinutes(selectionStart);
+    const endMinutes = timeToMinutes(selectionEnd);
+    const dayStartMinutes = START_HOUR * 60;
 
-  const handleMouseDown = (e) => {
-    // Only start selection if clicking on empty space (not on a lesson)
-    if (e.target === e.currentTarget || e.target.classList.contains('day-grid') || e.target.classList.contains('lessons-container') || e.target.classList.contains('no-lessons')) {
-      e.preventDefault();
-      setIsSelecting(true);
-      
-      const rect = dayGridRef.current.getBoundingClientRect();
-      const y = e.clientY - rect.top;
-      
-      // Calculate start time from Y position
-      const hour = Math.floor(y / HOUR_HEIGHT) + START_HOUR;
-      const minute = Math.floor(((y % HOUR_HEIGHT) / HOUR_HEIGHT) * 60);
-      
-      const rawTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-      const startTime = roundToQuarterHour(rawTime);
-      setSelectionStart(startTime);
-      setSelectionEnd(startTime);
+    if (endMinutes < dayStartMinutes || startMinutes > END_HOUR * 60) {
+      return null;
     }
+
+    const top = Math.max(0, (startMinutes - dayStartMinutes) * (HOUR_HEIGHT / 60));
+    const height = Math.min(
+      (endMinutes - startMinutes) * (HOUR_HEIGHT / 60),
+      (END_HOUR - START_HOUR) * HOUR_HEIGHT - top
+    );
+
+    return {
+      top: `${top}px`,
+      left: '0',
+      right: '0',
+      height: `${height}px`,
+    };
   };
 
-  const handleMouseMove = (e) => {
-    if (!isSelecting) return;
-    
-    const rect = dayGridRef.current.getBoundingClientRect();
-    const y = e.clientY - rect.top;
-    
-    // Calculate end time from Y position
-    const hour = Math.floor(y / HOUR_HEIGHT) + START_HOUR;
-    const minute = Math.floor(((y % HOUR_HEIGHT) / HOUR_HEIGHT) * 60);
-    
-    const rawEndTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-    const endTime = roundToQuarterHour(rawEndTime);
-    setSelectionEnd(endTime);
+  const handleMouseDown = (e, hour, minute) => {
+    if (isPastDay) return;
+
+    e.preventDefault();
+    const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    setIsSelecting(true);
+    setSelectionStart(startTime);
+    setSelectionEnd(startTime);
+  };
+
+  const handleMouseMove = (e, hour, minute) => {
+    if (!isSelecting || isPastDay) return;
+
+    const currentTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    setSelectionEnd(currentTime);
   };
 
   const handleMouseUp = () => {
-    if (!isSelecting) return;
-    
-    setIsSelecting(false);
-    
-    // Only show modal if selection has meaningful duration (at least 15 minutes)
-    if (selectionStart && selectionEnd && selectionStart !== selectionEnd) {
-      // Ensure start_time is before end_time
-      const start = selectionStart < selectionEnd ? selectionStart : selectionEnd;
-      const end = selectionStart < selectionEnd ? selectionEnd : selectionStart;
-      
+    if (!isSelecting || !selectionStart || !selectionEnd) return;
+
+    const startMinutes = timeToMinutes(selectionStart);
+    const endMinutes = timeToMinutes(selectionEnd);
+
+    if (Math.abs(endMinutes - startMinutes) >= 30) {
+      // Only show modal if selection is at least 30 minutes
       setQuickCreateData({
-        date: date,
-        start_time: start,
-        end_time: end
+        date,
+        start_time: startMinutes < endMinutes ? selectionStart : selectionEnd,
+        end_time: startMinutes < endMinutes ? selectionEnd : selectionStart,
       });
       setShowQuickCreateModal(true);
     }
-    
+
+    // Reset selection
+    setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
   };
 
-  // Add global mouse event listeners
-  useEffect(() => {
-    const handleGlobalMouseUp = () => {
-      if (isSelecting) {
-        handleMouseUp();
-      }
-    };
-
-    const handleGlobalMouseMove = (e) => {
-      if (isSelecting) {
-        handleMouseMove(e);
-      }
-    };
-
-    if (isSelecting) {
-      document.addEventListener('mouseup', handleGlobalMouseUp);
-      document.addEventListener('mousemove', handleGlobalMouseMove);
-    }
-
-    return () => {
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-    };
-  }, [isSelecting, selectionStart, selectionEnd]);
-
-  const calculateSelectionStyle = () => {
-    if (!selectionStart || !selectionEnd) return null;
-    
-    const startMinutes = timeToMinutes(selectionStart);
-    const endMinutes = timeToMinutes(selectionEnd);
-    
-    const startHour = startMinutes / 60;
-    const top = (startHour - START_HOUR) * HOUR_HEIGHT;
-    
-    const durationMinutes = Math.abs(endMinutes - startMinutes);
-    const height = (durationMinutes / 60) * HOUR_HEIGHT;
-    
-    return {
-      position: 'absolute',
-      left: '0',
-      right: '0',
-      top: `${Math.max(0, top)}px`,
-      height: `${Math.max(15, height)}px`,
-      backgroundColor: 'rgba(59, 130, 246, 0.2)',
-      border: '2px dashed #3b82f6',
-      borderRadius: '4px',
-      zIndex: 10,
-      pointerEvents: 'none'
-    };
-  };
+  const validLessons = lessons?.filter(lesson => {
+    if (!lesson.start_time || !lesson.end_time) return false;
+    const startMinutes = timeToMinutes(lesson.start_time);
+    const endMinutes = timeToMinutes(lesson.end_time);
+    const dayStartMinutes = START_HOUR * 60;
+    const dayEndMinutes = END_HOUR * 60;
+    return !(endMinutes < dayStartMinutes || startMinutes > dayEndMinutes);
+  }) || [];
 
   return (
-    <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
-      <div className="day-header">
-        <div className="day-name">{dayName}</div>
-        <div className="day-date">
-          <Icons.Calendar style={{ marginRight: '4px', fontSize: '12px' }} />
-          {format(dateObj, 'dd MMM', { locale: fr })}
-        </div>
-        {isCurrentDay && (
-          <span className="today-badge">
-            <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
-            Aujourd'hui
-          </span>
-        )}
-      </div>
+    <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}
+         style={{ flex: 1, minWidth: '200px', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', margin: '0 4px' }}>
+      <DayHeader date={date} dayName={dayName} />
 
       <div 
-        className="day-grid"
         ref={dayGridRef}
-        onMouseDown={handleMouseDown}
-        style={{ cursor: isSelecting ? 'crosshair' : 'default' }}
+        className="day-grid-container"
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        style={{ position: 'relative' }}
       >
-        <div className="hour-markers">
-          {Array.from({ length: END_HOUR - START_HOUR + 1 }, (_, i) => START_HOUR + i).map(
-            (hour) => (
-              <div
-                key={hour}
-                className="hour-marker"
-                style={{ top: `${(hour - START_HOUR) * HOUR_HEIGHT}px` }}
-              >
-                <span className="hour-label">
-                  <Icons.Clock style={{ fontSize: '8px', marginRight: '2px' }} />
-                  {`${hour}:00`}
-                </span>
-              </div>
-            )
-          )}
-        </div>
+        <DayGrid
+          lessons={lessons}
+          onLessonClick={onLessonClick}
+          selectionStyle={calculateSelectionStyle()}
+          isSelecting={isSelecting}
+          validLessons={validLessons}
+          calculateLessonStyle={calculateLessonStyle}
+        />
 
-        {/* Selection overlay */}
-        {isSelecting && calculateSelectionStyle() && (
-          <div style={calculateSelectionStyle()} />
-        )}
-
-        {validLessons.length === 0 ? (
-          <div className="no-lessons">
-            <Icons.Calendar style={{ fontSize: '32px', color: '#adb5bd', marginBottom: '8px' }} />
-            <p>Cliquez et glissez pour créer un cours</p>
-          </div>
-        ) : (
-          <div className="lessons-container">
-            {validLessons.map((lesson) => (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                onClick={() => onLessonClick(lesson)}
-                style={calculateLessonStyle(lesson)}
-              />
-            ))}
-          </div>
-        )}
+        {/* Mouse event overlay for selection */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: isPastDay ? -1 : 20,
+            cursor: isPastDay ? 'not-allowed' : 'crosshair'
+          }}
+          onMouseDown={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const totalMinutes = Math.floor(y / (HOUR_HEIGHT / 60)) + START_HOUR * 60;
+            const hour = Math.floor(totalMinutes / 60);
+            const minute = Math.floor((totalMinutes % 60) / 30) * 30;
+            handleMouseDown(e, hour, minute);
+          }}
+          onMouseMove={(e) => {
+            if (!isSelecting) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const y = e.clientY - rect.top;
+            const totalMinutes = Math.floor(y / (HOUR_HEIGHT / 60)) + START_HOUR * 60;
+            const hour = Math.floor(totalMinutes / 60);
+            const minute = Math.floor((totalMinutes % 60) / 30) * 30;
+            handleMouseMove(e, hour, minute);
+          }}
+        />
       </div>
 
       {/* Quick Create Modal */}

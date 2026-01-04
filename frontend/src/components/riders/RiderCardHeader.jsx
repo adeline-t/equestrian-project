@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../utils/icons';
+import { Icons } from '../../lib/libraries/icons';
 import * as commonStyles from '../../styles/common/common.module.css';
 
 const RiderCardHeader = ({ rider, onEdit, onDelete }) => {

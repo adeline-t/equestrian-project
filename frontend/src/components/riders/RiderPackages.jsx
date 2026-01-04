@@ -4,8 +4,8 @@ import { useRiderPackages } from '../../hooks/useRiderPackages';
 import PackageForm from '../packages/PackageForm';
 import PackagesTable from './PackagesTable';
 import PackageDeleteModal from './PackageDeleteModal';
-import Portal from '../../utils/Portal';
-import { Icons } from '../../utils/icons';
+import Portal from '../../components/common/Portal';
+import { Icons } from '../../lib/libraries/icons';
 
 function RiderPackages({ riderId, riderName }) {
   const {

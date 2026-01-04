@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { pairingsApi, ridersApi, horsesApi } from '../../services/api';
 import PairingForm from './PairingForm';
-import Portal from '../../utils/Portal';
-import { Icons } from '../../utils/icons';
+import Portal from '../../components/common/Portal';
+import { Icons } from '../../lib/libraries/icons';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 

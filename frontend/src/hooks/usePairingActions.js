@@ -28,7 +28,7 @@ export function usePairingActions(onSuccess) {
 
   const handleSubmit = async (riderId, pairingData) => {
     try {
-      const pairingsApi = await import('../services/api').then((m) => m.pairingsApi);
+      const pairingsApi = await import('../services').then((m) => m.pairingsApi);
 
       if (editingPairing) {
         await pairingsApi.update(editingPairing.id, pairingData);
@@ -47,7 +47,7 @@ export function usePairingActions(onSuccess) {
     if (!pairingToDelete) return;
 
     try {
-      const pairingsApi = await import('../services/api').then((m) => m.pairingsApi);
+      const pairingsApi = await import('../services').then((m) => m.pairingsApi);
       const today = new Date().toISOString().split('T')[0];
       await pairingsApi.update(pairingToDelete.id, {
         pairing_end_date: today,
@@ -64,7 +64,7 @@ export function usePairingActions(onSuccess) {
     if (!pairingToDelete) return;
 
     try {
-      const pairingsApi = await import('../services/api').then((m) => m.pairingsApi);
+      const pairingsApi = await import('../services').then((m) => m.pairingsApi);
       await pairingsApi.delete(pairingToDelete.id);
       onSuccess('Pension supprimée définitivement');
       setShowDeleteModal(false);

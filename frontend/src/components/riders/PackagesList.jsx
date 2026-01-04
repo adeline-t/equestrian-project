@@ -1,6 +1,6 @@
 import React from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency } from '../../lib/helpers/formatters';
 import * as commonStyles from '../../styles/common/common.module.css';
 
 const PackagesList = ({ packages, loading, rider, onStatusChange, onAdd }) => {

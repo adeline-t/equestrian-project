@@ -5,8 +5,8 @@ import PackageForm from './PackageForm';
 import PackagesTable from './PackagesTable';
 import PackageFilterButtons from './PackageFilterButtons';
 import PackageDeleteModal from '../riders/PackageDeleteModal';
-import Portal from '../../utils/Portal';
-import { Icons } from '../../utils/icons';
+import Portal from '../../components/common/Portal';
+import { Icons } from '../../lib/libraries/icons';
 
 function PackagesList() {
   const {

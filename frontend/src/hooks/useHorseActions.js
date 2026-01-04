@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { horsesApi } from '../services/api';
+import { horsesApi } from '../services';
 
 /**
  * Custom hook for managing horse CRUD operations

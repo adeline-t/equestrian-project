@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ridersApi } from '../services/api';
+import { ridersApi } from '../services';
 
 /**
  * Custom hook for fetching and managing riders data

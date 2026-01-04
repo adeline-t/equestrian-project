@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHorsesList } from '../../hooks/useHorsesList';
-import { Icons } from '../../utils/icons';
+import { Icons } from '../../lib/libraries/icons';
 import HorseForm from './HorseForm';
 import HorsesTable from './HorsesTable';
 import EmptyState from './EmptyState';

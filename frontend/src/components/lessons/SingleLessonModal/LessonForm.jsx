@@ -1,7 +1,7 @@
 import React from 'react';
-import { Icons } from '../../../utils/icons.jsx';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import { LESSON_TYPES } from '../../../constants/index.js';
-import { calculateDuration } from '../../../utils/formatters/index.js';
+import { calculateDuration } from '../../../lib/helpers/formatters/index.js';
 
 /**
  * Lesson Form Component for SingleLessonModal

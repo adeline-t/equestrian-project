@@ -1,13 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import ErrorBoundary from './utils/ErrorBoundary';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import RidersList from './components/riders/RidersList';
 import HorsesList from './components/horses/HorsesList';
 import PairingsList from './components/pairings/PairingsList';
 import PackagesList from './components/packages/PackagesList';
 import CalendarView from './components/calendar/CalendarView';
 import TemplateManagement from './components/templates/TemplateManagement';
-import { Icons } from './utils/icons';
+import { Icons } from './lib/libraries/icons';
 
 function App() {
   return (

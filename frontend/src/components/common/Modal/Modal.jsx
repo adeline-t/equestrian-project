@@ -1,6 +1,6 @@
 import React from 'react';
-import Portal from '../../../utils/Portal';
-import { Icons } from '../../../utils/icons';
+import Portal from '../../../components/common/Portal';
+import { Icons } from '../../../lib/libraries/icons';
 import './Modal.css';
 
 /**

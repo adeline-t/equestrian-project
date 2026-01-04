@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { templatesApi } from '../services/calendarApi';
-import { ridersApi, horsesApi } from '../services/api';
+import { ridersApi, horsesApi } from '../services';
 
 /**
  * Custom hook for managing template form state and operations

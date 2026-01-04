@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ridersApi, horsesApi } from '../services/api';
+import { ridersApi, horsesApi } from '../services';
 import { lessonsApi } from '../services/calendarApi';
 
 /**

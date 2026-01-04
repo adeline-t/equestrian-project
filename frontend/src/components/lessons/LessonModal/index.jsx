@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { lessonsApi } from '../../../services/calendarApi';
-import Portal from '../../../utils/Portal';
-import { Icons } from '../../../utils/icons';
-import { formatTime } from '../../../utils/formatters';
+import Portal from '../../../components/common/Portal';
+import { Icons } from '../../../lib/libraries/icons';
+import { formatTime } from '../../../lib/helpers/formatters';
 import {
   getLessonTypeIcon,
   isBlockedLesson,

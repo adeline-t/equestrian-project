@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Portal from '../../../utils/Portal';
-import { Icons } from '../../../utils/icons';
+import Portal from '../../../components/common/Portal';
+import { Icons } from '../../../lib/libraries/icons';
 import PackagePreview from './PackagePreview';
 import { usePackageForm } from '../../../hooks/usePackageForm';
 import '../../../styles/common/modal.css';

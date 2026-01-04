@@ -1,6 +1,6 @@
 import React from 'react';
 import { CurrencyDollarIcon, UserPlusIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import { Icons } from '../../utils/icons';
+import { Icons } from '../../lib/libraries/icons';
 import * as commonStyles from '../../styles/common/common.module.css';
 
 const RiderInfo = ({ rider, stats }) => {

@@ -1,0 +1,134 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import Modal from './Modal/Modal';
+import { Icons } from '../../lib/libraries/icons';
+import '../../styles/common/buttons.css';
+
+/**
+ * Unified Delete Confirmation Modal Component
+ * Handles different item types with consistent UI using common Modal
+ */
+function DeleteConfirmationModal({
+  isOpen,
+  onClose,
+  onRemoveFromInventory,
+  onPermanentDelete,
+  itemType = 'forfait',
+  itemName,
+}) {
+  const labels = {
+    forfait: {
+      title: 'Que faire avec ce forfait ?',
+      removeText: "Retirer de l'inventaire",
+      removeDescription:
+        "Le forfait restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
+      deleteDescription:
+        'Le forfait sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
+    },
+    pension: {
+      title: 'Que faire avec cette pension ?',
+      removeText: "Retirer de l'inventaire",
+      removeDescription:
+        "La pension restera sauvegardée mais sera marquée comme inactive. La date de fin sera définie à aujourd'hui.",
+      deleteDescription:
+        'Les données de la pension seront supprimées de la base de données de manière permanente. Cette action ne peut pas être annulée.',
+    },
+    cheval: {
+      title: itemName ? `Que faire avec ${itemName} ?` : 'Que faire avec ce cheval ?',
+      removeText: "Retirer de l'inventaire",
+      removeDescription:
+        "Le cheval restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
+      deleteDescription:
+        'Le cheval sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
+    },
+    pairing: {
+      title: 'Que faire avec cette pension ?',
+      removeText: "Retirer de l'inventaire",
+      removeDescription:
+        'La pension restera dans la base de données mais sera marquée comme inactive. La date de fin sera définie à aujourd\'hui.',
+      deleteDescription:
+        'La pension sera supprimée de la base de données de manière permanente. Cette action ne peut pas être annulée.',
+    },
+  };
+
+  const label = labels[itemType] || labels.forfait;
+
+  const footer = (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div>
+        <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+          <Icons.Remove style={{ marginRight: '8px' }} />
+          {label.removeText}
+        </h4>
+        <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+          {label.removeDescription}
+        </p>
+        <button
+          className="btn btn-warning"
+          onClick={onRemoveFromInventory}
+          style={{ width: '100%' }}
+        >
+          <Icons.Remove style={{ marginRight: '8px' }} />
+          {label.removeText}
+        </button>
+      </div>
+
+      <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+        <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
+          <Icons.Delete style={{ marginRight: '8px' }} />
+          Supprimer définitivement
+        </h4>
+        <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+          {label.deleteDescription}
+        </p>
+        <button
+          className="btn btn-danger"
+          onClick={onPermanentDelete}
+          style={{ width: '100%' }}
+        >
+          <Icons.Delete style={{ marginRight: '8px' }} />
+          Supprimer définitivement
+        </button>
+      </div>
+
+      <button
+        className="btn btn-secondary"
+        onClick={onClose}
+        style={{ width: '100%' }}
+      >
+        <Icons.Cancel style={{ marginRight: '8px' }} />
+        Annuler
+      </button>
+    </div>
+  );
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={
+        <>
+          <Icons.Warning style={{ marginRight: '8px', color: '#ed8936' }} />
+          {label.title}
+        </>
+      }
+      footer={footer}
+      size="small"
+    >
+      <p style={{ marginBottom: '20px', color: '#4a5568' }}>
+        Choisissez l'action à effectuer :
+      </p>
+    </Modal>
+  );
+}
+
+DeleteConfirmationModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onRemoveFromInventory: PropTypes.func.isRequired,
+  onPermanentDelete: PropTypes.func.isRequired,
+  itemType: PropTypes.oneOf(['forfait', 'pension', 'cheval', 'pairing']),
+  itemName: PropTypes.string,
+};
+
+export default DeleteConfirmationModal;

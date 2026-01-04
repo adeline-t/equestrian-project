@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { horsesApi } from '../services/api';
+import { horsesApi } from '../services';
 
 /**
  * Custom hook for fetching and managing horses data

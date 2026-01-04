@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../utils/icons';
+import { Icons } from '../../../lib/libraries/icons';
 
 function PackagePreview({ formData, selectedRider }) {
   if (

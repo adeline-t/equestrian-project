@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { packagesApi } from '../services/api';
+import { packagesApi } from '../services';
 
 /**
  * Custom hook for managing package CRUD operations

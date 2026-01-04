@@ -4,7 +4,7 @@ import { useHorseForm } from '../../hooks/useHorseForm';
 import BasicInfoFields from './HorseForm/BasicInfoFields';
 import OwnershipFields from './HorseForm/OwnershipFields';
 import FormActions from './HorseForm/FormActions';
-import { Icons } from '../../utils/icons';
+import { Icons } from '../../lib/libraries/icons';
 
 function HorseForm({ horse, onSubmit, onCancel }) {
   const {
