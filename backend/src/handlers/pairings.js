@@ -69,7 +69,7 @@ export async function handlePairings(request, env) {
           pairing_start_date,
           pairing_end_date,
           riders (id, name, phone, email),
-          horses (id, name, kind, is_owned_by_laury)
+          horses (id, name, kind, is_owned_by)
         `
         )
         .eq('id', pairingId)
