@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Portal from '../../common/Portal';
+import Modal from '../../common/Modal.jsx';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import { pairingsApi } from '../../../services/api';
 import PairingForm from '../PairingForm';
@@ -151,6 +151,7 @@ function PairingsList() {
           {error}
         </div>
       )}
+
       {successMessage && (
         <div className="success">
           <Icons.Check style={{ marginRight: '8px' }} />
@@ -170,40 +171,34 @@ function PairingsList() {
         />
       )}
 
-      {/* Form Modal */}
-      {showModal && (
-        <Portal>
-          <div className="modal-overlay" onClick={() => setShowModal(false)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h3>
-                  {editingPairing ? (
-                    <>
-                      <Icons.Edit style={{ marginRight: '8px' }} />
-                      Modifier la pension
-                    </>
-                  ) : (
-                    <>
-                      <Icons.Add style={{ marginRight: '8px' }} />
-                      Nouvelle pension
-                    </>
-                  )}
-                </h3>
-                <button className="modal-close" onClick={() => setShowModal(false)}>
-                  <Icons.Close />
-                </button>
-              </div>
-              <PairingForm
-                pairing={editingPairing}
-                riders={riders}
-                horses={horses}
-                onSubmit={handleFormSubmit}
-                onCancel={() => setShowModal(false)}
-              />
-            </div>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {editingPairing ? (
+              <>
+                <Icons.Edit />
+                Modifier la pension
+              </>
+            ) : (
+              <>
+                <Icons.Add />
+                Nouvelle pension
+              </>
+            )}
           </div>
-        </Portal>
-      )}
+        }
+        size="medium"
+      >
+        <PairingForm
+          pairing={editingPairing}
+          riders={riders}
+          horses={horses}
+          onSubmit={handleFormSubmit}
+          onCancel={() => setShowModal(false)}
+        />
+      </Modal>
 
       {/* Delete Modal */}
       <PairingDeleteModal

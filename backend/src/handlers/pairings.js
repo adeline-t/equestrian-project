@@ -147,6 +147,8 @@ export async function handlePairings(request, env) {
       const pairingId = parseInt(pathParts[2]);
       const body = await request.json().catch(() => null);
 
+      console.log('🔍 PUT /pairings/:id - ID:', pairingId, 'Body:', JSON.stringify(body));
+
       if (isNaN(pairingId) || !body) {
         return jsonResponse(
           { error: 'ID ou corps de requête invalide' },
@@ -155,11 +157,51 @@ export async function handlePairings(request, env) {
         );
       }
 
+      // Prepare update data - only include provided fields
       const updateData = {
-        pairing_start_date: body.pairing_start_date || null,
-        pairing_end_date: body.pairing_end_date || null,
         updated_at: new Date().toISOString(),
       };
+
+      // Only update dates if provided and not empty
+      if (body.pairing_start_date !== undefined && body.pairing_start_date !== '') {
+        updateData.pairing_start_date = body.pairing_start_date;
+      }
+      if (body.pairing_end_date !== undefined && body.pairing_end_date !== '') {
+        updateData.pairing_end_date = body.pairing_end_date;
+      }
+
+      // Optionally allow updating rider_id and horse_id
+      if (body.rider_id !== undefined && body.rider_id !== null) {
+        const riderId = parseInt(body.rider_id);
+        if (!isNaN(riderId)) {
+          const { error: riderError } = await db
+            .from('riders')
+            .select('id')
+            .eq('id', riderId)
+            .single();
+
+          if (!riderError) {
+            updateData.rider_id = riderId;
+          }
+        }
+      }
+
+      if (body.horse_id !== undefined && body.horse_id !== null) {
+        const horseId = parseInt(body.horse_id);
+        if (!isNaN(horseId)) {
+          const { error: horseError } = await db
+            .from('horses')
+            .select('id')
+            .eq('id', horseId)
+            .single();
+
+          if (!horseError) {
+            updateData.horse_id = horseId;
+          }
+        }
+      }
+
+      console.log('📝 Update data:', JSON.stringify(updateData));
 
       const { data, error } = await db
         .from('rider_horse_pairings')
@@ -167,18 +209,23 @@ export async function handlePairings(request, env) {
         .eq('id', pairingId)
         .select(
           `
-          id,
-          rider_id,
-          horse_id,
-          pairing_start_date,
-          pairing_end_date,
-          riders (id, name),
-          horses (id, name, kind, is_owned_by_laury)
-        `
+      id,
+      rider_id,
+      horse_id,
+      pairing_start_date,
+      pairing_end_date,
+      riders (id, name),
+      horses (id, name, kind, is_owned_by)
+    `
         )
         .single();
 
-      if (error) return handleDatabaseError(error, 'pairings.update');
+      if (error) {
+        console.error('❌ Database error:', JSON.stringify(error));
+        return handleDatabaseError(error, 'pairings.update');
+      }
+
+      console.log('✅ Pairing updated successfully');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 

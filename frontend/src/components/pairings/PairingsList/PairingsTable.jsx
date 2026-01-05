@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import { isActive } from '../../../lib/helpers/filters/activityFilters.js';
-import { HORSE_KIND_LABELS } from '../../../constants/horses.js';
+import { getHorseKindLabel } from '../../../constants/horses.js';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';
 
@@ -45,7 +45,7 @@ function PairingsTable({ pairings, onEdit, onDelete }) {
               </td>
               <td>
                 <span className={`badge badge-${pairing.horses?.kind}`}>
-                  {HORSE_KIND_LABELS[pairing.horses?.kind] || pairing.horses?.kind}
+                  {getHorseKindLabel(pairing.horses?.kind) || pairing.horses?.kind}
                 </span>
               </td>
               <td>{pairing.pairing_start_date || '-'}</td>
@@ -53,11 +53,11 @@ function PairingsTable({ pairings, onEdit, onDelete }) {
               <td>{getStatusBadge(pairing.pairing_start_date, pairing.pairing_end_date)}</td>
               <td className="actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(pairing)}>
-                  <Icons.Edit style={{ marginRight: '4px' }} />
+                  <Icons.Edit />
                   Modifier
                 </button>
                 <button className="btn btn-danger btn-sm" onClick={() => onDelete(pairing)}>
-                  <Icons.Delete style={{ marginRight: '4px' }} />
+                  <Icons.Delete />
                   Supprimer
                 </button>
               </td>

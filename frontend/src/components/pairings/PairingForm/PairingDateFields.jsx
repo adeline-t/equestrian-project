@@ -1,14 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 
-const PairingDateFields = ({ formData, onChange, error }) => {
+const PairingDateFields = ({ formData, onChange }) => {
   return (
     <div className="form-section">
-      <h3>Période du pairing</h3>
+      <h3>Période de la pension</h3>
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="pairing_start_date">Date de début</label>
+          <label htmlFor="pairing_start_date">
+            Date de début <span className="required">*</span>
+          </label>
           <input
             type="date"
             id="pairing_start_date"
@@ -16,6 +19,7 @@ const PairingDateFields = ({ formData, onChange, error }) => {
             value={formData.pairing_start_date}
             onChange={onChange}
             className="form-input"
+            required
           />
         </div>
 
@@ -27,25 +31,24 @@ const PairingDateFields = ({ formData, onChange, error }) => {
             name="pairing_end_date"
             value={formData.pairing_end_date}
             onChange={onChange}
-            className={`form-input ${error?.includes('postérieure') ? 'error' : ''}`}
+            className="form-input"
           />
-          <small className="form-help">Laissez vide si le pairing est toujours actif</small>
+          <small className="form-help">Laissez vide si la pension est toujours active</small>
         </div>
       </div>
 
-      {error && (error.includes('début') || error.includes('postérieure')) && (
-        <div className="alert alert-error" style={{ marginTop: '12px' }}>
-          <strong>Erreur:</strong> {error}
-        </div>
-      )}
-
       <div className="alert alert-info" style={{ marginTop: '16px' }}>
         <Icons.Info style={{ marginRight: '8px' }} />
-        Le pairing permettra à ce cavalier de monter ce cheval pendant la période spécifiée. Les
+        La pension permettra à ce cavalier de monter ce cheval pendant la période spécifiée. Les
         dates ne sont pas strictes - elles servent principalement de référence pour l'organisation.
       </div>
     </div>
   );
+};
+
+PairingDateFields.propTypes = {
+  formData: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default PairingDateFields;

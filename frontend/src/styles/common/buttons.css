@@ -4,6 +4,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 500;
@@ -20,15 +21,27 @@
   cursor: not-allowed;
 }
 
+/* Icon alignment in buttons */
+.btn svg,
+.btn i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: inherit;
+}
+
 /* Button sizes */
 .btn-sm {
   padding: 6px 12px;
   font-size: 13px;
+  gap: 6px;
 }
 
 .btn-lg {
   padding: 12px 24px;
   font-size: 16px;
+  gap: 10px;
 }
 
 /* Button variants */
@@ -125,10 +138,29 @@
   padding: 8px;
   width: 36px;
   height: 36px;
+  gap: 0;
 }
 
 /* Button groups */
 .btn-group {
   display: inline-flex;
   gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .btn-lg {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
 }

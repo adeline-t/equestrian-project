@@ -9,8 +9,8 @@ import { validatePairingForm } from '../lib/helpers/validators';
  */
 export function usePairingForm(pairing, riderId) {
   const [formData, setFormData] = useState({
-    rider_id: '',
-    horse_id: '',
+    rider_id: null,
+    horse_id: null,
     pairing_start_date: '',
     pairing_end_date: '',
   });
@@ -19,16 +19,26 @@ export function usePairingForm(pairing, riderId) {
 
   useEffect(() => {
     if (pairing) {
+      // Editing mode
       setFormData({
-        rider_id: pairing.rider_id?.toString() || '',
-        horse_id: pairing.horse_id?.toString() || '',
+        rider_id: pairing.rider_id ? parseInt(pairing.rider_id) : null,
+        horse_id: pairing.horse_id ? parseInt(pairing.horse_id) : null,
         pairing_start_date: pairing.pairing_start_date || '',
         pairing_end_date: pairing.pairing_end_date || '',
       });
-    } else {
+    } else if (riderId) {
+      // Creating mode with pre-filled riderId
       setFormData({
-        rider_id: riderId?.toString() || '',
-        horse_id: '',
+        rider_id: parseInt(riderId),
+        horse_id: null,
+        pairing_start_date: '',
+        pairing_end_date: '',
+      });
+    } else {
+      // Creating mode without pre-filled data
+      setFormData({
+        rider_id: null,
+        horse_id: null,
         pairing_start_date: '',
         pairing_end_date: '',
       });
@@ -37,9 +47,14 @@ export function usePairingForm(pairing, riderId) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Convert to number for rider_id and horse_id
+    const finalValue =
+      name === 'rider_id' || name === 'horse_id' ? (value ? parseInt(value) : null) : value;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: finalValue,
     }));
 
     // Clear error when user starts typing
@@ -55,38 +70,14 @@ export function usePairingForm(pairing, riderId) {
       setError(firstError);
       return false;
     }
+    setError(''); // Clear error if validation passes
     return true;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      setSubmitting(true);
-      await onSubmit(formData);
-    } catch (err) {
-      setError(err.message || 'Une erreur est survenue lors de la sauvegarde');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setError('');
-    if (onCancel) {
-      onCancel();
-    }
   };
 
   const resetForm = () => {
     setFormData({
-      rider_id: riderId?.toString() || '',
-      horse_id: '',
+      rider_id: riderId ? parseInt(riderId) : null,
+      horse_id: null,
       pairing_start_date: '',
       pairing_end_date: '',
     });
@@ -101,12 +92,11 @@ export function usePairingForm(pairing, riderId) {
 
     // Actions
     handleChange,
-    handleSubmit,
-    handleCancel,
     validateForm,
     resetForm,
-    
+
     // State setters
     setError,
+    setSubmitting,
   };
 }

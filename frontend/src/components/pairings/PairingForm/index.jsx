@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 import { usePairingForm } from '../../../hooks/usePairingForm';
 import PairingSelectionFields from './PairingSelectionFields';
 import PairingDateFields from './PairingDateFields';
@@ -13,12 +14,12 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
 
     // Actions
     handleChange,
-    handleSubmit,
-    handleCancel,
     validateForm,
+    resetForm,
 
     // State setters
     setError,
+    setSubmitting,
   } = usePairingForm(pairing, riderId);
 
   // Handle form submission
@@ -31,9 +32,26 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
     }
 
     try {
-      await onSubmit(formData);
+      setSubmitting(true);
+
+      // Préparer les données à envoyer - ne pas envoyer les chaînes vides
+      const dataToSubmit = {
+        pairing_start_date: formData.pairing_start_date || undefined,
+        pairing_end_date: formData.pairing_end_date || undefined,
+      };
+
+      // Si c'est une création, ajouter rider_id et horse_id
+      if (!pairing) {
+        dataToSubmit.rider_id = formData.rider_id;
+        dataToSubmit.horse_id = formData.horse_id;
+      }
+
+      await onSubmit(dataToSubmit);
     } catch (err) {
+      console.error('Error submitting pairing form:', err);
       setError(err.message || 'Une erreur est survenue lors de la sauvegarde');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -41,20 +59,27 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="pairing-form">
+      {/* Error Alert */}
+      {error && (
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          <strong>Erreur:</strong> {error}
+        </div>
+      )}
+
       <PairingSelectionFields
         formData={formData}
         onChange={handleChange}
         riders={riders}
         horses={horses}
-        error={error}
         riderId={riderId}
       />
 
-      <PairingDateFields formData={formData} onChange={handleChange} error={error} />
+      <PairingDateFields formData={formData} onChange={handleChange} />
 
       <PairingFormActions
         onSubmit={handleFormSubmit}
-        onCancel={handleCancel}
+        onCancel={onCancel}
         submitting={submitting}
         isEdit={isEdit}
       />
