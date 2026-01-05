@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import Modal from '../../common/Modal';
 import HorseForm from '../HorseForm';
 import FilterButtons from './FilterButtons';
 import HorsesTable from './HorsesTable';
@@ -17,22 +18,25 @@ import '../../../styles/components/horses.css';
 
 function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [filter, setFilter] = useState('all');
 
   // Load horses data
-  const { horses, loading, error, reload, setError } = useHorsesList();
+  const { horses, loading, error, reload } = useHorsesList();
 
   // Handle success messages
   const handleSuccess = (message) => {
     setSuccessMessage(message);
+    setErrorMessage('');
     setTimeout(() => setSuccessMessage(''), 3000);
     reload();
   };
 
   // Handle errors
   const handleError = (err) => {
-    setError(err.message);
-    setTimeout(() => setError(null), 5000);
+    const errorMsg = err?.message || 'Une erreur est survenue';
+    setErrorMessage(errorMsg);
+    setTimeout(() => setErrorMessage(''), 5000);
   };
 
   // Horse actions
@@ -40,8 +44,10 @@ function HorsesList() {
 
   const handleFormSubmit = async (horseData) => {
     try {
+      setErrorMessage('');
       await horseActions.handleSubmit(horseData);
     } catch (err) {
+      console.error('Error submitting horse form:', err);
       handleError(err);
       throw err;
     }
@@ -49,16 +55,20 @@ function HorsesList() {
 
   const handleRemoveFromInventory = async () => {
     try {
+      setErrorMessage('');
       await horseActions.handleRemoveFromInventory();
     } catch (err) {
+      console.error('Error removing horse:', err);
       handleError(err);
     }
   };
 
   const handlePermanentDelete = async () => {
     try {
+      setErrorMessage('');
       await horseActions.handlePermanentDelete();
     } catch (err) {
+      console.error('Error deleting horse:', err);
       handleError(err);
     }
   };
@@ -66,9 +76,22 @@ function HorsesList() {
   // Horse riders modal
   const ridersModal = useHorseRiders();
 
+  const handleRidersClick = async (horse) => {
+    try {
+      setErrorMessage('');
+      await ridersModal.handleRidersClick(horse);
+    } catch (err) {
+      console.error('Error loading riders:', err);
+      handleError(err);
+    }
+  };
+
   // Calculate statistics and filter horses
   const stats = calculateHorseStats(horses);
   const filteredHorses = filterHorsesByKind(horses, filter);
+
+  // Determine which error to display
+  const displayError = errorMessage || error;
 
   // Loading state
   if (loading) {
@@ -92,14 +115,17 @@ function HorsesList() {
         <FilterButtons filter={filter} stats={stats} onFilterChange={setFilter} />
       )}
 
-      {error && (
-        <div className="error">
-          <Icons.Warning /> {error}
+      {displayError && (
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          {displayError}
         </div>
       )}
+
       {successMessage && (
-        <div className="success">
-          <Icons.Check /> {successMessage}
+        <div className="alert alert-success" style={{ marginBottom: '20px' }}>
+          <Icons.Check style={{ marginRight: '8px' }} />
+          {successMessage}
         </div>
       )}
 
@@ -112,38 +138,35 @@ function HorsesList() {
           horses={filteredHorses}
           onEdit={horseActions.handleEdit}
           onDelete={horseActions.handleDeleteClick}
-          onRidersClick={ridersModal.handleRidersClick}
+          onRidersClick={handleRidersClick}
         />
       )}
 
       {/* Horse Form Modal */}
-      {horseActions.showModal && (
-        <div className="modal-overlay" onClick={horseActions.closeModal}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>
-                {horseActions.editingHorse ? (
-                  <>
-                    <Icons.Edit style={{ marginRight: '8px' }} /> Modifier le cheval
-                  </>
-                ) : (
-                  <>
-                    <Icons.Add style={{ marginRight: '8px' }} /> Nouveau cheval
-                  </>
-                )}
-              </h3>
-              <button className="modal-close" onClick={horseActions.closeModal}>
-                <Icons.Close />
-              </button>
-            </div>
-            <HorseForm
-              horse={horseActions.editingHorse}
-              onSubmit={handleFormSubmit}
-              onCancel={horseActions.closeModal}
-            />
+      <Modal
+        isOpen={horseActions.showModal}
+        onClose={horseActions.closeModal}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {horseActions.editingHorse ? (
+              <>
+                <Icons.Edit /> Modifier le cheval
+              </>
+            ) : (
+              <>
+                <Icons.Add /> Nouveau cheval
+              </>
+            )}
           </div>
-        </div>
-      )}
+        }
+        size="medium"
+      >
+        <HorseForm
+          horse={horseActions.editingHorse}
+          onSubmit={handleFormSubmit}
+          onCancel={horseActions.closeModal}
+        />
+      </Modal>
 
       {/* Riders Modal */}
       <RidersModal
@@ -151,9 +174,10 @@ function HorsesList() {
         onClose={ridersModal.closeRidersModal}
         horseRiders={ridersModal.selectedHorseRiders}
         loading={ridersModal.loadingRiders}
+        error={ridersModal.error}
       />
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal - UTILISEZ-LE DIRECTEMENT, PAS ENVELOPPÉ */}
       <DeleteConfirmationModal
         isOpen={horseActions.showDeleteModal}
         onClose={horseActions.closeDeleteModal}

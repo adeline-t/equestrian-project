@@ -36,7 +36,7 @@ export function useHorseActions(onSuccess) {
         await horsesApi.create(horseData);
         onSuccess('Cheval créé avec succès');
       }
-      setShowModal(false);
+      closeModal();
     } catch (err) {
       throw err;
     }
@@ -51,8 +51,7 @@ export function useHorseActions(onSuccess) {
         activity_end_date: today,
       });
       onSuccess(`${horseToDelete.name} a été retiré de l'inventaire`);
-      setShowDeleteModal(false);
-      setHorseToDelete(null);
+      closeDeleteModal();
     } catch (err) {
       throw err;
     }
@@ -64,8 +63,7 @@ export function useHorseActions(onSuccess) {
     try {
       await horsesApi.delete(horseToDelete.id);
       onSuccess(`${horseToDelete.name} a été supprimé définitivement`);
-      setShowDeleteModal(false);
-      setHorseToDelete(null);
+      closeDeleteModal();
     } catch (err) {
       throw err;
     }
@@ -73,6 +71,7 @@ export function useHorseActions(onSuccess) {
 
   const closeModal = () => {
     setShowModal(false);
+    setEditingHorse(null); // Clear editing state when closing
   };
 
   const closeDeleteModal = () => {
@@ -81,16 +80,21 @@ export function useHorseActions(onSuccess) {
   };
 
   return {
+    // State
     showModal,
     editingHorse,
     showDeleteModal,
     horseToDelete,
+
+    // Actions
     handleCreate,
     handleEdit,
     handleDeleteClick,
     handleSubmit,
     handleRemoveFromInventory,
     handlePermanentDelete,
+
+    // Modal handlers
     closeModal,
     closeDeleteModal,
   };

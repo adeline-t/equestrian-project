@@ -7,8 +7,11 @@ const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipO
       <h3>Propriétaire</h3>
 
       <div className="form-group">
-        <label>Possession *</label>
+        <label htmlFor="is_owned_by">
+          Possession <span className="required">*</span>
+        </label>
         <select
+          id="is_owned_by"
           value={formData.is_owned_by}
           onChange={(e) => onChange('is_owned_by', e.target.value)}
           className="form-select"
@@ -24,7 +27,9 @@ const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipO
 
       {formData.is_owned_by === 'Propriétaire' && (
         <div className="form-group">
-          <label>Propriétaire *</label>
+          <label htmlFor="owner_id">
+            Propriétaire <span className="required">*</span>
+          </label>
           {loadingRiders ? (
             <div className="loading" style={{ textAlign: 'center', padding: '12px' }}>
               <Icons.Loading className="spin" style={{ fontSize: '20px' }} />
@@ -39,6 +44,7 @@ const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipO
             </div>
           ) : (
             <select
+              id="owner_id"
               value={formData.owner_id || ''}
               onChange={(e) =>
                 onChange('owner_id', e.target.value ? parseInt(e.target.value) : null)

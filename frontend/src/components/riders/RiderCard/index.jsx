@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Portal from '../../common/Portal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import PackageForm from '../../packages/PackageForm';
 import PairingForm from '../../pairings/PairingForm';
@@ -117,181 +116,148 @@ function RiderCard({ riderId, onClose }) {
   // Loading state
   if (loading) {
     return (
-      <Portal>
-        <div className="modal-overlay">
-          <div className="modal rider-card-modal">
-            <div className="loading">
-              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
-              Chargement des informations du cavalier...
-            </div>
-          </div>
+      <Modal isOpen={true} onClose={onClose} size="large">
+        <div className="modal-loading">
+          <Icons.Loading className="spin" style={{ fontSize: '32px' }} />
+          <p>Chargement des informations du cavalier...</p>
         </div>
-      </Portal>
+      </Modal>
     );
   }
 
   // Error state
   if (!rider) {
     return (
-      <Portal>
-        <div className="modal-overlay" onClick={onClose}>
-          <div className="modal rider-card-modal">
-            <div className="error">
-              <Icons.Warning style={{ marginRight: '8px' }} />
-              Cavalier non trouvé
-            </div>
-          </div>
+      <Modal isOpen={true} onClose={onClose} size="small">
+        <div className="modal-error">
+          <Icons.Warning style={{ fontSize: '32px', color: '#dc3545' }} />
+          <h3>Cavalier non trouvé</h3>
         </div>
-      </Portal>
+      </Modal>
     );
   }
 
   return (
-    <Portal>
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal rider-card-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-header">
-            <h2>
-              <Icons.User style={{ marginRight: '8px' }} />
-              {rider.name}
-            </h2>
-            <button className="modal-close" onClick={onClose}>
-              <Icons.Close />
-            </button>
+    <>
+      {/* Main Rider Card Modal */}
+      <Modal
+        isOpen={true}
+        onClose={onClose}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icons.User />
+            {rider.name}
           </div>
-
-          <div className="modal-body rider-card-content">
-            {successMessage && (
-              <div className="alert alert-success mb-20">
-                <Icons.Check style={{ marginRight: '8px' }} />
-                {successMessage}
-              </div>
-            )}
-            {(error || loadError) && (
-              <div className="alert alert-error mb-20">
-                <Icons.Warning style={{ marginRight: '8px' }} />
-                {error || loadError}
-              </div>
-            )}
-
-            <RiderInfo rider={rider} />
-            <OwnedHorsesList horses={activeOwnedHorses} />
-            <PackagesList
-              packages={activePackages}
-              onAdd={packageActions.handleCreate}
-              onEdit={packageActions.handleEdit}
-            />
-            <PairingsList
-              pairings={activePairings}
-              onAdd={pairingActions.handleCreate}
-              onEdit={pairingActions.handleEdit}
-              onDelete={pairingActions.handleDeleteClick}
-            />
+        }
+        size="large"
+      >
+        {successMessage && (
+          <div className="alert alert-success mb-20">
+            <Icons.Check style={{ marginRight: '8px' }} />
+            {successMessage}
           </div>
-        </div>
-
-        {/* Package Form Modal */}
-        {packageActions.showPackageModal && (
-          <div
-            className="modal-overlay"
-            onClick={packageActions.closeModal}
-            style={{ zIndex: 1001 }}
-          >
-            <div
-              className="modal"
-              onClick={(e) => e.stopPropagation()}
-              style={{ maxHeight: '90vh', overflowY: 'auto' }}
-            >
-              <div className="modal-header">
-                <h3>
-                  {packageActions.editingPackage ? (
-                    <>
-                      <Icons.Edit style={{ marginRight: '8px' }} />
-                      Modifier le forfait
-                    </>
-                  ) : (
-                    <>
-                      <Icons.Add style={{ marginRight: '8px' }} />
-                      Nouveau forfait
-                    </>
-                  )}
-                </h3>
-                <button className="modal-close" onClick={packageActions.closeModal}>
-                  <Icons.Close />
-                </button>
-              </div>
-              <PackageForm
-                package={packageActions.editingPackage}
-                riders={riders}
-                riderId={riderId}
-                onSubmit={handlePackageSubmit}
-                onCancel={packageActions.closeModal}
-              />
-            </div>
+        )}
+        {(error || loadError) && (
+          <div className="alert alert-error mb-20">
+            <Icons.Warning style={{ marginRight: '8px' }} />
+            {error || loadError}
           </div>
         )}
 
-        {/* Pairing Form Modal */}
-        {pairingActions.showPairingModal && (
-          <div
-            className="modal-overlay"
-            onClick={pairingActions.closeModal}
-            style={{ zIndex: 1001 }}
-          >
-            <div
-              className="modal"
-              onClick={(e) => e.stopPropagation()}
-              style={{ maxHeight: '90vh', overflowY: 'auto' }}
-            >
-              <div className="modal-header">
-                <h3>
-                  {pairingActions.editingPairing ? (
-                    <>
-                      <Icons.Edit style={{ marginRight: '8px' }} />
-                      Modifier la pension
-                    </>
-                  ) : (
-                    <>
-                      <Icons.Add style={{ marginRight: '8px' }} />
-                      Nouvelle pension
-                    </>
-                  )}
-                </h3>
-                <button className="modal-close" onClick={pairingActions.closeModal}>
-                  <Icons.Close />
-                </button>
-              </div>
-              <PairingForm
-                pairing={pairingActions.editingPairing}
-                riders={riders}
-                horses={horses}
-                riderId={riderId}
-                onSubmit={handlePairingSubmit}
-                onCancel={pairingActions.closeModal}
-              />
-            </div>
+        <RiderInfo rider={rider} />
+        <OwnedHorsesList horses={activeOwnedHorses} />
+        <PackagesList
+          packages={activePackages}
+          onAdd={packageActions.handleCreate}
+          onEdit={packageActions.handleEdit}
+        />
+        <PairingsList
+          pairings={activePairings}
+          onAdd={pairingActions.handleCreate}
+          onEdit={pairingActions.handleEdit}
+          onDelete={pairingActions.handleDeleteClick}
+        />
+      </Modal>
+
+      {/* Package Form Modal */}
+      <Modal
+        isOpen={packageActions.showPackageModal}
+        onClose={packageActions.closeModal}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {packageActions.editingPackage ? (
+              <>
+                <Icons.Edit />
+                Modifier le forfait
+              </>
+            ) : (
+              <>
+                <Icons.Add />
+                Nouveau forfait
+              </>
+            )}
           </div>
-        )}
-
-        {/* Delete Package Modal */}
-        <DeleteConfirmationModal
-          isOpen={packageActions.showDeleteModal}
-          onClose={packageActions.closeDeleteModal}
-          onRemoveFromInventory={handlePackageRemove}
-          onPermanentDelete={handlePackageDelete}
-          itemType="forfait"
+        }
+        size="medium"
+      >
+        <PackageForm
+          package={packageActions.editingPackage}
+          riders={riders}
+          riderId={riderId}
+          onSubmit={handlePackageSubmit}
+          onCancel={packageActions.closeModal}
         />
+      </Modal>
 
-        {/* Delete Pairing Modal */}
-        <DeleteConfirmationModal
-          isOpen={pairingActions.showDeleteModal}
-          onClose={pairingActions.closeDeleteModal}
-          onRemoveFromInventory={handlePairingRemove}
-          onPermanentDelete={handlePairingDelete}
-          itemType="pension"
+      {/* Pairing Form Modal */}
+      <Modal
+        isOpen={pairingActions.showPairingModal}
+        onClose={pairingActions.closeModal}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {pairingActions.editingPairing ? (
+              <>
+                <Icons.Edit />
+                Modifier la pension
+              </>
+            ) : (
+              <>
+                <Icons.Add />
+                Nouvelle pension
+              </>
+            )}
+          </div>
+        }
+        size="medium"
+      >
+        <PairingForm
+          pairing={pairingActions.editingPairing}
+          riders={riders}
+          horses={horses}
+          riderId={riderId}
+          onSubmit={handlePairingSubmit}
+          onCancel={pairingActions.closeModal}
         />
-      </div>
-    </Portal>
+      </Modal>
+
+      {/* Delete Package Modal */}
+      <DeleteConfirmationModal
+        isOpen={packageActions.showDeleteModal}
+        onClose={packageActions.closeDeleteModal}
+        onRemoveFromInventory={handlePackageRemove}
+        onPermanentDelete={handlePackageDelete}
+        itemType="forfait"
+      />
+
+      {/* Delete Pairing Modal */}
+      <DeleteConfirmationModal
+        isOpen={pairingActions.showDeleteModal}
+        onClose={pairingActions.closeDeleteModal}
+        onRemoveFromInventory={handlePairingRemove}
+        onPermanentDelete={handlePairingDelete}
+        itemType="pension"
+      />
+    </>
   );
 }
 

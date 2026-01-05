@@ -1,17 +1,20 @@
 import React from 'react';
 
-const BasicInfoFields = ({ formData, onChange, error }) => {
+const BasicInfoFields = ({ formData, onChange }) => {
   return (
     <div className="form-section">
       <h3>Informations générales</h3>
-      
+
       <div className="form-group">
-        <label>Nom du cheval *</label>
+        <label htmlFor="name">
+          Nom du cheval <span className="required">*</span>
+        </label>
         <input
+          id="name"
           type="text"
           value={formData.name}
           onChange={(e) => onChange('name', e.target.value)}
-          className={`form-input ${error && !formData.name.trim() ? 'error' : ''}`}
+          className="form-input"
           placeholder="Entrez le nom du cheval"
           required
         />
@@ -32,8 +35,9 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
 
       <div className="form-row">
         <div className="form-group">
-          <label>Date de début d'activité</label>
+          <label htmlFor="activity_start_date">Date de début d'activité</label>
           <input
+            id="activity_start_date"
             type="date"
             value={formData.activity_start_date}
             onChange={(e) => onChange('activity_start_date', e.target.value)}
@@ -42,8 +46,9 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
         </div>
 
         <div className="form-group">
-          <label>Date de fin d'activité</label>
+          <label htmlFor="activity_end_date">Date de fin d'activité</label>
           <input
+            id="activity_end_date"
             type="date"
             value={formData.activity_end_date}
             onChange={(e) => onChange('activity_end_date', e.target.value)}
@@ -51,12 +56,6 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
           />
         </div>
       </div>
-
-      {error && (
-        <div className="alert alert-error" style={{ marginTop: '16px' }}>
-          <strong>Erreur:</strong> {error}
-        </div>
-      )}
     </div>
   );
 };

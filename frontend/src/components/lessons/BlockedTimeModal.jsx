@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { lessonsApi } from '../../services/calendarApi.js';
-import Modal from '../common/Modal/index.js';
+import Modal from '../common/Modal.jsx';
 import { Icons } from '../../lib/libraries/icons.jsx';
 import { calculateDuration } from '../../lib/helpers/formatters/index.js';
 import { validateLessonTime } from '../../lib/helpers/validators/index.js';

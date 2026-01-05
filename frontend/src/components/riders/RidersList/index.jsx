@@ -5,7 +5,7 @@ import RiderCard from '../RiderCard';
 import RidersTable from './RidersTable';
 import FilterButtons from './FilterButtons';
 import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
-import Portal from '../../common/Portal';
+import Modal from '../../common/Modal';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
@@ -78,17 +78,23 @@ function RidersList() {
       )}
 
       {error && (
-        <div className="error">
-          <Icons.Warning /> {error}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={clearError}>
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          {error}
+          <button
+            className="btn btn-sm btn-secondary"
+            onClick={clearError}
+            style={{ marginLeft: '12px' }}
+          >
             Effacer
           </button>
         </div>
       )}
 
       {successMessage && (
-        <div className="success">
-          <Icons.Check /> {successMessage}
+        <div className="alert alert-success" style={{ marginBottom: '20px' }}>
+          <Icons.Check style={{ marginRight: '8px' }} />
+          {successMessage}
         </div>
       )}
 
@@ -115,60 +121,28 @@ function RidersList() {
         />
       )}
 
-      {/* Rider Form Modal */}
-      {showModal && (
-        <Portal>
-          <div
-            className="modal-overlay"
-            onClick={closeRiderModal}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
-            }}
-          >
-            <div
-              className="modal"
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                maxHeight: '90vh',
-                overflowY: 'auto',
-              }}
-            >
-              <div className="modal-header">
-                <h3>
-                  {editingRider ? (
-                    <>
-                      <Icons.Edit style={{ marginRight: '8px' }} />
-                      Modifier le cavalier
-                    </>
-                  ) : (
-                    <>
-                      <Icons.Add style={{ marginRight: '8px' }} />
-                      Nouveau cavalier
-                    </>
-                  )}
-                </h3>
-                <button className="modal-close" onClick={closeRiderModal}>
-                  <Icons.Close />
-                </button>
-              </div>
-              <RiderForm
-                rider={editingRider}
-                onSubmit={handleFormSubmit}
-                onCancel={closeRiderModal}
-              />
-            </div>
+      <Modal
+        isOpen={showModal}
+        onClose={closeRiderModal}
+        title={
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {editingRider ? (
+              <>
+                <Icons.Edit />
+                Modifier le cavalier
+              </>
+            ) : (
+              <>
+                <Icons.Add />
+                Nouveau cavalier
+              </>
+            )}
           </div>
-        </Portal>
-      )}
+        }
+        size="medium"
+      >
+        <RiderForm rider={editingRider} onSubmit={handleFormSubmit} onCancel={closeRiderModal} />
+      </Modal>
 
       {/* Rider Card Modal */}
       {selectedRiderId && <RiderCard riderId={selectedRiderId} onClose={closeRiderCard} />}

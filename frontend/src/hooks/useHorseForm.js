@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { riderService, horseService } from '../services';
+import { riderService } from '../services';
 import { validateHorseForm } from '../lib/helpers/validators';
 
 /**
@@ -71,7 +71,10 @@ export function useHorseForm(horse) {
       ...prev,
       [field]: value,
     }));
-    setError(''); // Clear error on any change
+    // Clear error when user starts typing
+    if (error) {
+      setError('');
+    }
   };
 
   const validateForm = () => {
@@ -82,10 +85,9 @@ export function useHorseForm(horse) {
       setError(firstError);
       return false;
     }
+    setError(''); // Clear error if validation passes
     return true;
   };
-
-  
 
   const resetForm = () => {
     setFormData({
@@ -112,8 +114,10 @@ export function useHorseForm(horse) {
     handleChange,
     validateForm,
     resetForm,
-    
-    // State setters
+
+    // State setters - IMPORTANT: These must be included
     setError,
+    setSubmitting,
+    setFormData,
   };
 }

@@ -43,6 +43,14 @@ function RiderForm({ rider, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="rider-form">
+      {/* Error Alert */}
+      {errors.submit && (
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          <strong>Erreur:</strong> {errors.submit}
+        </div>
+      )}
+
       <BasicInfoFields formData={formData} onChange={handleChange} errors={errors} />
 
       <ActivityFields formData={formData} onChange={handleChange} errors={errors} />
@@ -52,7 +60,6 @@ function RiderForm({ rider, onSubmit, onCancel }) {
         onCancel={handleCancel}
         submitting={submitting}
         isEdit={isEdit}
-        submitError={errors.submit}
       />
     </form>
   );

@@ -12,7 +12,10 @@ export function useHorseRiders() {
   const [error, setError] = useState(null);
 
   const handleRidersClick = async (horse) => {
-    if (horse.active_riders_count === 0) return;
+    // Early return if no riders
+    if (!horse || horse.active_riders_count === 0) {
+      return;
+    }
 
     try {
       setLoadingRiders(true);
@@ -20,6 +23,15 @@ export function useHorseRiders() {
       setError(null);
 
       const data = await horsesApi.getRiders(horse.id);
+
+      // Handle empty riders array
+      if (!data || data.length === 0) {
+        setSelectedHorseRiders({
+          horseName: horse.name,
+          riders: [],
+        });
+        return;
+      }
 
       const ridersWithPairing = data.map((pairing) => ({
         ...pairing.riders,
@@ -30,11 +42,11 @@ export function useHorseRiders() {
 
       setSelectedHorseRiders({
         horseName: horse.name,
-        riders: ridersWithPairing || [],
+        riders: ridersWithPairing,
       });
     } catch (err) {
       console.error('Error loading riders:', err);
-      setError('Erreur lors du chargement des cavaliers');
+      setError(err.message || 'Erreur lors du chargement des cavaliers');
       setShowRidersModal(false);
     } finally {
       setLoadingRiders(false);
@@ -48,10 +60,13 @@ export function useHorseRiders() {
   };
 
   return {
+    // State
     showRidersModal,
     selectedHorseRiders,
     loadingRiders,
     error,
+
+    // Actions
     handleRidersClick,
     closeRidersModal,
   };

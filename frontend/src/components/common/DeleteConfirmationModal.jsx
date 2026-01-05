@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Modal from './Modal/Modal';
+import Modal from './Modal.jsx';
 import { Icons } from '../../lib/libraries/icons.jsx';
 import '../../styles/common/buttons.css';
 
@@ -56,8 +56,16 @@ function DeleteConfirmationModal({
   const footer = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <div>
-        <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-          <Icons.Remove style={{ marginRight: '8px' }} />
+        <h4
+          style={{
+            margin: '0 0 8px 0',
+            color: '#2d3748',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <Icons.Remove style={{ flexShrink: 0 }} />
           {label.removeText}
         </h4>
         <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
@@ -74,8 +82,16 @@ function DeleteConfirmationModal({
       </div>
 
       <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
-        <h4 style={{ margin: '0 0 8px 0', color: '#2d3748' }}>
-          <Icons.Delete style={{ marginRight: '8px' }} />
+        <h4
+          style={{
+            margin: '0 0 8px 0',
+            color: '#2d3748',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+        >
+          <Icons.Delete style={{ flexShrink: 0 }} />
           Supprimer définitivement
         </h4>
         <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
@@ -99,10 +115,10 @@ function DeleteConfirmationModal({
       isOpen={isOpen}
       onClose={onClose}
       title={
-        <>
-          <Icons.Warning style={{ marginRight: '8px', color: '#ed8936' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Icons.Warning style={{ color: '#ed8936', flexShrink: 0 }} />
           {label.title}
-        </>
+        </div>
       }
       footer={footer}
       size="small"

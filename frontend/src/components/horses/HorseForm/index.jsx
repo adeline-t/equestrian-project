@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useHorseForm } from '../../../hooks/useHorseForm';
 import BasicInfoFields from './BasicInfoFields';
@@ -23,26 +23,32 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
     // State setters
     setError,
+    setSubmitting,
   } = useHorseForm(horse);
-  const [localSubmitting, setLocalSubmitting] = useState(false);
 
   // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate form using the hook's validation
     if (!validateForm()) {
       return;
     }
 
     try {
-      setLocalSubmitting(true);
+      setSubmitting(true);
+      setError(''); // Clear any previous errors
+
+      // Call the parent's onSubmit
       await onSubmit(formData);
+
+      // Reset form on success
+      resetForm();
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue');
-      throw err;
+      // Use setError from the hook
+      setError(err.message || 'Une erreur est survenue lors de la sauvegarde');
     } finally {
-      setLocalSubmitting(false);
+      setSubmitting(false);
     }
   };
 
@@ -57,7 +63,15 @@ function HorseForm({ horse, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="horse-form">
-      <BasicInfoFields formData={formData} onChange={handleChange} error={error} />
+      {/* Error Alert */}
+      {error && (
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          <strong>Erreur:</strong> {error}
+        </div>
+      )}
+
+      <BasicInfoFields formData={formData} onChange={handleChange} />
 
       <OwnershipFields
         formData={formData}
@@ -70,7 +84,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       <FormActions
         onSubmit={handleFormSubmit}
         onCancel={handleCancelClick}
-        submitting={localSubmitting}
+        submitting={submitting}
         isEdit={isEdit}
       />
     </form>

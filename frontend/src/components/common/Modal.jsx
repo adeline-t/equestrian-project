@@ -1,14 +1,14 @@
 import React from 'react';
-import Portal from '../../../components/common/Portal';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import '../../../styles/components/modals.css';
+import Portal from './Portal.jsx';
+import { Icons } from '../../lib/libraries/icons.jsx';
+import '../../styles/common/modal.css';
 
 /**
  * Reusable Modal component
  * @param {Object} props - Component props
  * @param {boolean} props.isOpen - Whether modal is open
  * @param {Function} props.onClose - Close handler
- * @param {string} props.title - Modal title
+ * @param {string|React.ReactNode} props.title - Modal title (can include icons)
  * @param {React.ReactNode} props.children - Modal content
  * @param {React.ReactNode} props.footer - Modal footer content
  * @param {string} props.size - Modal size ('small', 'medium', 'large')
@@ -23,7 +23,19 @@ const Modal = ({ isOpen, onClose, title, children, footer, size = 'medium', clas
         <div className={`modal-content ${size} ${className}`} onClick={(e) => e.stopPropagation()}>
           {title && (
             <div className="modal-header">
-              <h2>{title}</h2>
+              <h2
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  margin: 0,
+                  fontSize: '1.3rem',
+                  fontWeight: 600,
+                  color: '#2d3748',
+                }}
+              >
+                {title}
+              </h2>
               <button className="btn-close" onClick={onClose} aria-label="Close modal">
                 <Icons.Close />
               </button>
