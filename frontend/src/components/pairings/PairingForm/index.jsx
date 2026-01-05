@@ -33,20 +33,7 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
 
     try {
       setSubmitting(true);
-
-      // Préparer les données à envoyer - ne pas envoyer les chaînes vides
-      const dataToSubmit = {
-        pairing_start_date: formData.pairing_start_date || undefined,
-        pairing_end_date: formData.pairing_end_date || undefined,
-      };
-
-      // Si c'est une création, ajouter rider_id et horse_id
-      if (!pairing) {
-        dataToSubmit.rider_id = formData.rider_id;
-        dataToSubmit.horse_id = formData.horse_id;
-      }
-
-      await onSubmit(dataToSubmit);
+      await onSubmit(formData);
     } catch (err) {
       console.error('Error submitting pairing form:', err);
       setError(err.message || 'Une erreur est survenue lors de la sauvegarde');
@@ -73,6 +60,7 @@ function PairingForm({ pairing, riders, horses, onSubmit, onCancel, riderId }) {
         riders={riders}
         horses={horses}
         riderId={riderId}
+        isEdit={isEdit}
       />
 
       <PairingDateFields formData={formData} onChange={handleChange} />

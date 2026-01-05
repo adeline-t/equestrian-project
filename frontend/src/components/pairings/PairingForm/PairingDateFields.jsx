@@ -1,11 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import InfoTooltip from '../../common/InfoTooltip';
 
 const PairingDateFields = ({ formData, onChange }) => {
   return (
     <div className="form-section">
-      <h3>Période de la pension</h3>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        <h3 style={{ margin: 0 }}>Période de la pension</h3>
+        <InfoTooltip
+          message="La pension permettra à ce cavalier de monter ce cheval pendant la période spécifiée. Les dates ne sont pas strictes - elles servent principalement de référence pour l'organisation."
+          position="bottom"
+        />
+      </div>
 
       <div className="form-row">
         <div className="form-group">
@@ -35,12 +42,6 @@ const PairingDateFields = ({ formData, onChange }) => {
           />
           <small className="form-help">Laissez vide si la pension est toujours active</small>
         </div>
-      </div>
-
-      <div className="alert alert-info" style={{ marginTop: '16px' }}>
-        <Icons.Info style={{ marginRight: '8px' }} />
-        La pension permettra à ce cavalier de monter ce cheval pendant la période spécifiée. Les
-        dates ne sont pas strictes - elles servent principalement de référence pour l'organisation.
       </div>
     </div>
   );

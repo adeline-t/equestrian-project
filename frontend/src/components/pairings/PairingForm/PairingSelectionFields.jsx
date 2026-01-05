@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import InfoTooltip from '../../common/InfoTooltip';
 
-const PairingSelectionFields = ({ formData, onChange, riders, horses, riderId }) => {
+const PairingSelectionFields = ({ formData, onChange, riders, horses, riderId, isEdit }) => {
   // Filter active horses
   const availableHorses =
     horses?.filter((horse) => {
@@ -13,11 +14,15 @@ const PairingSelectionFields = ({ formData, onChange, riders, horses, riderId })
       return isActive;
     }) || [];
 
-  // Get the selected rider name if riderId is provided
-  const selectedRiderName = riderId ? riders?.find((r) => r.id === parseInt(riderId))?.name : null;
+  // Get the selected rider - use formData.rider_id for current value
+  const selectedRider = riders?.find((r) => r.id === (riderId || formData.rider_id));
+
+  // Get the selected horse
+  const selectedHorse = horses?.find((h) => h.id === formData.horse_id);
 
   // Check if rider select should be disabled
-  const isRiderLocked = !!riderId;
+  const isRiderLocked = !!riderId || isEdit;
+  const isHorseLocked = isEdit;
 
   return (
     <div className="form-section">
@@ -25,13 +30,23 @@ const PairingSelectionFields = ({ formData, onChange, riders, horses, riderId })
 
       {/* Rider Selection */}
       <div className="form-group">
-        <label htmlFor="rider_id">
+        <label htmlFor="rider_id" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           Cavalier <span className="required">*</span>
+          {isRiderLocked && (
+            <InfoTooltip
+              message={
+                isEdit
+                  ? 'Le cavalier ne peut pas être modifié. Pour changer de cavalier, veuillez terminer cette pension et en créer une nouvelle.'
+                  : 'Le cavalier est défini et ne peut pas être modifié'
+              }
+              position="right"
+            />
+          )}
         </label>
         {isRiderLocked ? (
           <div className="form-input-static">
             <Icons.User style={{ marginRight: '8px' }} />
-            {selectedRiderName || 'Cavalier sélectionné'}
+            {selectedRider?.name}
           </div>
         ) : (
           <select
@@ -50,17 +65,28 @@ const PairingSelectionFields = ({ formData, onChange, riders, horses, riderId })
             ))}
           </select>
         )}
-        {isRiderLocked && (
-          <small className="form-help">Le cavalier est défini et ne peut pas être modifié</small>
-        )}
       </div>
 
       {/* Horse Selection */}
       <div className="form-group">
-        <label htmlFor="horse_id">
+        <label htmlFor="horse_id" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           Cheval <span className="required">*</span>
+          {isHorseLocked && (
+            <InfoTooltip
+              message="Le cheval ne peut pas être modifié. Pour changer de cheval, veuillez terminer cette pension et en créer une nouvelle avec le cheval souhaité."
+              position="right"
+            />
+          )}
         </label>
-        {availableHorses.length === 0 ? (
+        {isHorseLocked ? (
+          <div className="form-input-static">
+            <Icons.Horse style={{ marginRight: '8px' }} />
+            {selectedHorse?.name}
+            <span className={`badge badge-${selectedHorse?.kind}`} style={{ marginLeft: '8px' }}>
+              {selectedHorse?.kind === 'horse' ? 'Cheval' : 'Poney'}
+            </span>
+          </div>
+        ) : availableHorses.length === 0 ? (
           <div className="alert alert-warning">
             <Icons.Warning style={{ marginRight: '8px' }} />
             Aucun cheval actif disponible. Veuillez d'abord activer des chevaux.
@@ -93,6 +119,7 @@ PairingSelectionFields.propTypes = {
   riders: PropTypes.array.isRequired,
   horses: PropTypes.array.isRequired,
   riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  isEdit: PropTypes.bool,
 };
 
 export default PairingSelectionFields;
