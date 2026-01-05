@@ -1,10 +1,9 @@
-import { usePackagesList } from '../../hooks/usePackagesList';
-import PackageForm from './PackageForm';
-import PackagesTable from './PackagesTable';
-import PackageFilterButtons from './PackageFilterButtons';
-import PackageDeleteModal from '../common/DeleteConfirmationModal';
-import Portal from '../common/Portal';
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { usePackagesList } from '../../../hooks/usePackagesList.js';
+import PackageForm from '../PackageForm.jsx';
+import PackagesTable from './PackagesTable.jsx';
+import PackageFilterButtons from './PackageFilterButtons.jsx';
+import PackageDeleteModal from '../../common/DeleteConfirmationModal.jsx';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 function PackagesList() {
   const {
@@ -66,17 +65,23 @@ function PackagesList() {
       )}
 
       {error && (
-        <div className="error">
-          <Icons.Warning /> {error}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={clearError}>
+        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          {error}
+          <button
+            className="btn btn-sm btn-secondary"
+            onClick={clearError}
+            style={{ marginLeft: '12px' }}
+          >
             Effacer
           </button>
         </div>
       )}
 
       {successMessage && (
-        <div className="success">
-          <Icons.Check /> {successMessage}
+        <div className="alert alert-success" style={{ marginBottom: '20px' }}>
+          <Icons.Check style={{ marginRight: '8px' }} />
+          {successMessage}
         </div>
       )}
 
@@ -102,9 +107,10 @@ function PackagesList() {
       <PackageDeleteModal
         isOpen={showDeleteModal}
         onClose={closeDeleteModal}
-        packageName={packageToDelete?.name || `Forfait #${packageToDelete?.id}`}
         onRemoveFromInventory={handleRemoveFromInventory}
         onPermanentDelete={handlePermanentDelete}
+        itemType="forfait"
+        itemName={packageToDelete?.name || `Forfait #${packageToDelete?.id}`}
       />
     </div>
   );

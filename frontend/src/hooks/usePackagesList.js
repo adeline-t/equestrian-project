@@ -13,7 +13,7 @@ export function usePackagesList() {
   const [showModal, setShowModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [filter, setFilter] = useState('all'); // all, active, inactive
+  const [filter, setFilter] = useState('all');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [packageToDelete, setPackageToDelete] = useState(null);
 
@@ -21,7 +21,6 @@ export function usePackagesList() {
     try {
       setLoading(true);
       setError(null);
-      // Load both packages and riders for the form
       const [packagesData, ridersData] = await Promise.all([
         packagesApi.getAll(),
         ridersApi.getAll(),
@@ -29,6 +28,7 @@ export function usePackagesList() {
       setPackages(packagesData || []);
       setRiders(ridersData || []);
     } catch (err) {
+      console.error('❌ Error loading data:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -41,6 +41,7 @@ export function usePackagesList() {
   };
 
   const handleEdit = (pkg) => {
+    console.log('📝 Editing package:', pkg);
     setEditingPackage(pkg);
     setShowModal(true);
   };
@@ -48,6 +49,35 @@ export function usePackagesList() {
   const handleDeleteClick = (pkg) => {
     setPackageToDelete(pkg);
     setShowDeleteModal(true);
+  };
+
+  const handleFormSubmit = async (packageData) => {
+    try {
+      console.log('📤 Form submit - Editing:', !!editingPackage);
+      console.log('📤 Package data:', packageData);
+
+      if (editingPackage) {
+        console.log('🔄 Updating package ID:', editingPackage.id);
+        await packagesApi.update(editingPackage.id, packageData);
+        setSuccessMessage('Forfait modifié avec succès');
+      } else {
+        console.log('➕ Creating new package');
+        await packagesApi.create(packageData);
+        setSuccessMessage('Forfait créé avec succès');
+      }
+
+      setTimeout(() => setSuccessMessage(''), 3000);
+      setShowModal(false);
+      setEditingPackage(null);
+
+      // Reload data after successful submission
+      await loadData();
+      console.log('✅ Data reloaded');
+    } catch (err) {
+      console.error('❌ Form submit error:', err);
+      setError(err.message || 'Une erreur est survenue');
+      throw err;
+    }
   };
 
   const handleRemoveFromInventory = async () => {
@@ -62,8 +92,9 @@ export function usePackagesList() {
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setPackageToDelete(null);
-      loadData();
+      await loadData();
     } catch (err) {
+      console.error('❌ Error removing from inventory:', err);
       setError(err.message);
       setShowDeleteModal(false);
       setPackageToDelete(null);
@@ -79,28 +110,12 @@ export function usePackagesList() {
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setPackageToDelete(null);
-      loadData();
+      await loadData();
     } catch (err) {
+      console.error('❌ Error deleting package:', err);
       setError(err.message);
       setShowDeleteModal(false);
       setPackageToDelete(null);
-    }
-  };
-
-  const handleFormSubmit = async (packageData) => {
-    try {
-      if (editingPackage) {
-        await packagesApi.update(editingPackage.id, packageData);
-        setSuccessMessage('Forfait modifié avec succès');
-      } else {
-        await packagesApi.create(packageData);
-        setSuccessMessage('Forfait créé avec succès');
-      }
-      setTimeout(() => setSuccessMessage(''), 3000);
-      setShowModal(false);
-      loadData();
-    } catch (err) {
-      throw err;
     }
   };
 
@@ -124,7 +139,6 @@ export function usePackagesList() {
     return rider ? rider.name : `Cavalier #${riderId}`;
   };
 
-  // Filter packages based on selected filter
   const filteredPackages = packages.filter((pkg) => {
     if (filter === 'all') return true;
     if (filter === 'active') return isActive(pkg.activity_start_date, pkg.activity_end_date);
@@ -138,7 +152,6 @@ export function usePackagesList() {
     inactive: packages.filter((p) => !isActive(p.activity_start_date, p.activity_end_date)).length,
   };
 
-  // Modal handlers
   const closePackageModal = () => {
     setShowModal(false);
     setEditingPackage(null);

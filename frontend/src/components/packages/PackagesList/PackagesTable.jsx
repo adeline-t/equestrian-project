@@ -1,4 +1,4 @@
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/libraries/icons.jsx';
 
 const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderName }) => {
   if (packages.length === 0) {
@@ -18,9 +18,7 @@ const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderNam
       <table className="table">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Cavalier</th>
-            <th>Type</th>
             <th>Cours particuliers</th>
             <th>Prestations</th>
             <th>Date de début</th>
@@ -33,15 +31,10 @@ const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderNam
           {packages.map((pkg) => (
             <tr key={pkg.id}>
               <td>
-                <span className="badge badge-info">#{pkg.id}</span>
-              </td>
-              <td>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Icons.User style={{ fontSize: '0.875rem', color: '#4299e1' }} />
                   {getRiderName(pkg.rider_id)}
                 </div>
               </td>
-              <td>{pkg.type || 'Standard'}</td>
               <td>
                 <span className="lesson-badge">{pkg.private_lesson_count || 0}</span>
               </td>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { validatePackageForm } from '../lib/helpers/validators';
 
 /**
  * Custom hook for managing package form state and validation
@@ -21,15 +22,23 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   useEffect(() => {
     if (packageData) {
       setFormData({
-        rider_id: packageData.rider_id?.toString() || riderId?.toString() || '',
+        rider_id: packageData.rider_id?.toString() || '',
         private_lesson_count: Number(packageData.private_lesson_count) || 0,
         joint_lesson_count: Number(packageData.joint_lesson_count) || 0,
         activity_start_date: packageData.activity_start_date || '',
         activity_end_date: packageData.activity_end_date || '',
       });
-    } else {
+    } else if (riderId) {
       setFormData({
         rider_id: riderId?.toString() || '',
+        private_lesson_count: 0,
+        joint_lesson_count: 0,
+        activity_start_date: '',
+        activity_end_date: '',
+      });
+    } else {
+      setFormData({
+        rider_id: '',
         private_lesson_count: 0,
         joint_lesson_count: 0,
         activity_start_date: '',
@@ -59,34 +68,15 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   };
 
   const validateForm = () => {
-    if (!formData.rider_id) {
-      setError('Veuillez sélectionner un cavalier');
+    const validation = validatePackageForm(formData);
+
+    if (!validation.isValid) {
+      const firstError = Object.values(validation.errors)[0];
+      setError(firstError);
       return false;
     }
 
-    const privateCount = Number(formData.private_lesson_count) || 0;
-    const jointCount = Number(formData.joint_lesson_count) || 0;
-
-    if (privateCount === 0 && jointCount === 0) {
-      setError('Au moins un type de cours est requis (valeur > 0)');
-      return false;
-    }
-
-    if (privateCount < 0 || jointCount < 0) {
-      setError('Les nombres ne peuvent pas être négatifs');
-      return false;
-    }
-
-    if (formData.activity_start_date && formData.activity_end_date) {
-      const startDate = new Date(formData.activity_start_date);
-      const endDate = new Date(formData.activity_end_date);
-
-      if (startDate > endDate) {
-        setError('La date de début doit être antérieure à la date de fin');
-        return false;
-      }
-    }
-
+    setError('');
     return true;
   };
 
@@ -109,9 +99,11 @@ export function usePackageForm(packageData, riderId, onSubmit) {
         activity_end_date: formData.activity_end_date || null,
       };
 
+      console.log('📤 Submitting package data:', submitData);
       await onSubmit(submitData);
+      console.log('✅ Package submitted successfully');
     } catch (err) {
-      console.error('Submit error:', err);
+      console.error('❌ Submit error:', err);
       setError(err.message || 'Une erreur est survenue');
     } finally {
       setSubmitting(false);
