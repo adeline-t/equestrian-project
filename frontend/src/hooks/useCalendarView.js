@@ -13,9 +13,9 @@ export function useCalendarView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedLesson, setSelectedLesson] = useState(null);
-  const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [showSingleLessonModal, setShowSingleLessonModal] = useState(false);
-  const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false);
+  const [showLessonModal, setShowLessonModal] = useState(false); // CHANGED: For viewing/editing
+  const [showSingleLessonModal, setShowSingleLessonModal] = useState(false); // For creation only
+  const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false); // For creation only
   const [filters, setFilters] = useState({
     lessonType: 'all',
     status: 'all',
@@ -47,7 +47,7 @@ export function useCalendarView() {
   };
 
   const handlePrevWeek = () => {
-    setCurrentDate(prev => {
+    setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(newDate.getDate() - 7);
       return newDate;
@@ -55,7 +55,7 @@ export function useCalendarView() {
   };
 
   const handleNextWeek = () => {
-    setCurrentDate(prev => {
+    setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(newDate.getDate() + 7);
       return newDate;
@@ -67,37 +67,52 @@ export function useCalendarView() {
   };
 
   const handleLessonClick = (lesson) => {
+    console.log('Lesson clicked:', lesson);
+
     setSelectedLesson(lesson);
-    
-    if (lesson.is_template) {
-      setShowTemplateModal(true);
-    } else if (lesson.is_blocked) {
-      setShowBlockedTimeModal(true);
-    } else {
-      setShowSingleLessonModal(true);
-    }
+    // Always open LessonModal for viewing/editing existing lessons
+    setShowLessonModal(true);
+    setShowSingleLessonModal(false);
+    setShowBlockedTimeModal(false);
   };
 
-  const handleCreateLesson = () => {
-    setSelectedLesson(null);
+  const handleCreateLesson = (initialData = null) => {
+    if (initialData) {
+      // Quick create from day column selection
+      setSelectedLesson({
+        date: initialData.date,
+        start_time: initialData.start_time,
+        end_time: initialData.end_time,
+        lesson_type: 'private',
+        status: 'scheduled',
+      });
+    } else {
+      // Create from header button
+      setSelectedLesson(null);
+    }
+
     setShowSingleLessonModal(true);
+    setShowLessonModal(false);
+    setShowBlockedTimeModal(false);
   };
 
   const handleCreateBlockedTime = () => {
     setSelectedLesson(null);
     setShowBlockedTimeModal(true);
+    setShowLessonModal(false);
+    setShowSingleLessonModal(false);
   };
 
   const handleFilterChange = (filterName, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [filterName]: value
+      [filterName]: value,
     }));
   };
 
   // Modal handlers
-  const closeTemplateModal = () => {
-    setShowTemplateModal(false);
+  const closeLessonModal = () => {
+    setShowLessonModal(false);
     setSelectedLesson(null);
   };
 
@@ -113,10 +128,10 @@ export function useCalendarView() {
 
   const handleModalSuccess = () => {
     // Close all modals
-    closeTemplateModal();
+    closeLessonModal();
     closeSingleLessonModal();
     closeBlockedTimeModal();
-    
+
     // Reload data
     loadWeekData();
   };
@@ -124,28 +139,32 @@ export function useCalendarView() {
   // Utility functions
   const getWeekTitle = () => {
     if (!weekData || !weekData.period) return 'Chargement...';
-    
+
     const start = new Date(weekData.period.start);
     const end = new Date(weekData.period.end);
-    
+
     // Validate dates before formatting
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       return 'Semaine en cours';
     }
-    
-    return `Semaine du ${format(start, 'dd MMMM', { locale: fr })} au ${format(end, 'dd MMMM yyyy', { locale: fr })}`;
+
+    return `Semaine du ${format(start, 'dd MMMM', { locale: fr })} au ${format(
+      end,
+      'dd MMMM yyyy',
+      { locale: fr }
+    )}`;
   };
 
   const getCalendarStats = () => {
     if (!weekData || !weekData.days) return { total: 0, confirmed: 0, blocked: 0 };
-    
+
     // Flatten all lessons from all days
-    const allLessons = weekData.days.flatMap(day => day.lessons || []);
-    
+    const allLessons = weekData.days.flatMap((day) => day.lessons || []);
+
     return {
       total: allLessons.length,
-      confirmed: allLessons.filter(l => l.status === 'confirmed').length,
-      blocked: allLessons.filter(l => l.is_blocked || l.lesson_type === 'blocked').length,
+      confirmed: allLessons.filter((l) => l.status === 'confirmed').length,
+      blocked: allLessons.filter((l) => l.lesson_type === 'blocked').length,
     };
   };
 
@@ -159,7 +178,7 @@ export function useCalendarView() {
     loading,
     error,
     selectedLesson,
-    showTemplateModal,
+    showLessonModal, // CHANGED
     showSingleLessonModal,
     showBlockedTimeModal,
     filters,
@@ -174,16 +193,16 @@ export function useCalendarView() {
     handleCreateLesson,
     handleCreateBlockedTime,
     handleFilterChange,
-    
+
     // Modal handlers
-    closeTemplateModal,
+    closeLessonModal, // CHANGED
     closeSingleLessonModal,
     closeBlockedTimeModal,
     handleModalSuccess,
-    
+
     // Utility functions
     loadWeekData,
-    
+
     // State setters
     clearError,
   };

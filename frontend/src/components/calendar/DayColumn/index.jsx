@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SingleLessonModal from '../../lessons/SingleLessonModal';
-import { format, isToday, isPast, parseISO } from 'date-fns';
+import { format, isToday, isPast, parseISO, endOfDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Icons } from '../../../lib/libraries/icons.jsx';
 import DayHeader from './DayHeader';
@@ -30,7 +30,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
 
   const dateObj = parseISO(date);
   const isCurrentDay = isToday(dateObj);
-  const isPastDay = isPast(dateObj) && !isCurrentDay;
+  const isPastDay = isPast(endOfDay(dateObj)) && !isCurrentDay;
 
   const HOUR_HEIGHT = 60;
   const START_HOUR = 8;
@@ -66,7 +66,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
       left: '8px',
       right: '8px',
       height: `${height}px`,
-      zIndex: lesson.is_blocked ? 5 : 1,
+      zIndex: 1,
     };
   };
 
@@ -96,7 +96,10 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   };
 
   const handleMouseDown = (e, hour, minute) => {
-    if (isPastDay) return;
+    // Don't start selection if clicking on a lesson
+    if (e.target.closest('.lesson-card')) {
+      return;
+    }
 
     e.preventDefault();
     const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -106,7 +109,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   };
 
   const handleMouseMove = (e, hour, minute) => {
-    if (!isSelecting || isPastDay) return;
+    if (!isSelecting) return;
 
     const currentTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
     setSelectionEnd(currentTime);
@@ -119,7 +122,6 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     const endMinutes = timeToMinutes(selectionEnd);
 
     if (Math.abs(endMinutes - startMinutes) >= 30) {
-      // Only show modal if selection is at least 30 minutes
       setQuickCreateData({
         date,
         start_time: startMinutes < endMinutes ? selectionStart : selectionEnd,
@@ -128,7 +130,6 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
       setShowQuickCreateModal(true);
     }
 
-    // Reset selection
     setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
@@ -145,17 +146,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     }) || [];
 
   return (
-    <div
-      className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}
-      style={{
-        flex: 1,
-        minWidth: '200px',
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        margin: '0 4px',
-      }}
-    >
+    <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
       <DayHeader date={date} dayName={dayName} />
 
       <div
@@ -163,45 +154,19 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
         className="day-grid-container"
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        style={{ position: 'relative' }}
       >
         <DayGrid
-          lessons={lessons}
+          lessons={validLessons}
           onLessonClick={onLessonClick}
           selectionStyle={calculateSelectionStyle()}
           isSelecting={isSelecting}
           validLessons={validLessons}
           calculateLessonStyle={calculateLessonStyle}
-        />
-
-        {/* Mouse event overlay for selection */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: isPastDay ? -1 : 20,
-            cursor: isPastDay ? 'not-allowed' : 'crosshair',
-          }}
-          onMouseDown={(e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const y = e.clientY - rect.top;
-            const totalMinutes = Math.floor(y / (HOUR_HEIGHT / 60)) + START_HOUR * 60;
-            const hour = Math.floor(totalMinutes / 60);
-            const minute = Math.floor((totalMinutes % 60) / 30) * 30;
-            handleMouseDown(e, hour, minute);
-          }}
-          onMouseMove={(e) => {
-            if (!isSelecting) return;
-            const rect = e.currentTarget.getBoundingClientRect();
-            const y = e.clientY - rect.top;
-            const totalMinutes = Math.floor(y / (HOUR_HEIGHT / 60)) + START_HOUR * 60;
-            const hour = Math.floor(totalMinutes / 60);
-            const minute = Math.floor((totalMinutes % 60) / 30) * 30;
-            handleMouseMove(e, hour, minute);
-          }}
+          handleMouseDown={handleMouseDown}
+          handleMouseMove={handleMouseMove}
+          HOUR_HEIGHT={HOUR_HEIGHT}
+          START_HOUR={START_HOUR}
+          END_HOUR={END_HOUR}
         />
       </div>
 

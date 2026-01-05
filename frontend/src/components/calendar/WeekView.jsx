@@ -24,11 +24,13 @@ function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
   return (
     <div className="week-view">
       <div className="week-grid">
-        {/* Colonne des heures */}
+        {/* Time column with hours */}
         <div className="time-column">
           <div className="time-header">
-            <Icons.Clock style={{ marginBottom: '4px' }} />
-            <div>Heure</div>
+            <div className="time-header-content">
+              <Icons.Clock style={{ marginBottom: '4px' }} />
+              <div>Heure</div>
+            </div>
           </div>
           {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
             <div key={hour} className="time-slot">
@@ -37,7 +39,7 @@ function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
           ))}
         </div>
 
-        {/* Colonnes des jours */}
+        {/* Day columns */}
         {weekData.days.map((day) => (
           <DayColumn
             key={day.date}

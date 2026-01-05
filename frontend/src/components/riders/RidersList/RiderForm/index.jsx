@@ -8,7 +8,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
   const {
     // State
     formData,
-    error,
+    errors,
     submitting,
 
     // Actions
@@ -18,22 +18,24 @@ function RiderForm({ rider, onSubmit, onCancel }) {
     validateForm,
 
     // State setters
-    setError,
-  } = useRiderForm(rider);
+    setErrors,
+  } = useRiderForm(rider, onSubmit, onCancel);
 
   // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
 
     if (!validateForm()) {
       return;
     }
 
     try {
-      await onSubmit(formData);
+      await handleSubmit(e);
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue lors de la sauvegarde');
+      setErrors({
+        submit: err.message || 'Une erreur est survenue lors de la sauvegarde',
+      });
     }
   };
 
@@ -41,15 +43,16 @@ function RiderForm({ rider, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleFormSubmit} className="rider-form">
-      <BasicInfoFields formData={formData} onChange={handleChange} error={error} />
+      <BasicInfoFields formData={formData} onChange={handleChange} errors={errors} />
 
-      <ActivityFields formData={formData} onChange={handleChange} />
+      <ActivityFields formData={formData} onChange={handleChange} errors={errors} />
 
       <FormActions
         onSubmit={handleFormSubmit}
         onCancel={handleCancel}
         submitting={submitting}
         isEdit={isEdit}
+        submitError={errors.submit}
       />
     </form>
   );

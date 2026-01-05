@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
+import { validateRiderForm } from '../lib/helpers/validators/rider.js';
 
 /**
  * Custom hook for managing rider form data and operations
  * @param {Object} rider - The rider object for editing
+ * @param {Function} onSubmit - Callback function when form is submitted
+ * @param {Function} onCancel - Callback function when form is cancelled
  * @returns {Object} Form data, handlers, and state
  */
-export function useRiderForm(rider) {
+export function useRiderForm(rider, onSubmit, onCancel) {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -13,7 +16,7 @@ export function useRiderForm(rider) {
     activity_start_date: '',
     activity_end_date: '',
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -26,13 +29,7 @@ export function useRiderForm(rider) {
         activity_end_date: rider.activity_end_date || '',
       });
     } else {
-      setFormData({
-        name: '',
-        phone: '',
-        email: '',
-        activity_start_date: '',
-        activity_end_date: '',
-      });
+      resetForm();
     }
   }, [rider]);
 
@@ -43,41 +40,30 @@ export function useRiderForm(rider) {
       [name]: value,
     }));
 
-    // Clear error when user starts typing
-    if (error) {
-      setError('');
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
     }
   };
 
   const validateForm = () => {
-    if (!formData.name.trim()) {
-      setError('Le nom du cavalier est requis');
+    const validation = validateRiderForm(formData);
+
+    if (!validation.isValid) {
+      setErrors(validation.errors);
       return false;
     }
 
-    if (!formData.email.trim()) {
-      setError('L\'email du cavalier est requis');
-      return false;
-    }
-
-    if (!formData.activity_start_date) {
-      setError('La date de début d\'activité est requise');
-      return false;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError('Veuillez entrer une adresse email valide');
-      return false;
-    }
-
+    setErrors({});
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
 
     if (!validateForm()) {
       return;
@@ -85,16 +71,20 @@ export function useRiderForm(rider) {
 
     try {
       setSubmitting(true);
-      await onSubmit(formData);
+      if (onSubmit) {
+        await onSubmit(formData);
+      }
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue lors de la sauvegarde');
+      setErrors({
+        submit: err.message || 'Une erreur est survenue lors de la sauvegarde',
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    setError('');
+    setErrors({});
     if (onCancel) {
       onCancel();
     }
@@ -108,13 +98,13 @@ export function useRiderForm(rider) {
       activity_start_date: '',
       activity_end_date: '',
     });
-    setError('');
+    setErrors({});
   };
 
   return {
     // State
     formData,
-    error,
+    errors,
     submitting,
 
     // Actions
@@ -123,8 +113,9 @@ export function useRiderForm(rider) {
     handleCancel,
     validateForm,
     resetForm,
-    
+
     // State setters
-    setError,
+    setErrors,
+    setFormData,
   };
 }

@@ -188,13 +188,6 @@ function RiderCard({ riderId, onClose }) {
               onDelete={pairingActions.handleDeleteClick}
             />
           </div>
-
-          <div className="modal-footer">
-            <button className="btn btn-secondary" onClick={onClose}>
-              <Icons.Close style={{ marginRight: '8px' }} />
-              Fermer
-            </button>
-          </div>
         </div>
 
         {/* Package Form Modal */}

@@ -8,7 +8,7 @@ const DayHeader = ({ date, dayName }) => {
       <div className="day-header">
         <div className="day-name">
           <Icons.Warning style={{ marginRight: '4px' }} />
-          Invalid Date
+          Date eronnée
         </div>
       </div>
     );
@@ -19,27 +19,23 @@ const DayHeader = ({ date, dayName }) => {
 
   return (
     <div className={`day-header ${isCurrentDay ? 'today' : ''}`}>
-      <div className="day-name">
-        {dayName}
-        {isCurrentDay && (
-          <span
-            className="today-badge"
-            style={{
-              marginLeft: '8px',
-              padding: '2px 8px',
-              backgroundColor: '#48bb78',
-              color: 'white',
-              borderRadius: '12px',
-              fontSize: '0.75rem',
-            }}
-          >
-            Aujourd'hui
-          </span>
-        )}
-      </div>
-      <div className="day-date">
-        {dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-      </div>
+      <div className="day-name">{dayName}</div>
+      {isCurrentDay && (
+        <div
+          className="today-badge"
+          style={{
+            marginTop: '4px',
+            padding: '2px 8px',
+            backgroundColor: '#48bb78',
+            color: 'white',
+            borderRadius: '12px',
+            fontSize: '0.75rem',
+            display: 'inline-block',
+          }}
+        >
+          Aujourd'hui
+        </div>
+      )}
     </div>
   );
 };

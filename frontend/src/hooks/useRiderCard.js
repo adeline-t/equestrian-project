@@ -26,18 +26,18 @@ export function useRiderCard(riderId) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Fetch rider details
       const riderResponse = await ridersApi.getById(riderId);
       setRider(riderResponse);
-      
+
       // Fetch all data in parallel
       await Promise.all([
         fetchPackages(),
         fetchPairings(),
         fetchOwnedHorses(),
         fetchAllRiders(),
-        fetchAllHorses()
+        fetchAllHorses(),
       ]);
     } catch (error) {
       console.error('Error fetching rider data:', error);
@@ -49,21 +49,25 @@ export function useRiderCard(riderId) {
 
   const fetchPackages = async () => {
     try {
-      const response = await ridersApi.getPackages(riderId);
-      setPackages(response.data || []);
+      // The API returns data directly, not wrapped in a response object
+      const data = await ridersApi.getPackages(riderId);
+      console.log('Packages fetched:', data); // Debug log
+      setPackages(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching packages:', error);
-      throw error;
+      setPackages([]);
     }
   };
 
   const fetchPairings = async () => {
     try {
-      const response = await ridersApi.getHorses(riderId);
-      setPairings(response.data || []);
+      // The API returns data directly, not wrapped in a response object
+      const data = await ridersApi.getHorses(riderId);
+      console.log('Pairings fetched:', data); // Debug log
+      setPairings(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching pairings:', error);
-      throw error;
+      setPairings([]);
     }
   };
 
@@ -75,7 +79,7 @@ export function useRiderCard(riderId) {
       setOwnedHorses(owned);
     } catch (error) {
       console.error('Error fetching owned horses:', error);
-      setOwnedHorses([]); // Set empty array on error to prevent undefined issues
+      setOwnedHorses([]);
     }
   };
 
@@ -85,7 +89,7 @@ export function useRiderCard(riderId) {
       setRiders(response || []);
     } catch (error) {
       console.error('Error fetching all riders:', error);
-      setRiders([]); // Set empty array on error to prevent undefined issues
+      setRiders([]);
     }
   };
 
@@ -95,7 +99,7 @@ export function useRiderCard(riderId) {
       setHorses(response || []);
     } catch (error) {
       console.error('Error fetching all horses:', error);
-      throw error;
+      setHorses([]);
     }
   };
 

@@ -1,22 +1,30 @@
 import React from 'react';
+import { Icons } from '../../../../lib/libraries/icons.jsx';
 
-const BasicInfoFields = ({ formData, onChange, error }) => {
+const BasicInfoFields = ({ formData, onChange, errors = {} }) => {
   return (
     <div className="form-section">
       <h3>Informations générales</h3>
-      
+
       <div className="form-group">
-        <label htmlFor="name">Nom complet *</label>
+        <label htmlFor="name">
+          Nom complet <span className="required">*</span>
+        </label>
         <input
           type="text"
           id="name"
           name="name"
           value={formData.name}
           onChange={onChange}
-          className={`form-input ${error && !formData.name.trim() ? 'error' : ''}`}
+          className={`form-input ${errors.name ? 'error' : ''}`}
           placeholder="Entrez le nom complet du cavalier"
-          required
         />
+        {errors.name && (
+          <span className="error-message">
+            <Icons.Warning style={{ marginRight: '4px', fontSize: '12px' }} />
+            {errors.name}
+          </span>
+        )}
       </div>
 
       <div className="form-group">
@@ -27,9 +35,15 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
           name="email"
           value={formData.email}
           onChange={onChange}
-          className="form-input"
+          className={`form-input ${errors.email ? 'error' : ''}`}
           placeholder="cavalier@exemple.com"
         />
+        {errors.email && (
+          <span className="error-message">
+            <Icons.Warning style={{ marginRight: '4px', fontSize: '12px' }} />
+            {errors.email}
+          </span>
+        )}
       </div>
 
       <div className="form-group">
@@ -40,16 +54,16 @@ const BasicInfoFields = ({ formData, onChange, error }) => {
           name="phone"
           value={formData.phone}
           onChange={onChange}
-          className="form-input"
+          className={`form-input ${errors.phone ? 'error' : ''}`}
           placeholder="06 12 34 56 78"
         />
+        {errors.phone && (
+          <span className="error-message">
+            <Icons.Warning style={{ marginRight: '4px', fontSize: '12px' }} />
+            {errors.phone}
+          </span>
+        )}
       </div>
-
-      {error && (
-        <div className="alert alert-error" style={{ marginTop: '16px' }}>
-          <strong>Erreur:</strong> {error}
-        </div>
-      )}
     </div>
   );
 };

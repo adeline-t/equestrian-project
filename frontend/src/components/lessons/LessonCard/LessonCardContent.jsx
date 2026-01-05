@@ -30,6 +30,15 @@ const STATUS_BADGES = {
 };
 
 // Helper functions
+const formatTime = (timeStr) => {
+  if (!timeStr) return '';
+  // If already in HH:MM format, return as is
+  if (/^\d{2}:\d{2}$/.test(timeStr)) return timeStr;
+  // If in H:MM or HH:M format, pad with zeros
+  const [hours, minutes] = timeStr.split(':');
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+};
+
 const getLessonTypeIcon = (type) => {
   const IconComponent = LESSON_TYPE_ICONS[type] || Icons.Calendar;
   return <IconComponent style={{ fontSize: '14px' }} />;
@@ -105,7 +114,7 @@ const LessonCardContent = ({ lesson, isCompact = false }) => {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>
-            {lesson.start_time}
+            {formatTime(lesson.start_time)}
           </div>
           {lesson.participant_count > 0 && (
             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>
@@ -143,7 +152,7 @@ const LessonCardContent = ({ lesson, isCompact = false }) => {
       {/* Time and Duration */}
       <div style={{ marginBottom: '6px' }}>
         <div style={{ fontSize: '13px', fontWeight: '500', color: 'white' }}>
-          {lesson.start_time} - {lesson.end_time}
+          {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
         </div>
         <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>
           {lesson.duration_minutes} minutes

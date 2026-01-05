@@ -1,4 +1,8 @@
-/* RiderCard Modal Styles */
+/* ============================================
+   RIDER CARD & PACKAGES - UNIFIED STYLES
+   ============================================ */
+
+/* Override section styles for rider card */
 .rider-card-modal {
   max-width: 1400px;
   width: 95%;
@@ -10,19 +14,50 @@
   padding: 20px;
 }
 
-/* Rider Information Section */
+/* Force badge consistency */
+.badge,
+.horse-name-type .badge,
+.owned-horse-item .badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 6px 12px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  white-space: nowrap !important;
+  height: 28px !important;
+  min-width: 28px !important;
+}
+
+/* ============================================
+   RIDER INFO SECTION
+   ============================================ */
+
 .rider-info-section {
   background: #f7fafc;
   padding: 20px;
   border-radius: 8px;
   border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.rider-info-section h3 {
+  margin: 0 0 15px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 15px;
-  margin-top: 15px;
 }
 
 .info-item {
@@ -32,120 +67,30 @@
 }
 
 .info-label {
-  font-size: 0.875rem;
-  color: #718096;
-  font-weight: 500;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .info-value {
-  font-size: 1rem;
   color: #2d3748;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
-/* Statistics Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-}
+/* ============================================
+   DATE STATUS ROW
+   ============================================ */
 
-.stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.stat-content h3 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0 0 8px 0;
-}
-
-.stat-content p {
-  font-size: 0.875rem;
-  margin: 0;
-  opacity: 0.9;
-}
-
-.stat-number {
-  display: block;
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.875rem;
-  opacity: 0.9;
-}
-
-/* Section Styles */
-.section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.section h3 {
-  margin: 0;
-  color: #2d3748;
-  font-size: 1.25rem;
-}
-
-/* Minimal Section Style */
-.section-minimal {
-  padding: 15px 20px;
-  background: #f9fafb;
-}
-
-.section-minimal h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #2d3748;
-}
-
-/* Empty State Small */
-.empty-state-small {
-  text-align: center;
-  padding: 30px;
-  background: #f7fafc;
-  border-radius: 8px;
-  border: 2px dashed #cbd5e0;
-}
-
-.empty-state-small p {
-  color: #718096;
-  margin-bottom: 15px;
-}
-
-/* Table Styles for RiderCard */
-.table-sm {
-  font-size: 0.875rem;
-}
-
-.table-sm th,
-.table-sm td {
-  padding: 8px 12px;
-}
-
-/* Date Status Row - Single Line Display */
 .date-status-row {
   display: flex;
-  align-items: center;
   gap: 20px;
   flex-wrap: wrap;
+  align-items: center;
+  margin-top: 15px;
 }
 
 .date-status-item {
@@ -158,147 +103,227 @@
 .date-status-item .info-label {
   margin: 0;
   font-size: 0.8rem;
-  color: #718096;
 }
 
 .date-status-item .info-value {
   margin: 0;
   font-size: 0.95rem;
-  color: #2d3748;
 }
 
-/* Utility Classes */
-.mb-15 {
-  margin-bottom: 15px;
-}
+/* ============================================
+   OWNED HORSES LIST
+   ============================================ */
 
-.mb-20 {
-  margin-bottom: 20px;
-}
-
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Button Icon Style */
-.btn-icon {
-  padding: 8px 12px !important;
-  min-width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-  border-radius: 6px;
-  margin: 0 !important;
-  filter: brightness(0) saturate(100%);
-}
-
-.btn-primary.btn-icon {
-  filter: brightness(0) saturate(100%) invert(1);
-}
-
-/* Owned Horses List */
 .owned-horses-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.owned-horse-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: white;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  font-size: 0.9rem;
-}
-
-.horse-name-type {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.horse-name-type strong {
-  color: #2d3748;
-}
-
-.horse-name-type .badge {
-  padding: 4px 8px;
-  font-size: 0.75rem;
-}
-
-/* Packages List */
-.packages-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.package-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.owned-horse-item {
   padding: 12px;
-  background: white;
+  background: #f7fafc;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
 }
 
-.package-item:hover {
+.owned-horse-item:hover {
   border-color: #cbd5e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.package-info {
+.horse-name-type {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex: 1;
+  gap: 10px;
 }
 
-.package-id {
-  font-weight: 600;
+.horse-name-type strong {
   color: #2d3748;
-  min-width: 40px;
+  font-weight: 600;
 }
 
-.package-lessons {
+.horse-name-type .badge {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* ============================================
+   PACKAGES TABLE - UNIFIED
+   ============================================ */
+
+.packages-table-wrapper {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Table Header */
+.packages-table-header {
+  display: grid;
+  grid-template-columns: 140px 180px 180px 140px 140px;
+  gap: 0;
+  background: #f7fafc;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.packages-table-header > div {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid #e2e8f0;
+}
+
+.packages-table-header > div:last-child {
+  border-right: none;
+}
+
+/* Table Body */
+.packages-table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.package-row {
+  display: grid;
+  grid-template-columns: 140px 180px 180px 140px 140px;
+  gap: 0;
+  border-bottom: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.package-row:hover {
+  background: #f9fafb;
+  box-shadow: inset 0 0 0 1px #edf2f7;
+}
+
+.package-row:last-child {
+  border-bottom: none;
+}
+
+/* Column Styles */
+.package-row > div {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid #edf2f7;
+  min-height: 50px;
+}
+
+.package-row > div:last-child {
+  border-right: none;
+}
+
+/* Status Column */
+.col-status {
+  justify-content: center;
+}
+
+.package-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.package-status-badge.active {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.package-status-badge.expired {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.package-status-badge.upcoming {
+  background: #bee3f8;
+  color: #2c5282;
+}
+
+.package-status-badge.inactive {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+/* Lesson Columns */
+.col-particuliers,
+.col-prestations {
+  justify-content: center;
 }
 
 .lesson-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: #edf2f7;
-  border-radius: 4px;
+  justify-content: center;
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
   font-size: 0.85rem;
-  color: #4a5568;
-  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
+  transition: transform 0.2s ease;
 }
 
-.package-item .btn-secondary {
-  padding: 6px 10px !important;
+.lesson-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Date Columns */
+.col-debut,
+.col-fin {
+  justify-content: center;
+}
+
+.date-value {
+  font-size: 0.85rem;
+  color: #2d3748;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Actions Column */
+.col-actions {
+  justify-content: center;
+}
+
+.package-row .btn-secondary {
+  padding: 6px 8px !important;
   font-size: 0.9rem;
   margin: 0 !important;
-  filter: brightness(0) saturate(100%) invert(1);
 }
 
-/* Pairings List */
+/* ============================================
+   PAIRINGS LIST
+   ============================================ */
+
 .pairings-list {
   display: flex;
   flex-direction: column;
@@ -307,10 +332,10 @@
 
 .pairing-item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   padding: 12px;
-  background: white;
+  background: #f7fafc;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
@@ -342,16 +367,61 @@
 .pairing-item .btn-secondary,
 .pairing-item .btn-danger {
   padding: 6px 10px !important;
-  font-size: 0.9rem;
+  font-size: 0.9rem !important;
   margin: 0 !important;
-  filter: brightness(0) saturate(100%) invert(1);
 }
 
-/* Responsive Design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
 @media (max-width: 1200px) {
   .rider-card-modal {
     max-width: 90%;
     width: 90%;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .packages-table-header,
+  .package-row {
+    grid-template-columns: 100px 140px 140px 120px 120px;
+  }
+
+  .packages-table-header > div,
+  .package-row > div {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .packages-table-header,
+  .package-row {
+    grid-template-columns: 80px 100px 100px 100px 100px;
+  }
+
+  .packages-table-header > div,
+  .package-row > div {
+    padding: 8px 10px;
+    min-height: 45px;
+  }
+
+  .lesson-badge {
+    font-size: 0.75rem;
+    min-width: 32px;
+    padding: 2px 6px;
+  }
+
+  .package-status-badge {
+    font-size: 0.7rem;
+    padding: 3px 10px;
   }
 }
 
@@ -361,20 +431,16 @@
     max-height: 95vh;
   }
 
+  .rider-card-content {
+    padding: 15px;
+  }
+
+  .rider-info-section {
+    padding: 15px;
+  }
+
   .info-grid {
     grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stat-number {
-    font-size: 1.5rem;
-  }
-
-  .table-responsive {
-    overflow-x: auto;
   }
 
   .date-status-row {
@@ -397,20 +463,51 @@
     width: 100%;
   }
 
-  .package-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+  /* Packages Table - Switch to Card Layout */
+  .packages-table-wrapper {
+    border: none;
+    box-shadow: none;
   }
 
-  .package-info {
-    width: 100%;
+  .packages-table-header {
+    display: none;
+  }
+
+  .packages-table-body {
+    gap: 12px;
+  }
+
+  .package-row {
+    display: flex;
     flex-direction: column;
+    grid-template-columns: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
     gap: 8px;
+    background: white;
   }
 
-  .package-item .btn-secondary {
-    align-self: flex-end;
+  .package-row:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .package-row > div {
+    border: none;
+    border-bottom: 1px solid #edf2f7;
+    padding: 8px 0;
+    justify-content: space-between;
+    text-align: left;
+    min-height: auto;
+  }
+
+  .package-row > div:last-child {
+    border-bottom: none;
+  }
+
+  .col-actions {
+    justify-content: flex-end;
   }
 
   .pairing-item {
@@ -431,237 +528,42 @@
 }
 
 @media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
   .rider-card-modal {
     width: 98%;
+    max-height: 98vh;
   }
-}
 
-/* ============================================
-   ADDITIONAL RIDER CARD STYLES (from RiderCard/RiderCard.css)
-   ============================================ */
-
-  padding: 20px;
-}
-
-/* Rider Info Section */
-.rider-info-section {
-  background: #f7fafc;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.rider-info-section h3 {
-  margin: 0 0 15px 0;
-  color: #2d3748;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.info-label {
-  font-weight: 600;
-  color: #4a5568;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-}
-
-.info-value {
-  color: #2d3748;
-  font-size: 0.95rem;
-}
-
-.date-status-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.date-status-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Section Styles */
-.section {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.section-minimal {
-  padding: 15px;
-}
-
-.section h3 {
-  margin: 0 0 15px 0;
-  color: #2d3748;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-}
-
-/* Owned Horses List */
-.owned-horses-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.owned-horse-item {
-  padding: 10px;
-  background: #f7fafc;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-}
-
-.horse-name-type {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Packages List */
-.packages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.package-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: #f7fafc;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-}
-
-.package-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.package-id {
-  font-weight: 600;
-  color: #4a5568;
-  font-size: 0.9rem;
-}
-
-.package-lessons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: #718096;
-}
-
-.lesson-badge {
-  background: #4299e1;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.8rem;
-}
-
-/* Pairings List */
-.pairings-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pairing-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: #f7fafc;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-}
-
-.pairing-info {
-  display: flex;
-  align-items: center;
-}
-
-.pairing-horse-name {
-  font-weight: 600;
-  color: #2d3748;
-}
-
-.pairing-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* Utility Classes */
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.mb-15 {
-  margin-bottom: 15px;
-}
-
-.mb-20 {
-  margin-bottom: 20px;
-}
-
-.mb-30 {
-  margin-bottom: 30px;
-}
-
-/* Loading and Error States */
-.loading,
-.error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  color: #4a5568;
-  font-size: 1rem;
-}
-
-.error {
-  color: #e53e3e;
-}
-
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .rider-info-section {
+    padding: 12px;
+  }
+
+  .package-row {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .package-row > div {
+    padding: 6px 0;
+    font-size: 0.8rem;
+  }
+
+  .lesson-badge {
+    font-size: 0.75rem;
+    min-width: 28px;
+    padding: 2px 6px;
+  }
+
+  .date-value {
+    font-size: 0.75rem;
+  }
+
+  .package-status-badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
   }
 }

@@ -69,9 +69,6 @@ const TemplateManagement = () => {
         {successMessage && (
           <div className="success" style={{ marginBottom: '20px' }}>
             <Icons.Check /> {successMessage}
-            <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
-              Effacer
-            </button>
           </div>
         )}
 

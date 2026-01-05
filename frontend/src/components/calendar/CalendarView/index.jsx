@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCalendarView } from '../../../hooks/useCalendarView';
 import WeekView from '../WeekView.jsx';
-import TemplateModal from '../../templates/TemplateModal';
+import LessonModal from '../../lessons/LessonModal'; // ADDED
 import SingleLessonModal from '../../lessons/SingleLessonModal';
 import BlockedTimeModal from '../../lessons/BlockedTimeModal.jsx';
 import CalendarHeader from './CalendarHeader.jsx';
@@ -16,7 +16,7 @@ function CalendarView() {
     loading,
     error,
     selectedLesson,
-    showTemplateModal,
+    showLessonModal, // ADDED
     showSingleLessonModal,
     showBlockedTimeModal,
     filters,
@@ -33,7 +33,7 @@ function CalendarView() {
     handleFilterChange,
 
     // Modal handlers
-    closeTemplateModal,
+    closeLessonModal, // ADDED
     closeSingleLessonModal,
     closeBlockedTimeModal,
     handleModalSuccess,
@@ -83,36 +83,39 @@ function CalendarView() {
       <CalendarFilters filters={filters} onFilterChange={handleFilterChange} />
 
       <div className="calendar-content">
-        <WeekView 
-          weekData={weekData} 
-          onLessonClick={handleLessonClick} 
+        <WeekView
+          weekData={weekData}
+          onLessonClick={handleLessonClick}
           onQuickCreate={handleCreateLesson}
-          filters={filters} 
+          filters={filters}
         />
       </div>
 
-      {/* Template Modal */}
-      {showTemplateModal && selectedLesson && (
-        <TemplateModal
-          template={selectedLesson}
-          onClose={closeTemplateModal}
-          onSuccess={handleModalSuccess}
+      {/* ADDED: LessonModal for viewing/editing existing lessons */}
+      {showLessonModal && selectedLesson && selectedLesson.id && (
+        <LessonModal
+          lesson={selectedLesson}
+          onClose={closeLessonModal}
+          onUpdate={handleModalSuccess}
         />
       )}
 
-      {/* Single Lesson Modal */}
+      {/* SingleLessonModal for creating new lessons */}
       {showSingleLessonModal && (
         <SingleLessonModal
-          lesson={selectedLesson}
+          lesson={null} // Always null for creation
           onClose={closeSingleLessonModal}
           onSuccess={handleModalSuccess}
+          initialDate={selectedLesson?.date}
+          initialStartTime={selectedLesson?.start_time}
+          initialEndTime={selectedLesson?.end_time}
         />
       )}
 
-      {/* Blocked Time Modal */}
+      {/* BlockedTimeModal for creating blocked time */}
       {showBlockedTimeModal && (
         <BlockedTimeModal
-          blockedTime={selectedLesson}
+          blockedTime={null} // Always null for creation
           onClose={closeBlockedTimeModal}
           onSuccess={handleModalSuccess}
         />

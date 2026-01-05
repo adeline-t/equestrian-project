@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRidersList } from '../../../hooks/useRidersList';
-import RiderForm from './RiderForm';
+import RiderForm from './RiderForm/index.jsx';
 import RiderCard from '../RiderCard';
 import RidersTable from './RidersTable';
 import FilterButtons from './FilterButtons';
@@ -10,7 +10,10 @@ import { Icons } from '../../../lib/libraries/icons.jsx';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import { calculateRiderStats, filterRidersByStatus } from '../../../lib/helpers/stats/riderStats.js';
+import {
+  calculateRiderStats,
+  filterRidersByStatus,
+} from '../../../lib/helpers/stats/riderStats.js';
 
 function RidersList() {
   const [filter, setFilter] = useState('all');
@@ -70,7 +73,9 @@ function RidersList() {
         </button>
       </div>
 
-      {riders.length > 0 && <FilterButtons filter={filter} stats={stats} onFilterChange={setFilter} />}
+      {riders.length > 0 && (
+        <FilterButtons filter={filter} stats={stats} onFilterChange={setFilter} />
+      )}
 
       {error && (
         <div className="error">
@@ -84,9 +89,6 @@ function RidersList() {
       {successMessage && (
         <div className="success">
           <Icons.Check /> {successMessage}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
-            Effacer
-          </button>
         </div>
       )}
 
@@ -158,7 +160,11 @@ function RidersList() {
                   <Icons.Close />
                 </button>
               </div>
-              <RiderForm rider={editingRider} onSubmit={handleFormSubmit} onCancel={closeRiderModal} />
+              <RiderForm
+                rider={editingRider}
+                onSubmit={handleFormSubmit}
+                onCancel={closeRiderModal}
+              />
             </div>
           </div>
         </Portal>

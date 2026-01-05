@@ -54,23 +54,26 @@ function SingleLessonModal({
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Auto-update end time when start time changes
-    if (name === 'start_time' &amp;&amp; formData.start_time &amp;&amp; formData.end_time) {
+    if (name === 'start_time' && formData.start_time && formData.end_time) {
       // Calculate current duration in minutes
       const [oldStartHour, oldStartMin] = formData.start_time.split(':').map(Number);
       const [oldEndHour, oldEndMin] = formData.end_time.split(':').map(Number);
-      const durationMinutes = (oldEndHour * 60 + oldEndMin) - (oldStartHour * 60 + oldStartMin);
-      
+      const durationMinutes = oldEndHour * 60 + oldEndMin - (oldStartHour * 60 + oldStartMin);
+
       // Calculate new end time
       const [newStartHour, newStartMin] = value.split(':').map(Number);
-      const newEndMinutes = (newStartHour * 60 + newStartMin) + durationMinutes;
+      const newEndMinutes = newStartHour * 60 + newStartMin + durationMinutes;
       const newEndHour = Math.floor(newEndMinutes / 60);
       const newEndMin = newEndMinutes % 60;
-      
+
       // Format new end time
-      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(2, '0')}`;
-      
+      const newEndTime = `${String(newEndHour).padStart(2, '0')}:${String(newEndMin).padStart(
+        2,
+        '0'
+      )}`;
+
       setFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -102,9 +105,7 @@ function SingleLessonModal({
     }
 
     const rider = riders.find((r) => r.id === parseInt(selectedRiderId));
-    const horse = selectedHorseId
-      ? horses.find((h) => h.id === parseInt(selectedHorseId))
-      : null;
+    const horse = selectedHorseId ? horses.find((h) => h.id === parseInt(selectedHorseId)) : null;
 
     const newParticipant = {
       id: Date.now(), // Temporary ID
@@ -139,7 +140,7 @@ function SingleLessonModal({
     // Auto-generate lesson name if empty
     let lessonName = formData.name?.trim();
     if (!lessonName) {
-      const lessonType = LESSON_TYPES.find(t => t.value === formData.lesson_type);
+      const lessonType = LESSON_TYPES.find((t) => t.value === formData.lesson_type);
       lessonName = lessonType ? lessonType.label : 'Cours';
     }
 
@@ -194,12 +195,7 @@ function SingleLessonModal({
       size="large"
       footer={
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', width: '100%' }}>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={onClose}
-            disabled={loading}
-          >
+          <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
             <Icons.Cancel style={{ marginRight: '8px' }} />
             Annuler
           </button>

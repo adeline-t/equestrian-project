@@ -77,9 +77,6 @@ function PackagesList() {
       {successMessage && (
         <div className="success">
           <Icons.Check /> {successMessage}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
-            Effacer
-          </button>
         </div>
       )}
 

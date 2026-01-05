@@ -8,48 +8,54 @@ const DayGrid = ({
   isSelecting,
   validLessons,
   calculateLessonStyle,
+  handleMouseDown,
+  handleMouseMove,
+  HOUR_HEIGHT = 60,
+  START_HOUR = 8,
+  END_HOUR = 22,
 }) => {
+  const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
+
   return (
-    <div
-      className="day-grid"
-      style={{
-        position: 'relative',
-        minHeight: '840px', // 14 hours * 60px
-        backgroundColor: '#fafafa',
-        border: '1px solid #e2e8f0',
-        borderRadius: '0 0 8px 8px',
-      }}
-    >
-      {/* Time slots */}
-      {Array.from({ length: 14 }, (_, i) => {
-        const hour = 8 + i;
-        return (
+    <div className="day-grid">
+      {/* Hour markers and labels */}
+      <div className="hour-markers">
+        {hours.map((hour) => (
           <div
             key={hour}
-            className="time-slot"
+            className="hour-marker-row"
             style={{
               position: 'absolute',
-              top: `${i * 60}px`,
+              top: `${(hour - START_HOUR) * HOUR_HEIGHT}px`,
               left: 0,
               right: 0,
-              height: '60px',
-              borderTop: '1px solid #e2e8f0',
-              display: 'flex',
-              alignItems: 'center',
-              paddingLeft: '8px',
-              fontSize: '0.75rem',
-              color: '#718096',
-              backgroundColor: hour % 2 === 0 ? '#f7fafc' : 'white',
+              height: `${HOUR_HEIGHT}px`,
+              borderBottom: '1px solid #e2e8f0',
+              backgroundColor: hour % 2 === 0 ? '#fafafa' : 'white',
             }}
           >
-            {hour.toString().padStart(2, '0')}:00
+            <div
+              className="hour-label"
+              style={{
+                position: 'absolute',
+                left: '4px',
+                top: '2px',
+                fontSize: '0.65rem',
+                color: '#718096',
+                fontWeight: '500',
+                lineHeight: '1',
+              }}
+            >
+              {hour.toString().padStart(2, '0')}:00
+            </div>
           </div>
-        );
-      })}
+        ))}
+      </div>
 
       {/* Selection overlay */}
       {isSelecting && selectionStyle && (
         <div
+          className="selection-overlay"
           style={{
             position: 'absolute',
             backgroundColor: 'rgba(66, 153, 225, 0.2)',
@@ -63,50 +69,30 @@ const DayGrid = ({
       )}
 
       {/* Lessons */}
-      {validLessons.length === 0 ? (
-        <div
-          className="no-lessons"
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            textAlign: 'center',
-            color: '#a0aec0',
-          }}
-        >
-          <Icons.Calendar style={{ fontSize: '32px', color: '#adb5bd', marginBottom: '8px' }} />
-          <p style={{ margin: 0, fontSize: '0.875rem' }}>Cliquez et glissez pour créer un cours</p>
-        </div>
-      ) : (
-        <div className="lessons-container" style={{ position: 'relative' }}>
+      {validLessons.length > 0 && (
+        <div className="lessons-container">
           {validLessons.map((lesson) => (
             <div
               key={lesson.id}
+              className="lesson-card"
               style={{
-                position: 'absolute',
                 ...calculateLessonStyle(lesson),
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
               }}
-              onClick={() => onLessonClick(lesson)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onLessonClick(lesson);
+              }}
             >
-              {/* This would be the actual lesson card content */}
-              <div
-                style={{
-                  padding: '4px 8px',
-                  fontSize: '0.75rem',
-                  borderRadius: '4px',
-                  backgroundColor: getLessonColor(lesson.lesson_type),
-                  color: 'white',
-                  height: '100%',
-                  overflow: 'hidden',
-                }}
-              >
-                <div style={{ fontWeight: 'bold' }}>
+              <div className="lesson-card-content">
+                <div className="lesson-time">
                   {lesson.start_time} - {lesson.end_time}
                 </div>
-                <div style={{ fontSize: '0.7rem' }}>{lesson.name || 'Cours'}</div>
+                <div className="lesson-name">{lesson.name || 'Cours'}</div>
+                {lesson.lesson_type && (
+                  <div className="lesson-type-badge" data-type={lesson.lesson_type}>
+                    {lesson.lesson_type}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -114,19 +100,6 @@ const DayGrid = ({
       )}
     </div>
   );
-};
-
-// Helper function for lesson colors
-const getLessonColor = (lessonType) => {
-  const colors = {
-    private: '#4299e1',
-    group: '#48bb78',
-    training: '#ed8936',
-    competition: '#9f7aea',
-    event: '#f56565',
-    blocked: '#718096',
-  };
-  return colors[lessonType] || '#718096';
 };
 
 export default DayGrid;
