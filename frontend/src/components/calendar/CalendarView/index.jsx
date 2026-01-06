@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCalendarView } from '../../../hooks/useCalendarView';
 import WeekView from '../WeekView.jsx';
-import LessonModal from '../../lessons/LessonModal'; // ADDED
+import LessonModal from '../../lessons/LessonModal';
 import SingleLessonModal from '../../lessons/SingleLessonModal';
 import BlockedTimeModal from '../../lessons/BlockedTimeModal.jsx';
 import CalendarHeader from './CalendarHeader.jsx';
@@ -16,7 +16,7 @@ function CalendarView() {
     loading,
     error,
     selectedLesson,
-    showLessonModal, // ADDED
+    showLessonModal,
     showSingleLessonModal,
     showBlockedTimeModal,
     filters,
@@ -33,7 +33,7 @@ function CalendarView() {
     handleFilterChange,
 
     // Modal handlers
-    closeLessonModal, // ADDED
+    closeLessonModal,
     closeSingleLessonModal,
     closeBlockedTimeModal,
     handleModalSuccess,
@@ -47,20 +47,20 @@ function CalendarView() {
 
   if (loading) {
     return (
-      <div className="calendar-loading" style={{ textAlign: 'center', padding: '60px' }}>
+      <div className="calendar-loading">
         <Icons.Loading className="spin" style={{ fontSize: '48px', marginBottom: '16px' }} />
         <h3>Chargement du calendrier...</h3>
-        <p style={{ color: '#666' }}>Veuillez patienter pendant que nous chargeons vos cours</p>
+        <p>Veuillez patienter pendant que nous chargeons vos cours</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="calendar-error" style={{ textAlign: 'center', padding: '60px' }}>
+      <div className="calendar-error">
         <Icons.Warning style={{ fontSize: '48px', marginBottom: '16px', color: '#e53e3e' }} />
         <h3>Erreur de chargement</h3>
-        <p style={{ color: '#666', marginBottom: '20px' }}>{error}</p>
+        <p>{error}</p>
         <button className="btn btn-primary" onClick={loadWeekData}>
           <Icons.Refresh /> Réessayer
         </button>
@@ -75,12 +75,15 @@ function CalendarView() {
         onPrevWeek={handlePrevWeek}
         onNextWeek={handleNextWeek}
         onToday={handleToday}
-        onCreateLesson={handleCreateLesson}
-        onCreateBlockedTime={handleCreateBlockedTime}
         stats={stats}
       />
 
-      <CalendarFilters filters={filters} onFilterChange={handleFilterChange} />
+      <CalendarFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onCreateLesson={handleCreateLesson}
+        onCreateBlockedTime={handleCreateBlockedTime}
+      />
 
       <div className="calendar-content">
         <WeekView
@@ -91,7 +94,7 @@ function CalendarView() {
         />
       </div>
 
-      {/* ADDED: LessonModal for viewing/editing existing lessons */}
+      {/* LessonModal for viewing/editing existing lessons */}
       {showLessonModal && selectedLesson && selectedLesson.id && (
         <LessonModal
           lesson={selectedLesson}
@@ -103,7 +106,7 @@ function CalendarView() {
       {/* SingleLessonModal for creating new lessons */}
       {showSingleLessonModal && (
         <SingleLessonModal
-          lesson={null} // Always null for creation
+          lesson={null}
           onClose={closeSingleLessonModal}
           onSuccess={handleModalSuccess}
           initialDate={selectedLesson?.date}
@@ -115,7 +118,7 @@ function CalendarView() {
       {/* BlockedTimeModal for creating blocked time */}
       {showBlockedTimeModal && (
         <BlockedTimeModal
-          blockedTime={null} // Always null for creation
+          blockedTime={null}
           onClose={closeBlockedTimeModal}
           onSuccess={handleModalSuccess}
         />

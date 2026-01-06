@@ -43,30 +43,44 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   };
 
   const calculateLessonStyle = (lesson) => {
-    if (!lesson.start_time || !lesson.end_time) {
+    if (!lesson?.start_time || !lesson?.end_time) {
       return { display: 'none' };
     }
 
     const startMinutes = timeToMinutes(lesson.start_time);
     const endMinutes = timeToMinutes(lesson.end_time);
     const dayStartMinutes = START_HOUR * 60;
+    const dayEndMinutes = END_HOUR * 60;
 
-    if (endMinutes < dayStartMinutes || startMinutes > END_HOUR * 60) {
+    console.log('Lesson:', lesson.name, {
+      startMinutes,
+      endMinutes,
+      dayStartMinutes,
+      dayEndMinutes,
+    });
+
+    // Check if lesson is outside visible hours
+    if (endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes) {
       return { display: 'none' };
     }
 
-    const top = Math.max(0, (startMinutes - dayStartMinutes) * (HOUR_HEIGHT / 60));
-    const height = Math.min(
-      (endMinutes - startMinutes) * (HOUR_HEIGHT / 60),
-      (END_HOUR - START_HOUR) * HOUR_HEIGHT - top
-    );
+    // Clamp start and end to visible hours
+    const clampedStart = Math.max(startMinutes, dayStartMinutes);
+    const clampedEnd = Math.min(endMinutes, dayEndMinutes);
+
+    const top = (clampedStart - dayStartMinutes) * (HOUR_HEIGHT / 60);
+    const height = (clampedEnd - clampedStart) * (HOUR_HEIGHT / 60);
+
+    console.log('Calculated style:', {
+      top: `${top}px`,
+      height: `${height}px`,
+      clampedStart,
+      clampedEnd,
+    });
 
     return {
       top: `${top}px`,
-      left: '8px',
-      right: '8px',
       height: `${height}px`,
-      zIndex: 1,
     };
   };
 
@@ -76,27 +90,29 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     const startMinutes = timeToMinutes(selectionStart);
     const endMinutes = timeToMinutes(selectionEnd);
     const dayStartMinutes = START_HOUR * 60;
+    const dayEndMinutes = END_HOUR * 60;
 
-    if (endMinutes < dayStartMinutes || startMinutes > END_HOUR * 60) {
+    // Ensure start is before end
+    const minMinutes = Math.min(startMinutes, endMinutes);
+    const maxMinutes = Math.max(startMinutes, endMinutes);
+
+    if (maxMinutes <= dayStartMinutes || minMinutes >= dayEndMinutes) {
       return null;
     }
 
-    const top = Math.max(0, (startMinutes - dayStartMinutes) * (HOUR_HEIGHT / 60));
-    const height = Math.min(
-      (endMinutes - startMinutes) * (HOUR_HEIGHT / 60),
-      (END_HOUR - START_HOUR) * HOUR_HEIGHT - top
-    );
+    const clampedStart = Math.max(minMinutes, dayStartMinutes);
+    const clampedEnd = Math.min(maxMinutes, dayEndMinutes);
+
+    const top = (clampedStart - dayStartMinutes) * (HOUR_HEIGHT / 60);
+    const height = (clampedEnd - clampedStart) * (HOUR_HEIGHT / 60);
 
     return {
       top: `${top}px`,
-      left: '0',
-      right: '0',
       height: `${height}px`,
     };
   };
 
   const handleMouseDown = (e, hour, minute) => {
-    // Don't start selection if clicking on a lesson
     if (e.target.closest('.lesson-card')) {
       return;
     }
@@ -116,12 +132,16 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   };
 
   const handleMouseUp = () => {
-    if (!isSelecting || !selectionStart || !selectionEnd) return;
+    if (!isSelecting || !selectionStart || !selectionEnd) {
+      setIsSelecting(false);
+      return;
+    }
 
     const startMinutes = timeToMinutes(selectionStart);
     const endMinutes = timeToMinutes(selectionEnd);
+    const durationMinutes = Math.abs(endMinutes - startMinutes);
 
-    if (Math.abs(endMinutes - startMinutes) >= 30) {
+    if (durationMinutes >= 30) {
       setQuickCreateData({
         date,
         start_time: startMinutes < endMinutes ? selectionStart : selectionEnd,
@@ -135,15 +155,14 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     setSelectionEnd(null);
   };
 
-  const validLessons =
-    lessons?.filter((lesson) => {
-      if (!lesson.start_time || !lesson.end_time) return false;
-      const startMinutes = timeToMinutes(lesson.start_time);
-      const endMinutes = timeToMinutes(lesson.end_time);
-      const dayStartMinutes = START_HOUR * 60;
-      const dayEndMinutes = END_HOUR * 60;
-      return !(endMinutes < dayStartMinutes || startMinutes > dayEndMinutes);
-    }) || [];
+  const validLessons = (lessons || []).filter((lesson) => {
+    if (!lesson?.start_time || !lesson?.end_time) return false;
+    const startMinutes = timeToMinutes(lesson.start_time);
+    const endMinutes = timeToMinutes(lesson.end_time);
+    const dayStartMinutes = START_HOUR * 60;
+    const dayEndMinutes = END_HOUR * 60;
+    return !(endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes);
+  });
 
   return (
     <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
@@ -160,19 +179,16 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
           onLessonClick={onLessonClick}
           selectionStyle={calculateSelectionStyle()}
           isSelecting={isSelecting}
-          validLessons={validLessons}
           calculateLessonStyle={calculateLessonStyle}
-          handleMouseDown={handleMouseDown}
-          handleMouseMove={handleMouseMove}
           HOUR_HEIGHT={HOUR_HEIGHT}
           START_HOUR={START_HOUR}
           END_HOUR={END_HOUR}
         />
       </div>
 
-      {/* Quick Create Modal */}
       {showQuickCreateModal && quickCreateData && (
         <SingleLessonModal
+          lesson={null}
           onClose={() => {
             setShowQuickCreateModal(false);
             setQuickCreateData(null);

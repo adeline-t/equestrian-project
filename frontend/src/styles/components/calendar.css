@@ -1,5 +1,5 @@
 /* ============================================
-   CALENDAR VIEW
+   CALENDAR VIEW - MAIN CONTAINER
    ============================================ */
 
 .calendar-view {
@@ -8,6 +8,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
 .calendar-loading,
@@ -42,89 +43,171 @@
 
 .calendar-header {
   background: white;
-  padding: 20px;
   border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.calendar-header-top {
+.calendar-header-title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  gap: 20px;
   flex-wrap: wrap;
-  gap: 10px;
 }
 
-.calendar-header-top h2 {
-  margin: 0;
-  color: #333;
-  font-size: clamp(1.25rem, 5vw, 1.75rem);
-}
-
-.calendar-actions {
+.calendar-title-section {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.calendar-navigation {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .calendar-title {
-  text-align: center;
-  margin-bottom: 20px;
+  margin: 0;
+  font-size: clamp(1.25rem, 5vw, 1.75rem);
+  font-weight: 700;
+  color: #2d3748;
 }
 
-.calendar-title h3 {
-  margin: 0 0 10px 0;
-  color: #333;
-}
-
-.calendar-stats {
+.calendar-nav-buttons {
   display: flex;
-  gap: 20px;
-  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.calendar-nav-buttons .btn-text {
+  display: inline;
+}
+
+.calendar-header-bottom {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Compact Stats */
+.calendar-stats-compact {
+  display: flex;
+  gap: 16px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
-.stat {
-  padding: 8px 16px;
-  background: #e9ecef;
-  border-radius: 20px;
-  font-size: 14px;
+.stat-compact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.stat-compact-item:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+.stat-compact-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+  min-width: 24px;
+  text-align: center;
+}
+
+.stat-compact-label {
+  font-size: 0.7rem;
+  color: #718096;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
   white-space: nowrap;
 }
 
-.stat.blocked {
-  background: #fff3cd;
-  color: #856404;
-}
+/* ============================================
+   CALENDAR FILTERS
+   ============================================ */
 
 .calendar-filters {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filters-row {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: 20px;
-  justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+}
+
+.filters-controls {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .filter-group label {
-  font-size: 12px;
-  font-weight: bold;
-  color: #666;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.filter-group input[type='checkbox'] {
+  cursor: pointer;
+}
+
+.form-select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 160px;
+  font-family: inherit;
+}
+
+.form-select:hover {
+  border-color: #a0aec0;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+/* Action Buttons */
+.filters-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.filters-actions .btn {
+  white-space: nowrap;
+}
+
+.filters-actions .btn-text {
+  display: inline;
 }
 
 /* ============================================
@@ -146,7 +229,7 @@
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -198,13 +281,20 @@
 .time-slot {
   height: 60px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   border-bottom: 1px solid #e9ecef;
   font-size: 12px;
   color: #6c757d;
   flex-shrink: 0;
   font-weight: 500;
+  padding-top: 4px;
+  position: relative;
+}
+
+.time-label {
+  display: block;
+  line-height: 1;
 }
 
 /* ============================================
@@ -281,7 +371,7 @@
 }
 
 /* ============================================
-   DAY GRID CONTAINER
+   DAY GRID
    ============================================ */
 
 .day-grid-container {
@@ -300,15 +390,11 @@
   z-index: 20;
 }
 
-/* ============================================
-   DAY GRID
-   ============================================ */
-
 .day-grid {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 840px; /* 14 hours * 60px */
+  min-height: 840px;
   background: white;
   overflow-y: auto;
   overflow-x: hidden;
@@ -368,27 +454,27 @@
   height: 100%;
   z-index: 2;
 }
-
 /* ============================================
-   LESSON CARD
+   LESSON CARD - WRAPPER
    ============================================ */
 
 .lesson-card {
   position: absolute;
-  left: 8px;
-  right: 8px;
-  width: calc(100% - 16px);
-  background: white;
+  width: 100%;
+  height: 100%;
   border-radius: 6px;
-  padding: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-left: 4px solid;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  padding: 0;
+  border: none;
+  background: transparent;
+  min-height: auto;
+  max-height: none;
 }
 
 .lesson-card:hover {
@@ -397,83 +483,88 @@
   z-index: 10;
 }
 
-.lesson-card-content {
+/* ============================================
+   LESSON CARD - COMPACT (< 76 minutes)
+   ============================================ */
+
+.lesson-card.compact {
+  padding: 4px 6px;
+  min-height: 40px;
+  max-height: none;
+}
+
+.lesson-card.compact > div {
+  padding: 4px 6px !important;
+  font-size: 11px !important;
+  min-height: auto;
+  max-height: none;
+}
+
+.lesson-card.compact > div > div {
+  gap: 2px !important;
+}
+
+/* ============================================
+   LESSON CARD - STANDARD (>= 76 minutes)
+   ============================================ */
+
+.lesson-card.standard {
+  padding: 8px;
+  min-height: 60px;
+  max-height: none;
+}
+
+.lesson-card.standard > div {
+  padding: 8px !important;
+  font-size: 12px !important;
+  min-height: auto;
+  max-height: none;
+}
+
+/* ============================================
+   LESSON CARD CONTENT - OVERRIDE
+   ============================================ */
+
+.lesson-card > div {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-height: 0;
+  padding: 8px;
+  border-radius: 6px;
+  min-height: auto;
+  max-height: none;
+  overflow: visible;
 }
 
-.lesson-time {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #2d3748;
-}
+/* ============================================
+   LESSON CARD - TEXT TRUNCATION
+   ============================================ */
 
-.lesson-name {
-  font-size: 0.75rem;
-  color: #4a5568;
+.lesson-card strong,
+.lesson-card span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
 }
 
-.lesson-type-badge {
-  font-size: 0.65rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 2px 4px;
-  border-radius: 3px;
-  width: fit-content;
-  background: rgba(0, 0, 0, 0.1);
-  color: #2d3748;
+.lesson-card .lesson-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
-/* Lesson type colors */
-.lesson-card[style*='border-left-color: #4299e1'],
-.lesson-type-badge[data-type='private'] {
-  border-left-color: #4299e1;
-  background: #e7f3ff;
-}
+/* ============================================
+   LESSON CARD - HIDE UNNECESSARY CONTENT
+   ============================================ */
 
-.lesson-card[style*='border-left-color: #48bb78'],
-.lesson-type-badge[data-type='group'] {
-  border-left-color: #48bb78;
-  background: #e8f5e9;
-}
-
-.lesson-card[style*='border-left-color: #ed8936'],
-.lesson-type-badge[data-type='training'] {
-  border-left-color: #ed8936;
-  background: #fff8e1;
-}
-
-.lesson-card[style*='border-left-color: #9f7aea'],
-.lesson-type-badge[data-type='competition'] {
-  border-left-color: #9f7aea;
-  background: #ffebee;
-}
-
-.lesson-card[style*='border-left-color: #f56565'],
-.lesson-type-badge[data-type='event'] {
-  border-left-color: #f56565;
-  background: #f3e5f5;
-}
-
-.lesson-card[style*='border-left-color: #718096'],
-.lesson-type-badge[data-type='blocked'] {
-  border-left-color: #718096;
-  background: #f8f9fa;
-  opacity: 0.8;
-}
-
-.selection-overlay {
-  position: absolute;
-  background-color: rgba(66, 153, 225, 0.2);
-  border: 2px solid #4299e1;
-  border-radius: 4px;
-  z-index: 10;
-  pointer-events: none;
+.lesson-card.compact > div > div:nth-child(3),
+.lesson-card.compact > div > div:nth-child(4),
+.lesson-card.compact > div > div:nth-child(5) {
+  display: none;
 }
 
 /* ============================================
@@ -529,6 +620,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.2s ease;
 }
 
 .btn-close:hover {
@@ -553,317 +645,36 @@
 
 .alert {
   padding: 12px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid;
 }
 
 .alert-info {
   background: #d1ecf1;
   color: #0c5460;
-  border-left: 4px solid #17a2b8;
+  border-left-color: #17a2b8;
 }
 
 .alert-warning {
   background: #fff3cd;
   color: #856404;
-  border-left: 4px solid #ffc107;
+  border-left-color: #ffc107;
 }
 
 .alert-error {
   background: #f8d7da;
   color: #721c24;
-  border-left: 4px solid #dc3545;
+  border-left-color: #dc3545;
 }
 
 .alert-success {
   background: #d4edda;
   color: #155724;
-  border-left: 4px solid #28a745;
-}
-
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-
-@media (max-width: 1400px) {
-  .week-grid {
-    grid-template-columns: 70px repeat(7, 1fr);
-  }
-
-  .time-slot {
-    font-size: 11px;
-  }
-
-  .lesson-card {
-    padding: 6px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .calendar-view {
-    padding: 15px;
-  }
-
-  .week-grid {
-    grid-template-columns: 60px repeat(7, 1fr);
-  }
-
-  .time-header {
-    height: 70px;
-  }
-
-  .day-header {
-    height: 70px;
-    padding: 8px;
-  }
-
-  .time-slot {
-    height: 50px;
-    font-size: 10px;
-  }
-
-  .day-grid {
-    min-height: 700px; /* 14 hours * 50px */
-  }
-
-  .hour-marker-row {
-    height: 50px;
-  }
-
-  .lesson-card {
-    padding: 5px;
-  }
-
-  .lesson-time {
-    font-size: 0.7rem;
-  }
-
-  .lesson-name {
-    font-size: 0.7rem;
-  }
-
-  .lesson-type-badge {
-    font-size: 0.6rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .calendar-view {
-    padding: 10px;
-  }
-
-  .calendar-header {
-    padding: 15px;
-  }
-
-  .calendar-header-top {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .calendar-header-top h2 {
-    font-size: 1.25rem;
-  }
-
-  .calendar-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .calendar-navigation {
-    width: 100%;
-    justify-content: space-around;
-  }
-
-  .calendar-filters {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .filter-group {
-    width: 100%;
-  }
-
-  .week-grid {
-    grid-template-columns: 50px repeat(7, 1fr);
-    gap: 0;
-  }
-
-  .time-header {
-    height: 60px;
-    font-size: 11px;
-  }
-
-  .time-slot {
-    height: 45px;
-    font-size: 9px;
-  }
-
-  .day-header {
-    height: 60px;
-    padding: 6px;
-    font-size: 12px;
-  }
-
-  .day-name {
-    font-size: 12px;
-    margin-bottom: 2px;
-  }
-
-  .day-date {
-    font-size: 10px;
-  }
-
-  .today-badge {
-    font-size: 8px;
-    padding: 1px 4px;
-    margin-left: 4px;
-  }
-
-  .day-grid {
-    min-height: 630px; /* 14 hours * 45px */
-  }
-
-  .hour-marker-row {
-    height: 45px;
-  }
-
-  .hour-label {
-    font-size: 0.6rem;
-    left: 2px;
-    top: 1px;
-  }
-
-  .lesson-card {
-    padding: 4px;
-    left: 4px;
-    right: 4px;
-    width: calc(100% - 8px);
-  }
-
-  .lesson-time {
-    font-size: 0.65rem;
-  }
-
-  .lesson-name {
-    font-size: 0.65rem;
-  }
-
-  .lesson-type-badge {
-    font-size: 0.55rem;
-    padding: 1px 3px;
-  }
-
-  .modal-content {
-    max-width: 100%;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-
-  .modal-header {
-    padding: 15px;
-  }
-
-  .modal-header h2 {
-    font-size: 18px;
-  }
-
-  .modal-body {
-    padding: 15px;
-  }
-
-  .modal-footer {
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .calendar-view {
-    padding: 8px;
-  }
-
-  .calendar-header {
-    padding: 12px;
-    margin-bottom: 15px;
-  }
-
-  .calendar-header-top h2 {
-    font-size: 1rem;
-  }
-
-  .calendar-actions {
-    gap: 5px;
-  }
-
-  .calendar-navigation {
-    gap: 5px;
-  }
-
-  .week-grid {
-    grid-template-columns: 40px repeat(7, 1fr);
-  }
-
-  .time-header {
-    height: 50px;
-    font-size: 9px;
-  }
-
-  .time-slot {
-    height: 40px;
-    font-size: 8px;
-  }
-
-  .day-header {
-    height: 50px;
-    padding: 4px;
-    font-size: 10px;
-  }
-
-  .day-name {
-    font-size: 10px;
-    margin-bottom: 1px;
-  }
-
-  .day-date {
-    font-size: 8px;
-  }
-
-  .day-grid {
-    min-height: 560px; /* 14 hours * 40px */
-  }
-
-  .hour-marker-row {
-    height: 40px;
-  }
-
-  .hour-label {
-    font-size: 0.55rem;
-  }
-
-  .lesson-card {
-    padding: 3px;
-    left: 2px;
-    right: 2px;
-    width: calc(100% - 4px);
-  }
-
-  .lesson-time {
-    font-size: 0.6rem;
-  }
-
-  .lesson-name {
-    font-size: 0.6rem;
-  }
-
-  .lesson-type-badge {
-    font-size: 0.5rem;
-    padding: 1px 2px;
-  }
-
-  .stat {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
+  border-left-color: #28a745;
 }
 
 /* ============================================
@@ -926,7 +737,7 @@
   border: 1px solid #dc3545;
   color: #dc3545;
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -947,4 +758,411 @@
 .btn-outline-danger:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1400px) {
+  .week-grid {
+    grid-template-columns: 70px repeat(7, 1fr);
+  }
+
+  .time-slot {
+    font-size: 11px;
+  }
+
+  .lesson-card {
+    padding: 6px;
+  }
+
+  .stat-compact-label {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .calendar-view {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .calendar-header-title {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .week-grid {
+    grid-template-columns: 60px repeat(7, 1fr);
+  }
+
+  .time-header {
+    height: 70px;
+  }
+
+  .day-header {
+    height: 70px;
+    padding: 8px;
+  }
+
+  .time-slot {
+    height: 50px;
+    font-size: 10px;
+  }
+
+  .day-grid {
+    min-height: 700px;
+  }
+
+  .hour-marker-row {
+    height: 50px;
+  }
+
+  .lesson-card {
+    left: 4px;
+    right: 4px;
+    width: calc(100% - 8px);
+  }
+
+  .lesson-card.compact {
+    padding: 3px 4px;
+    min-height: 35px;
+  }
+
+  .lesson-card.standard {
+    padding: 6px;
+    min-height: 50px;
+  }
+
+  .lesson-card > div {
+    padding: 6px;
+    gap: 3px;
+  }
+
+  .calendar-nav-buttons .btn-text {
+    display: none;
+  }
+
+  .filters-actions .btn-text {
+    display: none;
+  }
+
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-controls {
+    width: 100%;
+  }
+
+  .filters-actions {
+    width: 100%;
+  }
+
+  .filters-actions .btn {
+    flex: 1;
+  }
+
+  .form-select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-view {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .calendar-header {
+    padding: 12px;
+  }
+
+  .calendar-title {
+    font-size: 1.25rem;
+  }
+
+  .calendar-filters {
+    padding: 12px;
+  }
+
+  .filters-row {
+    gap: 12px;
+  }
+
+  .filters-controls {
+    gap: 12px;
+  }
+
+  .filter-group label {
+    font-size: 0.8rem;
+  }
+
+  .form-select {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    min-width: 140px;
+  }
+
+  .filters-actions .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+
+  .filters-actions .btn-text {
+    display: none;
+  }
+
+  .week-grid {
+    grid-template-columns: 50px repeat(7, 1fr);
+  }
+
+  .time-header {
+    height: 60px;
+    font-size: 11px;
+  }
+
+  .time-slot {
+    height: 45px;
+    font-size: 9px;
+  }
+
+  .day-header {
+    height: 60px;
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .day-name {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .day-date {
+    font-size: 10px;
+  }
+
+  .today-badge {
+    font-size: 8px;
+    padding: 1px 4px;
+    margin-left: 4px;
+  }
+
+  .day-grid {
+    min-height: 630px;
+  }
+
+  .hour-marker-row {
+    height: 45px;
+  }
+
+  .hour-label {
+    font-size: 0.6rem;
+    left: 2px;
+    top: 1px;
+  }
+
+  .lesson-card {
+    left: 2px;
+    right: 2px;
+    width: calc(100% - 4px);
+  }
+
+  .lesson-card.compact {
+    padding: 2px 3px;
+    min-height: 30px;
+  }
+
+  .lesson-card.standard {
+    padding: 4px;
+    min-height: 40px;
+  }
+
+  .lesson-card > div {
+    padding: 4px;
+    gap: 2px;
+    font-size: 10px !important;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modal-header {
+    padding: 15px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 15px;
+  }
+
+  .modal-footer {
+    padding: 15px;
+  }
+
+  .stat-compact-item {
+    padding: 6px 8px;
+    flex: 1;
+  }
+
+  .stat-compact-value {
+    font-size: 1rem;
+  }
+
+  .stat-compact-label {
+    display: inline;
+    margin-left: 4px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-view {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .calendar-header {
+    padding: 10px;
+  }
+
+  .calendar-title {
+    font-size: 1rem;
+  }
+
+  .calendar-header-title {
+    gap: 8px;
+  }
+
+  .calendar-nav-buttons {
+    gap: 4px;
+  }
+
+  .calendar-filters {
+    padding: 10px;
+  }
+
+  .filters-row {
+    gap: 8px;
+  }
+
+  .filters-controls {
+    gap: 8px;
+    width: 100%;
+  }
+
+  .filter-group {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .filter-group label {
+    font-size: 0.75rem;
+  }
+
+  .form-select {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    min-width: auto;
+    width: 100%;
+  }
+
+  .filters-actions {
+    width: 100%;
+  }
+
+  .filters-actions .btn {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .filters-actions .btn-text {
+    display: none;
+  }
+
+  .week-grid {
+    grid-template-columns: 40px repeat(7, 1fr);
+  }
+
+  .time-header {
+    height: 50px;
+    font-size: 9px;
+  }
+
+  .time-slot {
+    height: 40px;
+    font-size: 8px;
+  }
+
+  .day-header {
+    height: 50px;
+    padding: 4px;
+    font-size: 10px;
+  }
+
+  .day-name {
+    font-size: 10px;
+    margin-bottom: 1px;
+  }
+
+  .day-date {
+    font-size: 8px;
+  }
+
+  .day-grid {
+    min-height: 560px;
+  }
+
+  .hour-marker-row {
+    height: 40px;
+  }
+
+  .hour-label {
+    font-size: 0.55rem;
+  }
+
+  .lesson-card {
+    left: 1px;
+    right: 1px;
+    width: calc(100% - 2px);
+  }
+
+  .lesson-card.compact {
+    padding: 2px 2px;
+    min-height: 25px;
+  }
+
+  .lesson-card.standard {
+    padding: 3px;
+    min-height: 35px;
+  }
+
+  .lesson-card > div {
+    padding: 3px;
+    gap: 1px;
+    font-size: 9px !important;
+  }
+
+  .stat-compact-item {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+  }
+
+  .stat-compact-value {
+    font-size: 0.9rem;
+  }
+
+  .stat-compact-label {
+    font-size: 0.65rem;
+  }
 }

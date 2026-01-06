@@ -28,13 +28,13 @@ function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
         <div className="time-column">
           <div className="time-header">
             <div className="time-header-content">
-              <Icons.Clock style={{ marginBottom: '4px' }} />
+              <Icons.Clock />
               <div>Heure</div>
             </div>
           </div>
           {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
             <div key={hour} className="time-slot">
-              {String(hour).padStart(2, '0')}:00
+              <span className="time-label">{String(hour).padStart(2, '0')}h</span>
             </div>
           ))}
         </div>

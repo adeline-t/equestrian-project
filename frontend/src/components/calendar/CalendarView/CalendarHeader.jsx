@@ -1,80 +1,62 @@
 import React from 'react';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import '../../../styles/components/calendar.css';
 
-const CalendarHeader = ({
-  weekTitle,
-  onPrevWeek,
-  onNextWeek,
-  onToday,
-  onCreateLesson,
-  onCreateBlockedTime,
-  stats,
-}) => {
+const CalendarHeader = ({ weekTitle, onPrevWeek, onNextWeek, onToday, stats }) => {
   return (
-    <div className="calendar-header" style={{ marginBottom: '20px' }}>
-      <div
-        className="header-top"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '16px',
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: '1.5rem' }}>{weekTitle}</h2>
+    <div className="calendar-header">
+      {/* Top: Title with Navigation */}
+      <div className="calendar-header-title">
+        <div className="calendar-title-section">
+          <h2 className="calendar-title">{weekTitle}</h2>
+        </div>
 
-        <div
-          className="header-actions"
-          style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
-        >
-          <button className="btn btn-secondary" onClick={onPrevWeek} title="Semaine précédente">
-            <Icons.ChevronLeft /> Semaine préc.
+        <div className="calendar-nav-buttons">
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={onPrevWeek}
+            title="Semaine précédente"
+          >
+            <Icons.ChevronLeft />
+            <span className="btn-text">Précédente</span>
           </button>
 
-          <button className="btn btn-primary" onClick={onToday} title="Aujourd'hui">
-            <Icons.Calendar /> Aujourd'hui
+          <button className="btn btn-primary" onClick={onToday} title="Aller à aujourd'hui">
+            <Icons.Calendar />
+            <span className="btn-text">Aujourd'hui</span>
           </button>
 
-          <button className="btn btn-secondary" onClick={onNextWeek} title="Semaine suivante">
-            Semaine suiv. <Icons.ChevronRight />
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={onNextWeek}
+            title="Semaine suivante"
+          >
+            <span className="btn-text">Suivante</span>
+            <Icons.ChevronRight />
           </button>
         </div>
       </div>
 
-      <div
-        className="header-stats-actions"
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-      >
-        <div
-          className="stats"
-          style={{ display: 'flex', gap: '16px', fontSize: '0.875rem', color: '#666' }}
-        >
-          <span>
-            <Icons.List style={{ marginRight: '4px' }} />
-            {stats.total} cours au total
-          </span>
-          <span>
-            <Icons.Check style={{ marginRight: '4px', color: '#48bb78' }} />
-            {stats.confirmed} confirmés
-          </span>
-          <span>
-            <Icons.Blocked style={{ marginRight: '4px', color: '#ed8936' }} />
-            {stats.blocked} bloqués
-          </span>
-        </div>
+      {/* Bottom: Stats */}
+      <div className="calendar-header-bottom">
+        <div className="calendar-stats-compact">
+          <div className="stat-compact-item">
+            <Icons.List style={{ fontSize: '0.9rem', color: '#2c5aa0' }} />
+            <span className="stat-compact-value">{stats.total}</span>
+            <span className="stat-compact-label">Total</span>
+          </div>
 
-        <div className="create-actions" style={{ display: 'flex', gap: '8px' }}>
-          <button className="btn btn-success" onClick={onCreateLesson} title="Créer un cours">
-            <Icons.Add /> Nouveau cours
-          </button>
+          <div className="stat-compact-item">
+            <Icons.Check style={{ fontSize: '0.9rem', color: '#22543d' }} />
+            <span className="stat-compact-value">{stats.confirmed}</span>
+            <span className="stat-compact-label">Confirmés</span>
+          </div>
 
-          <button
-            className="btn btn-warning"
-            onClick={onCreateBlockedTime}
-            title="Ajouter une plage bloquée"
-          >
-            <Icons.Blocked /> Bloquer un créneau
-          </button>
+          <div className="stat-compact-item">
+            <Icons.Blocked style={{ fontSize: '0.9rem', color: '#7c2d12' }} />
+            <span className="stat-compact-value">{stats.blocked}</span>
+            <span className="stat-compact-label">Bloqués</span>
+          </div>
         </div>
       </div>
     </div>

@@ -1,20 +1,19 @@
 import React from 'react';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import LessonCard from './LessonCard/index.jsx';
 
 const DayGrid = ({
   lessons,
   onLessonClick,
   selectionStyle,
   isSelecting,
-  validLessons,
   calculateLessonStyle,
-  handleMouseDown,
-  handleMouseMove,
   HOUR_HEIGHT = 60,
   START_HOUR = 8,
   END_HOUR = 22,
 }) => {
   const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
+  const validLessons = lessons || [];
 
   return (
     <div className="day-grid">
@@ -63,6 +62,9 @@ const DayGrid = ({
             borderRadius: '4px',
             zIndex: 10,
             pointerEvents: 'none',
+            left: '8px',
+            right: '8px',
+            width: 'calc(100% - 16px)',
             ...selectionStyle,
           }}
         />
@@ -71,31 +73,27 @@ const DayGrid = ({
       {/* Lessons */}
       {validLessons.length > 0 && (
         <div className="lessons-container">
-          {validLessons.map((lesson) => (
-            <div
-              key={lesson.id}
-              className="lesson-card"
-              style={{
-                ...calculateLessonStyle(lesson),
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onLessonClick(lesson);
-              }}
-            >
-              <div className="lesson-card-content">
-                <div className="lesson-time">
-                  {lesson.start_time} - {lesson.end_time}
-                </div>
-                <div className="lesson-name">{lesson.name || 'Cours'}</div>
-                {lesson.lesson_type && (
-                  <div className="lesson-type-badge" data-type={lesson.lesson_type}>
-                    {lesson.lesson_type}
-                  </div>
-                )}
+          {validLessons.map((lesson) => {
+            const lessonStyle = calculateLessonStyle(lesson);
+
+            // Debug log
+            console.log(`Rendering lesson ${lesson.id}:`, lessonStyle);
+
+            return (
+              <div
+                key={lesson.id}
+                style={{
+                  position: 'absolute',
+                  left: '8px',
+                  right: '8px',
+                  width: 'calc(100% - 16px)',
+                  ...lessonStyle,
+                }}
+              >
+                <LessonCard lesson={lesson} onClick={onLessonClick} />
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
