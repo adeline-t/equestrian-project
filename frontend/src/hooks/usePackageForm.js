@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { validatePackageForm } from '../lib/helpers/validators';
+import { validatePackageForm } from '../lib/helpers/domains/packages/packageValidators';
 
 /**
  * Custom hook for managing package form state and validation

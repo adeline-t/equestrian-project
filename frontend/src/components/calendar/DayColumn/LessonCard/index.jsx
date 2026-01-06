@@ -5,8 +5,8 @@ import {
   getLessonColor,
   shouldUseCompactLayout,
   isBlockedLesson,
-} from '../../../../lib/helpers/formatters/lessons.js';
-import { formatTime } from '../../../../lib/helpers/formatters/time.js';
+} from '../../../../lib/helpers/domains/lessons/formatters.js';
+import { formatTime } from '../../../../lib/helpers/shared/formatters/time.js';
 import LessonCardContent from './LessonCardContent';
 
 /**

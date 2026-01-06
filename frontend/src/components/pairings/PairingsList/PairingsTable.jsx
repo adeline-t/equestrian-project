@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
-import { isActive } from '../../../lib/helpers/filters/activityFilters.js';
-import { getHorseKindLabel } from '../../../constants/horses.js';
+import { isActive } from '../../../lib/helpers/domains/riders/filters.js';
+import { getHorseKindLabel } from '../../../constants/domains/horses/kinds.js';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';
 

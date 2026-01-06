@@ -1,5 +1,5 @@
 /**
- * Horse-related constants
+ * Horse kind constants
  */
 
 export const HORSE_KIND_LABELS = [

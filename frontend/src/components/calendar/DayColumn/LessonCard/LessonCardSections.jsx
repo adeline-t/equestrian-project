@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../../lib/libraries/icons.jsx';
-import { getStatusBadge } from '../../../../constants/lessonTypes.js';
-import { formatTime } from '../../../../lib/helpers/formatters/time.js';
-import { formatDuration } from '../../../../lib/helpers/formatters/duration.js';
+import { getStatusBadge } from '../../../../constants/domains/lessons/statuses.js';
+import { formatTime } from '../../../../lib/helpers/shared/formatters/time.js';
+import { formatDuration } from '../../../../lib/helpers/shared/formatters/duration.js';
 import { TEXT_STYLES, LAYOUT_STYLES } from '../../../../lib/config/ui.js';
 
 /**

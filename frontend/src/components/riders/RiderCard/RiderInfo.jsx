@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/libraries/icons.jsx';
-import { isActive } from '../../../lib/helpers/filters/activityFilters.js';
+import { isActive } from '../../../lib/helpers/domains/riders/filters.js';
 import '../../../styles/common/badges.css';
 
 function RiderInfo({ rider }) {

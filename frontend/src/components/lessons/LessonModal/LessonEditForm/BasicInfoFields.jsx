@@ -1,6 +1,6 @@
 import React from 'react';
 import { Icons } from '../../../../lib/libraries/icons.jsx';
-import { LESSON_TYPES } from '../../../../constants/index.js';
+import { LESSON_TYPES } from '../../../../constants/domains/lessons/types.js';
 
 const BasicInfoFields = ({ editFormData, lessonData, handleEditChange, handleTypeChange }) => {
   return (

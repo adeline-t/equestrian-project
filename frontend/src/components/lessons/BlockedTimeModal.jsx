@@ -4,8 +4,8 @@ import { fr } from 'date-fns/locale';
 import { lessonsApi } from '../../services/calendarApi.js';
 import Modal from '../common/Modal.jsx';
 import { Icons } from '../../lib/libraries/icons.jsx';
-import { calculateDuration } from '../../lib/helpers/formatters/index.js';
-import { validateLessonTime } from '../../lib/helpers/validators/index.js';
+import { calculateDuration } from '../../lib/helpers/shared/formatters/duration.js';
+import { validateLessonTime } from '../../lib/helpers/domains/lessons/validators';
 import '../../styles/components/lessons.css';
 
 /**

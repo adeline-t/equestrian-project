@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { riderService } from '../services';
-import { validateHorseForm } from '../lib/helpers/validators';
+import { validateHorseForm } from '../lib/helpers/domains/horses/validators';
 
 /**
  * Custom hook for managing horse form data and operations

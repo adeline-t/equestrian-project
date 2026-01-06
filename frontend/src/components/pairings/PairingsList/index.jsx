@@ -11,7 +11,7 @@ import { usePairingsList } from '../../../hooks/usePairingsList';
 import {
   calculatePairingStats,
   filterPairingsByStatus,
-} from '../../../lib/helpers/stats/pairingStats.js';
+} from '../../../lib/helpers/domains/pairings/stats.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';

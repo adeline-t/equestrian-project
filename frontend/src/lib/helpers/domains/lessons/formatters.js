@@ -2,7 +2,7 @@
  * Lesson Card Helper Functions
  */
 
-import { LESSON_TYPES } from '../../../constants/lessonTypes.js';
+import { LESSON_TYPES } from '../../../constants/domains/lessons/types.js';
 
 /**
  * Get lesson card background color based on lesson type

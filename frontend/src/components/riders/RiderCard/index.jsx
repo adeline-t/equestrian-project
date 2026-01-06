@@ -16,7 +16,7 @@ import {
   filterActivePackages,
   filterActivePairings,
   filterActiveHorses,
-} from '../../../lib/helpers/filters/activityFilters.js';
+} from '../../../lib/helpers/domains/riders/filters.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';

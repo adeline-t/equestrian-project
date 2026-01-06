@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { validatePairingForm } from '../lib/helpers/validators';
+import { validatePairingForm } from '../lib/helpers/domains/pairings/validators';
 
 /**
  * Custom hook for managing pairing form data and operations

@@ -1,22 +1,7 @@
 import React from 'react';
+import { TEMPLATE_LESSON_TYPE_FILTERS, TEMPLATE_STATUS_FILTERS } from '../../../../constants/domains/filters';
 
 const TemplateFilters = ({ filters, onFilterChange, stats }) => {
-  const lessonTypes = [
-    { value: 'all', label: 'Tous les types' },
-    { value: 'private', label: 'Cours Particulier' },
-    { value: 'group', label: 'Cours Collectif' },
-    { value: 'training', label: 'Stage' },
-    { value: 'competition', label: 'Concours' },
-    { value: 'event', label: 'Événement' },
-    { value: 'blocked', label: 'Plage Bloquée' },
-  ];
-
-  const statusOptions = [
-    { value: 'all', label: 'Tous les statuts' },
-    { value: 'active', label: 'Actifs seulement' },
-    { value: 'inactive', label: 'Inactifs seulement' },
-  ];
-
   return (
     <div className="template-filters" style={{ marginBottom: '20px' }}>
       <div className="filter-row" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '12px' }}>
@@ -28,7 +13,7 @@ const TemplateFilters = ({ filters, onFilterChange, stats }) => {
             className="form-select"
             style={{ minWidth: '180px' }}
           >
-            {statusOptions.map((option) => (
+            {TEMPLATE_STATUS_FILTERS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -44,7 +29,7 @@ const TemplateFilters = ({ filters, onFilterChange, stats }) => {
             className="form-select"
             style={{ minWidth: '200px' }}
           >
-            {lessonTypes.map((type) => (
+            {TEMPLATE_LESSON_TYPE_FILTERS.map((type) => (
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>

@@ -13,7 +13,7 @@ import '../../../styles/common/buttons.css';
 import {
   calculateRiderStats,
   filterRidersByStatus,
-} from '../../../lib/helpers/stats/riderStats.js';
+} from '../../../lib/helpers/domains/riders/stats.js';
 
 function RidersList() {
   const [filter, setFilter] = useState('all');

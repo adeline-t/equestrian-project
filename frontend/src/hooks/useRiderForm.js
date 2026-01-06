@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { validateRiderForm } from '../lib/helpers/validators/rider.js';
+import { validateRiderForm } from '../lib/helpers/domains/riders/validators';
 
 /**
  * Custom hook for managing rider form data and operations

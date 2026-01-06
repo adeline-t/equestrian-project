@@ -5,11 +5,8 @@
 // Libraries
 export * from './libraries/icons.jsx';
 
-// Helpers
-export * from './helpers/validators';
-export * from './helpers/formatters';
-export * from './helpers/stats';
-export * from './helpers/filters';
+// Helpers (now domain-organized)
+export * from './helpers';
 
 // Configuration
 export * from './config';

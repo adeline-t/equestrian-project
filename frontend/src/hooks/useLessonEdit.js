@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { lessonsApi } from '../services/calendarApi';
-import { calculateDurationInMinutes, addMinutesToTime } from '../lib/helpers/formatters';
+import { calculateDurationInMinutes, addMinutesToTime } from '../lib/helpers/domains/lessons/formatters';
 
 /**
  * Custom hook for managing lesson edit mode

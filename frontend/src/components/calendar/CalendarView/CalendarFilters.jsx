@@ -1,23 +1,8 @@
 import React from 'react';
 import { Icons } from '../../../lib/libraries/icons.jsx';
+import { CALENDAR_LESSON_TYPE_FILTERS, CALENDAR_STATUS_FILTERS } from '../../../constants/domains/filters';
 
 const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBlockedTime }) => {
-  const lessonTypes = [
-    { value: 'all', label: 'Tous les types' },
-    { value: 'private', label: 'Cours Particulier' },
-    { value: 'group', label: 'Cours Collectif' },
-    { value: 'training', label: 'Stage' },
-    { value: 'competition', label: 'Concours' },
-    { value: 'event', label: 'Événement' },
-  ];
-
-  const statusOptions = [
-    { value: 'all', label: 'Tous les statuts' },
-    { value: 'scheduled', label: 'Planifiés' },
-    { value: 'confirmed', label: 'Confirmés' },
-    { value: 'cancelled', label: 'Annulés' },
-  ];
-
   const handleCreateLesson = () => {
     console.log('Creating lesson from filters');
     onCreateLesson();
@@ -40,7 +25,7 @@ const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBloc
               onChange={(e) => onFilterChange('lessonType', e.target.value)}
               className="form-select"
             >
-              {lessonTypes.map((type) => (
+              {CALENDAR_LESSON_TYPE_FILTERS.map((type) => (
                 <option key={type.value} value={type.value}>
                   {type.label}
                 </option>
@@ -55,7 +40,7 @@ const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBloc
               onChange={(e) => onFilterChange('status', e.target.value)}
               className="form-select"
             >
-              {statusOptions.map((status) => (
+              {CALENDAR_STATUS_FILTERS.map((status) => (
                 <option key={status.value} value={status.value}>
                   {status.label}
                 </option>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getLessonTypeIcon } from '../../../../constants/lessonTypes.js';
+import { getLessonTypeIcon } from '../../../../constants/domains/lessons/types.js';
 
 /**
  * Render lesson type icon
