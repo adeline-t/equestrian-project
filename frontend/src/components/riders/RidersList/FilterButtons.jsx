@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../../../styles/common/buttons.css';
+import '../../../styles/index.css';
+import '../../../styles/components/list-view.css';
 
 function FilterButtons({ filter, stats, onFilterChange }) {
   return (

@@ -1,19 +1,17 @@
 import { useState } from 'react';
 import { useRidersList } from '../../../hooks/useRidersList';
-import RiderForm from './RiderForm/index.jsx';
-import RiderCard from '../RiderCard';
-import RidersTable from './RidersTable';
-import FilterButtons from './FilterButtons';
-import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
-import Modal from '../../common/Modal';
-import { Icons } from '../../../lib/icons';
-import '../../../styles/common/modal.css';
-import '../../../styles/common/alerts.css';
-import '../../../styles/common/buttons.css';
 import {
   calculateRiderStats,
   filterRidersByStatus,
 } from '../../../lib/helpers/domains/riders/stats.js';
+import { Icons } from '../../../lib/icons';
+import '../../../styles/index.css';
+import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
+import Modal from '../../common/Modal';
+import RiderCard from '../RiderCard';
+import FilterButtons from './FilterButtons';
+import RiderForm from './RiderForm/index.jsx';
+import RidersTable from './RidersTable';
 
 function RidersList() {
   const [filter, setFilter] = useState('all');
@@ -65,7 +63,7 @@ function RidersList() {
   }
 
   return (
-    <div className="card">
+    <div className="card-enhanced">
       <div className="flex-between mb-20">
         <h2>Liste des Cavaliers</h2>
         <button className="btn btn-primary" onClick={handleCreate}>

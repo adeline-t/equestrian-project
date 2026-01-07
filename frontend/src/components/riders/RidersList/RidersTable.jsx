@@ -1,4 +1,5 @@
 import { Icons } from '../../../lib/icons';
+import '../../../styles/index.css';
 
 const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }) => {
   if (riders.length === 0) {
@@ -48,7 +49,7 @@ const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }
                   {getStatusBadge(rider.activity_start_date, rider.activity_end_date)}
                 </span>
               </td>
-              <td className="actions">
+              <td className="table-actions">
                 <button
                   className="btn btn-info btn-sm"
                   onClick={() => onViewDetails(rider.id)}
