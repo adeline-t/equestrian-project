@@ -1,5 +1,6 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
+import { LAYOUT_STYLES } from '../../../lib/config/ui/cardStyles';
 import LessonCard from './LessonCard/index.jsx';
 
 const DayGrid = ({
@@ -8,6 +9,8 @@ const DayGrid = ({
   selectionStyle,
   isSelecting,
   calculateLessonStyle,
+  onMouseDown,
+  onMouseMove,
   HOUR_HEIGHT = 60,
   START_HOUR = 8,
   END_HOUR = 22,
@@ -16,9 +19,9 @@ const DayGrid = ({
   const validLessons = lessons || [];
 
   return (
-    <div className="day-grid">
+    <div className="day-grid" role="presentation">
       {/* Hour markers and labels */}
-      <div className="hour-markers">
+      <div className="hour-markers" role="presentation">
         {hours.map((hour) => (
           <div
             key={hour}
@@ -32,6 +35,9 @@ const DayGrid = ({
               borderBottom: '1px solid #e2e8f0',
               backgroundColor: hour % 2 === 0 ? '#fafafa' : 'white',
             }}
+            role="presentation"
+            onMouseDown={(e) => onMouseDown(e, hour, 0)}
+            onMouseMove={(e) => onMouseMove(e, hour, 0)}
           >
             <div
               className="hour-label"
@@ -44,6 +50,7 @@ const DayGrid = ({
                 fontWeight: '500',
                 lineHeight: '1',
               }}
+              aria-label={`${hour.toString().padStart(2, '0')}:00`}
             >
               {hour.toString().padStart(2, '0')}:00
             </div>
@@ -67,17 +74,16 @@ const DayGrid = ({
             width: 'calc(100% - 16px)',
             ...selectionStyle,
           }}
+          role="presentation"
+          aria-hidden="true"
         />
       )}
 
       {/* Lessons */}
       {validLessons.length > 0 && (
-        <div className="lessons-container">
+        <div className="lessons-container" role="presentation">
           {validLessons.map((lesson) => {
             const lessonStyle = calculateLessonStyle(lesson);
-
-            // Debug log
-            console.log(`Rendering lesson ${lesson.id}:`, lessonStyle);
 
             return (
               <div
@@ -89,6 +95,7 @@ const DayGrid = ({
                   width: 'calc(100% - 16px)',
                   ...lessonStyle,
                 }}
+                role="presentation"
               >
                 <LessonCard lesson={lesson} onClick={onLessonClick} />
               </div>

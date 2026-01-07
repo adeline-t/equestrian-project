@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CARD_STYLES } from '../../../../lib/config/ui.js';
+import { CARD_STYLES } from '../../../../lib/config/ui/cardStyles';
 import {
   getLessonColor,
   shouldUseCompactLayout,
   isBlockedLesson,
-} from '../../../../lib/helpers/domains/lessons/formatters.js';
-import { formatTime } from '../../../../lib/helpers/shared/formatters/time.js';
+} from '../../../../lib/helpers/domains/lessons/formatters';
+import { formatTime } from '../../../../lib/helpers/shared/formatters/time';
 import LessonCardContent from './LessonCardContent';
+import '../../../../styles/components/calendar.css';
 
 /**
  * Main Lesson Card Component
@@ -38,6 +39,10 @@ function LessonCard({ lesson, onClick, style }) {
     }
   };
 
+  const lessonLabel = `${lesson.name || 'Cours'}, ${formatTime(lesson.start_time)} - ${formatTime(
+    lesson.end_time
+  )}`;
+
   return (
     <div
       className={`lesson-card ${isCompact ? 'compact' : 'standard'} ${isBlocked ? 'blocked' : ''}`}
@@ -46,9 +51,8 @@ function LessonCard({ lesson, onClick, style }) {
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`${lesson.name || 'Cours'}, ${formatTime(lesson.start_time)} - ${formatTime(
-        lesson.end_time
-      )}`}
+      aria-label={lessonLabel}
+      aria-pressed="false"
     >
       <LessonCardContent lesson={lesson} isCompact={isCompact} isBlocked={isBlocked} />
     </div>

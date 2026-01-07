@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
 import { packagesApi, ridersApi } from '../services';
+import {
+  PACKAGE_STATUS,
+  getPackageStatusLabel,
+  isPackageActive,
+  isPackageExpired,
+} from '../lib/domains/packages/statuses';
+import { isActive } from '../lib/helpers/shared/filters';
 
 /**
  * Custom hook for managing packages list data and operations
@@ -13,7 +20,7 @@ export function usePackagesList() {
   const [showModal, setShowModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState(PACKAGE_STATUS.ACTIVE);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [packageToDelete, setPackageToDelete] = useState(null);
 
@@ -53,15 +60,10 @@ export function usePackagesList() {
 
   const handleFormSubmit = async (packageData) => {
     try {
-      console.log('📤 Form submit - Editing:', !!editingPackage);
-      console.log('📤 Package data:', packageData);
-
       if (editingPackage) {
-        console.log('🔄 Updating package ID:', editingPackage.id);
         await packagesApi.update(editingPackage.id, packageData);
         setSuccessMessage('Forfait modifié avec succès');
       } else {
-        console.log('➕ Creating new package');
         await packagesApi.create(packageData);
         setSuccessMessage('Forfait créé avec succès');
       }
@@ -72,9 +74,7 @@ export function usePackagesList() {
 
       // Reload data after successful submission
       await loadData();
-      console.log('✅ Data reloaded');
     } catch (err) {
-      console.error('❌ Form submit error:', err);
       setError(err.message || 'Une erreur est survenue');
       throw err;
     }
@@ -94,7 +94,6 @@ export function usePackagesList() {
       setPackageToDelete(null);
       await loadData();
     } catch (err) {
-      console.error('❌ Error removing from inventory:', err);
       setError(err.message);
       setShowDeleteModal(false);
       setPackageToDelete(null);
@@ -119,19 +118,30 @@ export function usePackagesList() {
     }
   };
 
-  const isActive = (startDate, endDate) => {
-    const now = new Date();
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
+  /**
+   * Determine package status based on dates
+   * @param {Object} pkg - Package object
+   * @returns {string} Package status (active, expired, or suspended)
+   */
+  const getPackageStatus = (pkg) => {
+    if (!pkg) return PACKAGE_STATUS.SUSPENDED;
 
-    if (start && start > now) return false;
-    if (end && end < now) return false;
-    return true;
+    // Check if package is within active date range
+    if (!isActive(pkg.activity_start_date, pkg.activity_end_date)) {
+      return PACKAGE_STATUS.EXPIRED;
+    }
+
+    return PACKAGE_STATUS.ACTIVE;
   };
 
-  const getStatusBadge = (startDate, endDate) => {
-    const active = isActive(startDate, endDate);
-    return active ? 'Actif' : 'Inactif';
+  /**
+   * Get status badge label for display
+   * @param {Object} pkg - Package object
+   * @returns {string} Human-readable status label
+   */
+  const getStatusBadge = (pkg) => {
+    const status = getPackageStatus(pkg);
+    return getPackageStatusLabel(status);
   };
 
   const getRiderName = (riderId) => {
@@ -140,16 +150,21 @@ export function usePackagesList() {
   };
 
   const filteredPackages = packages.filter((pkg) => {
+    const status = getPackageStatus(pkg);
+
     if (filter === 'all') return true;
-    if (filter === 'active') return isActive(pkg.activity_start_date, pkg.activity_end_date);
-    if (filter === 'inactive') return !isActive(pkg.activity_start_date, pkg.activity_end_date);
+    if (filter === PACKAGE_STATUS.ACTIVE) return status === PACKAGE_STATUS.ACTIVE;
+    if (filter === PACKAGE_STATUS.EXPIRED) return status === PACKAGE_STATUS.EXPIRED;
+    if (filter === PACKAGE_STATUS.SUSPENDED) return status === PACKAGE_STATUS.SUSPENDED;
+
     return true;
   });
 
   const stats = {
     total: packages.length,
-    active: packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date)).length,
-    inactive: packages.filter((p) => !isActive(p.activity_start_date, p.activity_end_date)).length,
+    active: packages.filter((p) => getPackageStatus(p) === PACKAGE_STATUS.ACTIVE).length,
+    expired: packages.filter((p) => getPackageStatus(p) === PACKAGE_STATUS.EXPIRED).length,
+    suspended: packages.filter((p) => getPackageStatus(p) === PACKAGE_STATUS.SUSPENDED).length,
   };
 
   const closePackageModal = () => {
@@ -189,6 +204,9 @@ export function usePackagesList() {
     filteredPackages,
     stats,
 
+    // Status constants
+    PACKAGE_STATUS,
+
     // Actions
     loadData,
     handleCreate,
@@ -204,9 +222,11 @@ export function usePackagesList() {
     closeDeleteModal,
 
     // Utility functions
-    isActive,
+    getPackageStatus,
     getStatusBadge,
     getRiderName,
+    isPackageActive,
+    isPackageExpired,
 
     // State setters
     clearSuccessMessage,

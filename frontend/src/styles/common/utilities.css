@@ -1,13 +1,22 @@
-/* Common Utility Classes - Shared across all components */
+/* ============================================
+   UTILITY CLASSES - Consolidated
+   ============================================ */
 
-/* Spacing utilities */
+/* ============================================
+   SPACING UTILITIES
+   ============================================ */
+
+/* Margin */
 .mt-10 { margin-top: 10px; }
 .mt-20 { margin-top: 20px; }
 .mb-10 { margin-bottom: 10px; }
+.mb-15 { margin-bottom: 15px; }
 .mb-20 { margin-bottom: 20px; }
+.mb-30 { margin-bottom: 30px; }
 .ml-10 { margin-left: 10px; }
 .mr-10 { margin-right: 10px; }
 
+/* Padding */
 .pt-10 { padding-top: 10px; }
 .pt-20 { padding-top: 20px; }
 .pb-10 { padding-bottom: 10px; }
@@ -15,16 +24,23 @@
 .pl-10 { padding-left: 10px; }
 .pr-10 { padding-right: 10px; }
 
-/* Display utilities */
+/* ============================================
+   DISPLAY UTILITIES
+   ============================================ */
+
 .d-flex { display: flex; }
 .d-inline-flex { display: inline-flex; }
 .d-block { display: block; }
 .d-inline-block { display: inline-block; }
 .d-none { display: none; }
 
-/* Flex utilities */
+/* ============================================
+   FLEX UTILITIES
+   ============================================ */
+
 .flex-column { flex-direction: column; }
 .flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
 .align-items-center { align-items: center; }
 .align-items-start { align-items: flex-start; }
 .align-items-end { align-items: flex-end; }
@@ -32,35 +48,34 @@
 .justify-content-between { justify-content: space-between; }
 .justify-content-end { justify-content: flex-end; }
 .gap-8 { gap: 8px; }
+.gap-10 { gap: 10px; }
 .gap-12 { gap: 12px; }
 .gap-16 { gap: 16px; }
+.gap-20 { gap: 20px; }
 
-/* Text utilities */
+/* ============================================
+   TEXT UTILITIES
+   ============================================ */
+
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
 
-.text-muted { color: #6c757d; }
-.text-primary { color: #007bff; }
-.text-success { color: #28a745; }
-.text-danger { color: #dc3545; }
-.text-warning { color: #ffc107; }
-.text-info { color: #17a2b8; }
+.text-muted { color: var(--color-gray-600); }
+.text-primary { color: var(--color-primary); }
+.text-success { color: var(--color-success); }
+.text-danger { color: var(--color-danger); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
 
-.font-weight-bold { font-weight: 700; }
-.font-weight-normal { font-weight: 400; }
+.font-weight-normal { font-weight: var(--font-weight-normal); }
+.font-weight-medium { font-weight: var(--font-weight-medium); }
+.font-weight-bold { font-weight: var(--font-weight-bold); }
 
-/* Loading animation */
-.spin {
-  animation: spin 1s linear infinite;
-}
+/* ============================================
+   LOADING & STATES
+   ============================================ */
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Empty state */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -68,15 +83,27 @@
   justify-content: center;
   padding: 40px 20px;
   text-align: center;
-  color: #6c757d;
+  color: var(--color-gray-600);
 }
 
 .empty-state p {
   margin-top: 12px;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
 }
 
-/* Loading state */
+.empty-state-small {
+  text-align: center;
+  padding: 30px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-lg);
+  border: 2px dashed #cbd5e0;
+}
+
+.empty-state-small p {
+  color: var(--color-gray-600);
+  margin-bottom: 15px;
+}
+
 .loading {
   display: flex;
   flex-direction: column;
@@ -84,14 +111,14 @@
   justify-content: center;
   padding: 40px 20px;
   text-align: center;
+  color: var(--color-gray-600);
 }
 
 .loading p {
   margin-top: 12px;
-  color: #6c757d;
+  color: var(--color-gray-600);
 }
 
-/* Error state */
 .error {
   display: flex;
   flex-direction: column;
@@ -99,9 +126,30 @@
   justify-content: center;
   padding: 40px 20px;
   text-align: center;
+  color: var(--color-danger);
 }
 
 .error p {
   margin-top: 12px;
-  color: #dc3545;
+  color: var(--color-danger);
+}
+
+/* ============================================
+   COMPOSITE UTILITIES
+   ============================================ */
+
+.flex {
+  display: flex;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

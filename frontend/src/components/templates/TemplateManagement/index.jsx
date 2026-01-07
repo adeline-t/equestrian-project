@@ -4,7 +4,7 @@ import TemplateModal from '../TemplateModal';
 import TemplateFilters from './TemplateFilters';
 import TemplatesTable from './TemplatesTable';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import '../../../styles/components/templates.css';
 
 const TemplateManagement = () => {

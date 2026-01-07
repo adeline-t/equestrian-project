@@ -33,7 +33,6 @@ FilterButtons.propTypes = {
     total: PropTypes.number.isRequired,
     horses: PropTypes.number.isRequired,
     ponies: PropTypes.number.isRequired,
-    active: PropTypes.number.isRequired,
   }).isRequired,
   onFilterChange: PropTypes.func.isRequired,
 };

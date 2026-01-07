@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 
 const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipOptions }) => {
   return (

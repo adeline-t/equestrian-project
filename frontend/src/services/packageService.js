@@ -1,21 +1,23 @@
 /**
  * Package Service - Handles all package-related API operations
  */
-import { api } from './apiService';
+import api from './apiService';
+import { createCrudOperations } from './apiService';
+import { validatePackageForm } from '../lib/helpers/domains/packages/validators';
+import { PACKAGE_STATUS, PACKAGE_STATUS_LABELS } from '../lib/domains/packages/statuses';
 
 export const packageService = {
   // Basic CRUD operations
-  getAll: async () => {
-    const response = await api.get('/packages');
-    return response.data;
-  },
+  ...createCrudOperations('packages'),
 
-  getById: async (id) => {
-    const response = await api.get(`/packages/${id}`);
-    return response.data;
-  },
-
+  // Override create to add validation
   create: async (data) => {
+    // Validate form data
+    const validation = validatePackageForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
+
     const validatedData = {
       ...data,
       rider_id: Number(data.rider_id),
@@ -29,7 +31,14 @@ export const packageService = {
     return response.data;
   },
 
+  // Override update to add validation
   update: async (id, data) => {
+    // Validate form data
+    const validation = validatePackageForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
+
     const validatedData = {
       ...data,
       rider_id: Number(data.rider_id),
@@ -40,11 +49,6 @@ export const packageService = {
     };
 
     const response = await api.put(`/packages/${id}`, validatedData);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await api.delete(`/packages/${id}`);
     return response.data;
   },
 
@@ -99,9 +103,30 @@ export const packageService = {
     return response.data;
   },
 
-  filterByType: async (type) => {
-    const response = await api.get('/packages', { params: { type } });
-    return response.data;
+  // Helper methods using domain constants and calculations
+  getPackageStatuses: () => ({ statuses: PACKAGE_STATUS, labels: PACKAGE_STATUS_LABELS }),
+
+  // Calculate remaining lessons for a package
+  getRemainingLessons: async (packageId) => {
+    const pkg = await packageService.getById(packageId);
+    return calculateRemainingLessons(pkg);
+  },
+
+  // Calculate total remaining lessons for a package
+  getTotalRemaining: async (packageId) => {
+    const pkg = await packageService.getById(packageId);
+    return calculateTotalRemainingLessons(pkg);
+  },
+
+  // Calculate package progress percentage
+  getProgress: async (packageId) => {
+    const pkg = await packageService.getById(packageId);
+    return calculatePackageProgress(pkg);
+  },
+
+  // Get package status label
+  getPackageStatusLabel: (status) => {
+    return PACKAGE_STATUS_LABELS[status] || status;
   },
 };
 

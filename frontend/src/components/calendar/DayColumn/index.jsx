@@ -1,10 +1,26 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import SingleLessonModal from '../../lessons/SingleLessonModal';
 import { format, isToday, isPast, parseISO, endOfDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
+import {
+  timeToMinutes,
+  calculateLessonStyle,
+  calculateSelectionStyle,
+} from '../../../lib/helpers/shared/formatters/time';
+import { getValidLessons } from '../../../lib/helpers/domains/lessons/validators';
 import DayHeader from './DayHeader';
 import DayGrid from './DayGrid';
+
+/**
+ * Calendar configuration constants
+ */
+const CALENDAR_CONFIG = {
+  HOUR_HEIGHT: 60,
+  START_HOUR: 8,
+  END_HOUR: 22,
+  MIN_SELECTION_DURATION: 30, // minutes
+};
 
 function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   const [isSelecting, setIsSelecting] = useState(false);
@@ -14,13 +30,15 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   const [quickCreateData, setQuickCreateData] = useState(null);
   const dayGridRef = useRef(null);
 
+  const { HOUR_HEIGHT, START_HOUR, END_HOUR, MIN_SELECTION_DURATION } = CALENDAR_CONFIG;
+
   if (!date) {
     return (
-      <div className="day-column">
+      <div className="day-column" role="region" aria-label="Colonne du jour invalide">
         <DayHeader date={date} dayName={dayName} />
         <div className="day-grid">
           <div className="no-lessons">
-            <Icons.Warning style={{ fontSize: '32px', marginBottom: '8px' }} />
+            <Icons.Warning style={{ fontSize: '32px', marginBottom: '8px' }} aria-hidden="true" />
             <p>Date invalide</p>
           </div>
         </div>
@@ -32,87 +50,25 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   const isCurrentDay = isToday(dateObj);
   const isPastDay = isPast(endOfDay(dateObj)) && !isCurrentDay;
 
-  const HOUR_HEIGHT = 60;
-  const START_HOUR = 8;
-  const END_HOUR = 22;
+  // Memoized valid lessons
+  const validLessons = useMemo(
+    () => getValidLessons(lessons, START_HOUR, END_HOUR),
+    [lessons, START_HOUR, END_HOUR]
+  );
 
-  const timeToMinutes = (timeStr) => {
-    if (!timeStr) return 0;
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + (minutes || 0);
-  };
+  // Memoized lesson style calculator
+  const calculateLessonStyleMemo = useCallback(
+    (lesson) => calculateLessonStyle(lesson, HOUR_HEIGHT, START_HOUR, END_HOUR),
+    [HOUR_HEIGHT, START_HOUR, END_HOUR]
+  );
 
-  const calculateLessonStyle = (lesson) => {
-    if (!lesson?.start_time || !lesson?.end_time) {
-      return { display: 'none' };
-    }
+  // Memoized selection style calculator
+  const calculateSelectionStyleMemo = useCallback(
+    () => calculateSelectionStyle(selectionStart, selectionEnd, HOUR_HEIGHT, START_HOUR, END_HOUR),
+    [selectionStart, selectionEnd, HOUR_HEIGHT, START_HOUR, END_HOUR]
+  );
 
-    const startMinutes = timeToMinutes(lesson.start_time);
-    const endMinutes = timeToMinutes(lesson.end_time);
-    const dayStartMinutes = START_HOUR * 60;
-    const dayEndMinutes = END_HOUR * 60;
-
-    console.log('Lesson:', lesson.name, {
-      startMinutes,
-      endMinutes,
-      dayStartMinutes,
-      dayEndMinutes,
-    });
-
-    // Check if lesson is outside visible hours
-    if (endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes) {
-      return { display: 'none' };
-    }
-
-    // Clamp start and end to visible hours
-    const clampedStart = Math.max(startMinutes, dayStartMinutes);
-    const clampedEnd = Math.min(endMinutes, dayEndMinutes);
-
-    const top = (clampedStart - dayStartMinutes) * (HOUR_HEIGHT / 60);
-    const height = (clampedEnd - clampedStart) * (HOUR_HEIGHT / 60);
-
-    console.log('Calculated style:', {
-      top: `${top}px`,
-      height: `${height}px`,
-      clampedStart,
-      clampedEnd,
-    });
-
-    return {
-      top: `${top}px`,
-      height: `${height}px`,
-    };
-  };
-
-  const calculateSelectionStyle = () => {
-    if (!selectionStart || !selectionEnd) return null;
-
-    const startMinutes = timeToMinutes(selectionStart);
-    const endMinutes = timeToMinutes(selectionEnd);
-    const dayStartMinutes = START_HOUR * 60;
-    const dayEndMinutes = END_HOUR * 60;
-
-    // Ensure start is before end
-    const minMinutes = Math.min(startMinutes, endMinutes);
-    const maxMinutes = Math.max(startMinutes, endMinutes);
-
-    if (maxMinutes <= dayStartMinutes || minMinutes >= dayEndMinutes) {
-      return null;
-    }
-
-    const clampedStart = Math.max(minMinutes, dayStartMinutes);
-    const clampedEnd = Math.min(maxMinutes, dayEndMinutes);
-
-    const top = (clampedStart - dayStartMinutes) * (HOUR_HEIGHT / 60);
-    const height = (clampedEnd - clampedStart) * (HOUR_HEIGHT / 60);
-
-    return {
-      top: `${top}px`,
-      height: `${height}px`,
-    };
-  };
-
-  const handleMouseDown = (e, hour, minute) => {
+  const handleMouseDown = useCallback((e, hour, minute) => {
     if (e.target.closest('.lesson-card')) {
       return;
     }
@@ -122,16 +78,21 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     setIsSelecting(true);
     setSelectionStart(startTime);
     setSelectionEnd(startTime);
-  };
+  }, []);
 
-  const handleMouseMove = (e, hour, minute) => {
-    if (!isSelecting) return;
+  const handleMouseMove = useCallback(
+    (e, hour, minute) => {
+      if (!isSelecting) return;
 
-    const currentTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-    setSelectionEnd(currentTime);
-  };
+      const currentTime = `${hour.toString().padStart(2, '0')}:${minute
+        .toString()
+        .padStart(2, '0')}`;
+      setSelectionEnd(currentTime);
+    },
+    [isSelecting]
+  );
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (!isSelecting || !selectionStart || !selectionEnd) {
       setIsSelecting(false);
       return;
@@ -141,7 +102,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     const endMinutes = timeToMinutes(selectionEnd);
     const durationMinutes = Math.abs(endMinutes - startMinutes);
 
-    if (durationMinutes >= 30) {
+    if (durationMinutes >= MIN_SELECTION_DURATION) {
       setQuickCreateData({
         date,
         start_time: startMinutes < endMinutes ? selectionStart : selectionEnd,
@@ -153,33 +114,47 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
-  };
+  }, [isSelecting, selectionStart, selectionEnd, date, MIN_SELECTION_DURATION]);
 
-  const validLessons = (lessons || []).filter((lesson) => {
-    if (!lesson?.start_time || !lesson?.end_time) return false;
-    const startMinutes = timeToMinutes(lesson.start_time);
-    const endMinutes = timeToMinutes(lesson.end_time);
-    const dayStartMinutes = START_HOUR * 60;
-    const dayEndMinutes = END_HOUR * 60;
-    return !(endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes);
-  });
+  // Cleanup event listeners
+  React.useEffect(() => {
+    const container = dayGridRef.current;
+    if (!container) return;
+
+    const handleMouseUpEvent = () => handleMouseUp();
+    const handleMouseLeaveEvent = () => handleMouseUp();
+
+    container.addEventListener('mouseup', handleMouseUpEvent);
+    container.addEventListener('mouseleave', handleMouseLeaveEvent);
+
+    return () => {
+      container.removeEventListener('mouseup', handleMouseUpEvent);
+      container.removeEventListener('mouseleave', handleMouseLeaveEvent);
+    };
+  }, [handleMouseUp]);
 
   return (
-    <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
+    <div
+      className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}
+      role="region"
+      aria-label={`Colonne du ${dayName}${isCurrentDay ? " (aujourd'hui)" : ''}`}
+    >
       <DayHeader date={date} dayName={dayName} />
 
       <div
         ref={dayGridRef}
         className="day-grid-container"
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        role="grid"
+        aria-label={`Grille horaire du ${dayName}`}
       >
         <DayGrid
           lessons={validLessons}
           onLessonClick={onLessonClick}
-          selectionStyle={calculateSelectionStyle()}
+          selectionStyle={calculateSelectionStyleMemo()}
           isSelecting={isSelecting}
-          calculateLessonStyle={calculateLessonStyle}
+          calculateLessonStyle={calculateLessonStyleMemo}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
           HOUR_HEIGHT={HOUR_HEIGHT}
           START_HOUR={START_HOUR}
           END_HOUR={END_HOUR}

@@ -1,42 +1,55 @@
-/* Common Form Styles - Shared across all forms */
+/* ============================================
+   FORM STYLES - Consolidated
+   ============================================ */
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .form-group label {
   display: block;
   margin-bottom: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #495057;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
 }
+
+/* ============================================
+   FORM INPUTS
+   ============================================ */
 
 .form-input,
 .form-select,
 .form-textarea {
   width: 100%;
   padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-gray-400);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
   font-family: inherit;
+  background: var(--color-white);
+  color: var(--color-gray-900);
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .form-input:disabled,
 .form-select:disabled,
 .form-textarea:disabled {
-  background-color: #e9ecef;
+  background-color: var(--color-gray-100);
   cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-input::placeholder {
+  color: var(--color-gray-500);
 }
 
 .form-textarea {
@@ -44,40 +57,56 @@
   min-height: 80px;
 }
 
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
+/* ============================================
+   FORM VALIDATION STATES
+   ============================================ */
 
-/* Form validation states */
 .form-input.is-invalid,
 .form-select.is-invalid,
 .form-textarea.is-invalid {
-  border-color: #dc3545;
+  border-color: var(--color-danger);
+}
+
+.form-input.is-invalid:focus,
+.form-select.is-invalid:focus,
+.form-textarea.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
 .form-input.is-valid,
 .form-select.is-valid,
 .form-textarea.is-valid {
-  border-color: #28a745;
+  border-color: var(--color-success);
 }
+
+.form-input.is-valid:focus,
+.form-select.is-valid:focus,
+.form-textarea.is-valid:focus {
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+/* ============================================
+   VALIDATION MESSAGES
+   ============================================ */
 
 .invalid-feedback {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: #dc3545;
+  color: var(--color-danger);
 }
 
 .valid-feedback {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: #28a745;
+  color: var(--color-success);
 }
 
-/* Checkbox and Radio styles */
+/* ============================================
+   CHECKBOX & RADIO
+   ============================================ */
+
 input[type='checkbox'],
 input[type='radio'] {
   width: 16px;
@@ -85,17 +114,38 @@ input[type='radio'] {
   cursor: pointer;
 }
 
-/* Helper text */
+/* ============================================
+   FORM ACTIONS
+   ============================================ */
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+/* ============================================
+   HELPER TEXT
+   ============================================ */
+
 .text-muted {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: #6c757d;
+  color: var(--color-gray-600);
 }
 
 .text-info {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: #17a2b8;
+  color: var(--color-info);
+}
+
+.text-danger {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-danger);
 }

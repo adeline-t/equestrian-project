@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../../lib/libraries/icons.jsx';
-import { getStatusBadge } from '../../../../constants/domains/lessons/statuses.js';
-import { formatTime } from '../../../../lib/helpers/shared/formatters/time.js';
-import { formatDuration } from '../../../../lib/helpers/shared/formatters/duration.js';
-import { TEXT_STYLES, LAYOUT_STYLES } from '../../../../lib/config/ui.js';
+import { Icons } from '../../../../lib/icons';
+import { getStatusBadge } from '../../../../lib/domains/lessons/statuses.js';
+import { formatTime } from '../../../../lib/helpers/shared/formatters/time';
+import { formatDuration } from '../../../../lib/helpers/shared/formatters/duration';
+import { TEXT_STYLES, LAYOUT_STYLES } from '../../../../lib/config/ui/cardStyles';
 
 /**
  * Status badge section
@@ -27,8 +27,10 @@ export function StatusBadgeSection({ status }) {
         flexShrink: 0,
         marginRight: '4px',
       }}
+      role="img"
+      aria-label={badgeConfig.label}
     >
-      <IconComponent />
+      <IconComponent aria-hidden="true" />
     </div>
   );
 }
@@ -46,8 +48,12 @@ export function ParticipantsSection({ count, max, isCompact = false }) {
   const fontSize = isCompact ? '9px' : '11px';
 
   return (
-    <div style={{ ...LAYOUT_STYLES.row, fontSize }}>
-      <Icons.Users style={{ fontSize, flexShrink: 0 }} />
+    <div
+      style={{ ...LAYOUT_STYLES.row, fontSize }}
+      role="img"
+      aria-label={`${count}${max ? `/${max}` : ''} participants`}
+    >
+      <Icons.Users style={{ fontSize, flexShrink: 0 }} aria-hidden="true" />
       <span>
         {count}
         {max && `/${max}`}
@@ -103,7 +109,11 @@ export function TimeSection({ lesson, isCompact = false }) {
 
   return (
     <div style={{ ...LAYOUT_STYLES.spaceBetween }}>
-      <div style={{ ...styles.time, color: 'white' }}>
+      <div
+        style={{ ...styles.time, color: 'white' }}
+        role="img"
+        aria-label={`De ${formatTime(lesson.start_time)} à ${formatTime(lesson.end_time)}`}
+      >
         {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
       </div>
       <ParticipantsSection
@@ -127,7 +137,11 @@ export function DurationSection({ lesson }) {
   if (!lesson.duration_minutes) return null;
 
   return (
-    <div style={{ ...TEXT_STYLES.standard.duration, color: 'rgba(255,255,255,0.8)' }}>
+    <div
+      style={{ ...TEXT_STYLES.standard.duration, color: 'rgba(255,255,255,0.8)' }}
+      role="img"
+      aria-label={`Durée: ${formatDuration(lesson.duration_minutes)}`}
+    >
       {formatDuration(lesson.duration_minutes)}
     </div>
   );
@@ -153,6 +167,7 @@ export function BlockedLessonSection({ lesson }) {
             whiteSpace: 'nowrap',
             marginRight: '4px',
           }}
+          aria-hidden="true"
         >
           <Icons.Blocked />
         </div>
@@ -184,7 +199,11 @@ export function BlockedLessonSection({ lesson }) {
           {lesson.name}
         </span>
       </div>
-      <div style={{ ...TEXT_STYLES.standard.time, color: 'white' }}>
+      <div
+        style={{ ...TEXT_STYLES.standard.time, color: 'white' }}
+        role="img"
+        aria-label={`De ${formatTime(lesson.start_time)} à ${formatTime(lesson.end_time)}`}
+      >
         {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
       </div>
     </div>

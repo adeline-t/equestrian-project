@@ -1,6 +1,7 @@
 /**
  * Lesson validation utilities
  */
+import { LESSON_TYPES } from '../../../domains/lessons/types';
 
 /**
  * Validate lesson time range
@@ -51,11 +52,6 @@ export const validateParticipantCount = (currentCount, maxParticipants) => {
 export const validateLessonForm = (formData) => {
   const errors = {};
 
-  // Name validation - now optional, will be auto-generated if empty
-  // if (!formData.name || formData.name.trim() === '') {
-  //   errors.name = 'Le nom du cours est requis';
-  // }
-
   // Date validation
   if (!formData.lesson_date) {
     errors.lesson_date = 'La date du cours est requise';
@@ -68,12 +64,18 @@ export const validateLessonForm = (formData) => {
   }
 
   // Type validation
-  if (!formData.lesson_type) {
-    errors.lesson_type = 'Le type de cours est requis';
+  if (!formData.type) {
+    errors.type = 'Le type de cours est requis';
+  } else {
+    // Validate that type exists in LESSON_TYPES
+    const lessonType = Object.values(LESSON_TYPES).find((t) => t.value === formData.type);
+    if (!lessonType) {
+      errors.type = 'Type de cours invalide';
+    }
   }
 
   // Participants validation
-  if (formData.lesson_type !== 'blocked') {
+  if (formData.type !== 'blocked') {
     if (formData.min_participants && formData.max_participants) {
       if (parseInt(formData.min_participants) > parseInt(formData.max_participants)) {
         errors.participants = 'Le minimum ne peut pas être supérieur au maximum';
@@ -85,4 +87,40 @@ export const validateLessonForm = (formData) => {
     isValid: Object.keys(errors).length === 0,
     errors,
   };
+};
+
+/**
+ * Validate lesson is within visible hours
+ * @param {Object} lesson - Lesson object
+ * @param {number} START_HOUR - Calendar start hour
+ * @param {number} END_HOUR - Calendar end hour
+ * @returns {boolean} True if lesson is visible
+ */
+export const isLessonVisible = (lesson, START_HOUR = 8, END_HOUR = 22) => {
+  if (!lesson?.start_time || !lesson?.end_time) return false;
+
+  const timeToMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + (minutes || 0);
+  };
+
+  const startMinutes = timeToMinutes(lesson.start_time);
+  const endMinutes = timeToMinutes(lesson.end_time);
+  const dayStartMinutes = START_HOUR * 60;
+  const dayEndMinutes = END_HOUR * 60;
+
+  return !(endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes);
+};
+
+/**
+ * Get valid lessons for display
+ * @param {Array} lessons - Array of lesson objects
+ * @param {number} START_HOUR - Calendar start hour
+ * @param {number} END_HOUR - Calendar end hour
+ * @returns {Array} Valid lessons
+ */
+export const getValidLessons = (lessons, START_HOUR = 8, END_HOUR = 22) => {
+  if (!lessons || !Array.isArray(lessons)) return [];
+
+  return lessons.filter((lesson) => isLessonVisible(lesson, START_HOUR, END_HOUR));
 };

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { lessonsApi } from '../../../services/calendarApi';
 import Portal from '../../common/Portal';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import { formatTime } from '../../../lib/helpers/shared/formatters/time.js';
-import { getLessonTypeIcon, isBlockedLesson, LESSON_TYPES } from '../../../constants/domains/lessons/types.js';
+import {
+  getLessonTypeIcon,
+  isBlockedLesson,
+  LESSON_TYPES,
+} from '../../../lib/domains/lessons/types';
 import { useLessonData, useLessonEdit, useParticipants } from '../../../hooks/index.js';
 import LessonDetailsTab from './LessonDetailsTab';
 import LessonEditForm from './LessonEditForm/index.jsx';

@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../common/Modal.jsx';
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { Icons } from '../../lib/icons';
 import { usePackageForm } from '../../hooks/usePackageForm.js';
 import '../../styles/common/forms.css';
 import '../../styles/common/alerts.css';
 import '../../styles/common/buttons.css';
-import '../../styles/components/packages.css';
 
 function PackageForm({
   package: packageData = null,

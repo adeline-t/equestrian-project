@@ -1,29 +1,34 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import { CALENDAR_LESSON_TYPE_FILTERS, CALENDAR_STATUS_FILTERS } from '../../../constants/domains/filters';
+import { Icons } from '../../../lib/icons';
+import {
+  CALENDAR_LESSON_TYPE_FILTERS,
+  CALENDAR_STATUS_FILTERS,
+} from '../../../lib/domains/filters';
+import '../../../styles/components/calendar.css';
+import '../../../styles/common/index.css';
 
 const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBlockedTime }) => {
   const handleCreateLesson = () => {
-    console.log('Creating lesson from filters');
     onCreateLesson();
   };
 
   const handleCreateBlockedTime = () => {
-    console.log('Creating blocked time from filters');
     onCreateBlockedTime();
   };
 
   return (
-    <div className="calendar-filters">
+    <div className="calendar-filters" role="region" aria-label="Filtres du calendrier">
       <div className="filters-row">
         {/* Filter Controls */}
         <div className="filters-controls">
           <div className="filter-group">
-            <label>Type de cours:</label>
+            <label htmlFor="lesson-type-filter">Type de cours:</label>
             <select
+              id="lesson-type-filter"
               value={filters.lessonType}
               onChange={(e) => onFilterChange('lessonType', e.target.value)}
               className="form-select"
+              aria-label="Filtrer par type de cours"
             >
               {CALENDAR_LESSON_TYPE_FILTERS.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -34,11 +39,13 @@ const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBloc
           </div>
 
           <div className="filter-group">
-            <label>Statut:</label>
+            <label htmlFor="status-filter">Statut:</label>
             <select
+              id="status-filter"
               value={filters.status}
               onChange={(e) => onFilterChange('status', e.target.value)}
               className="form-select"
+              aria-label="Filtrer par statut"
             >
               {CALENDAR_STATUS_FILTERS.map((status) => (
                 <option key={status.value} value={status.value}>
@@ -55,6 +62,7 @@ const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBloc
             className="btn btn-success"
             onClick={handleCreateLesson}
             title="Créer un nouveau cours"
+            aria-label="Créer un nouveau cours"
           >
             <Icons.Add />
             <span className="btn-text">Nouveau cours</span>
@@ -64,6 +72,7 @@ const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBloc
             className="btn btn-warning"
             onClick={handleCreateBlockedTime}
             title="Bloquer un créneau"
+            aria-label="Bloquer un créneau horaire"
           >
             <Icons.Blocked />
             <span className="btn-text">Bloquer un créneau</span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TEMPLATE_LESSON_TYPE_FILTERS, TEMPLATE_STATUS_FILTERS } from '../../../../constants/domains/filters';
+import { TEMPLATE_LESSON_TYPE_FILTERS, TEMPLATE_STATUS_FILTERS } from '../../../lib/domains/filters';
 
 const TemplateFilters = ({ filters, onFilterChange, stats }) => {
   return (

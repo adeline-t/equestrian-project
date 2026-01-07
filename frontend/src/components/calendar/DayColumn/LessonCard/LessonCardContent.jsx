@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LAYOUT_STYLES } from '../../../../lib/config/ui.js';
+import { LAYOUT_STYLES } from '../../../../lib/config/ui/cardStyles';
 import {
   HeaderSection,
   TimeSection,

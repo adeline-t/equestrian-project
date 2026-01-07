@@ -1,7 +1,21 @@
+/* ============================================
+   INFO TOOLTIP COMPONENT STYLES
+   ============================================ */
+
+@import './base.css';
+
+/* ============================================
+   INFO TOOLTIP WRAPPER
+   ============================================ */
+
 .info-tooltip-wrapper {
   position: relative;
   display: inline-block;
 }
+
+/* ============================================
+   INFO TOOLTIP TRIGGER
+   ============================================ */
 
 .info-tooltip-trigger {
   background: none;
@@ -13,8 +27,8 @@
   justify-content: center;
   color: #4299e1;
   font-size: 16px;
-  transition: all 0.2s ease;
-  border-radius: 50%;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-full);
 }
 
 .info-tooltip-trigger:hover {
@@ -28,33 +42,29 @@
   outline-offset: 2px;
 }
 
+/* ============================================
+   INFO TOOLTIP CONTENT
+   ============================================ */
+
 .info-tooltip {
   position: absolute;
-  background: #2d3748;
-  color: white;
+  background: var(--color-gray-800);
+  color: var(--color-white);
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-size: 0.85rem;
   line-height: 1.6;
   width: 400px;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
   animation: tooltipFadeIn 0.2s ease;
   display: block;
 }
 
-@keyframes tooltipFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+/* ============================================
+   TOOLTIP POSITION VARIANTS
+   ============================================ */
 
-/* Position variants */
 .info-tooltip-top {
   bottom: 100%;
   left: 50%;
@@ -69,7 +79,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: #2d3748;
+  border-top-color: var(--color-gray-800);
 }
 
 .info-tooltip-bottom {
@@ -86,7 +96,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-bottom-color: #2d3748;
+  border-bottom-color: var(--color-gray-800);
 }
 
 .info-tooltip-left {
@@ -103,7 +113,7 @@
   top: 50%;
   transform: translateY(-50%);
   border: 6px solid transparent;
-  border-left-color: #2d3748;
+  border-left-color: var(--color-gray-800);
 }
 
 .info-tooltip-right {
@@ -120,10 +130,13 @@
   top: 50%;
   transform: translateY(-50%);
   border: 6px solid transparent;
-  border-right-color: #2d3748;
+  border-right-color: var(--color-gray-800);
 }
 
-/* Mobile adjustments */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
 @media (max-width: 768px) {
   .info-tooltip {
     width: 300px;

@@ -7,7 +7,7 @@ import PairingsList from './components/pairings/PairingsList';
 import PackagesList from './components/packages/PackagesList';
 import CalendarView from './components/calendar/CalendarView';
 import TemplateManagement from './components/templates/TemplateManagement';
-import { Icons } from './lib/libraries/icons.jsx';
+import { Icons } from './lib/icons.jsx';
 
 function App() {
   return (

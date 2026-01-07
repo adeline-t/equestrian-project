@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LESSON_TYPES } from '../../../constants/domains/templates/types.js';
+import { LESSON_TYPES } from '../../../lib/domains/lessons/types';
 import '../../../styles/common/forms.css';
 import '../../../styles/common/alerts.css';
 

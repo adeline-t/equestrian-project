@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import { usePairingForm } from '../../../hooks/usePairingForm';
 import PairingSelectionFields from './PairingSelectionFields';
 import PairingDateFields from './PairingDateFields';

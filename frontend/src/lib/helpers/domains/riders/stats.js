@@ -1,9 +1,13 @@
-import { isActive } from '../filters/activityFilters';
+/**
+ * Rider statistics and filtering utilities
+ */
+
+import { isActive } from '../../shared/filters/activityFilters.js';
 
 /**
  * Calculate statistics for riders list
  * @param {Array} riders - Array of rider objects
- * @returns {Object} Statistics object with counts
+ * @returns {Object} Statistics object
  */
 export function calculateRiderStats(riders) {
   return {
@@ -21,11 +25,8 @@ export function calculateRiderStats(riders) {
  */
 export function filterRidersByStatus(riders, filter) {
   if (filter === 'all') return riders;
-  if (filter === 'active') {
-    return riders.filter((rider) => isActive(rider.activity_start_date, rider.activity_end_date));
-  }
-  if (filter === 'inactive') {
-    return riders.filter((rider) => !isActive(rider.activity_start_date, rider.activity_end_date));
-  }
-  return riders;
+  return riders.filter((rider) => {
+    const isActiveRider = isActive(rider.activity_start_date, rider.activity_end_date);
+    return filter === 'active' ? isActiveRider : !isActiveRider;
+  });
 }

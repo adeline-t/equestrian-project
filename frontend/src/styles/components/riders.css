@@ -1,8 +1,13 @@
 /* ============================================
-   RIDER CARD & PACKAGES - UNIFIED STYLES
+   RIDERS COMPONENT STYLES
    ============================================ */
 
-/* Override section styles for rider card */
+@import '../common/index.css';
+
+/* ============================================
+   RIDER CARD MODAL
+   ============================================ */
+
 .rider-card-modal {
   max-width: 1400px;
   width: 95%;
@@ -39,19 +44,19 @@
 .rider-info-section {
   background: #f7fafc;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 1px solid #e2e8f0;
   margin-bottom: 20px;
 }
 
 .rider-info-section h3 {
   margin: 0 0 15px 0;
-  color: #2d3748;
+  color: var(--color-gray-800);
   font-size: 1.1rem;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .info-grid {
@@ -67,8 +72,8 @@
 }
 
 .info-label {
-  font-weight: 600;
-  color: #4a5568;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -76,9 +81,9 @@
 }
 
 .info-value {
-  color: #2d3748;
+  color: var(--color-gray-800);
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* ============================================
@@ -123,9 +128,9 @@
 .owned-horse-item {
   padding: 12px;
   background: #f7fafc;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .owned-horse-item:hover {
@@ -140,15 +145,15 @@
 }
 
 .horse-name-type strong {
-  color: #2d3748;
-  font-weight: 600;
+  color: var(--color-gray-800);
+  font-weight: var(--font-weight-semibold);
 }
 
 .horse-name-type .badge {
   padding: 4px 8px;
   font-size: 0.75rem;
   border-radius: 4px;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* ============================================
@@ -159,7 +164,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -172,8 +177,8 @@
   background: #f7fafc;
   border-bottom: 2px solid #e2e8f0;
   padding: 0;
-  font-weight: 600;
-  color: #4a5568;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -206,8 +211,8 @@
   grid-template-columns: 140px 180px 180px 140px 140px;
   gap: 0;
   border-bottom: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-  background: white;
+  transition: all var(--transition-base);
+  background: var(--color-white);
 }
 
 .package-row:hover {
@@ -244,7 +249,7 @@
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -289,7 +294,7 @@
   min-width: 40px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base);
 }
 
 .lesson-badge:hover {
@@ -304,8 +309,8 @@
 
 .date-value {
   font-size: 0.85rem;
-  color: #2d3748;
-  font-weight: 500;
+  color: var(--color-gray-800);
+  font-weight: var(--font-weight-medium);
   white-space: nowrap;
 }
 
@@ -336,9 +341,9 @@
   align-items: center;
   padding: 12px;
   background: #f7fafc;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
+  transition: all var(--transition-base);
 }
 
 .pairing-item:hover {
@@ -353,8 +358,8 @@
 }
 
 .pairing-horse-name {
-  font-weight: 600;
-  color: #2d3748;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
   font-size: 0.95rem;
 }
 
@@ -383,10 +388,6 @@
 
   .info-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
   }
 
   .packages-table-header,
@@ -482,14 +483,14 @@
     flex-direction: column;
     grid-template-columns: none;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     padding: 12px;
     gap: 8px;
-    background: white;
+    background: var(--color-white);
   }
 
   .package-row:hover {
-    background: white;
+    background: var(--color-white);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 

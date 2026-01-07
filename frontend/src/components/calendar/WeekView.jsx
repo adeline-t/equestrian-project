@@ -1,51 +1,53 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import DayColumn from './DayColumn';
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { Icons } from '../../lib/icons';
+import { filterLessons } from '../../lib/helpers/domains/lessons/filters';
+import '../../styles/components/calendar.css';
 
 function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
-  const filterLessons = (lessons) => {
-    return lessons.filter((lesson) => {
-      if (filters.lessonType !== 'all' && lesson.lesson_type !== filters.lessonType) {
-        return false;
-      }
+  // Memoized filtered week data
+  const filteredWeekData = useMemo(() => {
+    if (!weekData || !weekData.days) return weekData;
 
-      if (filters.status !== 'all' && lesson.status !== filters.status) {
-        return false;
-      }
-
-      if (!filters.showBlocked && lesson.lesson_type === 'blocked') {
-        return false;
-      }
-
-      return true;
-    });
-  };
+    return {
+      ...weekData,
+      days: weekData.days.map((day) => ({
+        ...day,
+        lessons: filterLessons(day.lessons, filters),
+      })),
+    };
+  }, [weekData, filters]);
 
   return (
-    <div className="week-view">
-      <div className="week-grid">
+    <div className="week-view" role="main" aria-label="Vue hebdomadaire du calendrier">
+      <div className="week-grid" role="grid" aria-label="Grille de la semaine">
         {/* Time column with hours */}
-        <div className="time-column">
-          <div className="time-header">
+        <div className="time-column" role="presentation">
+          <div className="time-header" role="columnheader" aria-label="Colonne des heures">
             <div className="time-header-content">
-              <Icons.Clock />
+              <Icons.Clock aria-hidden="true" />
               <div>Heure</div>
             </div>
           </div>
           {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
-            <div key={hour} className="time-slot">
+            <div
+              key={hour}
+              className="time-slot"
+              role="rowheader"
+              aria-label={`${String(hour).padStart(2, '0')}h`}
+            >
               <span className="time-label">{String(hour).padStart(2, '0')}h</span>
             </div>
           ))}
         </div>
 
         {/* Day columns */}
-        {weekData.days.map((day) => (
+        {filteredWeekData?.days?.map((day) => (
           <DayColumn
             key={day.date}
             date={day.date}
             dayName={day.day_name}
-            lessons={filterLessons(day.lessons)}
+            lessons={day.lessons}
             onLessonClick={onLessonClick}
             onQuickCreate={onQuickCreate}
           />

@@ -1,32 +1,35 @@
 /**
  * Rider Service - Handles all rider-related API operations
  */
-import { api } from './apiService';
+import api from './apiService';
+import { createCrudOperations } from './apiService';
+import { validateRiderForm } from '../lib/helpers/domains/riders/validators';
 
 export const riderService = {
   // Basic CRUD operations
-  getAll: async () => {
-    const response = await api.get('/riders');
-    return response.data;
-  },
+  ...createCrudOperations('riders'),
 
-  getById: async (id) => {
-    const response = await api.get(`/riders/${id}`);
-    return response.data;
-  },
-
+  // Override create to add validation
   create: async (data) => {
+    // Validate form data
+    const validation = validateRiderForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
+
     const response = await api.post('/riders', data);
     return response.data;
   },
 
+  // Override update to add validation
   update: async (id, data) => {
-    const response = await api.put(`/riders/${id}`, data);
-    return response.data;
-  },
+    // Validate form data
+    const validation = validateRiderForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
 
-  delete: async (id) => {
-    const response = await api.delete(`/riders/${id}`);
+    const response = await api.put(`/riders/${id}`, data);
     return response.data;
   },
 
@@ -42,7 +45,7 @@ export const riderService = {
   },
 
   addHorse: async (riderId, horseId) => {
-    const response = await api.post(`/riders/${riderId}/horses`, { horse_id: horseId });
+    const response = await api.post(`/riders/${riderId}/horses`, { horse_id: Number(horseId) });
     return response.data;
   },
 
@@ -51,13 +54,15 @@ export const riderService = {
     return response.data;
   },
 
-  // Package operations
+  // Package operations with validation
   createPackage: async (riderId, packageData) => {
     const validatedData = {
       ...packageData,
       rider_id: Number(riderId),
       private_lesson_count: Number(packageData.private_lesson_count) || 0,
       joint_lesson_count: Number(packageData.joint_lesson_count) || 0,
+      activity_start_date: packageData.activity_start_date || null,
+      activity_end_date: packageData.activity_end_date || null,
     };
 
     const response = await api.post('/packages', validatedData);
@@ -67,8 +72,11 @@ export const riderService = {
   updatePackage: async (id, packageData) => {
     const validatedData = {
       ...packageData,
+      rider_id: Number(packageData.rider_id),
       private_lesson_count: Number(packageData.private_lesson_count) || 0,
       joint_lesson_count: Number(packageData.joint_lesson_count) || 0,
+      activity_start_date: packageData.activity_start_date || null,
+      activity_end_date: packageData.activity_end_date || null,
     };
 
     const response = await api.put(`/packages/${id}`, validatedData);
@@ -78,6 +86,15 @@ export const riderService = {
   deletePackage: async (id) => {
     const response = await api.delete(`/packages/${id}`);
     return response.data;
+  },
+
+  // Package status helpers
+  getPackageStats: async (packageId) => {
+    const pkg = await api.get(`/packages/${packageId}`);
+    return {
+      remainingLessons: calculateTotalRemainingLessons(pkg.data),
+      progress: calculatePackageProgress(pkg.data),
+    };
   },
 
   // Statistics

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../common/Modal';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';

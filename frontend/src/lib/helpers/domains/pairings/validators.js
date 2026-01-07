@@ -11,13 +11,13 @@ export const validatePairingForm = (formData) => {
   const errors = {};
 
   // Rider validation
-  if (!formData.rider_id) {
-    errors.rider_id = 'Le cavalier est requis';
+  if (!formData.rider_id || isNaN(parseInt(formData.rider_id))) {
+    errors.rider_id = 'Le cavalier est requis et doit être valide';
   }
 
   // Horse validation
-  if (!formData.horse_id) {
-    errors.horse_id = 'Le cheval est requis';
+  if (!formData.horse_id || isNaN(parseInt(formData.horse_id))) {
+    errors.horse_id = 'Le cheval est requis et doit être valide';
   }
 
   // Start date validation - now optional

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import InfoTooltip from '../../common/InfoTooltip';
 
 const PairingDateFields = ({ formData, onChange }) => {

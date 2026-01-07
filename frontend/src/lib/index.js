@@ -1,12 +1,9 @@
 /**
- * Centralized exports for all utility libraries
+ * Centralized export for all constants and services
  */
 
-// Libraries
-export * from './libraries/icons.jsx';
+// Export all domain-organized constants
+export * from './domains';
 
-// Helpers (now domain-organized)
-export * from './helpers';
-
-// Configuration
-export * from './config';
+// Export all services
+export * from './services';

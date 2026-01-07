@@ -9,3 +9,4 @@ export { useParticipants } from './useParticipants.js';
 export { useRiders } from './useRiders.js';
 export { useHorses } from './useHorses.js';
 export { useFormState } from './useFormState.js';
+export { useCalendarView } from './useCalendarView.js';

@@ -1,28 +1,31 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { format, startOfWeek } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { scheduleApi } from '../services/calendarApi';
+import { isLessonConfirmed, isLessonBlocked } from '../lib/domains/lessons/statuses';
+import { calculateCalendarStats } from '../lib/helpers/domains/lessons/stats';
+import { formatWeekTitle } from '../lib/helpers/shared/formatters/date';
 
 /**
  * Custom hook for managing calendar view data and operations
  * @returns {Object} Calendar data, loading state, error, and handler functions
  */
 export function useCalendarView() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [weekData, setWeekData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedLesson, setSelectedLesson] = useState(null);
-  const [showLessonModal, setShowLessonModal] = useState(false); // CHANGED: For viewing/editing
-  const [showSingleLessonModal, setShowSingleLessonModal] = useState(false); // For creation only
-  const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false); // For creation only
-  const [filters, setFilters] = useState({
+  const [currentDate, setCurrentDate] = React.useState(new Date());
+  const [weekData, setWeekData] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+  const [selectedLesson, setSelectedLesson] = React.useState(null);
+  const [showLessonModal, setShowLessonModal] = React.useState(false);
+  const [showSingleLessonModal, setShowSingleLessonModal] = React.useState(false);
+  const [showBlockedTimeModal, setShowBlockedTimeModal] = React.useState(false);
+  const [filters, setFilters] = React.useState({
     lessonType: 'all',
     status: 'all',
     showBlocked: true,
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadWeekData();
   }, [currentDate, filters]);
 
@@ -46,39 +49,35 @@ export function useCalendarView() {
     }
   };
 
-  const handlePrevWeek = () => {
+  const handlePrevWeek = React.useCallback(() => {
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(newDate.getDate() - 7);
       return newDate;
     });
-  };
+  }, []);
 
-  const handleNextWeek = () => {
+  const handleNextWeek = React.useCallback(() => {
     setCurrentDate((prev) => {
       const newDate = new Date(prev);
       newDate.setDate(newDate.getDate() + 7);
       return newDate;
     });
-  };
+  }, []);
 
-  const handleToday = () => {
+  const handleToday = React.useCallback(() => {
     setCurrentDate(new Date());
-  };
+  }, []);
 
-  const handleLessonClick = (lesson) => {
-    console.log('Lesson clicked:', lesson);
-
+  const handleLessonClick = React.useCallback((lesson) => {
     setSelectedLesson(lesson);
-    // Always open LessonModal for viewing/editing existing lessons
     setShowLessonModal(true);
     setShowSingleLessonModal(false);
     setShowBlockedTimeModal(false);
-  };
+  }, []);
 
-  const handleCreateLesson = (initialData = null) => {
+  const handleCreateLesson = React.useCallback((initialData = null) => {
     if (initialData) {
-      // Quick create from day column selection
       setSelectedLesson({
         date: initialData.date,
         start_time: initialData.start_time,
@@ -87,89 +86,55 @@ export function useCalendarView() {
         status: 'scheduled',
       });
     } else {
-      // Create from header button
       setSelectedLesson(null);
     }
 
     setShowSingleLessonModal(true);
     setShowLessonModal(false);
     setShowBlockedTimeModal(false);
-  };
+  }, []);
 
-  const handleCreateBlockedTime = () => {
+  const handleCreateBlockedTime = React.useCallback(() => {
     setSelectedLesson(null);
     setShowBlockedTimeModal(true);
     setShowLessonModal(false);
     setShowSingleLessonModal(false);
-  };
+  }, []);
 
-  const handleFilterChange = (filterName, value) => {
+  const handleFilterChange = React.useCallback((filterName, value) => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: value,
     }));
-  };
+  }, []);
 
-  // Modal handlers
-  const closeLessonModal = () => {
+  const closeLessonModal = React.useCallback(() => {
     setShowLessonModal(false);
     setSelectedLesson(null);
-  };
+  }, []);
 
-  const closeSingleLessonModal = () => {
+  const closeSingleLessonModal = React.useCallback(() => {
     setShowSingleLessonModal(false);
     setSelectedLesson(null);
-  };
+  }, []);
 
-  const closeBlockedTimeModal = () => {
+  const closeBlockedTimeModal = React.useCallback(() => {
     setShowBlockedTimeModal(false);
     setSelectedLesson(null);
-  };
+  }, []);
 
-  const handleModalSuccess = () => {
-    // Close all modals
+  const handleModalSuccess = React.useCallback(() => {
     closeLessonModal();
     closeSingleLessonModal();
     closeBlockedTimeModal();
-
-    // Reload data
     loadWeekData();
-  };
+  }, []);
 
-  // Utility functions
-  const getWeekTitle = () => {
-    if (!weekData || !weekData.period) return 'Chargement...';
+  // Use helper function from lib
+  const weekTitle = formatWeekTitle(weekData);
+  const stats = calculateCalendarStats(weekData);
 
-    const start = new Date(weekData.period.start);
-    const end = new Date(weekData.period.end);
-
-    // Validate dates before formatting
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return 'Semaine en cours';
-    }
-
-    return `Semaine du ${format(start, 'dd MMMM', { locale: fr })} au ${format(
-      end,
-      'dd MMMM yyyy',
-      { locale: fr }
-    )}`;
-  };
-
-  const getCalendarStats = () => {
-    if (!weekData || !weekData.days) return { total: 0, confirmed: 0, blocked: 0 };
-
-    // Flatten all lessons from all days
-    const allLessons = weekData.days.flatMap((day) => day.lessons || []);
-
-    return {
-      total: allLessons.length,
-      confirmed: allLessons.filter((l) => l.status === 'confirmed').length,
-      blocked: allLessons.filter((l) => l.lesson_type === 'blocked').length,
-    };
-  };
-
-  // Clear messages
-  const clearError = () => setError(null);
+  const clearError = React.useCallback(() => setError(null), []);
 
   return {
     // State
@@ -178,12 +143,12 @@ export function useCalendarView() {
     loading,
     error,
     selectedLesson,
-    showLessonModal, // CHANGED
+    showLessonModal,
     showSingleLessonModal,
     showBlockedTimeModal,
     filters,
-    weekTitle: getWeekTitle(),
-    stats: getCalendarStats(),
+    weekTitle,
+    stats,
 
     // Actions
     handlePrevWeek,
@@ -195,7 +160,7 @@ export function useCalendarView() {
     handleFilterChange,
 
     // Modal handlers
-    closeLessonModal, // CHANGED
+    closeLessonModal,
     closeSingleLessonModal,
     closeBlockedTimeModal,
     handleModalSuccess,

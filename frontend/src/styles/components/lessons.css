@@ -1,5 +1,11 @@
 /* ============================================
-   LESSON CARD CONTENT - STYLES
+   LESSONS COMPONENT STYLES
+   ============================================ */
+
+@import '../common/index.css';
+
+/* ============================================
+   LESSON CARD CONTENT
    ============================================ */
 
 .lesson-card-content {
@@ -50,8 +56,8 @@
 
 .detail-row label {
   min-width: 140px;
-  font-weight: 500;
-  color: #495057;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -60,7 +66,7 @@
 .detail-row span,
 .detail-row p {
   flex: 1;
-  color: #212529;
+  color: var(--color-gray-900);
   font-size: 14px;
   margin: 0;
 }
@@ -80,9 +86,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  background-color: var(--color-gray-100);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
 }
 
 .participant-info {
@@ -100,7 +106,7 @@
 
 .participant-name strong {
   font-size: 14px;
-  color: #212529;
+  color: var(--color-gray-900);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -110,7 +116,7 @@
 
 .participant-name small {
   font-size: 12px;
-  color: #6c757d;
+  color: var(--color-gray-600);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -120,7 +126,7 @@
 
 .participant-horse {
   font-size: 13px;
-  color: #495057;
+  color: var(--color-gray-700);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -140,17 +146,17 @@
    ============================================ */
 
 .add-participant-form {
-  background-color: #f8f9fa;
+  background-color: var(--color-gray-100);
   padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
 }
 
 .add-participant-form h4 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  font-weight: 600;
-  color: #212529;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
   display: flex;
   align-items: center;
 }
@@ -166,8 +172,8 @@
 }
 
 .advanced-section {
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-lg);
   padding: 16px;
 }
 
@@ -175,8 +181,8 @@
   display: flex;
   align-items: center;
   font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
   margin-bottom: 16px;
   padding-bottom: 8px;
   border-bottom: 2px solid #e5e7eb;
@@ -197,14 +203,14 @@
 .advanced-section .detail-row label {
   display: flex;
   align-items: center;
-  font-weight: 500;
-  color: #6b7280;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
   font-size: 14px;
   min-width: 180px;
 }
 
 .advanced-section .detail-row span {
-  color: #1f2937;
+  color: var(--color-gray-800);
   font-size: 14px;
   text-align: right;
   flex: 1;
@@ -216,35 +222,6 @@
 
 .advanced-section .alert:last-child {
   margin-bottom: 0;
-}
-
-/* ============================================
-   MODAL ACTIONS - COMPACT LAYOUT
-   ============================================ */
-
-.modal-actions-compact {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.modal-actions-compact .btn {
-  padding: 6px 10px;
-  font-size: 13px;
-  line-height: 1.2;
-  min-height: auto;
-  white-space: nowrap;
-}
-
-.modal-actions-compact .btn-sm {
-  padding: 4px 8px;
-  font-size: 12px;
-}
-
-.modal-actions-compact .btn svg {
-  font-size: 14px !important;
 }
 
 /* ============================================
@@ -268,21 +245,10 @@
 }
 
 /* ============================================
-   RESPONSIVE - TABLET (< 768px)
+   RESPONSIVE DESIGN
    ============================================ */
 
 @media (max-width: 768px) {
-  .modal-actions-compact {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .modal-actions-compact .btn {
-    justify-content: center;
-    width: 100%;
-  }
-
   .advanced-section .detail-row {
     flex-direction: column;
     gap: 8px;
@@ -307,22 +273,7 @@
   }
 }
 
-/* ============================================
-   RESPONSIVE - MOBILE (< 600px)
-   ============================================ */
-
 @media (max-width: 600px) {
-  .modal-actions-compact {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .modal-actions-compact .btn {
-    justify-content: center;
-    width: 100%;
-  }
-
   .detail-row {
     flex-direction: column;
     gap: 8px;

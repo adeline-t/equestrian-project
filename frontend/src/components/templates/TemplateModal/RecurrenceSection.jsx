@@ -4,7 +4,7 @@ import {
   RECURRENCE_FREQUENCIES,
   WEEK_DAYS,
   getRecurrenceIntervalText,
-} from '../../../constants/domains/templates';
+} from '../../../lib/domains/templates/recurrence';
 import '../../../styles/common/forms.css';
 import '../../../styles/components/templates.css';
 

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ridersApi } from '../services';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { isActive } from '../lib/helpers/shared/filters';
+import { ACTIVITY_STATUS_FILTERS } from '../lib/domains/filters';
 
 /**
  * Custom hook for managing riders list data and operations
@@ -17,6 +19,7 @@ export function useRidersList() {
   const [selectedRiderId, setSelectedRiderId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [riderToDelete, setRiderToDelete] = useState(null);
+  const [filter, setFilter] = useState(ACTIVITY_STATUS_FILTERS.ALL);
 
   useEffect(() => {
     loadRiders();
@@ -66,7 +69,7 @@ export function useRidersList() {
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setRiderToDelete(null);
-      loadRiders();
+      await loadRiders();
     } catch (err) {
       setError(err.message);
       setShowDeleteModal(false);
@@ -83,7 +86,7 @@ export function useRidersList() {
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setRiderToDelete(null);
-      loadRiders();
+      await loadRiders();
     } catch (err) {
       setError(err.message);
       setShowDeleteModal(false);
@@ -102,34 +105,56 @@ export function useRidersList() {
       }
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
-      loadRiders();
+      setEditingRider(null);
+      await loadRiders();
     } catch (err) {
       throw err;
     }
   };
 
-  const isActive = (startDate, endDate) => {
-    const now = new Date();
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-
-    if (start && start > now) return false;
-    if (end && end < now) return false;
-    return true;
-  };
-
-  const getStatusBadge = (startDate, endDate) => {
-    const active = isActive(startDate, endDate);
+  /**
+   * Get status badge label for display
+   * @param {Object} rider - Rider object
+   * @returns {string} Human-readable status label
+   */
+  const getStatusBadge = (rider) => {
+    if (!rider) return 'Inactif';
+    const active = isActive(rider.activity_start_date, rider.activity_end_date);
     return active ? 'Actif' : 'Inactif';
   };
 
+  /**
+   * Get rider activity status
+   * @param {Object} rider - Rider object
+   * @returns {boolean} True if rider is active
+   */
+  const getRiderStatus = (rider) => {
+    if (!rider) return false;
+    return isActive(rider.activity_start_date, rider.activity_end_date);
+  };
+
+  /**
+   * Get statistics about riders
+   * @returns {Object} Stats object with total, active, and inactive counts
+   */
   const getStats = () => {
     return {
       total: riders.length,
-      active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
-      inactive: riders.filter((r) => !isActive(r.activity_start_date, r.activity_end_date)).length,
+      active: riders.filter((r) => getRiderStatus(r)).length,
+      inactive: riders.filter((r) => !getRiderStatus(r)).length,
     };
   };
+
+  /**
+   * Filter riders based on activity status
+   * @returns {Array} Filtered array of riders
+   */
+  const filteredRiders = riders.filter((rider) => {
+    if (filter === ACTIVITY_STATUS_FILTERS.ALL) return true;
+    if (filter === ACTIVITY_STATUS_FILTERS.ACTIVE) return getRiderStatus(rider);
+    if (filter === ACTIVITY_STATUS_FILTERS.INACTIVE) return !getRiderStatus(rider);
+    return true;
+  });
 
   // Modal handlers
   const closeRiderModal = () => {
@@ -153,6 +178,7 @@ export function useRidersList() {
   return {
     // State
     riders,
+    filteredRiders,
     loading,
     error,
     showModal,
@@ -161,7 +187,11 @@ export function useRidersList() {
     selectedRiderId,
     showDeleteModal,
     riderToDelete,
+    filter,
     stats: getStats(),
+
+    // Filter constants
+    ACTIVITY_STATUS_FILTERS,
 
     // Actions
     handleCreate,
@@ -171,6 +201,7 @@ export function useRidersList() {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
+    setFilter,
 
     // Modal handlers
     closeRiderModal,
@@ -179,6 +210,7 @@ export function useRidersList() {
 
     // Utility functions
     getStatusBadge,
+    getRiderStatus,
     isActive,
 
     // State setters

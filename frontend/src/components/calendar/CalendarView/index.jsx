@@ -1,14 +1,18 @@
 import React from 'react';
 import { useCalendarView } from '../../../hooks/useCalendarView';
 import WeekView from '../WeekView.jsx';
-import LessonModal from '../../lessons/LessonModal';
-import SingleLessonModal from '../../lessons/SingleLessonModal';
-import BlockedTimeModal from '../../lessons/BlockedTimeModal.jsx';
 import CalendarHeader from './CalendarHeader.jsx';
 import CalendarFilters from './CalendarFilters.jsx';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import CalendarModals from './CalendarModals.jsx';
+import CalendarLoading from './CalendarLoading.jsx';
+import CalendarError from './CalendarError.jsx';
+import ErrorBoundary from '../../common/ErrorBoundary.jsx';
+import '../../../styles/common/index.css';
 import '../../../styles/components/calendar.css';
 
+/**
+ * Main Calendar View Component
+ */
 function CalendarView() {
   const {
     // State
@@ -40,36 +44,21 @@ function CalendarView() {
 
     // Utility functions
     loadWeekData,
-
-    // State setters
-    clearError,
   } = useCalendarView();
 
+  // Loading state
   if (loading) {
-    return (
-      <div className="calendar-loading">
-        <Icons.Loading className="spin" style={{ fontSize: '48px', marginBottom: '16px' }} />
-        <h3>Chargement du calendrier...</h3>
-        <p>Veuillez patienter pendant que nous chargeons vos cours</p>
-      </div>
-    );
+    return <CalendarLoading />;
   }
 
+  // Error state
   if (error) {
-    return (
-      <div className="calendar-error">
-        <Icons.Warning style={{ fontSize: '48px', marginBottom: '16px', color: '#e53e3e' }} />
-        <h3>Erreur de chargement</h3>
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={loadWeekData}>
-          <Icons.Refresh /> Réessayer
-        </button>
-      </div>
-    );
+    return <CalendarError error={error} onRetry={loadWeekData} />;
   }
 
+  // Main render
   return (
-    <div className="calendar-view">
+    <div className="calendar-view" role="main" aria-label="Vue calendrier">
       <CalendarHeader
         weekTitle={weekTitle}
         onPrevWeek={handlePrevWeek}
@@ -94,37 +83,27 @@ function CalendarView() {
         />
       </div>
 
-      {/* LessonModal for viewing/editing existing lessons */}
-      {showLessonModal && selectedLesson && selectedLesson.id && (
-        <LessonModal
-          lesson={selectedLesson}
-          onClose={closeLessonModal}
-          onUpdate={handleModalSuccess}
-        />
-      )}
-
-      {/* SingleLessonModal for creating new lessons */}
-      {showSingleLessonModal && (
-        <SingleLessonModal
-          lesson={null}
-          onClose={closeSingleLessonModal}
-          onSuccess={handleModalSuccess}
-          initialDate={selectedLesson?.date}
-          initialStartTime={selectedLesson?.start_time}
-          initialEndTime={selectedLesson?.end_time}
-        />
-      )}
-
-      {/* BlockedTimeModal for creating blocked time */}
-      {showBlockedTimeModal && (
-        <BlockedTimeModal
-          blockedTime={null}
-          onClose={closeBlockedTimeModal}
-          onSuccess={handleModalSuccess}
-        />
-      )}
+      <CalendarModals
+        showLessonModal={showLessonModal}
+        showSingleLessonModal={showSingleLessonModal}
+        showBlockedTimeModal={showBlockedTimeModal}
+        selectedLesson={selectedLesson}
+        onCloseLessonModal={closeLessonModal}
+        onCloseSingleLessonModal={closeSingleLessonModal}
+        onCloseBlockedTimeModal={closeBlockedTimeModal}
+        onModalSuccess={handleModalSuccess}
+      />
     </div>
   );
 }
 
-export default CalendarView;
+/**
+ * Export with Error Boundary
+ */
+export default function CalendarViewWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <CalendarView />
+    </ErrorBoundary>
+  );
+}

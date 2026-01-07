@@ -12,7 +12,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: API_SETTINGS.TIMEOUT,
+  timeout: API_SETTINGS?.TIMEOUT || 10000,
 });
 
 // Request interceptor
@@ -21,6 +21,13 @@ api.interceptors.request.use(
     console.log(`🟢 API Request: ${config.method?.toUpperCase()} ${config.url}`);
     if (config.data) {
       console.log('📤 Request Data:', config.data);
+      console.log(
+        '📤 Request Data Types:',
+        Object.keys(config.data).reduce((acc, key) => {
+          acc[key] = typeof config.data[key];
+          return acc;
+        }, {})
+      );
     }
     return config;
   },
@@ -46,23 +53,23 @@ api.interceptors.response.use(
 const handleApiError = (error) => {
   if (error.response) {
     const status = error.response.status;
-    const message = error.response.data?.error || error.response.data?.message || ERROR_MESSAGES.UNKNOWN;
+    const message = error.response.data?.error || error.response.data?.message || ERROR_MESSAGES?.UNKNOWN || 'Une erreur est survenue';
     
     let errorMessage = message;
     switch (status) {
-      case HTTP_STATUS.BAD_REQUEST:
+      case HTTP_STATUS?.BAD_REQUEST || 400:
         errorMessage = message;
         break;
-      case HTTP_STATUS.UNAUTHORIZED:
+      case HTTP_STATUS?.UNAUTHORIZED || 401:
         errorMessage = `${message} (Non autorisé)`;
         break;
-      case HTTP_STATUS.FORBIDDEN:
+      case HTTP_STATUS?.FORBIDDEN || 403:
         errorMessage = `${message} (Accès refusé)`;
         break;
-      case HTTP_STATUS.NOT_FOUND:
+      case HTTP_STATUS?.NOT_FOUND || 404:
         errorMessage = `${message} (Non trouvé)`;
         break;
-      case HTTP_STATUS.INTERNAL_SERVER_ERROR:
+      case HTTP_STATUS?.INTERNAL_SERVER_ERROR || 500:
         errorMessage = `${message} (Erreur serveur)`;
         break;
       default:
@@ -74,16 +81,16 @@ const handleApiError = (error) => {
     customError.status = status;
     return customError;
   } else if (error.request) {
-    return new Error(ERROR_MESSAGES.NETWORK);
+    return new Error(ERROR_MESSAGES?.NETWORK || 'Impossible de contacter le serveur. Vérifiez votre connexion.');
   } else {
-    return new Error(error.message || ERROR_MESSAGES.UNKNOWN);
+    return new Error(error.message || ERROR_MESSAGES?.UNKNOWN || 'Une erreur est survenue lors de la requête.');
   }
 };
 
 // Generic CRUD operations
 const createCrudOperations = (resource) => ({
-  getAll: async () => {
-    const response = await api.get(`/${resource}`);
+  getAll: async (params = {}) => {
+    const response = await api.get(`/${resource}`, { params });
     return response.data;
   },
 

@@ -1,44 +1,31 @@
 /**
- * Unified Services Export
- * Clean separation: Services handle API calls, Hooks handle state management
+ * Services - Main Export
  */
 
 // Core API service
-export { api } from './apiService';
+export { default as api, createCrudOperations } from './apiService';
 
 // Domain-specific services
-import horseServiceDefault from './horseService';
-export const horseService = horseServiceDefault;
+export { horseService } from './horseService';
+export { riderService } from './riderService';
+export { lessonService } from './lessonService';
+export { packageService } from './packageService';
+export { pairingService } from './pairingService';
+export { templateService } from './templateService';
 
-import riderServiceDefault from './riderService';
-export const riderService = riderServiceDefault;
-
-import lessonServiceDefault from './lessonService';
-export const lessonService = lessonServiceDefault;
-
-import packageServiceDefault from './packageService';
-export const packageService = packageServiceDefault;
-
-import pairingServiceDefault from './pairingService';
-export const pairingService = pairingServiceDefault;
-
-import templateServiceDefault from './templateService';
-export const templateService = templateServiceDefault;
+// Calendar API (specialized)
+export { templatesApi, lessonsApi, scheduleApi, generationApi } from './calendarApi';
 
 // Legacy exports for backward compatibility
-export const ridersApi = riderServiceDefault;
-export const horsesApi = horseServiceDefault;
-export const pairingsApi = pairingServiceDefault;
-export const packagesApi = packageServiceDefault;
+export { horseService as horsesApi } from './horseService';
+export { riderService as ridersApi } from './riderService';
+export { packageService as packagesApi } from './packageService';
+export { pairingService as pairingsApi } from './pairingService';
+
+// Utility API
 export const utilityApi = {
   health: async () => {
-    const { api } = await import('./apiService');
-    const response = await api.get('/health');
-    return response.data;
-  },
-  docs: async () => {
-    const { api } = await import('./apiService');
-    const response = await api.get('/docs');
-    return response.data;
+    const { default: api } = await import('./apiService');
+    return api.get('/health');
   },
 };

@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ridersApi, packagesApi } from '../services';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { isActive, filterActivePackages } from '../lib/helpers/shared/filters';
+import {
+  PACKAGE_STATUS,
+  PACKAGE_STATUS_LABELS,
+  getPackageStatusLabel,
+} from '../lib/domains/packages/statuses';
 
 /**
  * Custom hook for managing rider packages data and operations
@@ -68,7 +72,7 @@ export function useRiderPackages(riderId) {
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setPackageToDelete(null);
-      loadPackages();
+      await loadPackages();
     } catch (err) {
       setError(err.message);
       setShowDeleteModal(false);
@@ -85,7 +89,7 @@ export function useRiderPackages(riderId) {
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
       setPackageToDelete(null);
-      loadPackages();
+      await loadPackages();
     } catch (err) {
       setError(err.message);
       setShowDeleteModal(false);
@@ -104,31 +108,41 @@ export function useRiderPackages(riderId) {
       }
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
-      loadPackages();
+      setEditingPackage(null);
+      await loadPackages();
     } catch (err) {
       throw err;
     }
   };
 
-  const isActive = (startDate, endDate) => {
-    const now = new Date();
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
+  /**
+   * Determine package status based on dates
+   * @param {Object} pkg - Package object
+   * @returns {string} Package status (active, expired, or suspended)
+   */
+  const getPackageStatus = (pkg) => {
+    if (!pkg) return PACKAGE_STATUS.SUSPENDED;
 
-    if (start && start > now) return false;
-    if (end && end < now) return false;
-    return true;
+    // Check if package is within active date range
+    if (!isActive(pkg.activity_start_date, pkg.activity_end_date)) {
+      return PACKAGE_STATUS.EXPIRED;
+    }
+
+    return PACKAGE_STATUS.ACTIVE;
   };
 
-  const getStatusBadge = (startDate, endDate) => {
-    const active = isActive(startDate, endDate);
-    return active ? 'Actif' : 'Inactif';
+  /**
+   * Get status badge label for display
+   * @param {Object} pkg - Package object
+   * @returns {string} Human-readable status label
+   */
+  const getStatusBadge = (pkg) => {
+    const status = getPackageStatus(pkg);
+    return getPackageStatusLabel(status);
   };
 
-  // Filter active packages
-  const activePackages = packages.filter((pkg) =>
-    isActive(pkg.activity_start_date, pkg.activity_end_date)
-  );
+  // Filter active packages using helper function
+  const activePackages = filterActivePackages(packages);
 
   // Modal handlers
   const closePackageModal = () => {
@@ -169,6 +183,10 @@ export function useRiderPackages(riderId) {
     packageToDelete,
     activePackages,
 
+    // Status constants
+    PACKAGE_STATUS,
+    PACKAGE_STATUS_LABELS,
+
     // Actions
     loadPackages,
     handleCreate,
@@ -184,7 +202,9 @@ export function useRiderPackages(riderId) {
 
     // Utility functions
     isActive,
+    getPackageStatus,
     getStatusBadge,
+    getPackageStatusLabel,
 
     // State setters
     clearSuccessMessage,

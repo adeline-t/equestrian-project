@@ -1,8 +1,13 @@
-/* Common Styles - Import all common CSS files */
+/* ============================================
+   COMMON STYLES - Main Import File
+   ============================================ */
 
-@import './modal.css';
-@import './forms.css';
+@import './base.css';
 @import './buttons.css';
+@import './forms.css';
 @import './alerts.css';
 @import './badges.css';
+@import './modal.css';
+@import './tables.css';
 @import './utilities.css';
+@import './infotooltip.css';

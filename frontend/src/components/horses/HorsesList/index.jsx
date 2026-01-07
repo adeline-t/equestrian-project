@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import Modal from '../../common/Modal';
 import HorseForm from '../HorseForm';
 import FilterButtons from './FilterButtons';
@@ -10,11 +10,13 @@ import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import { useHorsesList } from '../../../hooks/useHorsesList';
 import { useHorseActions } from '../../../hooks/useHorseActions';
 import { useHorseRiders } from '../../../hooks/useHorseRiders';
-import { calculateHorseStats, filterHorsesByKind } from '../../../lib/helpers/domains/horses/stats.js';
+import {
+  calculateHorseStats,
+  filterHorsesByKind,
+} from '../../../lib/helpers/domains/horses/stats.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import '../../../styles/components/horses.css';
 
 function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');

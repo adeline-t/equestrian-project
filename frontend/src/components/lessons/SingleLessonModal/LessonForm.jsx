@@ -1,7 +1,7 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import { LESSON_TYPES } from '../../../constants/domains/lessons/types.js';
-import { calculateDuration } from '../../../lib/helpers/shared/formatters/duration.js';
+import { Icons } from '../../../lib/icons';
+import { LESSON_TYPES } from '../../../lib/domains/lessons/types';
+import { formatDuration } from '../../../lib/helpers/shared/formatters/duration.js';
 
 /**
  * Lesson Form Component for SingleLessonModal
@@ -133,7 +133,7 @@ const LessonForm = ({ formData, handleFormChange, handleTypeChange }) => {
           }}
         >
           <Icons.Clock style={{ fontSize: '14px' }} />
-          Durée: {calculateDuration(formData.start_time, formData.end_time)}
+          Durée: {formatDuration(formData.start_time, formData.end_time)}
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import { getHorseKindLabel } from '../../../constants/domains/horses/kinds.js';
+import { Icons } from '../../../lib/icons';
+import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
 import '../../../styles/common/badges.css';
 
 function OwnedHorsesList({ horses }) {

@@ -1,4 +1,4 @@
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 
 const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderName }) => {
   if (packages.length === 0) {

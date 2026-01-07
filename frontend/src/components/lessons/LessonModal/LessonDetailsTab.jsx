@@ -1,8 +1,8 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import { getLessonTypeLabel, isBlockedLesson } from '../../../constants/domains/lessons/types.js';
+import { Icons } from '../../../lib/icons';
+import { getLessonTypeLabel, isBlockedLesson } from '../../../lib/domains/lessons/types';
 
 /**
  * Lesson Details Tab - View Mode

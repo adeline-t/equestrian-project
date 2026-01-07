@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from './Modal.jsx';
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { Icons } from '../../lib/icons';
 import '../../styles/common/buttons.css';
+import '../../styles/common/alerts.css';
 
 /**
  * Unified Delete Confirmation Modal Component
@@ -17,6 +18,14 @@ function DeleteConfirmationModal({
   itemName,
 }) {
   const labels = {
+    cavalier: {
+      title: 'Que faire avec ce cavalier ?',
+      removeText: "Retirer de l'inventaire",
+      removeDescription:
+        "Le cavalier restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
+      deleteDescription:
+        'Le cavalier sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
+    },
     forfait: {
       title: 'Que faire avec ce forfait ?',
       removeText: "Retirer de l'inventaire",
@@ -40,14 +49,6 @@ function DeleteConfirmationModal({
         "Le cheval restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
       deleteDescription:
         'Le cheval sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
-    },
-    pairing: {
-      title: 'Que faire avec cette pension ?',
-      removeText: "Retirer de l'inventaire",
-      removeDescription:
-        "La pension restera dans la base de données mais sera marquée comme inactive. La date de fin sera définie à aujourd'hui.",
-      deleteDescription:
-        'La pension sera supprimée de la base de données de manière permanente. Cette action ne peut pas être annulée.',
     },
   };
 
@@ -133,7 +134,7 @@ DeleteConfirmationModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onRemoveFromInventory: PropTypes.func.isRequired,
   onPermanentDelete: PropTypes.func.isRequired,
-  itemType: PropTypes.oneOf(['forfait', 'pension', 'cheval', 'pairing']),
+  itemType: PropTypes.oneOf(['forfait', 'pension', 'cheval', 'cavalier']),
   itemName: PropTypes.string,
 };
 

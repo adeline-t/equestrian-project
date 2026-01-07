@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { riderService } from '../services';
 import { validateHorseForm } from '../lib/helpers/domains/horses/validators';
+import { OWNER_TYPES } from '../lib/domains/horses/owners';
+import { HORSE_KIND_LABELS } from '../lib/domains/horses/kinds';
 
 /**
  * Custom hook for managing horse form data and operations
@@ -10,22 +12,16 @@ import { validateHorseForm } from '../lib/helpers/domains/horses/validators';
 export function useHorseForm(horse) {
   const [formData, setFormData] = useState({
     name: '',
-    kind: 'horse',
+    kind: HORSE_KIND_LABELS.HORSE.value,
     activity_start_date: '',
     activity_end_date: '',
-    is_owned_by: 'Propriétaire',
+    is_owned_by: OWNER_TYPES.OWNER.value,
     owner_id: null,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [riders, setRiders] = useState([]);
   const [loadingRiders, setLoadingRiders] = useState(false);
-
-  const ownershipOptions = [
-    { value: 'Laury', label: 'Laury' },
-    { value: 'Propriétaire', label: 'Propriétaire' },
-    { value: 'Club', label: 'Club' },
-  ];
 
   const loadRiders = async () => {
     try {
@@ -48,19 +44,19 @@ export function useHorseForm(horse) {
     if (horse) {
       setFormData({
         name: horse.name || '',
-        kind: horse.kind || 'horse',
+        kind: horse.kind || HORSE_KIND_LABELS.HORSE.value,
         activity_start_date: horse.activity_start_date || '',
         activity_end_date: horse.activity_end_date || '',
-        is_owned_by: horse.is_owned_by || 'Propriétaire',
+        is_owned_by: horse.is_owned_by || OWNER_TYPES.OWNER.value,
         owner_id: horse.owner_id || null,
       });
     } else {
       setFormData({
         name: '',
-        kind: 'horse',
+        kind: HORSE_KIND_LABELS.HORSE.value,
         activity_start_date: '',
         activity_end_date: '',
-        is_owned_by: 'Propriétaire',
+        is_owned_by: OWNER_TYPES.OWNER.value,
         owner_id: null,
       });
     }
@@ -92,10 +88,10 @@ export function useHorseForm(horse) {
   const resetForm = () => {
     setFormData({
       name: '',
-      kind: 'horse',
+      kind: HORSE_KIND_LABELS.HORSE.value,
       activity_start_date: '',
       activity_end_date: '',
-      is_owned_by: 'Propriétaire',
+      is_owned_by: OWNER_TYPES.OWNER.value,
       owner_id: null,
     });
     setError('');
@@ -108,14 +104,15 @@ export function useHorseForm(horse) {
     submitting,
     riders,
     loadingRiders,
-    ownershipOptions,
+    kindOptions: Object.values(HORSE_KIND_LABELS),
+    ownershipOptions: Object.values(OWNER_TYPES),
 
     // Actions
     handleChange,
     validateForm,
     resetForm,
 
-    // State setters - IMPORTANT: These must be included
+    // State setters
     setError,
     setSubmitting,
     setFormData,

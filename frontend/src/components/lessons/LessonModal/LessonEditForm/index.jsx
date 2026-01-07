@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../../lib/icons';
 import BasicInfoFields from './BasicInfoFields.jsx';
 import StatusFields from './StatusFields.jsx';
 import SpecialFields from './SpecialFields.jsx';
@@ -16,7 +16,7 @@ const LessonEditForm = ({
   handleTypeChange,
 }) => {
   const isBlocked = lessonData.lesson_type === 'blocked' || lessonData.is_blocked;
-  
+
   return (
     <div className="edit-form">
       {/* Error Display */}

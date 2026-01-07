@@ -1,32 +1,47 @@
 /**
  * Horse Service - Handles all horse-related API operations
  */
-import { api } from './apiService';
+import api from './apiService';
+import { createCrudOperations } from './apiService';
+import { validateHorseForm } from '../lib/helpers/domains/horses/validators';
 
 export const horseService = {
   // Basic CRUD operations
-  getAll: async () => {
-    const response = await api.get('/horses');
-    return response.data;
-  },
+  ...createCrudOperations('horses'),
 
-  getById: async (id) => {
-    const response = await api.get(`/horses/${id}`);
-    return response.data;
-  },
-
+  // Override create to add validation
   create: async (data) => {
-    const response = await api.post('/horses', data);
+    // Validate form data
+    const validation = validateHorseForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
+
+    // Ensure owner_id is a number
+    const validatedData = {
+      ...data,
+      owner_id: data.owner_id ? Number(data.owner_id) : null,
+    };
+
+    const response = await api.post('/horses', validatedData);
     return response.data;
   },
 
+  // Override update to add validation
   update: async (id, data) => {
-    const response = await api.put(`/horses/${id}`, data);
-    return response.data;
-  },
+    // Validate form data
+    const validation = validateHorseForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
 
-  delete: async (id) => {
-    const response = await api.delete(`/horses/${id}`);
+    // Ensure owner_id is a number
+    const validatedData = {
+      ...data,
+      owner_id: data.owner_id ? Number(data.owner_id) : null,
+    };
+
+    const response = await api.put(`/horses/${id}`, validatedData);
     return response.data;
   },
 
@@ -37,7 +52,7 @@ export const horseService = {
   },
 
   addRider: async (horseId, riderId) => {
-    const response = await api.post(`/horses/${horseId}/riders`, { rider_id: riderId });
+    const response = await api.post(`/horses/${horseId}/riders`, { rider_id: Number(riderId) });
     return response.data;
   },
 

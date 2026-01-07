@@ -1,32 +1,66 @@
 /**
  * Template Service - Handles all template-related API operations
  */
-import { api } from './apiService';
+import api from './apiService';
+import { createCrudOperations } from './apiService';
+import { LESSON_TYPES } from '../lib/domains/lessons/types';
+import { RECURRENCE_FREQUENCIES } from '../lib/domains/templates/recurrence';
 
 export const templateService = {
   // Basic CRUD operations
-  getAll: async () => {
-    const response = await api.get('/templates');
-    return response.data;
-  },
+  ...createCrudOperations('templates'),
 
-  getById: async (id) => {
-    const response = await api.get(`/templates/${id}`);
-    return response.data;
-  },
-
+  // Override create to add validation
   create: async (data) => {
-    const response = await api.post('/templates', data);
+    // Validate lesson type
+    const lessonType = LESSON_TYPES.find((t) => t.value === data.type);
+    if (!lessonType) {
+      throw new Error('Type de leçon invalide');
+    }
+
+    // Validate recurrence type if provided
+    if (data.recurrence_type) {
+      const recurrenceType = RECURRENCE_FREQUENCIES.find((t) => t.value === data.recurrence_type);
+      if (!recurrenceType) {
+        throw new Error('Type de récurrence invalide');
+      }
+    }
+
+    // Ensure numeric fields
+    const validatedData = {
+      ...data,
+      max_participants: Number(data.max_participants) || lessonType.defaultMax,
+    };
+
+    const response = await api.post('/templates', validatedData);
     return response.data;
   },
 
+  // Override update to add validation
   update: async (id, data) => {
-    const response = await api.put(`/templates/${id}`, data);
-    return response.data;
-  },
+    // Validate lesson type if provided
+    if (data.type) {
+      const lessonType = LESSON_TYPES.find((t) => t.value === data.type);
+      if (!lessonType) {
+        throw new Error('Type de leçon invalide');
+      }
+    }
 
-  delete: async (id) => {
-    const response = await api.delete(`/templates/${id}`);
+    // Validate recurrence type if provided
+    if (data.recurrence_type) {
+      const recurrenceType = RECURRENCE_FREQUENCIES.find((t) => t.value === data.recurrence_type);
+      if (!recurrenceType) {
+        throw new Error('Type de récurrence invalide');
+      }
+    }
+
+    // Ensure numeric fields
+    const validatedData = {
+      ...data,
+      max_participants: data.max_participants ? Number(data.max_participants) : undefined,
+    };
+
+    const response = await api.put(`/templates/${id}`, validatedData);
     return response.data;
   },
 
@@ -39,14 +73,14 @@ export const templateService = {
   generateLessons: async (id, startDate, endDate) => {
     const response = await api.post(`/templates/${id}/generate`, {
       start_date: startDate,
-      end_date: endDate
+      end_date: endDate,
     });
     return response.data;
   },
 
   previewLessons: async (id, startDate, endDate) => {
     const response = await api.get(`/templates/${id}/preview`, {
-      params: { start_date: startDate, end_date: endDate }
+      params: { start_date: startDate, end_date: endDate },
     });
     return response.data;
   },
@@ -59,7 +93,7 @@ export const templateService = {
 
   getNextOccurrences: async (id, count = 10) => {
     const response = await api.get(`/templates/${id}/next-occurrences`, {
-      params: { count }
+      params: { count },
     });
     return response.data;
   },
@@ -100,6 +134,20 @@ export const templateService = {
   bulkDelete: async (ids) => {
     const response = await api.delete('/templates/bulk', { data: { ids } });
     return response.data;
+  },
+
+  // Helper methods using domain constants
+  getLessonTypes: () => LESSON_TYPES,
+  getRecurrenceTypes: () => RECURRENCE_FREQUENCIES,
+
+  // Get lesson type config by value
+  getLessonTypeConfig: (typeValue) => {
+    return LESSON_TYPES.find((t) => t.value === typeValue);
+  },
+
+  // Get recurrence type config by value
+  getRecurrenceTypeConfig: (recurrenceValue) => {
+    return RECURRENCE_FREQUENCIES.find((t) => t.value === recurrenceValue);
   },
 };
 

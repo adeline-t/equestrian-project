@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { lessonsApi } from '../services/calendarApi';
-import { calculateDurationInMinutes, addMinutesToTime } from '../lib/helpers/domains/lessons/formatters';
+import {
+  calculateDurationMinutes,
+  addMinutesToTime,
+} from '../lib/helpers/shared/formatters/duration';
+import { LESSON_STATUSES } from '../lib/domains/lessons/statuses';
+import { LESSON_TYPES, getLessonTypeConfig } from '../lib/domains/lessons/types';
 
 /**
  * Custom hook for managing lesson edit mode
@@ -22,11 +27,11 @@ export const useLessonEdit = (lessonData, onSaveSuccess) => {
       lesson_date: lessonData.lesson_date || '',
       start_time: lessonData.start_time || '',
       end_time: lessonData.end_time || '',
-      lesson_type: lessonData.lesson_type || 'private',
+      lesson_type: lessonData.lesson_type || LESSON_TYPES.PRIVATE.value,
       description: lessonData.description || '',
       max_participants: lessonData.max_participants || 1,
       min_participants: lessonData.min_participants || '',
-      status: lessonData.status || 'scheduled',
+      status: lessonData.status || LESSON_STATUSES.SCHEDULED,
       cancellation_reason: lessonData.cancellation_reason || '',
       not_given_by_laury: lessonData.not_given_by_laury || false,
       not_given_reason: lessonData.not_given_reason || '',
@@ -45,7 +50,7 @@ export const useLessonEdit = (lessonData, onSaveSuccess) => {
 
     // If start_time is changed, calculate new end_time based on duration
     if (name === 'start_time') {
-      const durationMinutes = calculateDurationInMinutes(
+      const durationMinutes = calculateDurationMinutes(
         editFormData.start_time,
         editFormData.end_time
       );
@@ -64,9 +69,9 @@ export const useLessonEdit = (lessonData, onSaveSuccess) => {
     }
   };
 
-  const handleTypeChange = (e, lessonTypes) => {
+  const handleTypeChange = (e) => {
     const type = e.target.value;
-    const typeConfig = lessonTypes.find((t) => t.value === type);
+    const typeConfig = getLessonTypeConfig(type);
 
     setEditFormData((prev) => ({
       ...prev,

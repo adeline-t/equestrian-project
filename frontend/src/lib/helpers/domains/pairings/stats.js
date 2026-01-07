@@ -1,9 +1,13 @@
-import { isActive } from '../filters/activityFilters.js';
+/**
+ * Pairing statistics and filtering utilities
+ */
+
+import { isActive } from '../../shared/filters/activityFilters.js';
 
 /**
  * Calculate statistics for pairings list
  * @param {Array} pairings - Array of pairing objects
- * @returns {Object} Statistics object with counts
+ * @returns {Object} Statistics object
  */
 export function calculatePairingStats(pairings) {
   return {
@@ -21,9 +25,8 @@ export function calculatePairingStats(pairings) {
  */
 export function filterPairingsByStatus(pairings, filter) {
   if (filter === 'all') return pairings;
-  const active = isActive;
   return pairings.filter((pairing) => {
-    const isActivePairing = active(pairing.pairing_start_date, pairing.pairing_end_date);
+    const isActivePairing = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
     return filter === 'active' ? isActivePairing : !isActivePairing;
   });
 }

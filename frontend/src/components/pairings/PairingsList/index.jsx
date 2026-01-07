@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from '../../common/Modal.jsx';
-import { Icons } from '../../../lib/libraries/icons.jsx';
-import { pairingsApi } from '../../../services/api';
+import { Icons } from '../../../lib/icons';
+import { pairingsApi } from '../../../services/index';
 import PairingForm from '../PairingForm';
 import PairingsFilterButtons from './PairingsFilterButtons';
 import PairingsTable from './PairingsTable';
@@ -15,7 +15,6 @@ import {
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
-import '../../../styles/components/pairings.css';
 
 function PairingsList() {
   const [successMessage, setSuccessMessage] = useState('');

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../lib/libraries/icons.jsx';
+import { Icons } from '../../lib/icons';
 import '../../styles/common/infotooltip.css';
 
 function InfoTooltip({ message, position = 'top' }) {

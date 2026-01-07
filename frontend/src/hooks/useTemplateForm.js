@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { templatesApi } from '../services/calendarApi';
 import { ridersApi, horsesApi } from '../services';
+import { LESSON_TYPES } from '../lib/domains/lessons/types';
 
 /**
  * Custom hook for managing template form state and operations
@@ -33,14 +34,13 @@ export function useTemplateForm(template, onSuccess) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const lessonTypes = [
-    { value: 'private', label: '👤 Cours Particulier', maxP: 1, minP: 1 },
-    { value: 'group', label: '👥 Cours Collectif', maxP: 8, minP: 2 },
-    { value: 'training', label: '🎓 Stage', maxP: 12, minP: 3 },
-    { value: 'competition', label: '🏆 Concours', maxP: null, minP: 1 },
-    { value: 'event', label: '🎉 Événement', maxP: null, minP: 1 },
-    { value: 'blocked', label: '🚫 Plage Bloquée', maxP: 0, minP: 0 },
-  ];
+  // Use domain constants for lesson types
+  const lessonTypes = LESSON_TYPES.map((type) => ({
+    value: type.value,
+    label: type.labelShort || type.label,
+    maxP: type.maxP,
+    minP: type.minP,
+  }));
 
   const weekDays = [
     { value: 'monday', label: 'Lun' },
@@ -61,10 +61,7 @@ export function useTemplateForm(template, onSuccess) {
 
   const loadData = async () => {
     try {
-      const [ridersData, horsesData] = await Promise.all([
-        ridersApi.getAll(), 
-        horsesApi.getAll()
-      ]);
+      const [ridersData, horsesData] = await Promise.all([ridersApi.getAll(), horsesApi.getAll()]);
       setRiders(ridersData);
       setHorses(horsesData);
     } catch (err) {
@@ -118,7 +115,7 @@ export function useTemplateForm(template, onSuccess) {
           updated.min_participants = 0;
         } else if (prev.lesson_type === 'blocked') {
           // Restore default values when changing from blocked
-          const lessonType = lessonTypes.find(type => type.value === value);
+          const lessonType = lessonTypes.find((type) => type.value === value);
           if (lessonType) {
             updated.max_participants = lessonType.maxP || 8;
             updated.min_participants = lessonType.minP || 1;
@@ -170,12 +167,12 @@ export function useTemplateForm(template, onSuccess) {
     }
 
     if (!formData.start_time) {
-      setError('L\'heure de début est requise');
+      setError("L'heure de début est requise");
       return false;
     }
 
     if (!formData.duration_minutes || formData.duration_minutes < 15) {
-      setError('La durée doit être d\'au moins 15 minutes');
+      setError("La durée doit être d'au moins 15 minutes");
       return false;
     }
 
@@ -191,7 +188,7 @@ export function useTemplateForm(template, onSuccess) {
 
     if (formData.lesson_type !== 'blocked') {
       if (!formData.min_participants || formData.min_participants < 1) {
-        setError('Le nombre minimum de participants doit être d\'au moins 1');
+        setError("Le nombre minimum de participants doit être d'au moins 1");
         return false;
       }
 
@@ -206,7 +203,7 @@ export function useTemplateForm(template, onSuccess) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -222,7 +219,7 @@ export function useTemplateForm(template, onSuccess) {
       } else {
         await templatesApi.create(submitData);
       }
-      
+
       onSuccess();
     } catch (err) {
       console.error('Submit error:', err);
@@ -320,6 +317,6 @@ export function useTemplateForm(template, onSuccess) {
 
     // Utility
     validateForm,
-    prepareSubmitData
+    prepareSubmitData,
   };
 }

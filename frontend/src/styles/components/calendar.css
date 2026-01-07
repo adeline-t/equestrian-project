@@ -1,10 +1,16 @@
 /* ============================================
+   CALENDAR COMPONENT STYLES
+   ============================================ */
+
+@import '../common/index.css';
+
+/* ============================================
    CALENDAR VIEW - MAIN CONTAINER
    ============================================ */
 
 .calendar-view {
   padding: 20px;
-  background: #f5f5f5;
+  background: var(--color-gray-100);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -18,23 +24,10 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background: white;
-  border-radius: 8px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
   padding: 40px;
   margin: 20px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.spin {
-  animation: spin 1s linear infinite;
 }
 
 /* ============================================
@@ -42,10 +35,10 @@
    ============================================ */
 
 .calendar-header {
-  background: white;
-  border-radius: 8px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
   padding: 16px 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .calendar-header-title {
@@ -67,8 +60,8 @@
 .calendar-title {
   margin: 0;
   font-size: clamp(1.25rem, 5vw, 1.75rem);
-  font-weight: 700;
-  color: #2d3748;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-800);
 }
 
 .calendar-nav-buttons {
@@ -79,16 +72,15 @@
   flex-shrink: 0;
 }
 
-.calendar-nav-buttons .btn-text {
-  display: inline;
-}
-
 .calendar-header-bottom {
   display: flex;
   justify-content: flex-start;
 }
 
-/* Compact Stats */
+/* ============================================
+   COMPACT STATS
+   ============================================ */
+
 .calendar-stats-compact {
   display: flex;
   gap: 16px;
@@ -101,29 +93,29 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #f7fafc;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-200);
+  transition: all var(--transition-base);
 }
 
 .stat-compact-item:hover {
-  background: #edf2f7;
-  border-color: #cbd5e0;
+  background: var(--color-gray-200);
+  border-color: var(--color-gray-300);
 }
 
 .stat-compact-value {
   font-size: 1.1rem;
-  font-weight: 700;
-  color: #2d3748;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-800);
   min-width: 24px;
   text-align: center;
 }
 
 .stat-compact-label {
   font-size: 0.7rem;
-  color: #718096;
-  font-weight: 500;
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   white-space: nowrap;
@@ -134,10 +126,10 @@
    ============================================ */
 
 .calendar-filters {
-  background: white;
+  background: var(--color-white);
   padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .filters-row {
@@ -164,50 +156,8 @@
 
 .filter-group label {
   font-size: 0.875rem;
-  font-weight: 500;
-  color: #4a5568;
-}
-
-.filter-group input[type='checkbox'] {
-  cursor: pointer;
-}
-
-.form-select {
-  padding: 8px 12px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 160px;
-  font-family: inherit;
-}
-
-.form-select:hover {
-  border-color: #a0aec0;
-}
-
-.form-select:focus {
-  outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-}
-
-/* Action Buttons */
-.filters-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-}
-
-.filters-actions .btn {
-  white-space: nowrap;
-}
-
-.filters-actions .btn-text {
-  display: inline;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
 }
 
 /* ============================================
@@ -226,10 +176,10 @@
    ============================================ */
 
 .week-view {
-  background: white;
-  border-radius: 8px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -249,8 +199,8 @@
    ============================================ */
 
 .time-column {
-  background: #f8f9fa;
-  border-right: 2px solid #dee2e6;
+  background: var(--color-gray-100);
+  border-right: 2px solid var(--color-gray-300);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -261,11 +211,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  border-bottom: 2px solid #dee2e6;
+  font-weight: var(--font-weight-bold);
+  border-bottom: 2px solid var(--color-gray-300);
   position: sticky;
   top: 0;
-  background: #f8f9fa;
+  background: var(--color-gray-100);
   z-index: 10;
   flex-shrink: 0;
 }
@@ -283,18 +233,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--color-gray-200);
   font-size: 12px;
-  color: #6c757d;
+  color: var(--color-gray-600);
   flex-shrink: 0;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   padding-top: 4px;
   position: relative;
-}
-
-.time-label {
-  display: block;
-  line-height: 1;
 }
 
 /* ============================================
@@ -302,7 +247,7 @@
    ============================================ */
 
 .day-column {
-  border-right: 1px solid #dee2e6;
+  border-right: 1px solid var(--color-gray-300);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -319,16 +264,16 @@
 }
 
 .day-column.past {
-  background: #f8f9fa;
+  background: var(--color-gray-100);
   opacity: 0.7;
 }
 
 .day-header {
   height: 80px;
   padding: 10px;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--color-gray-300);
   text-align: center;
-  background: white;
+  background: var(--color-white);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -339,7 +284,7 @@
 }
 
 .day-name {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   font-size: 14px;
   text-transform: capitalize;
   margin-bottom: 5px;
@@ -351,23 +296,18 @@
 
 .day-date {
   font-size: 12px;
-  color: #6c757d;
+  color: var(--color-gray-600);
 }
 
 .today-badge {
   display: inline-block;
   background: #48bb78;
-  color: white;
+  color: var(--color-white);
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 10px;
   margin-left: 8px;
   white-space: nowrap;
-}
-
-.day-column.past .lesson-card {
-  cursor: pointer;
-  opacity: 1;
 }
 
 /* ============================================
@@ -395,7 +335,7 @@
   width: 100%;
   height: 100%;
   min-height: 840px;
-  background: white;
+  background: var(--color-white);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -413,7 +353,7 @@
 .hour-marker-row {
   position: absolute;
   width: 100%;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .hour-label {
@@ -421,8 +361,8 @@
   left: 4px;
   top: 2px;
   font-size: 0.65rem;
-  color: #718096;
-  font-weight: 500;
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
   line-height: 1;
   background: inherit;
   padding: 0 2px;
@@ -434,7 +374,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #adb5bd;
+  color: var(--color-gray-500);
   font-style: italic;
   position: absolute;
   top: 0;
@@ -454,18 +394,19 @@
   height: 100%;
   z-index: 2;
 }
+
 /* ============================================
-   LESSON CARD - WRAPPER
+   LESSON CARD
    ============================================ */
 
 .lesson-card {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
   overflow: visible;
   display: flex;
   flex-direction: column;
@@ -479,7 +420,7 @@
 
 .lesson-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   z-index: 10;
 }
 
@@ -522,7 +463,7 @@
 }
 
 /* ============================================
-   LESSON CARD CONTENT - OVERRIDE
+   LESSON CARD CONTENT
    ============================================ */
 
 .lesson-card > div {
@@ -532,7 +473,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   min-height: auto;
   max-height: none;
   overflow: visible;
@@ -555,209 +496,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-}
-
-/* ============================================
-   LESSON CARD - HIDE UNNECESSARY CONTENT
-   ============================================ */
-
-.lesson-card.compact > div > div:nth-child(3),
-.lesson-card.compact > div > div:nth-child(4),
-.lesson-card.compact > div > div:nth-child(5) {
-  display: none;
-}
-
-/* ============================================
-   MODAL
-   ============================================ */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 8px;
-  max-width: 800px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 32px;
-  cursor: pointer;
-  color: #6c757d;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s ease;
-}
-
-.btn-close:hover {
-  color: #000;
-}
-
-.modal-body {
-  padding: 20px;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 20px;
-  border-top: 1px solid #dee2e6;
-}
-
-/* ============================================
-   ALERTS
-   ============================================ */
-
-.alert {
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-left: 4px solid;
-}
-
-.alert-info {
-  background: #d1ecf1;
-  color: #0c5460;
-  border-left-color: #17a2b8;
-}
-
-.alert-warning {
-  background: #fff3cd;
-  color: #856404;
-  border-left-color: #ffc107;
-}
-
-.alert-error {
-  background: #f8d7da;
-  color: #721c24;
-  border-left-color: #dc3545;
-}
-
-.alert-success {
-  background: #d4edda;
-  color: #155724;
-  border-left-color: #28a745;
-}
-
-/* ============================================
-   UTILITIES
-   ============================================ */
-
-.text-muted {
-  color: #6c757d;
-  font-size: 12px;
-}
-
-.mt-20 {
-  margin-top: 20px;
-}
-
-.mb-20 {
-  margin-bottom: 20px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px;
-  color: #6c757d;
-}
-
-.badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.badge-info {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-
-.badge-success {
-  background: #d4edda;
-  color: #155724;
-}
-
-.badge-warning {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badge-danger {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-/* ============================================
-   BUTTON STYLES
-   ============================================ */
-
-.btn-outline-danger {
-  background-color: transparent;
-  border: 1px solid #dc3545;
-  color: #dc3545;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-
-.btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-}
-
-.btn-outline-danger:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
 }
 
 /* ============================================
@@ -826,29 +564,6 @@
     width: calc(100% - 8px);
   }
 
-  .lesson-card.compact {
-    padding: 3px 4px;
-    min-height: 35px;
-  }
-
-  .lesson-card.standard {
-    padding: 6px;
-    min-height: 50px;
-  }
-
-  .lesson-card > div {
-    padding: 6px;
-    gap: 3px;
-  }
-
-  .calendar-nav-buttons .btn-text {
-    display: none;
-  }
-
-  .filters-actions .btn-text {
-    display: none;
-  }
-
   .filters-row {
     flex-direction: column;
     align-items: stretch;
@@ -864,10 +579,6 @@
 
   .filters-actions .btn {
     flex: 1;
-  }
-
-  .form-select {
-    width: 100%;
   }
 }
 
@@ -901,21 +612,6 @@
     font-size: 0.8rem;
   }
 
-  .form-select {
-    font-size: 0.8rem;
-    padding: 6px 10px;
-    min-width: 140px;
-  }
-
-  .filters-actions .btn {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-  }
-
-  .filters-actions .btn-text {
-    display: none;
-  }
-
   .week-grid {
     grid-template-columns: 50px repeat(7, 1fr);
   }
@@ -936,77 +632,12 @@
     font-size: 12px;
   }
 
-  .day-name {
-    font-size: 12px;
-    margin-bottom: 2px;
-  }
-
-  .day-date {
-    font-size: 10px;
-  }
-
-  .today-badge {
-    font-size: 8px;
-    padding: 1px 4px;
-    margin-left: 4px;
-  }
-
   .day-grid {
     min-height: 630px;
   }
 
   .hour-marker-row {
     height: 45px;
-  }
-
-  .hour-label {
-    font-size: 0.6rem;
-    left: 2px;
-    top: 1px;
-  }
-
-  .lesson-card {
-    left: 2px;
-    right: 2px;
-    width: calc(100% - 4px);
-  }
-
-  .lesson-card.compact {
-    padding: 2px 3px;
-    min-height: 30px;
-  }
-
-  .lesson-card.standard {
-    padding: 4px;
-    min-height: 40px;
-  }
-
-  .lesson-card > div {
-    padding: 4px;
-    gap: 2px;
-    font-size: 10px !important;
-  }
-
-  .modal-content {
-    max-width: 100%;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-
-  .modal-header {
-    padding: 15px;
-  }
-
-  .modal-header h2 {
-    font-size: 18px;
-  }
-
-  .modal-body {
-    padding: 15px;
-  }
-
-  .modal-footer {
-    padding: 15px;
   }
 
   .stat-compact-item {
@@ -1047,49 +678,6 @@
     gap: 4px;
   }
 
-  .calendar-filters {
-    padding: 10px;
-  }
-
-  .filters-row {
-    gap: 8px;
-  }
-
-  .filters-controls {
-    gap: 8px;
-    width: 100%;
-  }
-
-  .filter-group {
-    flex: 1;
-    min-width: 120px;
-  }
-
-  .filter-group label {
-    font-size: 0.75rem;
-  }
-
-  .form-select {
-    font-size: 0.75rem;
-    padding: 6px 8px;
-    min-width: auto;
-    width: 100%;
-  }
-
-  .filters-actions {
-    width: 100%;
-  }
-
-  .filters-actions .btn {
-    flex: 1;
-    padding: 8px 10px;
-    font-size: 0.8rem;
-  }
-
-  .filters-actions .btn-text {
-    display: none;
-  }
-
   .week-grid {
     grid-template-columns: 40px repeat(7, 1fr);
   }
@@ -1110,59 +698,11 @@
     font-size: 10px;
   }
 
-  .day-name {
-    font-size: 10px;
-    margin-bottom: 1px;
-  }
-
-  .day-date {
-    font-size: 8px;
-  }
-
   .day-grid {
     min-height: 560px;
   }
 
   .hour-marker-row {
     height: 40px;
-  }
-
-  .hour-label {
-    font-size: 0.55rem;
-  }
-
-  .lesson-card {
-    left: 1px;
-    right: 1px;
-    width: calc(100% - 2px);
-  }
-
-  .lesson-card.compact {
-    padding: 2px 2px;
-    min-height: 25px;
-  }
-
-  .lesson-card.standard {
-    padding: 3px;
-    min-height: 35px;
-  }
-
-  .lesson-card > div {
-    padding: 3px;
-    gap: 1px;
-    font-size: 9px !important;
-  }
-
-  .stat-compact-item {
-    padding: 4px 6px;
-    font-size: 0.8rem;
-  }
-
-  .stat-compact-value {
-    font-size: 0.9rem;
-  }
-
-  .stat-compact-label {
-    font-size: 0.65rem;
   }
 }

@@ -1,21 +1,23 @@
 /**
  * Pairing Service - Handles all pairing-related API operations
  */
-import { api } from './apiService';
+import api from './apiService';
+import { createCrudOperations } from './apiService';
+import { validatePairingForm } from '../lib/helpers/domains/pairings/validators';
+import { calculatePairingStats } from '../lib/helpers/domains/pairings/stats';
 
 export const pairingService = {
   // Basic CRUD operations
-  getAll: async () => {
-    const response = await api.get('/pairings');
-    return response.data;
-  },
+  ...createCrudOperations('pairings'),
 
-  getById: async (id) => {
-    const response = await api.get(`/pairings/${id}`);
-    return response.data;
-  },
-
+  // Override create to add validation
   create: async (data) => {
+    // Validate form data
+    const validation = validatePairingForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
+
     const validatedData = {
       ...data,
       rider_id: Number(data.rider_id),
@@ -26,19 +28,21 @@ export const pairingService = {
     return response.data;
   },
 
+  // Override update to add validation
   update: async (id, data) => {
+    // Validate form data
+    const validation = validatePairingForm(data);
+    if (!validation.isValid) {
+      throw new Error(JSON.stringify(validation.errors));
+    }
+
     const validatedData = {
       ...data,
-      rider_id: Number(data.rider_id),
-      horse_id: Number(data.horse_id),
+      rider_id: data.rider_id ? Number(data.rider_id) : undefined,
+      horse_id: data.horse_id ? Number(data.horse_id) : undefined,
     };
 
     const response = await api.put(`/pairings/${id}`, validatedData);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await api.delete(`/pairings/${id}`);
     return response.data;
   },
 
@@ -110,6 +114,15 @@ export const pairingService = {
   bulkDelete: async (ids) => {
     const response = await api.delete('/pairings/bulk', { data: { ids } });
     return response.data;
+  },
+
+  // Helper methods using helper functions
+  getPairingStats: async (riderId, horseId) => {
+    const pairing = await pairingService.getByRiderAndHorse(riderId, horseId);
+    if (pairing) {
+      return calculatePairingStats(pairing);
+    }
+    return null;
   },
 };
 

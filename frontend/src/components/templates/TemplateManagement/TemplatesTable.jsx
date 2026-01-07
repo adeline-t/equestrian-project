@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 
 const TemplatesTable = ({ templates, onEdit, onDelete, loading }) => {
   if (loading) {

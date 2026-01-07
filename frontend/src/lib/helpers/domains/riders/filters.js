@@ -1,55 +1,41 @@
 /**
- * Check if an item is currently active based on start and end dates
- * @param {string} startDate - Activity start date
- * @param {string} endDate - Activity end date
- * @returns {boolean} True if the item is active
+ * Rider-specific filter utilities
  */
-export function isActive(startDate, endDate) {
-  const now = new Date();
-  const start = startDate ? new Date(startDate) : null;
-  const end = endDate ? new Date(endDate) : null;
 
-  if (start && start > now) return false;
-  if (end && end < now) return false;
-  return true;
+import { isActive } from '../../shared/filters/activityFilters.js';
+
+/**
+ * Calculate statistics for riders list
+ * @param {Array} riders - Array of rider objects
+ * @returns {Object} Statistics object with counts
+ */
+export function calculateRiderStatsWithPackages(riders) {
+  return {
+    total: riders.length,
+    active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
+    withActivePackages: riders.filter(
+      (r) =>
+        r.packages &&
+        r.packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date)).length > 0
+    ).length,
+  };
 }
 
 /**
- * Filter packages to return only active ones
- * @param {Array} packages - Array of package objects
- * @returns {Array} Filtered array of active packages
+ * Get active items for a rider
+ * @param {Object} rider - Rider object
+ * @returns {Object} Active items
  */
-export function filterActivePackages(packages) {
-  if (!packages || !Array.isArray(packages)) return [];
-  return packages.filter((pkg) =>
-    isActive(pkg.activity_start_date, pkg.activity_end_date)
-  );
-}
-
-/**
- * Filter pairings to return only active ones (both pairing and horse must be active)
- * @param {Array} pairings - Array of pairing objects
- * @returns {Array} Filtered array of active pairings
- */
-export function filterActivePairings(pairings) {
-  if (!pairings || !Array.isArray(pairings)) return [];
-  return pairings.filter((pairing) => {
-    const pairingActive = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
-    const horseActive =
-      pairing.horses &&
-      isActive(pairing.horses.activity_start_date, pairing.horses.activity_end_date);
-    return pairingActive && horseActive;
-  });
-}
-
-/**
- * Filter horses to return only active ones
- * @param {Array} horses - Array of horse objects
- * @returns {Array} Filtered array of active horses
- */
-export function filterActiveHorses(horses) {
-  if (!horses || !Array.isArray(horses)) return [];
-  return horses.filter((horse) =>
-    isActive(horse.activity_start_date, horse.activity_end_date)
-  );
+export function getRiderActiveItems(rider) {
+  return {
+    packages: rider.packages
+      ? rider.packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date))
+      : [],
+    pairings: rider.pairings
+      ? rider.pairings.filter((p) => isActive(p.pairing_start_date, p.pairing_end_date))
+      : [],
+    horses: rider.horses
+      ? rider.horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date))
+      : [],
+  };
 }

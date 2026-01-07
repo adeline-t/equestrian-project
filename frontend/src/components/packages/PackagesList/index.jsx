@@ -3,7 +3,7 @@ import PackageForm from '../PackageForm.jsx';
 import PackagesTable from './PackagesTable.jsx';
 import PackageFilterButtons from './PackageFilterButtons.jsx';
 import PackageDeleteModal from '../../common/DeleteConfirmationModal.jsx';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 
 function PackagesList() {
   const {

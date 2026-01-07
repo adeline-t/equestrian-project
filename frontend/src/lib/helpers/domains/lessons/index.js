@@ -2,5 +2,7 @@
  * Lessons domain helpers exports
  */
 
-export * from './validators.js';
-export * from './formatters.js';
+export * from './validators';
+export * from './formatters';
+export * from './filters';
+export * from './stats';

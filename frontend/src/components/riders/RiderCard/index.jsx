@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import PackageForm from '../../packages/PackageForm';
 import PairingForm from '../../pairings/PairingForm';
 import Modal from '../../common/Modal';
@@ -8,15 +8,11 @@ import RiderInfo from './RiderInfo';
 import OwnedHorsesList from './OwnedHorsesList';
 import PackagesList from './PackagesList.jsx';
 import PairingsList from './PairingsList.jsx';
-import DeleteConfirmationModal from './DeleteConfirmationModal';
+import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import { useRiderCard } from '../../../hooks/useRiderCard';
 import { usePackageActions } from '../../../hooks/usePackageActions';
 import { usePairingActions } from '../../../hooks/usePairingActions';
-import {
-  filterActivePackages,
-  filterActivePairings,
-  filterActiveHorses,
-} from '../../../lib/helpers/domains/riders/filters.js';
+import { isActive } from '../../../lib/helpers/shared/filters/activityFilters.js';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
@@ -109,9 +105,21 @@ function RiderCard({ riderId, onClose }) {
   };
 
   // Filter active items
-  const activePackages = filterActivePackages(packages);
-  const activePairings = filterActivePairings(pairings);
-  const activeOwnedHorses = filterActiveHorses(ownedHorses);
+  const activePackages =
+    packages?.filter((pkg) => isActive(pkg.activity_start_date, pkg.activity_end_date)) || [];
+
+  const activePairings =
+    pairings?.filter((pairing) => {
+      const pairingActive = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
+      const horseActive =
+        pairing.horses &&
+        isActive(pairing.horses.activity_start_date, pairing.horses.activity_end_date);
+      return pairingActive && horseActive;
+    }) || [];
+
+  const activeOwnedHorses =
+    ownedHorses?.filter((horse) => isActive(horse.activity_start_date, horse.activity_end_date)) ||
+    [];
 
   // Loading state
   if (loading) {

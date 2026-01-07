@@ -6,7 +6,7 @@ import RidersTable from './RidersTable';
 import FilterButtons from './FilterButtons';
 import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import Modal from '../../common/Modal';
-import { Icons } from '../../../lib/libraries/icons.jsx';
+import { Icons } from '../../../lib/icons';
 import '../../../styles/common/modal.css';
 import '../../../styles/common/alerts.css';
 import '../../../styles/common/buttons.css';
