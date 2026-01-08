@@ -6,8 +6,6 @@ import { Icons } from '../../icons';
 export const LESSON_STATUSES = {
   SCHEDULED: 'scheduled',
   CONFIRMED: 'confirmed',
-  IN_PROGRESS: 'in_progress',
-  COMPLETED: 'completed',
   CANCELLED: 'cancelled',
   BLOCKED: 'blocked',
 };
@@ -23,18 +21,6 @@ export const STATUS_BADGES = {
     label: 'Confirmé',
     icon: Icons.Check,
     color: '#28a745',
-    bgColor: '#d4edda',
-  },
-  in_progress: {
-    label: 'En cours',
-    icon: Icons.Clock,
-    color: '#0c5460',
-    bgColor: '#d1ecf1',
-  },
-  completed: {
-    label: 'Terminé',
-    icon: Icons.Check,
-    color: '#155724',
     bgColor: '#d4edda',
   },
   cancelled: {
@@ -88,24 +74,6 @@ export const isLessonConfirmed = (status) => {
 };
 
 /**
- * Check if lesson is in progress
- * @param {string} status - Status value
- * @returns {boolean} True if in progress
- */
-export const isLessonInProgress = (status) => {
-  return status === LESSON_STATUSES.IN_PROGRESS;
-};
-
-/**
- * Check if lesson is completed
- * @param {string} status - Status value
- * @returns {boolean} True if completed
- */
-export const isLessonCompleted = (status) => {
-  return status === LESSON_STATUSES.COMPLETED;
-};
-
-/**
  * Check if lesson is cancelled
  * @param {string} status - Status value
  * @returns {boolean} True if cancelled
@@ -129,5 +97,5 @@ export const isLessonBlocked = (status) => {
  * @returns {boolean} True if lesson can be modified
  */
 export const isLessonModifiable = (status) => {
-  return !isLessonCompleted(status) && !isLessonCancelled(status);
+  return !isLessonCancelled(status);
 };

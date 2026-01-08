@@ -3,15 +3,15 @@
  */
 export const OWNER_TYPES = {
   LAURY: {
-    value: 'Laury',
+    value: 'laury',
     label: 'Laury',
   },
   OWNER: {
-    value: 'Propriétaire',
+    value: 'private_owner',
     label: 'Propriétaire',
   },
   CLUB: {
-    value: 'Club',
+    value: 'club',
     label: 'Club',
   },
 };

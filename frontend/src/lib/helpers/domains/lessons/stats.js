@@ -2,11 +2,7 @@
  * Lesson statistics utilities
  */
 
-import {
-  isLessonConfirmed,
-  isLessonBlocked,
-  isLessonCompleted,
-} from '../../../domains/lessons/statuses';
+import { isLessonConfirmed, isLessonBlocked } from '../../../domains/lessons/statuses';
 
 /**
  * Calculate calendar statistics
@@ -25,7 +21,6 @@ export function calculateCalendarStats(weekData) {
     total: allLessons.length,
     confirmed: allLessons.filter((l) => isLessonConfirmed(l.status)).length,
     blocked: allLessons.filter((l) => isLessonBlocked(l.status)).length,
-    completed: allLessons.filter((l) => isLessonCompleted(l.status)).length,
   };
 }
 
@@ -36,14 +31,13 @@ export function calculateCalendarStats(weekData) {
  */
 export function calculateDayStats(lessons) {
   if (!lessons || !Array.isArray(lessons)) {
-    return { total: 0, confirmed: 0, blocked: 0, completed: 0 };
+    return { total: 0, confirmed: 0, blocked: 0 };
   }
 
   return {
     total: lessons.length,
     confirmed: lessons.filter((l) => isLessonConfirmed(l.status)).length,
     blocked: lessons.filter((l) => isLessonBlocked(l.status)).length,
-    completed: lessons.filter((l) => isLessonCompleted(l.status)).length,
   };
 }
 

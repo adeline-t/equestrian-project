@@ -10,7 +10,6 @@ export const LESSON_TYPES = {
   PRIVATE: {
     value: 'private',
     label: 'Cours particulier',
-    labelShort: '👤 Particulier',
     icon: Icons.PrivateLesson,
     color: '#007bff',
     defaultMax: 1,
@@ -20,7 +19,6 @@ export const LESSON_TYPES = {
   GROUP: {
     value: 'group',
     label: 'Cours collectif',
-    labelShort: '👥 Collectif',
     icon: Icons.GroupLesson,
     color: '#28a745',
     defaultMax: 6,
@@ -30,7 +28,6 @@ export const LESSON_TYPES = {
   TRAINING: {
     value: 'training',
     label: 'Stage',
-    labelShort: '🎓 Stage',
     icon: Icons.Training,
     color: '#ffc107',
     defaultMax: 10,
@@ -40,7 +37,6 @@ export const LESSON_TYPES = {
   COMPETITION: {
     value: 'competition',
     label: 'Concours',
-    labelShort: '🏆 Concours',
     icon: Icons.Competition,
     color: '#dc3545',
     defaultMax: 20,
@@ -50,7 +46,6 @@ export const LESSON_TYPES = {
   EVENT: {
     value: 'event',
     label: 'Événement',
-    labelShort: '🎉 Événement',
     icon: Icons.Event,
     color: '#6f42c1',
     defaultMax: 50,
@@ -60,7 +55,6 @@ export const LESSON_TYPES = {
   BLOCKED: {
     value: 'blocked',
     label: 'Période bloquée',
-    labelShort: '🛫 Bloqué',
     icon: Icons.Blocked,
     color: '#6c757d',
     defaultMax: null,

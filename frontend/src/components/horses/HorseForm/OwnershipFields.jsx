@@ -25,7 +25,7 @@ const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipO
         </select>
       </div>
 
-      {formData.is_owned_by === 'Propriétaire' && (
+      {formData.is_owned_by === 'private_owner' && (
         <div className="form-group">
           <label htmlFor="owner_id">
             Propriétaire <span className="required">*</span>
@@ -63,7 +63,7 @@ const OwnershipFields = ({ formData, onChange, riders, loadingRiders, ownershipO
         </div>
       )}
 
-      {formData.is_owned_by === 'Propriétaire' && formData.owner_id && (
+      {formData.is_owned_by === 'private_owner' && formData.owner_id && (
         <div className="alert alert-success" style={{ marginTop: '12px' }}>
           <Icons.Check style={{ marginRight: '8px' }} />
           Ce cheval sera associé au cavalier sélectionné comme propriétaire.

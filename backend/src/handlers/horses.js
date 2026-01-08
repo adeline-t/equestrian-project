@@ -161,9 +161,9 @@ export async function handleHorses(request, env) {
       }
 
       // Validate is_owned_by if provided
-      if (body.is_owned_by && !['Laury', 'Propriétaire', 'Club'].includes(body.is_owned_by)) {
+      if (body.is_owned_by && !['laury', 'private_owner', 'club'].includes(body.is_owned_by)) {
         return jsonResponse(
-          { error: 'Le propriétaire doit être "Laury", "Propriétaire" ou "Club"' },
+          { error: 'Le propriétaire doit être "laury", "private_owner" ou "club"' },
           400,
           getSecurityHeaders()
         );
@@ -191,7 +191,7 @@ export async function handleHorses(request, env) {
         kind: body.kind,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
-        is_owned_by: body.is_owned_by || 'Propriétaire',
+        is_owned_by: body.is_owned_by || 'private_owner',
         owner_id: body.owner_id || null,
       };
 
@@ -224,9 +224,9 @@ export async function handleHorses(request, env) {
       }
 
       // Validate is_owned_by if provided
-      if (body.is_owned_by && !['Laury', 'Propriétaire', 'Club'].includes(body.is_owned_by)) {
+      if (body.is_owned_by && !['laury', 'private_owner', 'club'].includes(body.is_owned_by)) {
         return jsonResponse(
-          { error: 'Le propriétaire doit être "Laury", "Propriétaire" ou "Club"' },
+          { error: 'Le propriétaire doit être "laury", "private_owner" ou "club"' },
           400,
           getSecurityHeaders()
         );

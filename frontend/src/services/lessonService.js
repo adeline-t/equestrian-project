@@ -6,7 +6,6 @@ import { createCrudOperations } from './apiService';
 import { validateLessonForm } from '../lib/helpers/domains/lessons/validators';
 import { LESSON_TYPES } from '../lib/domains/lessons/types';
 import { LESSON_STATUSES } from '../lib/domains/lessons/statuses';
-import { PARTICIPATION_STATUSES } from '../lib/domains/lessons/participation';
 
 export const lessonService = {
   // Basic CRUD operations
@@ -140,7 +139,6 @@ export const lessonService = {
   // Helper methods using domain constants
   getLessonTypes: () => LESSON_TYPES,
   getLessonStatuses: () => LESSON_STATUSES,
-  getParticipationStatuses: () => PARTICIPATION_STATUSES,
 
   // Get lesson type config by value
   getLessonTypeConfig: (typeValue) => {

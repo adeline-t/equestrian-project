@@ -3,12 +3,14 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Icons } from '../../../lib/icons';
 import { getLessonTypeLabel, isBlockedLesson } from '../../../lib/domains/lessons/types';
+import { getStatusBadge } from '../../../lib/domains/lessons/statuses';
 
 /**
  * Lesson Details Tab - View Mode
  */
 const LessonDetailsTab = ({ lessonData, LessonIcon }) => {
   const isBlocked = isBlockedLesson(lessonData.lesson_type);
+  const statusBadge = getStatusBadge(lessonData.status);
 
   return (
     <div className="details-tab">
@@ -50,17 +52,21 @@ const LessonDetailsTab = ({ lessonData, LessonIcon }) => {
           <Icons.Info style={{ marginRight: '4px' }} />
           Statut :
         </label>
-        <span className={`status-badge status-${lessonData.status}`}>
-          {lessonData.status === 'confirmed' && (
-            <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
-          )}
-          {lessonData.status === 'cancelled' && (
-            <Icons.Close style={{ marginRight: '4px', fontSize: '10px' }} />
-          )}
-          {lessonData.status === 'completed' && (
-            <Icons.Check style={{ marginRight: '4px', fontSize: '10px' }} />
-          )}
-          {lessonData.status}
+        <span
+          className="status-badge"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
+            color: statusBadge.color,
+            backgroundColor: statusBadge.bgColor,
+            padding: '2px 6px',
+            borderRadius: '4px',
+            fontSize: '12px',
+          }}
+        >
+          {statusBadge.icon && <statusBadge.icon style={{ fontSize: '10px' }} />}
+          {statusBadge.label}
         </span>
       </div>
 

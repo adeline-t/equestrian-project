@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
+import { getOwnerTypeLabel } from '../../../lib/domains/horses/owners';
 import { isActive } from '../../../lib/helpers/shared/filters';
 import { Icons } from '../../../lib/icons';
 import '../../../styles/common/badges.css';
@@ -16,7 +17,7 @@ function HorsesTable({ horses, onEdit, onDelete, onRidersClick }) {
   };
 
   const getOwnershipLabel = (ownership) => {
-    return `${ownership}`;
+    return getOwnerTypeLabel(ownership);
   };
 
   return (

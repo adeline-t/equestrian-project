@@ -19,26 +19,26 @@ export const HORSE_FORM_FIELDS = {
   },
   activity_start_date: {
     type: FIELD_TYPES.DATE,
-    label: 'Date de début d\'activité',
+    label: "Date de début d'activité",
     required: true,
   },
   activity_end_date: {
     type: FIELD_TYPES.DATE,
-    label: 'Date de fin d\'activité',
+    label: "Date de fin d'activité",
     required: false,
   },
   is_owned_by: {
     type: FIELD_TYPES.SELECT,
     label: 'Propriétaire',
     required: true,
-    options: ['Laury', 'Propriétaire', 'Club'],
+    options: ['laury', 'private_owner', 'club'],
   },
   owner_id: {
     type: FIELD_TYPES.SELECT,
     label: 'Cavalier propriétaire',
     required: false,
     dependsOn: 'is_owned_by',
-    showWhen: 'Propriétaire',
+    showWhen: 'private_owner',
   },
 };
 
