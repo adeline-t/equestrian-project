@@ -1,6 +1,6 @@
 # 📁 Project Files Export
 
-Generated on: Wed Jan  7 19:11:20 CET 2026
+Generated on: Wed Jan  7 22:14:29 CET 2026
 
 ## 📄 alerts.css
 **Path:** `common/alerts.css`
@@ -322,31 +322,31 @@ Generated on: Wed Jan  7 19:11:20 CET 2026
   --color-primary: #007bff;
   --color-primary-dark: #0056b3;
   --color-primary-light: #667eea;
-  
+
   /* Secondary Colors */
   --color-secondary: #6c757d;
   --color-secondary-dark: #545b62;
-  
+
   /* Success Colors */
   --color-success: #28a745;
   --color-success-dark: #1e7e34;
   --color-success-light: #d4edda;
-  
+
   /* Danger Colors */
   --color-danger: #dc3545;
   --color-danger-dark: #bd2130;
   --color-danger-light: #f8d7da;
-  
+
   /* Warning Colors */
   --color-warning: #ffc107;
   --color-warning-dark: #e0a800;
   --color-warning-light: #fff3cd;
-  
+
   /* Info Colors */
   --color-info: #17a2b8;
   --color-info-dark: #117a8b;
   --color-info-light: #d1ecf1;
-  
+
   /* Neutral Colors */
   --color-white: #ffffff;
   --color-black: #000000;
@@ -359,32 +359,32 @@ Generated on: Wed Jan  7 19:11:20 CET 2026
   --color-gray-700: #495057;
   --color-gray-800: #2d3748;
   --color-gray-900: #212529;
-  
+
   /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
-  
+
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
   --radius-full: 9999px;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
   --shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.2);
-  
+
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
-  
+
   /* Font Sizes */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -393,7 +393,7 @@ Generated on: Wed Jan  7 19:11:20 CET 2026
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.75rem;
-  
+
   /* Font Weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -412,13 +412,13 @@ Generated on: Wed Jan  7 19:11:20 CET 2026
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   color: var(--color-gray-800);
-  background-color: var(--color-white);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 /* ============================================
@@ -467,7 +467,8 @@ body {
 
 .spin {
   animation: spin 1s linear infinite;
-}```
+}
+```
 
 ---
 
@@ -493,8 +494,6 @@ body {
   transition: all var(--transition-base);
   text-decoration: none;
   line-height: 1.5;
-  background: var(--color-primary);
-  color: var(--color-white);
 }
 
 .btn:disabled {
@@ -540,15 +539,30 @@ body {
    BUTTON VARIANTS - SOLID
    ============================================ */
 
+/* PRIMARY BUTTON WITH GRADIENT */
 .btn-primary {
-  background-color: var(--color-primary);
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: var(--color-white);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--color-primary-dark);
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* OUTLINE PRIMARY BUTTON */
+.btn-outline-primary {
+  background-color: transparent;
+  color: #667eea;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--color-white);
+  border: 2px solid transparent;
 }
 
 .btn-secondary {
@@ -612,12 +626,12 @@ body {
 
 .btn-outline-primary {
   background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 1px solid linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .btn-outline-primary:hover:not(:disabled) {
-  background-color: var(--color-primary);
+  background-color: vlinear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: var(--color-white);
 }
 
@@ -683,7 +697,8 @@ body {
     padding: 10px 20px;
     font-size: 15px;
   }
-}```
+}
+```
 
 ---
 
@@ -4037,7 +4052,8 @@ main {
   header h1 {
     font-size: 1.3rem;
   }
-}```
+}
+```
 
 ---
 

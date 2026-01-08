@@ -98,11 +98,11 @@ main {
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  background-image: var(--gradient-light);
+  border: 2px solid #e2e8f0;
   padding: 20px;
   border-radius: var(--radius-xl);
   text-align: center;
-  border: 2px solid #e2e8f0;
   transition: all var(--transition-slow);
 }
 

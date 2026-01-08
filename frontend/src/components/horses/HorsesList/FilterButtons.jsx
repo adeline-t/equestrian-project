@@ -15,13 +15,13 @@ function FilterButtons({ filter, stats, onFilterChange }) {
         className={`btn ${filter === 'horse' ? 'btn-primary' : 'btn-secondary'}`}
         onClick={() => onFilterChange('horse')}
       >
-        Chevaux ({stats.horses})
+        Chevaux ({stats.horse})
       </button>
       <button
         className={`btn ${filter === 'pony' ? 'btn-primary' : 'btn-secondary'}`}
         onClick={() => onFilterChange('pony')}
       >
-        Poneys ({stats.ponies})
+        Poneys ({stats.pony})
       </button>
     </div>
   );
@@ -31,8 +31,8 @@ FilterButtons.propTypes = {
   filter: PropTypes.oneOf(['all', 'horse', 'pony']).isRequired,
   stats: PropTypes.shape({
     total: PropTypes.number.isRequired,
-    horses: PropTypes.number.isRequired,
-    ponies: PropTypes.number.isRequired,
+    horse: PropTypes.number.isRequired,
+    pony: PropTypes.number.isRequired,
   }).isRequired,
   onFilterChange: PropTypes.func.isRequired,
 };

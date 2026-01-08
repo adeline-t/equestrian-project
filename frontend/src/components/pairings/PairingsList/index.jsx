@@ -1,20 +1,18 @@
-import React, { useState } from 'react';
-import Modal from '../../common/Modal.jsx';
-import { Icons } from '../../../lib/icons';
-import { pairingsApi } from '../../../services/index';
-import PairingForm from '../PairingForm';
-import PairingsFilterButtons from './PairingsFilterButtons';
-import PairingsTable from './PairingsTable';
-import PairingsEmptyState from './PairingsEmptyState';
-import PairingDeleteModal from './PairingDeleteModal';
+import { useState } from 'react';
 import { usePairingsList } from '../../../hooks/usePairingsList';
 import {
   calculatePairingStats,
   filterPairingsByStatus,
 } from '../../../lib/helpers/domains/pairings/stats.js';
-import '../../../styles/common/modal.css';
-import '../../../styles/common/alerts.css';
-import '../../../styles/common/buttons.css';
+import { Icons } from '../../../lib/icons';
+import { pairingsApi } from '../../../services/index';
+import '../../../styles/index.css';
+import Modal from '../../common/Modal.jsx';
+import PairingForm from '../PairingForm';
+import PairingDeleteModal from './PairingDeleteModal';
+import PairingsEmptyState from './PairingsEmptyState';
+import PairingsFilterButtons from './PairingsFilterButtons';
+import PairingsTable from './PairingsTable';
 
 function PairingsList() {
   const [successMessage, setSuccessMessage] = useState('');
@@ -128,7 +126,7 @@ function PairingsList() {
   }
 
   return (
-    <div className="card">
+    <div className="card-enhanced">
       <div className="flex-between mb-20">
         <h2>
           <Icons.Link style={{ marginRight: '8px' }} />

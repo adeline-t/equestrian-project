@@ -12,11 +12,12 @@ import { isActive } from '../../shared/filters/activityFilters.js';
 export function calculateHorseStats(horses) {
   return {
     total: horses.length,
+    horse: horses.filter((h) => h.kind === 'horse').length,
+    pony: horses.filter((h) => h.kind === 'pony').length,
     active: horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date)).length,
     inactive: horses.filter((h) => !isActive(h.activity_start_date, h.activity_end_date)).length,
   };
 }
-
 /**
  * Filter horses by kind
  * @param {Array} horses - Array of horse objects

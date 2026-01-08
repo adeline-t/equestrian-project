@@ -1,10 +1,9 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import Modal from '../../common/Modal';
 import { Icons } from '../../../lib/icons';
-import '../../../styles/common/modal.css';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';
+import '../../../styles/common/modal.css';
+import Modal from '../../common/Modal';
 
 function RidersModal({ isOpen, onClose, horseRiders, loading }) {
   // Loading content
@@ -17,7 +16,7 @@ function RidersModal({ isOpen, onClose, horseRiders, loading }) {
 
   // Empty state content
   const emptyContent = (
-    <div style={{ textAlign: 'center', padding: '40px', color: '#718096' }}>
+    <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-gray-500)' }}>
       <Icons.Users style={{ fontSize: '48px', marginBottom: '12px' }} />
       <p>Aucun cavalier actif pour ce cheval</p>
     </div>
@@ -29,7 +28,7 @@ function RidersModal({ isOpen, onClose, horseRiders, loading }) {
       <p
         style={{
           marginBottom: '16px',
-          color: '#4a5568',
+          color: 'var(--color-gray-650)',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
@@ -53,15 +52,15 @@ function RidersModal({ isOpen, onClose, horseRiders, loading }) {
             key={rider.id || index}
             style={{
               padding: '12px 16px',
-              borderBottom: '1px solid #e2e8f0',
+              borderBottom: '1px solid var(--color-gray-200)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Icons.User style={{ color: '#4299e1', flexShrink: 0 }} />
-              <div style={{ fontWeight: '500', color: '#2d3748' }}>{rider.name}</div>
+              <Icons.User style={{ color: 'var(--color-info-blue)', flexShrink: 0 }} />
+              <div style={{ fontWeight: '500', color: 'var(--color-gray-800)' }}>{rider.name}</div>
             </div>
             {rider.level && <span className="badge badge-secondary">{rider.level}</span>}
           </li>

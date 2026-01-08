@@ -6,10 +6,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
-  font-size: 12px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -28,38 +28,38 @@
    ============================================ */
 
 .status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: var(--spacing-xs) 10px;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .status-scheduled {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background-color: var(--color-info-light);
+  color: var(--color-info-blue-dark);
 }
 
 .status-confirmed {
-  background-color: #e8f5e9;
-  color: #388e3c;
+  background-color: var(--color-success-light);
+  color: var(--color-success-medium-dark);
 }
 
 .status-completed {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-purple);
 }
 
 .status-cancelled {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: var(--color-danger-light);
+  color: var(--color-danger-dark);
 }
 
 .status-blocked {
-  background-color: #fafafa;
-  color: #616161;
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-600);
 }
 
 /* ============================================
@@ -67,23 +67,52 @@
    ============================================ */
 
 .badge-confirmed {
-  background-color: #e8f5e9;
-  color: #388e3c;
+  background-color: var(--color-success-light);
+  color: var(--color-success-medium-dark);
 }
 
 .badge-pending {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-orange-dark);
 }
 
 .badge-cancelled {
-  background-color: #ffebee;
-  color: #c62828;
+  background-color: var(--color-danger-light);
+  color: var(--color-danger-dark);
 }
 
+/* ============================================
+   COLOR VARIANT BADGES (Used in components)
+   ============================================ */
+
 .badge-info {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background-image: var(--gradient-info);
+  color: var(--color-white);
+}
+
+.badge-success {
+  background-image: var(--gradient-success);
+  color: var(--color-white);
+}
+
+.badge-warning {
+  background-image: var(--gradient-warning);
+  color: var(--color-white);
+}
+
+.badge-danger {
+  background-image: var(--gradient-danger);
+  color: var(--color-white);
+}
+
+.badge-secondary {
+  background-image: var(--gradient-secondary);
+  color: var(--color-white);
+}
+
+.badge-primary {
+  background-image: var(--gradient-primary);
+  color: var(--color-white);
 }
 
 /* ============================================
@@ -92,7 +121,7 @@
 
 .lesson-type-badge {
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: var(--font-weight-medium);
   display: inline-flex;
@@ -101,79 +130,79 @@
 }
 
 .lesson-type-badge.private {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background-color: var(--color-info-light);
+  color: var(--color-info-blue-dark);
 }
 
 .lesson-type-badge.group {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-purple);
 }
 
 .lesson-type-badge.training {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: var(--color-warning-light);
+  color: var(--color-warning-orange-dark);
 }
 
 .lesson-type-badge.competition {
-  background-color: #fce4ec;
-  color: #c2185b;
+  background-color: var(--color-danger-light);
+  color: var(--color-danger-medium-dark);
 }
 
 .lesson-type-badge.event {
-  background-color: #e0f2f1;
-  color: #00695c;
+  background-color: var(--color-success-light);
+  color: var(--color-success-dark);
 }
 
 .lesson-type-badge.blocked {
-  background-color: #fafafa;
-  color: #616161;
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-600);
 }
 
 /* ============================================
-   COLOR VARIANT BADGES
+   COLOR VARIANT BADGES (Used in components)
    ============================================ */
 
 .badge-info {
-  background-color: #d1ecf1;
-  color: #0c5460;
+  background-color: var(--color-info-light);
+  color: var(--color-white);
 }
 
 .badge-success {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--color-success-light);
+  color: var(--color-white);
 }
 
 .badge-warning {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: var(--color-warning-light);
+  color: var(--color-white);
 }
 
 .badge-danger {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--color-danger-light);
+  color: var(--color-white);
 }
 
 .badge-secondary {
-  background-color: #e9ecef;
-  color: #495057;
+  background-color: var(--color-gray-200);
+  color: var(--color-white);
 }
 
 .badge-primary {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 /* ============================================
-   HORSE TYPE BADGES
+   GRADIENT VARIANT BADGES
    ============================================ */
 
 .badge-horse {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background-image: var(--gradient-primary);
+  color: var(--color-white);
 }
 
 .badge-pony {
-  background: linear-gradient(135deg, #ed64a6 0%, #d53f8c 100%);
-  color: white;
+  background-image: var(--gradient-pony);
+  color: var(--color-white);
 }

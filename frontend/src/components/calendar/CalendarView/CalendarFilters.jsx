@@ -1,11 +1,10 @@
-import React from 'react';
-import { Icons } from '../../../lib/icons';
 import {
   CALENDAR_LESSON_TYPE_FILTERS,
   CALENDAR_STATUS_FILTERS,
 } from '../../../lib/domains/filters';
-import '../../../styles/components/calendar.css';
+import { Icons } from '../../../lib/icons';
 import '../../../styles/common/index.css';
+import '../../../styles/components/calendar.css';
 
 const CalendarFilters = ({ filters, onFilterChange, onCreateLesson, onCreateBlockedTime }) => {
   const handleCreateLesson = () => {

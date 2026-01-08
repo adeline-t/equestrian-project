@@ -54,7 +54,7 @@ const PackagesTable = ({ packages, onEdit, onDelete, getStatusBadge, getRiderNam
                   {getStatusBadge(pkg.activity_start_date, pkg.activity_end_date)}
                 </span>
               </td>
-              <td className="actions">
+              <td className="table-actions">
                 <button
                   className="btn btn-secondary btn-sm"
                   onClick={() => onEdit(pkg)}

@@ -5,9 +5,24 @@
 @import '../common/index.css';
 
 /* ============================================
-   CALENDAR VIEW - MAIN CONTAINER
+   VARIABLES GLOBALES
    ============================================ */
+:root {
+  --hour-height: 60px;
+  --start-hour: 8;
+  --end-hour: 22;
+  --selection-color: rgba(66, 153, 225, 0.2);
+  --selection-border: #4299e1;
+  --today-bg: #ebf8ff;
+  --hour-line-color: #e2e8f0;
+  --text-color: #2d3748;
+  --label-color: #718096;
+  --lesson-card-padding: 4px;
+}
 
+/* ============================================
+   BASE LAYOUT
+   ============================================ */
 .calendar-view {
   padding: 20px;
   background: var(--color-gray-100);
@@ -33,21 +48,11 @@
 /* ============================================
    CALENDAR HEADER
    ============================================ */
-
 .calendar-header {
   background: var(--color-white);
   border-radius: var(--radius-lg);
   padding: 16px 20px;
   box-shadow: var(--shadow-sm);
-}
-
-.calendar-header-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  gap: 20px;
-  flex-wrap: wrap;
 }
 
 .calendar-title-section {
@@ -62,6 +67,28 @@
   font-size: clamp(1.25rem, 5vw, 1.75rem);
   font-weight: var(--font-weight-bold);
   color: var(--color-gray-800);
+  position: relative;
+}
+
+.calendar-title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.calendar-header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .calendar-nav-buttons {
@@ -70,6 +97,8 @@
   align-items: center;
   flex-wrap: wrap;
   flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
 }
 
 .calendar-header-bottom {
@@ -80,7 +109,6 @@
 /* ============================================
    COMPACT STATS
    ============================================ */
-
 .calendar-stats-compact {
   display: flex;
   gap: 16px;
@@ -124,7 +152,6 @@
 /* ============================================
    CALENDAR FILTERS
    ============================================ */
-
 .calendar-filters {
   background: var(--color-white);
   padding: 16px;
@@ -136,8 +163,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 20px;
-  flex-wrap: wrap;
 }
 
 .filters-controls {
@@ -148,33 +173,27 @@
   flex: 1;
 }
 
-.filter-group {
+.filters-actions {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.filter-group label {
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
+  flex-direction: row;
+  gap: 12px;
 }
 
 /* ============================================
    CALENDAR CONTENT
    ============================================ */
-
 .calendar-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow-x: auto;
+  padding: 8px;
 }
 
 /* ============================================
    WEEK VIEW
    ============================================ */
-
 .week-view {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -184,26 +203,29 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  width: 100%;
 }
 
 .week-grid {
   display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
+  grid-template-columns: 60px repeat(7, 1fr);
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  gap: 4px; /* effet "grid gaps" dynamique */
 }
 
 /* ============================================
-   TIME COLUMN
+   TIME COLUMN (Colonne des heures)
    ============================================ */
-
 .time-column {
   background: var(--color-gray-100);
   border-right: 2px solid var(--color-gray-300);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 60px;
+  flex-shrink: 0;
 }
 
 .time-header {
@@ -218,54 +240,75 @@
   background: var(--color-gray-100);
   z-index: 10;
   flex-shrink: 0;
-}
-
-.time-header-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  font-size: 0.9rem;
 }
 
 .time-slot {
-  height: 60px;
+  height: var(--hour-height);
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  border-bottom: 1px solid var(--color-gray-200);
-  font-size: 12px;
-  color: var(--color-gray-600);
+  align-items: top;
+  justify-content: flex-end;
+  padding-right: 8px;
+  font-size: 0.75rem;
+  color: var(--label-color);
+  border-bottom: 1px solid var(--hour-line-color);
   flex-shrink: 0;
-  font-weight: var(--font-weight-medium);
-  padding-top: 4px;
-  position: relative;
+}
+
+/* ============================================
+   Responsive : ajustement pour mobile
+   ============================================ */
+@media (max-width: 768px) {
+  .time-column {
+    min-width: 50px;
+  }
+  .time-slot {
+    font-size: 0.65rem;
+    padding-right: 4px;
+    height: 50px;
+  }
+  .time-header {
+    height: 60px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .time-column {
+    min-width: 40px;
+  }
+  .time-slot {
+    font-size: 0.6rem;
+    height: 40px;
+    padding-right: 2px;
+  }
+  .time-header {
+    height: 50px;
+    font-size: 0.7rem;
+  }
 }
 
 /* ============================================
    DAY COLUMN
    ============================================ */
-
 .day-column {
   border-right: 1px solid var(--color-gray-300);
+  border-left: 1px solid #e2e8f0;
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
+  background: linear-gradient(to bottom, transparent 80%, rgba(0, 0, 0, 0.03) 100%);
 }
 
 .day-column:last-child {
   border-right: none;
+  min-width: 120px;
 }
 
 .day-column.today {
-  background: #fffbf0;
-}
-
-.day-column.past {
-  background: var(--color-gray-100);
-  opacity: 0.7;
+  background-color: var(--today-bg);
 }
 
 .day-header {
@@ -280,7 +323,7 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: top;
 }
 
 .day-name {
@@ -291,12 +334,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-}
-
-.day-date {
-  font-size: 12px;
-  color: var(--color-gray-600);
+  gap: 4px;
 }
 
 .today-badge {
@@ -313,7 +351,6 @@
 /* ============================================
    DAY GRID
    ============================================ */
-
 .day-grid-container {
   position: relative;
   flex: 1;
@@ -321,20 +358,11 @@
   overflow: hidden;
 }
 
-.day-grid-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-}
-
 .day-grid {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 840px;
+  min-height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
   background: var(--color-white);
   overflow-y: auto;
   overflow-x: hidden;
@@ -346,48 +374,29 @@
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
   z-index: 1;
 }
 
 .hour-marker-row {
+  border-bottom: 1px solid var(--hour-line-color);
   position: absolute;
   width: 100%;
-  border-bottom: 1px solid var(--color-gray-200);
+  height: var(--hour-height);
+  box-sizing: border-box;
 }
 
-.hour-label {
+.selection-overlay {
   position: absolute;
-  left: 4px;
-  top: 2px;
-  font-size: 0.65rem;
-  color: var(--color-gray-600);
-  font-weight: var(--font-weight-medium);
-  line-height: 1;
-  background: inherit;
-  padding: 0 2px;
-}
-
-.no-lessons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--color-gray-500);
-  font-style: italic;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
+  background-color: var(--selection-color);
+  border: 2px solid var(--selection-border);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
 }
 
 /* ============================================
-   LESSONS CONTAINER
+   LESSONS CONTAINER & CARDS
    ============================================ */
-
 .lessons-container {
   position: relative;
   width: 100%;
@@ -395,9 +404,9 @@
   z-index: 2;
 }
 
-/* ============================================
-   LESSON CARD
-   ============================================ */
+.lessons-container > div {
+  position: absolute;
+}
 
 .lesson-card {
   position: absolute;
@@ -405,17 +414,17 @@
   height: 100%;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: var(--shadow-sm);
   overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 0;
   border: none;
-  background: transparent;
-  min-height: auto;
-  max-height: none;
+  background: rgba(255, 255, 255, 0.9);
+  min-height: 40px;
+  max-height: 100%;
+  padding: 0;
 }
 
 .lesson-card:hover {
@@ -424,97 +433,50 @@
   z-index: 10;
 }
 
-/* ============================================
-   LESSON CARD - COMPACT (< 76 minutes)
-   ============================================ */
-
 .lesson-card.compact {
   padding: 4px 6px;
   min-height: 40px;
-  max-height: none;
 }
-
-.lesson-card.compact > div {
-  padding: 4px 6px !important;
-  font-size: 11px !important;
-  min-height: auto;
-  max-height: none;
-}
-
-.lesson-card.compact > div > div {
-  gap: 2px !important;
-}
-
-/* ============================================
-   LESSON CARD - STANDARD (>= 76 minutes)
-   ============================================ */
 
 .lesson-card.standard {
   padding: 8px;
   min-height: 60px;
-  max-height: none;
 }
-
-.lesson-card.standard > div {
-  padding: 8px !important;
-  font-size: 12px !important;
-  min-height: auto;
-  max-height: none;
-}
-
-/* ============================================
-   LESSON CARD CONTENT
-   ============================================ */
 
 .lesson-card > div {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 8px;
   border-radius: var(--radius-md);
-  min-height: auto;
-  max-height: none;
   overflow: visible;
+  width: 100%;
+  height: auto; /* changer de 100% à auto */
+  min-height: inherit;
+  box-sizing: border-box;
 }
 
-/* ============================================
-   LESSON CARD - TEXT TRUNCATION
-   ============================================ */
-
 .lesson-card strong,
-.lesson-card span {
+.lesson-card span,
+.lesson-card .lesson-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: block;
 }
 
-.lesson-card .lesson-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-}
-
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
-
 @media (max-width: 1400px) {
   .week-grid {
     grid-template-columns: 70px repeat(7, 1fr);
   }
-
   .time-slot {
     font-size: 11px;
   }
-
   .lesson-card {
     padding: 6px;
   }
-
   .stat-compact-label {
     display: none;
   }
@@ -525,184 +487,84 @@
     padding: 12px;
     gap: 12px;
   }
-
   .calendar-header-title {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 12px;
   }
+}
 
+@media (max-width: 768px) {
   .week-grid {
     grid-template-columns: 60px repeat(7, 1fr);
+    display: block;
   }
-
-  .time-header {
-    height: 70px;
+  .day-column {
+    min-width: 100%;
+    margin-bottom: 16px;
+    border-left: none;
   }
-
   .day-header {
     height: 70px;
     padding: 8px;
   }
-
   .time-slot {
     height: 50px;
     font-size: 10px;
   }
-
   .day-grid {
     min-height: 700px;
   }
-
   .hour-marker-row {
     height: 50px;
   }
-
-  .lesson-card {
+  .hour-label {
+    font-size: 0.75rem;
+  }
+  .lessons-container > div {
     left: 4px;
     right: 4px;
     width: calc(100% - 8px);
   }
-
-  .filters-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filters-controls {
-    width: 100%;
-  }
-
-  .filters-actions {
-    width: 100%;
-  }
-
-  .filters-actions .btn {
-    flex: 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .calendar-view {
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .calendar-header {
-    padding: 12px;
-  }
-
-  .calendar-title {
-    font-size: 1.25rem;
-  }
-
-  .calendar-filters {
-    padding: 12px;
-  }
-
-  .filters-row {
-    gap: 12px;
-  }
-
-  .filters-controls {
-    gap: 12px;
-  }
-
-  .filter-group label {
-    font-size: 0.8rem;
-  }
-
-  .week-grid {
-    grid-template-columns: 50px repeat(7, 1fr);
-  }
-
-  .time-header {
-    height: 60px;
-    font-size: 11px;
-  }
-
-  .time-slot {
-    height: 45px;
-    font-size: 9px;
-  }
-
-  .day-header {
-    height: 60px;
-    padding: 6px;
-    font-size: 12px;
-  }
-
-  .day-grid {
-    min-height: 630px;
-  }
-
-  .hour-marker-row {
-    height: 45px;
-  }
-
-  .stat-compact-item {
-    padding: 6px 8px;
-    flex: 1;
-  }
-
-  .stat-compact-value {
-    font-size: 1rem;
-  }
-
-  .stat-compact-label {
-    display: inline;
-    margin-left: 4px;
-    font-size: 0.65rem;
-  }
 }
 
 @media (max-width: 480px) {
-  .calendar-view {
-    padding: 8px;
-    gap: 8px;
-  }
-
-  .calendar-header {
-    padding: 10px;
-  }
-
-  .calendar-title {
-    font-size: 1rem;
-  }
-
-  .calendar-header-title {
-    gap: 8px;
-  }
-
-  .calendar-nav-buttons {
-    gap: 4px;
-  }
-
   .week-grid {
     grid-template-columns: 40px repeat(7, 1fr);
   }
-
   .time-header {
     height: 50px;
     font-size: 9px;
   }
-
   .time-slot {
     height: 40px;
     font-size: 8px;
   }
-
   .day-header {
     height: 50px;
     padding: 4px;
     font-size: 10px;
   }
-
   .day-grid {
     min-height: 560px;
   }
-
   .hour-marker-row {
     height: 40px;
+  }
+  .calendar-view {
+    padding: 8px;
+    gap: 8px;
+  }
+  .calendar-header {
+    padding: 10px;
+  }
+  .calendar-title {
+    font-size: 1rem;
+  }
+  .calendar-header-title {
+    gap: 8px;
+  }
+  .calendar-nav-buttons {
+    gap: 4px;
   }
 }

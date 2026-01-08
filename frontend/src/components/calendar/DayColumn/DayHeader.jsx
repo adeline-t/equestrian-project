@@ -28,8 +28,9 @@ const DayHeader = ({ date, dayName }) => {
       role="banner"
       aria-label={`${dayName} ${formattedDate}${isCurrentDay ? " (aujourd'hui)" : ''}`}
     >
-      <div className="day-name">{dayName}</div>
-      <div className="day-date">{formattedDate}</div>
+      <div className="day-name">
+        {dayName} {formattedDate}
+      </div>
       {isCurrentDay && (
         <div
           className="today-badge"

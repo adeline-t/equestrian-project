@@ -1,10 +1,8 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/icons';
-import { isActive } from '../../../lib/helpers/shared/filters';
 import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
-import '../../../styles/common/badges.css';
-import '../../../styles/common/buttons.css';
+import { isActive } from '../../../lib/helpers/shared/filters';
+import { Icons } from '../../../lib/icons';
+import '../../../styles/index.css';
 
 function PairingsTable({ pairings, onEdit, onDelete }) {
   const getStatusBadge = (startDate, endDate) => {
@@ -51,7 +49,7 @@ function PairingsTable({ pairings, onEdit, onDelete }) {
               <td>{pairing.pairing_start_date || '-'}</td>
               <td>{pairing.pairing_end_date || '-'}</td>
               <td>{getStatusBadge(pairing.pairing_start_date, pairing.pairing_end_date)}</td>
-              <td className="actions">
+              <td className="table-actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(pairing)}>
                   <Icons.Edit />
                   Modifier

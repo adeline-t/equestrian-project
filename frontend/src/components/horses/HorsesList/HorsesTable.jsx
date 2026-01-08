@@ -1,8 +1,7 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/icons';
-import { isActive } from '../../../lib/helpers/shared/filters';
 import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
+import { isActive } from '../../../lib/helpers/shared/filters';
+import { Icons } from '../../../lib/icons';
 import '../../../styles/common/badges.css';
 import '../../../styles/common/buttons.css';
 
@@ -69,7 +68,7 @@ function HorsesTable({ horses, onEdit, onDelete, onRidersClick }) {
               <td>{horse.activity_start_date || '-'}</td>
               <td>{horse.activity_end_date || '-'}</td>
               <td>{getStatusBadge(horse.activity_start_date, horse.activity_end_date)}</td>
-              <td className="actions">
+              <td className="table-actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => onEdit(horse)}>
                   <Icons.Edit /> Modifier
                 </button>

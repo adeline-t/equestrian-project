@@ -60,86 +60,76 @@
 /* ============================================
    BUTTON VARIANTS - SOLID
    ============================================ */
-
-/* PRIMARY BUTTON WITH GRADIENT */
+/* PRIMARY BUTTON */
 .btn-primary {
-  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: var(--gradient-primary);
   color: var(--color-white);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: var(--gradient-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* OUTLINE PRIMARY BUTTON */
-.btn-outline-primary {
-  background-color: transparent;
-  color: #667eea;
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
-}
-
-.btn-outline-primary:hover:not(:disabled) {
-  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: var(--color-white);
-  border: 2px solid transparent;
-}
-
-.btn-secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-white);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background-color: var(--color-secondary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-}
-
+/* SUCCESS BUTTON */
 .btn-success {
-  background-color: var(--color-success);
+  background-image: var(--gradient-success);
   color: var(--color-white);
 }
 
 .btn-success:hover:not(:disabled) {
-  background-color: var(--color-success-dark);
+  background-image: var(--gradient-success);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
 }
 
+/* DANGER BUTTON */
 .btn-danger {
-  background-color: var(--color-danger);
+  background-image: var(--gradient-danger);
   color: var(--color-white);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: var(--color-danger-dark);
+  background-image: var(--gradient-danger);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
 }
 
+/* SECONDARY BUTTON */
+.btn-secondary {
+  background-image: var(--gradient-secondary);
+  color: var(--color-white);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-image: var(--gradient-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
+}
+
+/* WARNING BUTTON */
 .btn-warning {
-  background-color: var(--color-warning);
-  color: var(--color-black);
+  background-image: var(--gradient-warning);
+  color: var(--color-white);
 }
 
 .btn-warning:hover:not(:disabled) {
-  background-color: var(--color-warning-dark);
+  background-image: var(--gradient-warning);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+  box-shadow: 0 4px 12px rgba(237, 137, 54, 0.4);
 }
 
+/* INFO BUTTON */
 .btn-info {
-  background-color: var(--color-info);
+  background-image: var(--gradient-info);
   color: var(--color-white);
 }
 
 .btn-info:hover:not(:disabled) {
-  background-color: var(--color-info-dark);
+  background-image: var(--gradient-info);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
 }
 
 /* ============================================

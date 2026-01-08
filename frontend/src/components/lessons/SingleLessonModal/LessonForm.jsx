@@ -51,7 +51,7 @@ const LessonForm = ({ formData, handleFormChange, handleTypeChange }) => {
             required
             style={{ fontSize: '14px' }}
           >
-            {LESSON_TYPES.map((type) => (
+            {Object.values(LESSON_TYPES).map((type) => (
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>

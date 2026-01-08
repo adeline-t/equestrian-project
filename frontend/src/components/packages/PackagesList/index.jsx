@@ -52,7 +52,7 @@ function PackagesList() {
   }
 
   return (
-    <div className="card">
+    <div className="card-enhanced">
       <div className="flex-between mb-20">
         <h2>Liste des Forfaits</h2>
         <button className="btn btn-primary" onClick={handleCreate}>

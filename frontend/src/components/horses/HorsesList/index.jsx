@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useHorseActions } from '../../../hooks/useHorseActions';
+import { useHorseRiders } from '../../../hooks/useHorseRiders';
+import { useHorsesList } from '../../../hooks/useHorsesList';
+import {
+  calculateHorseStats,
+  filterHorsesByKind,
+} from '../../../lib/helpers/domains/horses/stats.js';
 import { Icons } from '../../../lib/icons';
+import '../../../styles/index.css';
+import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import Modal from '../../common/Modal';
 import HorseForm from '../HorseForm';
 import FilterButtons from './FilterButtons';
 import HorsesTable from './HorsesTable';
 import RidersModal from './RidersModal';
-import EmptyState from './EmptyState';
-import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
-import { useHorsesList } from '../../../hooks/useHorsesList';
-import { useHorseActions } from '../../../hooks/useHorseActions';
-import { useHorseRiders } from '../../../hooks/useHorseRiders';
-import {
-  calculateHorseStats,
-  filterHorsesByKind,
-} from '../../../lib/helpers/domains/horses/stats.js';
-import '../../../styles/common/modal.css';
-import '../../../styles/common/alerts.css';
-import '../../../styles/common/buttons.css';
 
 function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');
@@ -95,6 +92,11 @@ function HorsesList() {
   // Determine which error to display
   const displayError = errorMessage || error;
 
+  // Clear messages
+  const clearError = () => {
+    setErrorMessage('');
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -105,7 +107,7 @@ function HorsesList() {
   }
 
   return (
-    <div className="card">
+    <div className="card-enhanced">
       <div className="flex-between mb-20">
         <h2>Liste des Chevaux</h2>
         <button className="btn btn-primary" onClick={horseActions.handleCreate}>
@@ -121,6 +123,13 @@ function HorsesList() {
         <div className="alert alert-error" style={{ marginBottom: '20px' }}>
           <Icons.Warning style={{ marginRight: '8px' }} />
           {displayError}
+          <button
+            className="btn btn-sm btn-secondary"
+            onClick={clearError}
+            style={{ marginLeft: '12px' }}
+          >
+            Effacer
+          </button>
         </div>
       )}
 
@@ -132,9 +141,18 @@ function HorsesList() {
       )}
 
       {horses.length === 0 ? (
-        <EmptyState type="no-horses" onCreate={horseActions.handleCreate} />
+        <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+          <Icons.Horse style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <p>Aucun cheval trouvé</p>
+          <button className="btn btn-primary mt-20" onClick={horseActions.handleCreate}>
+            <Icons.Add /> Ajouter un cheval
+          </button>
+        </div>
       ) : filteredHorses.length === 0 ? (
-        <EmptyState type="no-results" filter={filter} />
+        <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+          <Icons.Filter style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <p>Aucun cheval ne correspond au filtre sélectionné</p>
+        </div>
       ) : (
         <HorsesTable
           horses={filteredHorses}
@@ -179,7 +197,7 @@ function HorsesList() {
         error={ridersModal.error}
       />
 
-      {/* Delete Confirmation Modal - UTILISEZ-LE DIRECTEMENT, PAS ENVELOPPÉ */}
+      {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={horseActions.showDeleteModal}
         onClose={horseActions.closeDeleteModal}

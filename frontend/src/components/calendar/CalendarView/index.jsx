@@ -15,7 +15,6 @@ import '../../../styles/components/calendar.css';
  */
 function CalendarView() {
   const {
-    // State
     weekData,
     loading,
     error,
@@ -26,8 +25,6 @@ function CalendarView() {
     filters,
     weekTitle,
     stats,
-
-    // Actions
     handlePrevWeek,
     handleNextWeek,
     handleToday,
@@ -35,28 +32,16 @@ function CalendarView() {
     handleCreateLesson,
     handleCreateBlockedTime,
     handleFilterChange,
-
-    // Modal handlers
     closeLessonModal,
     closeSingleLessonModal,
     closeBlockedTimeModal,
     handleModalSuccess,
-
-    // Utility functions
     loadWeekData,
   } = useCalendarView();
 
-  // Loading state
-  if (loading) {
-    return <CalendarLoading />;
-  }
+  if (loading) return <CalendarLoading />;
+  if (error) return <CalendarError error={error} onRetry={loadWeekData} />;
 
-  // Error state
-  if (error) {
-    return <CalendarError error={error} onRetry={loadWeekData} />;
-  }
-
-  // Main render
   return (
     <div className="calendar-view" role="main" aria-label="Vue calendrier">
       <CalendarHeader
@@ -76,7 +61,7 @@ function CalendarView() {
 
       <div className="calendar-content">
         <WeekView
-          weekData={weekData}
+          weekData={weekData || { days: [] }}
           onLessonClick={handleLessonClick}
           onQuickCreate={handleCreateLesson}
           filters={filters}
@@ -97,9 +82,6 @@ function CalendarView() {
   );
 }
 
-/**
- * Export with Error Boundary
- */
 export default function CalendarViewWithErrorBoundary() {
   return (
     <ErrorBoundary>

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
 import SingleLessonModal from '../../lessons/SingleLessonModal';
-import { format, isToday, isPast, parseISO, endOfDay } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { parseISO, isToday, isPast, endOfDay } from 'date-fns';
 import { Icons } from '../../../lib/icons';
 import {
   timeToMinutes,
@@ -12,14 +11,11 @@ import { getValidLessons } from '../../../lib/helpers/domains/lessons/validators
 import DayHeader from './DayHeader';
 import DayGrid from './DayGrid';
 
-/**
- * Calendar configuration constants
- */
 const CALENDAR_CONFIG = {
   HOUR_HEIGHT: 60,
   START_HOUR: 8,
   END_HOUR: 22,
-  MIN_SELECTION_DURATION: 30, // minutes
+  MIN_SELECTION_DURATION: 30,
 };
 
 function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
@@ -32,47 +28,34 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
 
   const { HOUR_HEIGHT, START_HOUR, END_HOUR, MIN_SELECTION_DURATION } = CALENDAR_CONFIG;
 
-  if (!date) {
+  if (!date)
     return (
-      <div className="day-column" role="region" aria-label="Colonne du jour invalide">
+      <div className="day-column invalid">
         <DayHeader date={date} dayName={dayName} />
-        <div className="day-grid">
-          <div className="no-lessons">
-            <Icons.Warning style={{ fontSize: '32px', marginBottom: '8px' }} aria-hidden="true" />
-            <p>Date invalide</p>
-          </div>
-        </div>
       </div>
     );
-  }
 
   const dateObj = parseISO(date);
   const isCurrentDay = isToday(dateObj);
   const isPastDay = isPast(endOfDay(dateObj)) && !isCurrentDay;
 
-  // Memoized valid lessons
   const validLessons = useMemo(
     () => getValidLessons(lessons, START_HOUR, END_HOUR),
     [lessons, START_HOUR, END_HOUR]
   );
 
-  // Memoized lesson style calculator
   const calculateLessonStyleMemo = useCallback(
     (lesson) => calculateLessonStyle(lesson, HOUR_HEIGHT, START_HOUR, END_HOUR),
     [HOUR_HEIGHT, START_HOUR, END_HOUR]
   );
 
-  // Memoized selection style calculator
   const calculateSelectionStyleMemo = useCallback(
     () => calculateSelectionStyle(selectionStart, selectionEnd, HOUR_HEIGHT, START_HOUR, END_HOUR),
     [selectionStart, selectionEnd, HOUR_HEIGHT, START_HOUR, END_HOUR]
   );
 
   const handleMouseDown = useCallback((e, hour, minute) => {
-    if (e.target.closest('.lesson-card')) {
-      return;
-    }
-
+    if (e.target.closest('.lesson-card')) return;
     e.preventDefault();
     const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
     setIsSelecting(true);
@@ -83,11 +66,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
   const handleMouseMove = useCallback(
     (e, hour, minute) => {
       if (!isSelecting) return;
-
-      const currentTime = `${hour.toString().padStart(2, '0')}:${minute
-        .toString()
-        .padStart(2, '0')}`;
-      setSelectionEnd(currentTime);
+      setSelectionEnd(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
     },
     [isSelecting]
   );
@@ -116,37 +95,22 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
     setSelectionEnd(null);
   }, [isSelecting, selectionStart, selectionEnd, date, MIN_SELECTION_DURATION]);
 
-  // Cleanup event listeners
   React.useEffect(() => {
     const container = dayGridRef.current;
     if (!container) return;
-
-    const handleMouseUpEvent = () => handleMouseUp();
-    const handleMouseLeaveEvent = () => handleMouseUp();
-
-    container.addEventListener('mouseup', handleMouseUpEvent);
-    container.addEventListener('mouseleave', handleMouseLeaveEvent);
-
+    container.addEventListener('mouseup', handleMouseUp);
+    container.addEventListener('mouseleave', handleMouseUp);
     return () => {
-      container.removeEventListener('mouseup', handleMouseUpEvent);
-      container.removeEventListener('mouseleave', handleMouseLeaveEvent);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mouseleave', handleMouseUp);
     };
   }, [handleMouseUp]);
 
   return (
-    <div
-      className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}
-      role="region"
-      aria-label={`Colonne du ${dayName}${isCurrentDay ? " (aujourd'hui)" : ''}`}
-    >
+    <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
       <DayHeader date={date} dayName={dayName} />
 
-      <div
-        ref={dayGridRef}
-        className="day-grid-container"
-        role="grid"
-        aria-label={`Grille horaire du ${dayName}`}
-      >
+      <div ref={dayGridRef} className="day-grid-container">
         <DayGrid
           lessons={validLessons}
           onLessonClick={onLessonClick}
@@ -171,9 +135,7 @@ function DayColumn({ date, dayName, lessons, onLessonClick, onQuickCreate }) {
           onSuccess={() => {
             setShowQuickCreateModal(false);
             setQuickCreateData(null);
-            if (onQuickCreate) {
-              onQuickCreate();
-            }
+            onQuickCreate?.();
           }}
           initialDate={quickCreateData.date}
           initialStartTime={quickCreateData.start_time}

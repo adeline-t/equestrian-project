@@ -1,14 +1,11 @@
 import React, { useMemo } from 'react';
 import DayColumn from './DayColumn';
-import { Icons } from '../../lib/icons';
 import { filterLessons } from '../../lib/helpers/domains/lessons/filters';
 import '../../styles/components/calendar.css';
 
 function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
-  // Memoized filtered week data
   const filteredWeekData = useMemo(() => {
-    if (!weekData || !weekData.days) return weekData;
-
+    if (!weekData?.days) return { days: [] };
     return {
       ...weekData,
       days: weekData.days.map((day) => ({
@@ -18,31 +15,26 @@ function WeekView({ weekData, onLessonClick, onQuickCreate, filters }) {
     };
   }, [weekData, filters]);
 
+  const hours = Array.from(
+    { length: 24 - 8 }, // de 8h à 22h, ou utiliser vos variables CSS si nécessaire
+    (_, i) => i + 8
+  );
+
   return (
     <div className="week-view" role="main" aria-label="Vue hebdomadaire du calendrier">
       <div className="week-grid" role="grid" aria-label="Grille de la semaine">
-        {/* Time column with hours */}
-        <div className="time-column" role="presentation">
-          <div className="time-header" role="columnheader" aria-label="Colonne des heures">
-            <div className="time-header-content">
-              <Icons.Clock aria-hidden="true" />
-              <div>Heure</div>
-            </div>
-          </div>
-          {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
-            <div
-              key={hour}
-              className="time-slot"
-              role="rowheader"
-              aria-label={`${String(hour).padStart(2, '0')}h`}
-            >
-              <span className="time-label">{String(hour).padStart(2, '0')}h</span>
+        {/* COLONNE DES HEURES */}
+        <div className="time-column" aria-hidden="true">
+          <div className="time-header">Heures</div>
+          {hours.map((hour) => (
+            <div key={hour} className="time-slot">
+              {hour}:00
             </div>
           ))}
         </div>
 
-        {/* Day columns */}
-        {filteredWeekData?.days?.map((day) => (
+        {/* COLONNES DES JOURS */}
+        {filteredWeekData.days.map((day) => (
           <DayColumn
             key={day.date}
             date={day.date}
