@@ -17,13 +17,13 @@ function PairingsList({ pairings, onAdd, onEdit, onDelete }) {
       </div>
 
       {pairings.length === 0 ? (
-        <p style={{ color: '#718096', margin: '0', fontSize: '0.9rem' }}>Aucune pension active</p>
+        <p className="empty-message">Aucune pension active</p>
       ) : (
         <div className="pairings-list">
           {pairings.map((pairing) => (
             <div key={pairing.id} className="pairing-item">
               <div className="pairing-info">
-                <Icons.Horse style={{ marginRight: '8px', color: '#4299e1' }} />
+                <Icons.Horse style={{ marginRight: '8px', color: 'var(--color-info-blue)' }} />
                 <span className="pairing-horse-name">{pairing.horses?.name || 'N/A'}</span>
               </div>
               <div className="pairing-actions">

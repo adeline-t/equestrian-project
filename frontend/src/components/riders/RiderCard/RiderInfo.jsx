@@ -2,10 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/icons';
 import { isActive } from '../../../lib/helpers/shared/filters';
-import { getRiderKindLabel } from '../../../lib/domains/riders/kinds';
+import { getRiderKindLabel, getRiderKindConfig } from '../../../lib/domains/riders/kinds';
+import { formatDate } from '../../../lib/helpers/shared/formatters/date';
 import '../../../styles/common/badges.css';
 
 function RiderInfo({ rider }) {
+  const kindConfig = getRiderKindConfig(rider.kind);
+
   const getStatusBadge = (start, end) => (
     <span className={`badge ${isActive(start, end) ? 'badge-success' : 'badge-secondary'}`}>
       {isActive(start, end) ? 'Actif' : 'Inactif'}
@@ -28,17 +31,23 @@ function RiderInfo({ rider }) {
         </div>
         <div className="info-item">
           <span className="info-label">Type:</span>
-          <span className={`badge badge-${rider.kind}`}>{getRiderKindLabel(rider.kind)}</span>
+          <span className="badge badge-kind" data-kind={rider.kind}>
+            {getRiderKindLabel(rider.kind)}
+          </span>
         </div>
       </div>
-      <div className="date-status-row" style={{ marginTop: '15px' }}>
+      <div className="date-status-row">
         <div className="date-status-item">
           <span className="info-label">Début:</span>
-          <span className="info-value">{rider.activity_start_date || '-'}</span>
+          <span className="info-value">
+            {rider.activity_start_date ? formatDate(rider.activity_start_date) : '-'}
+          </span>
         </div>
         <div className="date-status-item">
           <span className="info-label">Fin:</span>
-          <span className="info-value">{rider.activity_end_date || '-'}</span>
+          <span className="info-value">
+            {rider.activity_end_date ? formatDate(rider.activity_end_date) : '-'}
+          </span>
         </div>
         <div className="date-status-item">
           <span className="info-label">Statut:</span>

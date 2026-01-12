@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/icons';
-import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
+import { getHorseKindLabel, getHorseKindConfig } from '../../../lib/domains/horses/kinds';
 import '../../../styles/common/badges.css';
 
 function OwnedHorsesList({ horses }) {
@@ -15,25 +15,22 @@ function OwnedHorsesList({ horses }) {
         <Icons.Horse style={{ marginRight: '8px' }} />
         Chevaux Possédés ({horses.length})
       </h3>
+      <div className="owned-horses-list">
+        {horses.map((horse) => {
+          const kindConfig = getHorseKindConfig(horse.kind);
 
-      {horses.length === 0 ? (
-        <p style={{ color: '#718096', margin: '10px 0 0 0', fontSize: '0.9rem' }}>
-          Aucun cheval actif possédé
-        </p>
-      ) : (
-        <div className="owned-horses-list">
-          {horses.map((horse) => (
+          return (
             <div key={horse.id} className="owned-horse-item">
               <div className="horse-name-type">
                 <strong>{horse.name}</strong>
-                <span className={`badge badge-${horse.kind}`}>
-                  {getHorseKindLabel(horse.kind) || horse.kind}
+                <span className="badge badge-kind" data-kind={horse.kind}>
+                  {getHorseKindLabel(horse.kind)}
                 </span>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

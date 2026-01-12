@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { usePackageActions } from '../../../hooks/usePackageActions';
 import { usePairingActions } from '../../../hooks/usePairingActions';
 import { useRiderCard } from '../../../hooks/useRiderCard';
-import { getRiderKindLabel } from '../../../lib/domains/riders/kinds';
+import { getRiderKindLabel, getRiderKindConfig } from '../../../lib/domains/riders/kinds';
 import { isActive } from '../../../lib/helpers/shared/filters/activityFilters.js';
 import { Icons } from '../../../lib/icons';
 import '../../../styles/components/riders.css';
@@ -136,12 +136,14 @@ function RiderCard({ riderId, onClose }) {
     return (
       <Modal isOpen={true} onClose={onClose} size="small">
         <div className="modal-error">
-          <Icons.Warning style={{ fontSize: '32px', color: '#dc3545' }} />
+          <Icons.Warning style={{ fontSize: '32px', color: 'var(--color-danger-medium-dark)' }} />
           <h3>Cavalier non trouvé</h3>
         </div>
       </Modal>
     );
   }
+
+  const kindConfig = getRiderKindConfig(rider.kind);
 
   return (
     <>
@@ -153,7 +155,9 @@ function RiderCard({ riderId, onClose }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icons.User />
             {rider.name}
-            <span className={`badge badge-${rider.kind}`}>{getRiderKindLabel(rider.kind)}</span>
+            <span className="badge badge-kind" data-kind={rider.kind}>
+              {getRiderKindLabel(rider.kind)}
+            </span>
           </div>
         }
         size="large"

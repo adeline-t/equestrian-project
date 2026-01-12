@@ -10,6 +10,7 @@ export function useRiderCard(riderId) {
   const [rider, setRider] = useState(null);
   const [packages, setPackages] = useState([]);
   const [pairings, setPairings] = useState([]);
+  const [ownedHorses, setOwnedHorses] = useState([]);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +32,13 @@ export function useRiderCard(riderId) {
       setRider(riderResponse);
 
       // Fetch all data in parallel
-      await Promise.all([fetchPackages(), fetchPairings(), fetchAllRiders(), fetchAllHorses()]);
+      await Promise.all([
+        fetchPackages(),
+        fetchPairings(),
+        fetchOwnedHorses(),
+        fetchAllRiders(),
+        fetchAllHorses(),
+      ]);
     } catch (error) {
       console.error('Error fetching rider data:', error);
       setError('Erreur lors du chargement des données');
@@ -44,7 +51,7 @@ export function useRiderCard(riderId) {
     try {
       // The API returns data directly, not wrapped in a response object
       const data = await ridersApi.getPackages(riderId);
-      console.log('Packages fetched:', data); // Debug log
+      console.log('Packages fetched:', data);
       setPackages(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching packages:', error);
@@ -56,11 +63,22 @@ export function useRiderCard(riderId) {
     try {
       // The API returns data directly, not wrapped in a response object
       const data = await ridersApi.getHorses(riderId);
-      console.log('Pairings fetched:', data); // Debug log
+      console.log('Pairings fetched:', data);
       setPairings(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching pairings:', error);
       setPairings([]);
+    }
+  };
+
+  const fetchOwnedHorses = async () => {
+    try {
+      const data = await horsesApi.getByOwner(riderId);
+      console.log('Owned horses fetched:', data);
+      setOwnedHorses(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching owned horses:', error);
+      setOwnedHorses([]);
     }
   };
 
@@ -93,6 +111,7 @@ export function useRiderCard(riderId) {
     rider,
     packages,
     pairings,
+    ownedHorses,
     riders,
     horses,
     loading,

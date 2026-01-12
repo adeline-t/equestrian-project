@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/icons';
 import { format, parseISO, isAfter, isBefore, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { PACKAGE_STATUS, getPackageStatusConfig } from '../../../lib/domains/packages/statuses';
 import '../../../styles/common/buttons.css';
 
 function PackagesList({ packages, onAdd, onEdit }) {
@@ -14,21 +15,21 @@ function PackagesList({ packages, onAdd, onEdit }) {
     const startDate = pkg.activity_start_date ? parseISO(pkg.activity_start_date) : null;
     const endDate = pkg.activity_end_date ? parseISO(pkg.activity_end_date) : null;
 
-    if (endDate && isBefore(now, startDate)) {
-      return { status: 'upcoming', label: 'À venir', color: '#4299e1' };
+    if (startDate && isBefore(now, startDate)) {
+      return PACKAGE_STATUS.UPCOMING;
     }
 
     if (endDate && isAfter(now, endDate)) {
-      return { status: 'expired', label: 'Expiré', color: '#cbd5e0' };
+      return PACKAGE_STATUS.EXPIRED;
     }
 
     if (startDate && (isToday(startDate) || isAfter(now, startDate))) {
       if (!endDate || isAfter(endDate, now) || isToday(endDate)) {
-        return { status: 'active', label: 'Actif', color: '#48bb78' };
+        return PACKAGE_STATUS.ACTIVE;
       }
     }
 
-    return { status: 'inactive', label: 'Inactif', color: '#ed8936' };
+    return PACKAGE_STATUS.INACTIVE;
   };
 
   /**
@@ -56,7 +57,7 @@ function PackagesList({ packages, onAdd, onEdit }) {
       </div>
 
       {packages.length === 0 ? (
-        <p style={{ color: '#718096', margin: '0', fontSize: '0.9rem' }}>Aucun forfait actif</p>
+        <p className="empty-message">Aucun forfait actif</p>
       ) : (
         <div className="packages-table-wrapper">
           {/* Table Header */}
@@ -71,20 +72,15 @@ function PackagesList({ packages, onAdd, onEdit }) {
           {/* Table Body */}
           <div className="packages-table-body">
             {packages.map((pkg) => {
-              const statusInfo = getPackageStatus(pkg);
+              const status = getPackageStatus(pkg);
+              const statusConfig = getPackageStatusConfig(status);
 
               return (
                 <div key={pkg.id} className="package-row">
                   {/* Status */}
                   <div className="col-status">
-                    <span
-                      className="package-status-badge"
-                      style={{
-                        backgroundColor: statusInfo.color,
-                        color: 'white',
-                      }}
-                    >
-                      {statusInfo.label}
+                    <span className={`package-status-badge ${statusConfig.cssClass}`}>
+                      {statusConfig.label}
                     </span>
                   </div>
 
