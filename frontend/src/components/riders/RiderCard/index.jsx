@@ -155,6 +155,7 @@ function RiderCard({ riderId, onClose }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icons.User />
             {rider.name}
+            <span className={`badge badge-${rider.kind}`}>{getRiderKindLabel(rider.kind)}</span>
           </div>
         }
         size="large"

@@ -1,24 +1,23 @@
-import { useState } from 'react';
-import { useRidersList } from '../../../hooks/useRidersList';
-import {
-  calculateRiderStats,
-  filterRidersByStatus,
-} from '../../../lib/helpers/domains/riders/stats.js';
 import { Icons } from '../../../lib/icons';
+import { useRidersList } from '../../../hooks/useRidersList';
+
 import '../../../styles/index.css';
+
 import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import Modal from '../../common/Modal';
 import RiderCard from '../RiderCard';
 import FilterButtons from './FilterButtons';
-import RiderForm from './RiderForm/index.jsx';
+import RiderForm from './RiderForm';
 import RidersTable from './RidersTable';
 
 function RidersList() {
-  const [filter, setFilter] = useState('all');
-
   const {
-    // State
+    // Data
+    filteredRiders,
     riders,
+    stats,
+
+    // UI state
     loading,
     error,
     showModal,
@@ -27,6 +26,10 @@ function RidersList() {
     selectedRiderId,
     showDeleteModal,
     riderToDelete,
+
+    // Filters
+    activityFilter,
+    setActivityFilter,
 
     // Actions
     handleCreate,
@@ -42,17 +45,17 @@ function RidersList() {
     closeDeleteModal,
     closeRiderCard,
 
-    // Utility functions
+    // Utilities
     getStatusBadge,
 
-    // State setters
+    // Message helpers
     clearSuccessMessage,
     clearError,
   } = useRidersList();
 
-  // Calculate statistics and filter riders
-  const stats = calculateRiderStats(riders);
-  const filteredRiders = filterRidersByStatus(riders, filter);
+  /* ------------------------------------------------------------------ */
+  /* Loading                                                            */
+  /* ------------------------------------------------------------------ */
 
   if (loading) {
     return (
@@ -61,6 +64,10 @@ function RidersList() {
       </div>
     );
   }
+
+  /* ------------------------------------------------------------------ */
+  /* Render                                                             */
+  /* ------------------------------------------------------------------ */
 
   return (
     <div className="card-enhanced">
@@ -71,12 +78,14 @@ function RidersList() {
         </button>
       </div>
 
+      {/* Filters */}
       {riders.length > 0 && (
-        <FilterButtons filter={filter} stats={stats} onFilterChange={setFilter} />
+        <FilterButtons filter={activityFilter} stats={stats} onFilterChange={setActivityFilter} />
       )}
 
+      {/* Error */}
       {error && (
-        <div className="alert alert-error" style={{ marginBottom: '20px' }}>
+        <div className="alert alert-error mb-20">
           <Icons.Warning style={{ marginRight: '8px' }} />
           {error}
           <button
@@ -89,15 +98,24 @@ function RidersList() {
         </div>
       )}
 
+      {/* Success */}
       {successMessage && (
-        <div className="alert alert-success" style={{ marginBottom: '20px' }}>
+        <div className="alert alert-success mb-20">
           <Icons.Check style={{ marginRight: '8px' }} />
           {successMessage}
+          <button
+            className="btn btn-sm btn-secondary"
+            onClick={clearSuccessMessage}
+            style={{ marginLeft: '12px' }}
+          >
+            OK
+          </button>
         </div>
       )}
 
+      {/* Content */}
       {riders.length === 0 ? (
-        <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+        <div className="empty-state text-center p-40">
           <Icons.Users style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
           <p>Aucun cavalier trouvé</p>
           <button className="btn btn-primary mt-20" onClick={handleCreate}>
@@ -105,7 +123,7 @@ function RidersList() {
           </button>
         </div>
       ) : filteredRiders.length === 0 ? (
-        <div className="empty-state" style={{ textAlign: 'center', padding: '40px' }}>
+        <div className="empty-state text-center p-40">
           <Icons.Filter style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
           <p>Aucun cavalier ne correspond au filtre sélectionné</p>
         </div>
@@ -119,33 +137,32 @@ function RidersList() {
         />
       )}
 
+      {/* Create / Edit Modal */}
       <Modal
         isOpen={showModal}
         onClose={closeRiderModal}
+        size="medium"
         title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="flex gap-8 align-center">
             {editingRider ? (
               <>
-                <Icons.Edit />
-                Modifier le cavalier
+                <Icons.Edit /> Modifier le cavalier
               </>
             ) : (
               <>
-                <Icons.Add />
-                Nouveau cavalier
+                <Icons.Add /> Nouveau cavalier
               </>
             )}
           </div>
         }
-        size="medium"
       >
         <RiderForm rider={editingRider} onSubmit={handleFormSubmit} onCancel={closeRiderModal} />
       </Modal>
 
-      {/* Rider Card Modal */}
+      {/* Rider details */}
       {selectedRiderId && <RiderCard riderId={selectedRiderId} onClose={closeRiderCard} />}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete confirmation */}
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
         onClose={closeDeleteModal}
@@ -157,7 +174,5 @@ function RidersList() {
     </div>
   );
 }
-
-RidersList.propTypes = {};
 
 export default RidersList;

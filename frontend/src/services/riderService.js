@@ -4,36 +4,68 @@
 import api from './apiService';
 import { createCrudOperations } from './apiService';
 import { validateRiderForm } from '../lib/helpers/domains/riders/validators';
+import { RIDER_KIND_LABELS } from '../lib/helpers/domains/riders/kinds';
+
+// Extract allowed values from constants
+const RIDER_KINDS = Object.values(RIDER_KIND_LABELS).map((k) => k.value);
+
+const normalizeRiderData = (data) => {
+  const normalized = { ...data };
+
+  // Default kind
+  if (!normalized.kind) {
+    normalized.kind = RIDER_KIND_LABELS.BOARDER.value;
+  }
+
+  // Validate kind
+  if (!RIDER_KINDS.includes(normalized.kind)) {
+    throw new Error(
+      JSON.stringify({
+        kind: 'Le type doit être "owner", "club" ou "boarder"',
+      })
+    );
+  }
+
+  return normalized;
+};
 
 export const riderService = {
   // Basic CRUD operations
   ...createCrudOperations('riders'),
 
-  // Override create to add validation
+  /**
+   * Create rider with validation
+   */
   create: async (data) => {
-    // Validate form data
     const validation = validateRiderForm(data);
     if (!validation.isValid) {
       throw new Error(JSON.stringify(validation.errors));
     }
 
-    const response = await api.post('/riders', data);
+    const normalizedData = normalizeRiderData(data);
+
+    const response = await api.post('/riders', normalizedData);
     return response.data;
   },
 
-  // Override update to add validation
+  /**
+   * Update rider with validation
+   */
   update: async (id, data) => {
-    // Validate form data
     const validation = validateRiderForm(data);
     if (!validation.isValid) {
       throw new Error(JSON.stringify(validation.errors));
     }
 
-    const response = await api.put(`/riders/${id}`, data);
+    const normalizedData = normalizeRiderData(data);
+
+    const response = await api.put(`/riders/${id}`, normalizedData);
     return response.data;
   },
 
-  // Rider-specific operations
+  /**
+   * Rider-specific operations
+   */
   getHorses: async (id) => {
     const response = await api.get(`/riders/${id}/horses`);
     return response.data;
@@ -45,7 +77,9 @@ export const riderService = {
   },
 
   addHorse: async (riderId, horseId) => {
-    const response = await api.post(`/riders/${riderId}/horses`, { horse_id: Number(horseId) });
+    const response = await api.post(`/riders/${riderId}/horses`, {
+      horse_id: Number(horseId),
+    });
     return response.data;
   },
 
@@ -54,7 +88,9 @@ export const riderService = {
     return response.data;
   },
 
-  // Package operations with validation
+  /**
+   * Package operations
+   */
   createPackage: async (riderId, packageData) => {
     const validatedData = {
       ...packageData,
@@ -88,22 +124,17 @@ export const riderService = {
     return response.data;
   },
 
-  // Package status helpers
-  getPackageStats: async (packageId) => {
-    const pkg = await api.get(`/packages/${packageId}`);
-    return {
-      remainingLessons: calculateTotalRemainingLessons(pkg.data),
-      progress: calculatePackageProgress(pkg.data),
-    };
-  },
-
-  // Statistics
+  /**
+   * Statistics
+   */
   getStats: async () => {
     const response = await api.get('/riders/stats');
     return response.data;
   },
 
-  // Filtering and search
+  /**
+   * Filtering and search
+   */
   search: async (query) => {
     const response = await api.get('/riders/search', { params: { q: query } });
     return response.data;

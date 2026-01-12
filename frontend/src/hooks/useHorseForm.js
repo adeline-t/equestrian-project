@@ -16,7 +16,6 @@ export function useHorseForm(horse) {
     activity_start_date: '',
     activity_end_date: '',
     is_owned_by: OWNER_TYPES.OWNER.value,
-    owner_id: null,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -48,7 +47,6 @@ export function useHorseForm(horse) {
         activity_start_date: horse.activity_start_date || '',
         activity_end_date: horse.activity_end_date || '',
         is_owned_by: horse.is_owned_by || OWNER_TYPES.OWNER.value,
-        owner_id: horse.owner_id || null,
       });
     } else {
       setFormData({
@@ -57,7 +55,6 @@ export function useHorseForm(horse) {
         activity_start_date: '',
         activity_end_date: '',
         is_owned_by: OWNER_TYPES.OWNER.value,
-        owner_id: null,
       });
     }
   }, [horse]);
@@ -92,7 +89,6 @@ export function useHorseForm(horse) {
       activity_start_date: '',
       activity_end_date: '',
       is_owned_by: OWNER_TYPES.OWNER.value,
-      owner_id: null,
     });
     setError('');
   };

@@ -9,50 +9,52 @@ export const horseService = {
   // Basic CRUD operations
   ...createCrudOperations('horses'),
 
-  // Override create to add validation
+  /**
+   * Create horse with validation
+   */
   create: async (data) => {
-    // Validate form data
     const validation = validateHorseForm(data);
     if (!validation.isValid) {
       throw new Error(JSON.stringify(validation.errors));
     }
 
-    // Ensure owner_id is a number
     const validatedData = {
       ...data,
-      owner_id: data.owner_id ? Number(data.owner_id) : null,
     };
 
     const response = await api.post('/horses', validatedData);
     return response.data;
   },
 
-  // Override update to add validation
+  /**
+   * Update horse with validation
+   */
   update: async (id, data) => {
-    // Validate form data
     const validation = validateHorseForm(data);
     if (!validation.isValid) {
       throw new Error(JSON.stringify(validation.errors));
     }
 
-    // Ensure owner_id is a number
     const validatedData = {
       ...data,
-      owner_id: data.owner_id ? Number(data.owner_id) : null,
     };
 
     const response = await api.put(`/horses/${id}`, validatedData);
     return response.data;
   },
 
-  // Horse-specific operations
+  /**
+   * Horse-specific operations
+   */
   getRiders: async (id) => {
     const response = await api.get(`/horses/${id}/riders`);
     return response.data;
   },
 
   addRider: async (horseId, riderId) => {
-    const response = await api.post(`/horses/${horseId}/riders`, { rider_id: Number(riderId) });
+    const response = await api.post(`/horses/${horseId}/riders`, {
+      rider_id: Number(riderId),
+    });
     return response.data;
   },
 
@@ -61,19 +63,25 @@ export const horseService = {
     return response.data;
   },
 
-  // Bulk operations
+  /**
+   * Bulk operations
+   */
   bulkUpdate: async (horses) => {
     const response = await api.put('/horses/bulk', { horses });
     return response.data;
   },
 
-  // Statistics
+  /**
+   * Statistics
+   */
   getStats: async () => {
     const response = await api.get('/horses/stats');
     return response.data;
   },
 
-  // Filtering and search
+  /**
+   * Filtering and search
+   */
   search: async (query) => {
     const response = await api.get('/horses/search', { params: { q: query } });
     return response.data;

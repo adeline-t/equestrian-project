@@ -10,7 +10,6 @@ export function useRiderCard(riderId) {
   const [rider, setRider] = useState(null);
   const [packages, setPackages] = useState([]);
   const [pairings, setPairings] = useState([]);
-  const [ownedHorses, setOwnedHorses] = useState([]);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,13 +31,7 @@ export function useRiderCard(riderId) {
       setRider(riderResponse);
 
       // Fetch all data in parallel
-      await Promise.all([
-        fetchPackages(),
-        fetchPairings(),
-        fetchOwnedHorses(),
-        fetchAllRiders(),
-        fetchAllHorses(),
-      ]);
+      await Promise.all([fetchPackages(), fetchPairings(), fetchAllRiders(), fetchAllHorses()]);
     } catch (error) {
       console.error('Error fetching rider data:', error);
       setError('Erreur lors du chargement des données');
@@ -71,18 +64,6 @@ export function useRiderCard(riderId) {
     }
   };
 
-  const fetchOwnedHorses = async () => {
-    try {
-      const response = await horsesApi.getAll();
-      // Filter horses owned by this rider
-      const owned = (response || []).filter((horse) => horse.owner_id === riderId);
-      setOwnedHorses(owned);
-    } catch (error) {
-      console.error('Error fetching owned horses:', error);
-      setOwnedHorses([]);
-    }
-  };
-
   const fetchAllRiders = async () => {
     try {
       const response = await ridersApi.getAll();
@@ -112,7 +93,6 @@ export function useRiderCard(riderId) {
     rider,
     packages,
     pairings,
-    ownedHorses,
     riders,
     horses,
     loading,

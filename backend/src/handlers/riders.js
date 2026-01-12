@@ -1,22 +1,21 @@
 import {
+  checkRateLimit,
   getDatabase,
+  getSecurityHeaders,
   handleDbError,
   jsonResponse,
   validateEmail,
   validatePhone,
   validateRequired,
-  checkRateLimit,
-  getSecurityHeaders,
 } from '../db.js';
-import {
-  handleDatabaseError,
-  handleValidationError,
-  handleNotFoundError,
-  handleRateLimitError,
-  handleUnexpectedError,
-} from '../utils/errorHandler.js';
-import { sanitizeRiderData, removeEmptyValues } from '../utils/inputSanitizer.js';
 
+const RIDER_KINDS = ['owner', 'club', 'boarder'];
+
+const isValidRiderKind = (kind) => RIDER_KINDS.includes(kind);
+
+/**
+ * /api/riders
+ */
 export async function handleRiders(request, env) {
   const db = getDatabase(env);
   const url = new URL(request.url);
@@ -25,7 +24,7 @@ export async function handleRiders(request, env) {
 
   // Rate limiting
   if (!checkRateLimit(clientIP, 60, 60000)) {
-    return jsonResponse({ error: 'Trop de requêtes' }, 429);
+    return jsonResponse({ error: 'Trop de requêtes' }, 429, getSecurityHeaders());
   }
 
   // Handle OPTIONS for CORS
@@ -34,9 +33,10 @@ export async function handleRiders(request, env) {
   }
 
   try {
-    // GET /api/riders - List all riders with counts
+    /**
+     * GET /api/riders
+     */
     if (request.method === 'GET' && pathParts.length === 2) {
-      // Get all riders
       const { data: riders, error: ridersError } = await db
         .from('riders')
         .select('*')
@@ -44,21 +44,17 @@ export async function handleRiders(request, env) {
 
       if (ridersError) return handleDbError(ridersError);
 
-      const now = new Date().toISOString().split('T')[0];
+      const today = new Date();
 
-      // Add counts for each rider
       const ridersWithCounts = await Promise.all(
         riders.map(async (rider) => {
-          // Count active horses (pairings where dates are active and horse is active)
-          const { data: pairings, error: pairingsError } = await db
+          const { data: pairings } = await db
             .from('rider_horse_pairings')
             .select(
               `
-              id,
               pairing_start_date,
               pairing_end_date,
               horses (
-                id,
                 activity_start_date,
                 activity_end_date
               )
@@ -66,46 +62,38 @@ export async function handleRiders(request, env) {
             )
             .eq('rider_id', rider.id);
 
-          let activeHorsesCount = 0;
-          if (!pairingsError && pairings) {
-            activeHorsesCount = pairings.filter((pairing) => {
+          const activeHorsesCount =
+            pairings?.filter((pairing) => {
               const pairingActive =
-                (!pairing.pairing_start_date || pairing.pairing_start_date <= now) &&
-                (!pairing.pairing_end_date || pairing.pairing_end_date >= now);
+                (!pairing.pairing_start_date || new Date(pairing.pairing_start_date) <= today) &&
+                (!pairing.pairing_end_date || new Date(pairing.pairing_end_date) >= today);
 
               const horse = pairing.horses;
               const horseActive =
                 horse &&
-                (!horse.activity_start_date || horse.activity_start_date <= now) &&
-                (!horse.activity_end_date || horse.activity_end_date >= now);
+                (!horse.activity_start_date || new Date(horse.activity_start_date) <= today) &&
+                (!horse.activity_end_date || new Date(horse.activity_end_date) >= today);
 
               return pairingActive && horseActive;
-            }).length;
-          }
+            }).length || 0;
 
-          // Count active packages and lesson counts
-          const { data: packages, error: packagesError } = await db
-            .from('packages')
-            .select('*')
-            .eq('rider_id', rider.id);
+          const { data: packages } = await db.from('packages').select('*').eq('rider_id', rider.id);
 
           let activePackagesCount = 0;
           let privateLessonsCount = 0;
           let jointLessonsCount = 0;
 
-          if (!packagesError && packages) {
-            packages.forEach((pkg) => {
-              const packageActive =
-                (!pkg.activity_start_date || pkg.activity_start_date <= now) &&
-                (!pkg.activity_end_date || pkg.activity_end_date >= now);
+          packages?.forEach((pkg) => {
+            const active =
+              (!pkg.activity_start_date || new Date(pkg.activity_start_date) <= today) &&
+              (!pkg.activity_end_date || new Date(pkg.activity_end_date) >= today);
 
-              if (packageActive) {
-                activePackagesCount++;
-                privateLessonsCount += pkg.private_lesson_count || 0;
-                jointLessonsCount += pkg.joint_lesson_count || 0;
-              }
-            });
-          }
+            if (active) {
+              activePackagesCount++;
+              privateLessonsCount += pkg.private_lesson_count || 0;
+              jointLessonsCount += pkg.joint_lesson_count || 0;
+            }
+          });
 
           return {
             ...rider,
@@ -120,30 +108,32 @@ export async function handleRiders(request, env) {
       return jsonResponse(ridersWithCounts, 200, getSecurityHeaders());
     }
 
-    // GET /api/riders/:id - Get single rider
+    /**
+     * GET /api/riders/:id
+     */
     if (request.method === 'GET' && pathParts.length === 3) {
-      const riderId = parseInt(pathParts[2]);
-
-      if (isNaN(riderId)) {
+      const riderId = Number(pathParts[2]);
+      if (!Number.isInteger(riderId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
       const { data, error } = await db.from('riders').select('*').eq('id', riderId).single();
 
       if (error) return handleDbError(error);
+
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // POST /api/riders - Create rider
+    /**
+     * POST /api/riders
+     */
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
-
       if (!body) {
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
       }
 
-      // Validate required fields
-      const missingFields = validateRequired(['name'], body);
+      const missingFields = validateRequired(['name', 'kind'], body);
       if (missingFields) {
         return jsonResponse(
           { error: `Champs requis: ${missingFields}` },
@@ -152,18 +142,25 @@ export async function handleRiders(request, env) {
         );
       }
 
-      // Validate email format if provided
+      if (!isValidRiderKind(body.kind)) {
+        return jsonResponse(
+          { error: 'Le type doit être "owner", "club" ou "boarder"' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
       if (body.email && !validateEmail(body.email)) {
         return jsonResponse({ error: "Format d'email invalide" }, 400, getSecurityHeaders());
       }
 
-      // Validate phone format if provided
       if (body.phone && !validatePhone(body.phone)) {
         return jsonResponse({ error: 'Format de téléphone invalide' }, 400, getSecurityHeaders());
       }
 
       const riderData = {
         name: body.name.trim(),
+        kind: body.kind,
         phone: body.phone?.trim() || null,
         email: body.email?.trim().toLowerCase() || null,
         activity_start_date: body.activity_start_date || null,
@@ -173,15 +170,18 @@ export async function handleRiders(request, env) {
       const { data, error } = await db.from('riders').insert(riderData).select().single();
 
       if (error) return handleDbError(error);
+
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
-    // PUT /api/riders/:id - Update rider
+    /**
+     * PUT /api/riders/:id
+     */
     if (request.method === 'PUT' && pathParts.length === 3) {
-      const riderId = parseInt(pathParts[2]);
+      const riderId = Number(pathParts[2]);
       const body = await request.json().catch(() => null);
 
-      if (isNaN(riderId) || !body) {
+      if (!Number.isInteger(riderId) || !body) {
         return jsonResponse(
           { error: 'ID ou corps de requête invalide' },
           400,
@@ -189,26 +189,32 @@ export async function handleRiders(request, env) {
         );
       }
 
-      // Validate email format if provided
+      if (body.kind && !isValidRiderKind(body.kind)) {
+        return jsonResponse(
+          { error: 'Le type doit être "owner", "club" ou "boarder"' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
       if (body.email && !validateEmail(body.email)) {
         return jsonResponse({ error: "Format d'email invalide" }, 400, getSecurityHeaders());
       }
 
-      // Validate phone format if provided
       if (body.phone && !validatePhone(body.phone)) {
         return jsonResponse({ error: 'Format de téléphone invalide' }, 400, getSecurityHeaders());
       }
 
       const updateData = {
         name: body.name?.trim(),
-        phone: body.phone?.trim() || null,
-        email: body.email?.trim().toLowerCase() || null,
-        activity_start_date: body.activity_start_date || null,
-        activity_end_date: body.activity_end_date || null,
+        kind: body.kind,
+        phone: body.phone?.trim(),
+        email: body.email?.trim().toLowerCase(),
+        activity_start_date: body.activity_start_date,
+        activity_end_date: body.activity_end_date,
         updated_at: new Date().toISOString(),
       };
 
-      // Remove undefined fields
       Object.keys(updateData).forEach(
         (key) => updateData[key] === undefined && delete updateData[key]
       );
@@ -221,20 +227,22 @@ export async function handleRiders(request, env) {
         .single();
 
       if (error) return handleDbError(error);
+
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // DELETE /api/riders/:id - Delete rider
+    /**
+     * DELETE /api/riders/:id
+     */
     if (request.method === 'DELETE' && pathParts.length === 3) {
-      const riderId = parseInt(pathParts[2]);
-
-      if (isNaN(riderId)) {
+      const riderId = Number(pathParts[2]);
+      if (!Number.isInteger(riderId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
       }
 
       const { error } = await db.from('riders').delete().eq('id', riderId);
-
       if (error) return handleDbError(error);
+
       return jsonResponse({ message: 'Cavalier supprimé avec succès' }, 200, getSecurityHeaders());
     }
 
@@ -245,7 +253,9 @@ export async function handleRiders(request, env) {
   }
 }
 
-// GET /api/riders/:id/horses - Get horses for a rider
+/**
+ * GET /api/riders/:id/horses
+ */
 export async function handleRiderHorses(request, env, riderId) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -255,8 +265,8 @@ export async function handleRiderHorses(request, env, riderId) {
   }
 
   try {
-    const riderIdNum = parseInt(riderId);
-    if (isNaN(riderIdNum)) {
+    const riderIdNum = Number(riderId);
+    if (!Number.isInteger(riderIdNum)) {
       return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
     }
 
@@ -280,6 +290,7 @@ export async function handleRiderHorses(request, env, riderId) {
       .order('pairing_start_date', { ascending: false });
 
     if (error) return handleDbError(error);
+
     return jsonResponse(data, 200, getSecurityHeaders());
   } catch (error) {
     console.error('Unexpected error:', error);

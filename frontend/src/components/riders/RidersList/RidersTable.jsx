@@ -1,15 +1,15 @@
 import { Icons } from '../../../lib/icons';
-import '../../../styles/index.css';
+import {
+  getOwnerKindLabel,
+  getOwnerKindBadgeClass,
+} from '../../../lib/helpers/domains/riders/ownerKind';
 
 const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }) => {
-  if (riders.length === 0) {
+  if (!riders.length) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">
-          <Icons.User style={{ fontSize: '48px' }} />
-        </div>
+        <Icons.User style={{ fontSize: '48px' }} />
         <h3>Aucun cavalier trouvé</h3>
-        <p>Commencez par ajouter votre premier cavalier</p>
       </div>
     );
   }
@@ -20,60 +20,56 @@ const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }
         <thead>
           <tr>
             <th>Nom</th>
+            <th>Type</th>
             <th>Email</th>
             <th>Téléphone</th>
-            <th>Début d'activité</th>
-            <th>Fin d'activité</th>
+            <th>Début</th>
+            <th>Fin</th>
             <th>Statut</th>
             <th>Actions</th>
           </tr>
         </thead>
+
         <tbody>
-          {riders.map((rider) => (
-            <tr key={rider.id}>
-              <td>
-                <strong>{rider.name}</strong>
-              </td>
-              <td>{rider.email || '-'}</td>
-              <td>{rider.phone || '-'}</td>
-              <td>{rider.activity_start_date || '-'}</td>
-              <td>{rider.activity_end_date || '-'}</td>
-              <td>
-                <span
-                  className={`badge ${
-                    getStatusBadge(rider.activity_start_date, rider.activity_end_date) === 'Actif'
-                      ? 'badge-success'
-                      : 'badge-secondary'
-                  }`}
-                >
-                  {getStatusBadge(rider.activity_start_date, rider.activity_end_date)}
-                </span>
-              </td>
-              <td className="table-actions">
-                <button
-                  className="btn btn-info btn-sm"
-                  onClick={() => onViewDetails(rider.id)}
-                  title="Voir les détails"
-                >
-                  <Icons.View /> Détails
-                </button>
-                <button
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => onEdit(rider)}
-                  title="Modifier"
-                >
-                  <Icons.Edit /> Modifier
-                </button>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => onDelete(rider)}
-                  title="Supprimer"
-                >
-                  <Icons.Delete /> Supprimer
-                </button>
-              </td>
-            </tr>
-          ))}
+          {riders.map((rider) => {
+            const statusLabel = getStatusBadge(rider);
+            const statusClass = statusLabel === 'Actif' ? 'badge-success' : 'badge-secondary';
+
+            return (
+              <tr key={rider.id}>
+                <td>
+                  <strong>{rider.name}</strong>
+                </td>
+
+                <td>
+                  <span className={`badge ${getOwnerKindBadgeClass(rider.owner_kind)}`}>
+                    {getOwnerKindLabel(rider.owner_kind)}
+                  </span>
+                </td>
+
+                <td>{rider.email || '-'}</td>
+                <td>{rider.phone || '-'}</td>
+                <td>{rider.activity_start_date || '-'}</td>
+                <td>{rider.activity_end_date || '-'}</td>
+
+                <td>
+                  <span className={`badge ${statusClass}`}>{statusLabel}</span>
+                </td>
+
+                <td className="table-actions">
+                  <button onClick={() => onViewDetails(rider.id)}>
+                    <Icons.View /> Détails
+                  </button>
+                  <button onClick={() => onEdit(rider)}>
+                    <Icons.Edit /> Modifier
+                  </button>
+                  <button onClick={() => onDelete(rider)}>
+                    <Icons.Delete /> Supprimer
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

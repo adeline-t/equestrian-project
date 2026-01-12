@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useHorseForm } from '../../../hooks/useHorseForm';
 import BasicInfoFields from './BasicInfoFields';
-import OwnershipFields from './OwnershipFields';
 import FormActions from './FormActions';
 import { Icons } from '../../../lib/icons';
 
@@ -72,14 +71,6 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       )}
 
       <BasicInfoFields formData={formData} onChange={handleChange} />
-
-      <OwnershipFields
-        formData={formData}
-        onChange={handleChange}
-        riders={riders}
-        loadingRiders={loadingRiders}
-        ownershipOptions={ownershipOptions}
-      />
 
       <FormActions
         onSubmit={handleFormSubmit}
