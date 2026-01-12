@@ -30,6 +30,8 @@ function RidersList() {
     // Filters
     activityFilter,
     setActivityFilter,
+    kindFilter,
+    setKindFilter,
 
     // Actions
     handleCreate,
@@ -80,7 +82,13 @@ function RidersList() {
 
       {/* Filters */}
       {riders.length > 0 && (
-        <FilterButtons filter={activityFilter} stats={stats} onFilterChange={setActivityFilter} />
+        <FilterButtons
+          activityFilter={activityFilter}
+          riderKindFilter={kindFilter}
+          stats={stats}
+          onActivityFilterChange={setActivityFilter}
+          onRiderKindFilterChange={setKindFilter}
+        />
       )}
 
       {/* Error */}

@@ -12,11 +12,6 @@ const RIDER_KINDS = Object.values(RIDER_KIND_LABELS).map((k) => k.value);
 const normalizeRiderData = (data) => {
   const normalized = { ...data };
 
-  // Default kind
-  if (!normalized.kind) {
-    normalized.kind = RIDER_KIND_LABELS.BOARDER.value;
-  }
-
   // Validate kind
   if (!RIDER_KINDS.includes(normalized.kind)) {
     throw new Error(
@@ -40,6 +35,11 @@ export const riderService = {
     const validation = validateRiderForm(data);
     if (!validation.isValid) {
       throw new Error(JSON.stringify(validation.errors));
+    }
+
+    // Default kind
+    if (!data.kind) {
+      data.kind = RIDER_KIND_LABELS.BOARDER.value;
     }
 
     const normalizedData = normalizeRiderData(data);

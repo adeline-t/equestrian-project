@@ -1,6 +1,7 @@
 /**
  * Rider validation utilities
  */
+import { RIDER_KIND_LABELS } from '../../../domains/riders/kinds';
 
 /**
  * Validate email format
@@ -24,6 +25,9 @@ export const isValidPhone = (phone) => {
   return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
 };
 
+// Extract allowed values
+const ALLOWED_KINDS = Object.values(RIDER_KIND_LABELS).map((k) => k.value);
+
 /**
  * Validate rider form data
  * @param {Object} formData - Rider form data
@@ -37,9 +41,16 @@ export const validateRiderForm = (formData) => {
     errors.name = 'Le nom du cavalier est requis';
   }
 
+  // Kind validation
+  if (!formData.kind) {
+    errors.kind = 'Le type de cavalier est requis';
+  } else if (!ALLOWED_KINDS.includes(formData.kind)) {
+    errors.kind = 'Le type doit être "owner", "club" ou "boarder"';
+  }
+
   // Email validation
   if (formData.email && !isValidEmail(formData.email)) {
-    errors.email = 'Format d\'email invalide';
+    errors.email = "Format d'email invalide";
   }
 
   // Phone validation

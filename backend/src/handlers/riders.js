@@ -189,7 +189,8 @@ export async function handleRiders(request, env) {
         );
       }
 
-      if (body.kind && !isValidRiderKind(body.kind)) {
+      // Validate kind if provided
+      if (body.kind !== undefined && !isValidRiderKind(body.kind)) {
         return jsonResponse(
           { error: 'Le type doit être "owner", "club" ou "boarder"' },
           400,
@@ -197,27 +198,42 @@ export async function handleRiders(request, env) {
         );
       }
 
-      if (body.email && !validateEmail(body.email)) {
+      if (body.email !== undefined && body.email && !validateEmail(body.email)) {
         return jsonResponse({ error: "Format d'email invalide" }, 400, getSecurityHeaders());
       }
 
-      if (body.phone && !validatePhone(body.phone)) {
+      if (body.phone !== undefined && body.phone && !validatePhone(body.phone)) {
         return jsonResponse({ error: 'Format de téléphone invalide' }, 400, getSecurityHeaders());
       }
 
+      // Build update data - only include fields that are present in body
       const updateData = {
-        name: body.name?.trim(),
-        kind: body.kind,
-        phone: body.phone?.trim(),
-        email: body.email?.trim().toLowerCase(),
-        activity_start_date: body.activity_start_date,
-        activity_end_date: body.activity_end_date,
         updated_at: new Date().toISOString(),
       };
 
-      Object.keys(updateData).forEach(
-        (key) => updateData[key] === undefined && delete updateData[key]
-      );
+      if (body.name !== undefined) {
+        updateData.name = body.name.trim();
+      }
+
+      if (body.kind !== undefined) {
+        updateData.kind = body.kind;
+      }
+
+      if (body.phone !== undefined) {
+        updateData.phone = body.phone ? body.phone.trim() : null;
+      }
+
+      if (body.email !== undefined) {
+        updateData.email = body.email ? body.email.trim().toLowerCase() : null;
+      }
+
+      if (body.activity_start_date !== undefined) {
+        updateData.activity_start_date = body.activity_start_date || null;
+      }
+
+      if (body.activity_end_date !== undefined) {
+        updateData.activity_end_date = body.activity_end_date || null;
+      }
 
       const { data, error } = await db
         .from('riders')
@@ -226,8 +242,12 @@ export async function handleRiders(request, env) {
         .select()
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) {
+        console.error('❌ Database error:', error);
+        return handleDbError(error);
+      }
 
+      console.log('✅ Updated rider:', JSON.stringify(data, null, 2));
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 

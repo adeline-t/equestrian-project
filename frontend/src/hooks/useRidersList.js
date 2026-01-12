@@ -223,6 +223,8 @@ export function useRidersList() {
     // Utilities
     getStatusBadge,
     getRiderStatus,
+    kindFilter,
+    setKindFilter,
 
     // Message helpers
     clearSuccessMessage,
