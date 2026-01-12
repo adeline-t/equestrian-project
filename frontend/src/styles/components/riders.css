@@ -5,6 +5,291 @@
 @import '../common/index.css';
 
 /* ============================================
+   RIDERS TABLE - GRID LAYOUT
+   ============================================ */
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
+  box-shadow: var(--shadow-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-image: var(--gradient-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table thead,
+.table tbody {
+  display: block;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table thead tr {
+  display: grid;
+  grid-template-columns: 220px 140px 220px 140px 100px 1fr;
+  gap: 0;
+}
+
+.table tbody tr {
+  display: grid;
+  grid-template-columns: 220px 140px 220px 140px 100px 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--color-gray-200);
+  transition: all var(--transition-base);
+  background-image: var(--gradient-light);
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.table th {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  font-size: var(--font-size-sm);
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-right: none;
+}
+
+/* Column-specific alignment */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* ============================================
+   RIDER ROW INTERACTIONS
+   ============================================ */
+
+.rider-row {
+  position: relative;
+}
+
+.rider-row:hover {
+  background: var(--color-gray-50);
+  cursor: pointer;
+}
+
+/* Table Actions Container */
+.table-actions {
+  position: relative;
+}
+
+/* Desktop: Hover to reveal */
+.action-buttons-desktop {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.rider-row:hover .action-buttons-desktop {
+  opacity: 1;
+}
+
+/* Mobile menu hidden by default */
+.action-buttons-mobile {
+  display: none;
+}
+
+/* ============================================
+   ACTION BUTTONS (ICONS)
+   ============================================ */
+
+.btn-icon {
+  background: none;
+  border: none;
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.btn-icon-view {
+  color: var(--color-info-blue);
+}
+
+.btn-icon-view:hover {
+  background: var(--color-info-light);
+  color: var(--color-info-blue-dark);
+  transform: scale(1.15);
+}
+
+.btn-icon-edit {
+  color: var(--color-gray-500);
+}
+
+.btn-icon-edit:hover {
+  background: var(--color-gray-150);
+  color: var(--color-gray-800);
+  transform: scale(1.15);
+}
+
+.btn-icon-delete {
+  color: var(--color-danger-medium-dark);
+}
+
+.btn-icon-delete:hover {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+  transform: scale(1.15);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-gray-600);
+  border-radius: var(--radius-lg);
+  border: 2px dashed var(--color-gray-400);
+}
+
+.empty-state h3 {
+  margin: 20px 0 0 0;
+  color: var(--color-gray-800);
+  font-size: var(--font-size-2xl);
+}
+
+/* ============================================
+   KIND FILTER TABS
+   ============================================ */
+
+.kind-filter-pills {
+  display: inline-flex;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  gap: 4px;
+  margin-top: var(--spacing-md);
+}
+
+.kind-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.kind-pill.kind-pill-active {
+  background: var(--color-white);
+  color: var(--color-gray-900);
+  box-shadow: var(--shadow-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.kind-pill:not(.kind-pill-active):hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Color indicator bar */
+.kind-pill.kind-pill-active {
+  position: relative;
+  padding-left: 24px;
+}
+
+.kind-pill.kind-pill-active::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+}
+
+/* Dynamic colors based on data-kind and data-gradient */
+.kind-pill[data-kind='owner'].kind-pill-active::before {
+  background: var(--gradient-warning);
+}
+
+.kind-pill[data-kind='club'].kind-pill-active::before {
+  background: var(--gradient-info);
+}
+
+.kind-pill[data-kind='boarder'].kind-pill-active::before {
+  background: var(--gradient-success);
+}
+
+.kind-pill[data-kind='all'].kind-pill-active::before {
+  background: var(--gradient-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .kind-filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .kind-pill {
+    padding: 8px 16px;
+    font-size: var(--font-size-xs);
+  }
+
+  .kind-pill.kind-pill-active {
+    padding-left: 20px;
+  }
+
+  .kind-pill.kind-pill-active::before {
+    width: 3px;
+    height: 16px;
+  }
+}
+
+/* ============================================
    RIDER CARD MODAL
    ============================================ */
 
@@ -28,8 +313,8 @@
   justify-content: center !important;
   padding: 6px 12px !important;
   border-radius: 20px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-semibold) !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
   white-space: nowrap !important;
@@ -42,20 +327,20 @@
    ============================================ */
 
 .rider-info-section {
-  background: #f7fafc;
+  background: var(--color-gray-50);
   padding: 20px;
   border-radius: var(--radius-lg);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   margin-bottom: 20px;
 }
 
 .rider-info-section h3 {
   margin: 0 0 15px 0;
   color: var(--color-gray-800);
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -74,15 +359,15 @@
 .info-label {
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-600);
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .info-value {
   color: var(--color-gray-800);
-  font-size: 0.95rem;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
 
@@ -101,18 +386,18 @@
 .date-status-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   white-space: nowrap;
 }
 
 .date-status-item .info-label {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
 }
 
 .date-status-item .info-value {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: var(--font-size-sm);
 }
 
 /* ============================================
@@ -127,15 +412,15 @@
 
 .owned-horse-item {
   padding: 12px;
-  background: #f7fafc;
+  background: var(--color-gray-50);
   border-radius: var(--radius-md);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   transition: all var(--transition-base);
 }
 
 .owned-horse-item:hover {
-  border-color: #cbd5e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-gray-400);
+  box-shadow: var(--shadow-sm);
 }
 
 .horse-name-type {
@@ -151,8 +436,8 @@
 
 .horse-name-type .badge {
   padding: 4px 8px;
-  font-size: 0.75rem;
-  border-radius: 4px;
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
   font-weight: var(--font-weight-medium);
 }
 
@@ -163,10 +448,10 @@
 .packages-table-wrapper {
   display: flex;
   flex-direction: column;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
 }
 
 /* Table Header */
@@ -174,12 +459,12 @@
   display: grid;
   grid-template-columns: 140px 180px 180px 140px 140px;
   gap: 0;
-  background: #f7fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: var(--gradient-light);
+  border-bottom: 2px solid var(--color-gray-200);
   padding: 0;
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-600);
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: sticky;
@@ -193,7 +478,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid var(--color-gray-200);
 }
 
 .packages-table-header > div:last-child {
@@ -210,14 +495,14 @@
   display: grid;
   grid-template-columns: 140px 180px 180px 140px 140px;
   gap: 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-gray-200);
   transition: all var(--transition-base);
   background: var(--color-white);
 }
 
 .package-row:hover {
-  background: #f9fafb;
-  box-shadow: inset 0 0 0 1px #edf2f7;
+  background: var(--color-gray-50);
+  box-shadow: inset 0 0 0 1px var(--color-gray-150);
 }
 
 .package-row:last-child {
@@ -231,7 +516,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  border-right: 1px solid #edf2f7;
+  border-right: 1px solid var(--color-gray-150);
   min-height: 50px;
 }
 
@@ -247,8 +532,8 @@
 .package-status-badge {
   display: inline-block;
   padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -256,23 +541,23 @@
 }
 
 .package-status-badge.active {
-  background: #c6f6d5;
-  color: #22543d;
+  background: var(--color-success-badge-light);
+  color: var(--color-success-dark);
 }
 
 .package-status-badge.expired {
-  background: #e2e8f0;
-  color: #4a5568;
+  background: var(--color-gray-200);
+  color: var(--color-gray-650);
 }
 
 .package-status-badge.upcoming {
-  background: #bee3f8;
-  color: #2c5282;
+  background: var(--color-info-light);
+  color: var(--color-info-dark);
 }
 
 .package-status-badge.inactive {
-  background: #fed7d7;
-  color: #742a2a;
+  background: var(--color-danger-badge-light);
+  color: var(--color-danger-dark);
 }
 
 /* Lesson Columns */
@@ -285,12 +570,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  background: var(--gradient-info);
   color: white;
   padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.85rem;
+  border-radius: var(--radius-xl);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
   min-width: 40px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
@@ -308,7 +593,7 @@
 }
 
 .date-value {
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-800);
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
@@ -317,12 +602,6 @@
 /* Actions Column */
 .col-actions {
   justify-content: center;
-}
-
-.package-row .btn-secondary {
-  padding: 6px 8px !important;
-  font-size: 0.9rem;
-  margin: 0 !important;
 }
 
 /* ============================================
@@ -340,15 +619,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px;
-  background: #f7fafc;
+  background: var(--color-gray-50);
   border-radius: var(--radius-md);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-gray-200);
   transition: all var(--transition-base);
 }
 
 .pairing-item:hover {
-  border-color: #cbd5e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-gray-400);
+  box-shadow: var(--shadow-sm);
 }
 
 .pairing-info {
@@ -360,20 +639,110 @@
 .pairing-horse-name {
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-800);
-  font-size: 0.95rem;
+  font-size: var(--font-size-sm);
 }
 
 .pairing-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
   margin-left: 12px;
 }
 
-.pairing-item .btn-secondary,
-.pairing-item .btn-danger {
-  padding: 6px 10px !important;
-  font-size: 0.9rem !important;
-  margin: 0 !important;
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Hide desktop buttons */
+  .action-buttons-desktop {
+    display: none;
+  }
+
+  /* Show mobile menu */
+  .action-buttons-mobile {
+    display: block;
+    position: relative;
+  }
+
+  /* Disable row hover and click */
+  .rider-row {
+    cursor: default;
+  }
+
+  .rider-row:hover {
+    background: transparent;
+  }
+
+  /* Menu button */
+  .btn-menu {
+    color: var(--color-info-blue);
+    padding: 10px;
+    font-size: 18px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Backdrop */
+  .menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    animation: fadeIn var(--transition-base) ease;
+  }
+
+  /* Mobile menu */
+  .actions-menu-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-white);
+    border-radius: 16px 16px 0 0;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    padding: 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    animation: slideIn var(--transition-slow) ease;
+  }
+
+  .actions-menu-mobile button {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: none;
+    background: var(--color-gray-50);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-gray-800);
+    transition: background var(--transition-base);
+  }
+
+  .actions-menu-mobile button:hover {
+    background: var(--color-gray-150);
+  }
+
+  .actions-menu-mobile button:last-child {
+    margin-bottom: 0;
+  }
+
+  .actions-menu-mobile .menu-delete {
+    background: var(--color-danger-light);
+    color: var(--color-danger-medium-dark);
+  }
+
+  .actions-menu-mobile .menu-delete:hover {
+    background: var(--color-danger-badge-light);
+  }
 }
 
 /* ============================================
@@ -390,19 +759,27 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  /* Riders Table */
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 180px 100px 180px 120px 90px 1fr;
+  }
+
+  /* Packages Table */
   .packages-table-header,
   .package-row {
-    grid-template-columns: 100px 140px 140px 120px 120px;
+    grid-template-columns: 100px 160px 140px 120px 120px;
   }
 
   .packages-table-header > div,
   .package-row > div {
     padding: 10px 12px;
-    font-size: 0.8rem;
+    font-size: var(--font-size-xs);
   }
 }
 
 @media (max-width: 1024px) {
+  /* Packages Table */
   .packages-table-header,
   .package-row {
     grid-template-columns: 80px 100px 100px 100px 100px;
@@ -410,18 +787,18 @@
 
   .packages-table-header > div,
   .package-row > div {
-    padding: 8px 10px;
+    padding: var(--spacing-sm) 10px;
     min-height: 45px;
   }
 
   .lesson-badge {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     min-width: 32px;
     padding: 2px 6px;
   }
 
   .package-status-badge {
-    font-size: 0.7rem;
+    font-size: var(--font-size-xs);
     padding: 3px 10px;
   }
 }
@@ -452,16 +829,28 @@
 
   .date-status-item {
     flex-direction: column;
-    gap: 4px;
+    gap: var(--spacing-xs);
   }
 
   .owned-horses-list {
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-sm);
   }
 
   .owned-horse-item {
     width: 100%;
+  }
+
+  /* Riders Table - Smaller columns */
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 150px 90px 150px 100px 80px 60px;
+  }
+
+  .table th,
+  .table td {
+    padding: var(--spacing-sm) 12px;
+    font-size: 13px;
   }
 
   /* Packages Table - Switch to Card Layout */
@@ -482,22 +871,22 @@
     display: flex;
     flex-direction: column;
     grid-template-columns: none;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-lg);
     padding: 12px;
-    gap: 8px;
+    gap: var(--spacing-sm);
     background: var(--color-white);
   }
 
   .package-row:hover {
     background: var(--color-white);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
   }
 
   .package-row > div {
     border: none;
-    border-bottom: 1px solid #edf2f7;
-    padding: 8px 0;
+    border-bottom: 1px solid var(--color-gray-150);
+    padding: var(--spacing-sm) 0;
     justify-content: space-between;
     text-align: left;
     min-height: auto;
@@ -543,6 +932,18 @@
     padding: 12px;
   }
 
+  /* Riders Table - Ultra compact */
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 120px 70px 120px 90px 70px 50px;
+  }
+
+  .table th,
+  .table td {
+    padding: 6px var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+
   .package-row {
     padding: 10px;
     gap: 6px;
@@ -550,21 +951,21 @@
 
   .package-row > div {
     padding: 6px 0;
-    font-size: 0.8rem;
+    font-size: var(--font-size-xs);
   }
 
   .lesson-badge {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
     min-width: 28px;
     padding: 2px 6px;
   }
 
   .date-value {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
   }
 
   .package-status-badge {
-    font-size: 0.65rem;
-    padding: 2px 8px;
+    font-size: var(--font-size-xs);
+    padding: 2px var(--spacing-sm);
   }
 }

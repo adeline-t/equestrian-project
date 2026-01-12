@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../../lib/icons';
+import { Icons } from '../../../lib/icons';
 
 const ActivityFields = ({ formData, onChange, errors = {} }) => {
   return (

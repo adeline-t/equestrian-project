@@ -1,6 +1,6 @@
 import React from 'react';
-import { Icons } from '../../../../lib/icons';
-import { RIDER_KIND_LABELS } from '../../../../lib/domains/riders/kinds';
+import { Icons } from '../../../lib/icons';
+import { RIDER_KIND_LABELS } from '../../../lib/domains/riders/kinds';
 
 const BasicInfoFields = ({ formData, onChange, errors = {} }) => (
   <div className="form-section">

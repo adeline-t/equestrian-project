@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { usePackageActions } from '../../../hooks/usePackageActions';
+import { usePairingActions } from '../../../hooks/usePairingActions';
+import { useRiderCard } from '../../../hooks/useRiderCard';
+import { getRiderKindLabel } from '../../../lib/domains/riders/kinds';
+import { isActive } from '../../../lib/helpers/shared/filters/activityFilters.js';
 import { Icons } from '../../../lib/icons';
+import '../../../styles/components/riders.css';
+import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
+import Modal from '../../common/Modal';
 import PackageForm from '../../packages/PackageForm';
 import PairingForm from '../../pairings/PairingForm';
-import Modal from '../../common/Modal';
-import RiderInfo from './RiderInfo';
 import OwnedHorsesList from './OwnedHorsesList';
 import PackagesList from './PackagesList.jsx';
 import PairingsList from './PairingsList.jsx';
-import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
-import { useRiderCard } from '../../../hooks/useRiderCard';
-import { usePackageActions } from '../../../hooks/usePackageActions';
-import { usePairingActions } from '../../../hooks/usePairingActions';
-import { isActive } from '../../../lib/helpers/shared/filters/activityFilters.js';
-import '../../../styles/common/modal.css';
-import '../../../styles/common/alerts.css';
-import '../../../styles/common/buttons.css';
-import '../../../styles/components/riders.css';
+import RiderInfo from './RiderInfo';
 
 function RiderCard({ riderId, onClose }) {
   const [successMessage, setSuccessMessage] = useState('');

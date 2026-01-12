@@ -206,3 +206,35 @@
   background-image: var(--gradient-pony);
   color: var(--color-white);
 }
+/* ============================================
+   KIND BADGES - Full gradient style
+   ============================================ */
+
+.badge-kind {
+  color: var(--color-white);
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Owner - Orange gradient */
+.badge-kind[data-kind='owner'] {
+  background: var(--gradient-warning);
+}
+
+/* Club - Blue gradient */
+.badge-kind[data-kind='club'] {
+  background: var(--gradient-info);
+}
+
+/* Boarder - Green gradient */
+.badge-kind[data-kind='boarder'] {
+  background: var(--gradient-success);
+}
+
+/* Hover effects */
+.badge-kind:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: all var(--transition-base);
+}

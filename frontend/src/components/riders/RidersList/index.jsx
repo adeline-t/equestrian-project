@@ -7,7 +7,7 @@ import DeleteConfirmationModal from '../../common/DeleteConfirmationModal';
 import Modal from '../../common/Modal';
 import RiderCard from '../RiderCard';
 import FilterButtons from './FilterButtons';
-import RiderForm from './RiderForm';
+import RiderForm from '../RiderForm';
 import RidersTable from './RidersTable';
 
 function RidersList() {

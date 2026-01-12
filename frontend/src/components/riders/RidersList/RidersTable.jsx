@@ -1,5 +1,8 @@
+import PropTypes from 'prop-types';
 import { Icons } from '../../../lib/icons';
-import { getRiderKindLabel, getRiderKindBadgeClass } from '../../../lib/domains/riders/kinds';
+import RiderRow from './RiderRow';
+import '../../../styles/index.css';
+import '../../../styles/components/riders.css';
 
 const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }) => {
   if (!riders.length) {
@@ -20,57 +23,41 @@ const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }
             <th>Type</th>
             <th>Email</th>
             <th>Téléphone</th>
-            <th>Début</th>
-            <th>Fin</th>
             <th>Statut</th>
-            <th>Actions</th>
+            <th></th>
           </tr>
         </thead>
-
         <tbody>
-          {riders.map((rider) => {
-            const statusLabel = getStatusBadge(rider);
-            const statusClass = statusLabel === 'Actif' ? 'badge-success' : 'badge-secondary';
-
-            return (
-              <tr key={rider.id}>
-                <td>
-                  <strong>{rider.name}</strong>
-                </td>
-
-                <td>
-                  <span className={`badge ${getRiderKindBadgeClass(rider.kind)}`}>
-                    {getRiderKindLabel(rider.kind)}
-                  </span>
-                </td>
-
-                <td>{rider.email || '-'}</td>
-                <td>{rider.phone || '-'}</td>
-                <td>{rider.activity_start_date || '-'}</td>
-                <td>{rider.activity_end_date || '-'}</td>
-
-                <td>
-                  <span className={`badge ${statusClass}`}>{statusLabel}</span>
-                </td>
-
-                <td className="table-actions">
-                  <button onClick={() => onViewDetails(rider.id)}>
-                    <Icons.View /> Détails
-                  </button>
-                  <button onClick={() => onEdit(rider)}>
-                    <Icons.Edit /> Modifier
-                  </button>
-                  <button onClick={() => onDelete(rider)}>
-                    <Icons.Delete /> Supprimer
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {riders.map((rider) => (
+            <RiderRow
+              key={rider.id}
+              rider={rider}
+              onViewDetails={onViewDetails}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              getStatusBadge={getStatusBadge}
+            />
+          ))}
         </tbody>
       </table>
     </div>
   );
+};
+
+RidersTable.propTypes = {
+  riders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      kind: PropTypes.string.isRequired,
+      email: PropTypes.string,
+      phone: PropTypes.string,
+    })
+  ).isRequired,
+  onViewDetails: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  getStatusBadge: PropTypes.func.isRequired,
 };
 
 export default RidersTable;

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { useRiderForm } from '../../../../hooks/useRiderForm';
-import { Icons } from '../../../../lib/icons';
+import { useRiderForm } from '../../../hooks/useRiderForm';
+import { Icons } from '../../../lib/icons';
 import ActivityFields from './ActivityFields';
 import BasicInfoFields from './BasicInfoFields';
 import FormActions from './FormActions';
