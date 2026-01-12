@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  ACTIVITY_STATUS_FILTERS,
-  RIDER_KIND_FILTERS,
-} from '../../../lib/helpers/shared/filters/constants';
+import { ACTIVITY_STATUS_FILTERS, RIDER_KIND_FILTERS } from '../../../lib/domains/filters';
 import '../../../styles/index.css';
 import '../../../styles/components/list-view.css';
 

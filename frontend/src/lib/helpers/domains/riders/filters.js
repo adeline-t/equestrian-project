@@ -2,24 +2,8 @@
  * Rider-specific filter utilities
  */
 
-import { isActive } from '../../shared/filters/activityFilters.js';
-
-/**
- * Calculate statistics for riders list
- * @param {Array} riders - Array of rider objects
- * @returns {Object} Statistics object with counts
- */
-export function calculateRiderStatsWithPackages(riders) {
-  return {
-    total: riders.length,
-    active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
-    withActivePackages: riders.filter(
-      (r) =>
-        r.packages &&
-        r.packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date)).length > 0
-    ).length,
-  };
-}
+import { isActive } from '../../shared/filters/activityFilters';
+import { ACTIVITY_STATUS_FILTERS, COMMON_FILTERS } from '../../../domains/filters';
 
 /**
  * Get active items for a rider
@@ -39,3 +23,54 @@ export function getRiderActiveItems(rider) {
       : [],
   };
 }
+
+/**
+ * Filter riders by status
+ * @param {Array} riders - Array of rider objects
+ * @param {string} filter - Filter type ('all', 'active', 'inactive')
+ * @returns {Array} Filtered riders
+ */
+export function filterRidersByStatus(riders, filter) {
+  if (filter === 'all') return riders;
+  return riders.filter((rider) => {
+    const isActiveRider = isActive(rider.activity_start_date, rider.activity_end_date);
+    return filter === 'active' ? isActiveRider : !isActiveRider;
+  });
+}
+
+/**
+ * Filter riders based on criteria
+ * @param {Array} riders - array of riders
+ * @param {Object} filters - filter criteria
+ * @param {string} filters.activityStatus - activity status filter (ACTIVITY_STATUS_FILTERS)
+ * @param {string} filters.kind - rider kind filter (owner, club, boarder, or 'all')
+ * @returns {Array} filtered riders
+ */
+export const filterRiders = (riders, filters = {}) => {
+  if (!riders || !Array.isArray(riders)) {
+    return [];
+  }
+
+  let filtered = [...riders];
+
+  // Filter by activity status
+  if (filters.activityStatus) {
+    if (filters.activityStatus === ACTIVITY_STATUS_FILTERS.ACTIVE) {
+      filtered = filtered.filter((rider) =>
+        isActive(rider.activity_start_date, rider.activity_end_date)
+      );
+    } else if (filters.activityStatus === ACTIVITY_STATUS_FILTERS.INACTIVE) {
+      filtered = filtered.filter(
+        (rider) => !isActive(rider.activity_start_date, rider.activity_end_date)
+      );
+    }
+    // If ACTIVITY_STATUS_FILTERS.ALL, no filtering needed
+  }
+
+  // Filter by rider kind
+  if (filters.kind && filters.kind !== COMMON_FILTERS.ALL) {
+    filtered = filtered.filter((rider) => rider.kind === filters.kind);
+  }
+
+  return filtered;
+};

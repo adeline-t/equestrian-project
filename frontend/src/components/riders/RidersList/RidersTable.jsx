@@ -1,8 +1,5 @@
 import { Icons } from '../../../lib/icons';
-import {
-  getOwnerKindLabel,
-  getOwnerKindBadgeClass,
-} from '../../../lib/helpers/domains/riders/ownerKind';
+import { getRiderKindLabel, getRiderKindBadgeClass } from '../../../lib/domains/riders/kinds';
 
 const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }) => {
   if (!riders.length) {
@@ -42,8 +39,8 @@ const RidersTable = ({ riders, onViewDetails, onEdit, onDelete, getStatusBadge }
                 </td>
 
                 <td>
-                  <span className={`badge ${getOwnerKindBadgeClass(rider.owner_kind)}`}>
-                    {getOwnerKindLabel(rider.owner_kind)}
+                  <span className={`badge ${getRiderKindBadgeClass(rider.kind)}`}>
+                    {getRiderKindLabel(rider.kind)}
                   </span>
                 </td>
 

@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import { ridersApi } from '../services';
 import { isActive } from '../lib/helpers/shared/filters/activityFilters';
 import { ACTIVITY_STATUS_FILTERS, COMMON_FILTERS } from '../lib/domains/filters';
-import {
-  calculateRiderStats,
-  filterRiders,
-} from '../lib/helpers/domains/riders/riderStatsAndFilters';
+import { calculateRiderStats, filterRiders } from '../lib/helpers/domains/riders';
 
 /**
  * Custom hook for managing riders list data and operations

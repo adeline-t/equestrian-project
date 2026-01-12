@@ -4,7 +4,7 @@
 import api from './apiService';
 import { createCrudOperations } from './apiService';
 import { validateRiderForm } from '../lib/helpers/domains/riders/validators';
-import { RIDER_KIND_LABELS } from '../lib/helpers/domains/riders/kinds';
+import { RIDER_KIND_LABELS } from '../lib/domains/riders/kinds';
 
 // Extract allowed values from constants
 const RIDER_KINDS = Object.values(RIDER_KIND_LABELS).map((k) => k.value);

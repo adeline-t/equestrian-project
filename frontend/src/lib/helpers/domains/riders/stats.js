@@ -5,28 +5,35 @@
 import { isActive } from '../../shared/filters/activityFilters.js';
 
 /**
+ * Calculate riders statistics
+ * @param {Array} riders - array of riders
+ * @returns {Object} statistics (total, active, inactive)
+ */
+export const calculateRiderStats = (riders) => {
+  if (!riders || !Array.isArray(riders)) {
+    return { total: 0, active: 0, inactive: 0 };
+  }
+
+  const total = riders.length;
+  const active = riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length;
+  const inactive = total - active;
+
+  return { total, active, inactive };
+};
+
+/**
  * Calculate statistics for riders list
  * @param {Array} riders - Array of rider objects
- * @returns {Object} Statistics object
+ * @returns {Object} Statistics object with counts
  */
-export function calculateRiderStats(riders) {
+export function calculateRiderStatsWithPackages(riders) {
   return {
     total: riders.length,
     active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
-    inactive: riders.filter((r) => !isActive(r.activity_start_date, r.activity_end_date)).length,
+    withActivePackages: riders.filter(
+      (r) =>
+        r.packages &&
+        r.packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date)).length > 0
+    ).length,
   };
-}
-
-/**
- * Filter riders by status
- * @param {Array} riders - Array of rider objects
- * @param {string} filter - Filter type ('all', 'active', 'inactive')
- * @returns {Array} Filtered riders
- */
-export function filterRidersByStatus(riders, filter) {
-  if (filter === 'all') return riders;
-  return riders.filter((rider) => {
-    const isActiveRider = isActive(rider.activity_start_date, rider.activity_end_date);
-    return filter === 'active' ? isActiveRider : !isActiveRider;
-  });
 }

@@ -2,6 +2,8 @@
  * Filter options constants (Consolidated)
  */
 
+import { RIDER_KIND_LABELS } from './riders/kinds';
+
 /**
  * Calendar lesson type filter options
  */
@@ -91,3 +93,14 @@ export const COMMON_FILTERS = {
   ACTIVE: 'active',
   INACTIVE: 'inactive',
 };
+
+/**
+ * Rider kind filters
+ * Includes an "ALL" option plus all rider kind types
+ */
+export const RIDER_KIND_FILTERS = [
+  { value: 'all', label: 'Tous types' },
+  { value: RIDER_KIND_LABELS.OWNER.value, label: RIDER_KIND_LABELS.OWNER.label },
+  { value: RIDER_KIND_LABELS.CLUB.value, label: RIDER_KIND_LABELS.CLUB.label },
+  { value: RIDER_KIND_LABELS.BOARDER.value, label: RIDER_KIND_LABELS.BOARDER.label },
+];
