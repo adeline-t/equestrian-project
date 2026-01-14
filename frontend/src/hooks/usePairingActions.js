@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { pairingService } from '../services/index.js';
 
 /**
  * Custom hook for managing pairing CRUD operations
@@ -28,13 +29,11 @@ export function usePairingActions(onSuccess) {
 
   const handleSubmit = async (riderId, pairingData) => {
     try {
-      const pairingsApi = await import('../services').then((m) => m.pairingsApi);
-
       if (editingPairing) {
-        await pairingsApi.update(editingPairing.id, pairingData);
+        await pairingService.update(editingPairing.id, pairingData);
         onSuccess('Pension modifiée avec succès');
       } else {
-        await pairingsApi.create({ ...pairingData, rider_id: riderId });
+        await pairingService.create({ ...pairingData, rider_id: riderId });
         onSuccess('Pension créée avec succès');
       }
       setShowPairingModal(false);
@@ -47,9 +46,8 @@ export function usePairingActions(onSuccess) {
     if (!pairingToDelete) return;
 
     try {
-      const pairingsApi = await import('../services').then((m) => m.pairingsApi);
       const today = new Date().toISOString().split('T')[0];
-      await pairingsApi.update(pairingToDelete.id, {
+      await pairingService.update(pairingToDelete.id, {
         pairing_end_date: today,
       });
       onSuccess("Pension retirée de l'inventaire");
@@ -64,8 +62,7 @@ export function usePairingActions(onSuccess) {
     if (!pairingToDelete) return;
 
     try {
-      const pairingsApi = await import('../services').then((m) => m.pairingsApi);
-      await pairingsApi.delete(pairingToDelete.id);
+      await pairingService.delete(pairingToDelete.id);
       onSuccess('Pension supprimée définitivement');
       setShowDeleteModal(false);
       setPairingToDelete(null);

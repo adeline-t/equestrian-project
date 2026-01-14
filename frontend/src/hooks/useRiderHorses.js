@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ridersApi } from '../services';
+import { riderService } from '../services/index.js';
 
 /**
  * Custom hook for managing rider-horse pairings
@@ -24,19 +24,19 @@ export const useRiderHorses = (riderId) => {
       setLoading(true);
       setError(null);
       
-      const pairedHorsesRaw = await ridersApi.getHorses(riderId);
+      const pairedHorsesRaw = await riderService.getHorses(riderId);
 
       const pairedHorses = pairedHorsesRaw.map((pairing) => ({
         id: pairing.horses.id,
         name: pairing.horses.name,
         kind: pairing.horses.kind,
-        breed: pairing.horses.breed,
-        color: pairing.horses.color,
+        ownership_type: pairing.horses.ownership_type, // ✅ Corrigé
         pairing_id: pairing.id,
+        pairing_start_date: pairing.pairing_start_date,
+        pairing_end_date: pairing.pairing_end_date,
       }));
 
       setRiderPairedHorses(pairedHorses);
-
       console.log('🐴 Paired horses for rider:', pairedHorses);
     } catch (err) {
       console.error('Error loading rider horses:', err);

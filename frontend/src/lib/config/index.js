@@ -1,7 +1,6 @@
 /**
- * Configuration Constants - Main Export
+ * Config barrel
  */
-
-export * from './api';
-export * from './forms';
-export * from './ui';
+export * from './api.js';
+export * from './forms.js';
+export * from './ui.js';

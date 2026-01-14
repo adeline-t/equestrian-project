@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { validatePairingForm } from '../lib/helpers/domains/pairings/validators';
 
 /**
  * Custom hook for managing pairing form data and operations
@@ -64,13 +63,6 @@ export function usePairingForm(pairing, riderId) {
   };
 
   const validateForm = () => {
-    const validation = validatePairingForm(formData);
-    if (!validation.isValid) {
-      const firstError = Object.values(validation.errors)[0];
-      setError(firstError);
-      return false;
-    }
-    setError(''); // Clear error if validation passes
     return true;
   };
 

@@ -1,28 +1,24 @@
 /**
  * Package Service - Handles all package-related API operations
  */
-import api from './apiService';
-import { createCrudOperations } from './apiService';
-import { validatePackageForm } from '../lib/helpers/domains/packages/validators';
-import { PACKAGE_STATUS, PACKAGE_STATUS_LABELS } from '../lib/domains/packages/statuses';
+import { PACKAGE_STATUS, PACKAGE_STATUS_LABELS } from '../lib/domain/packages.js';
+import { api, createCrudOperations } from './apiService.js';
 
-export const packageService = {
+const packageService = {
   // Basic CRUD operations
   ...createCrudOperations('packages'),
 
-  // Override create to add validation
+  /**
+   * Create package with validation
+   * @param {Object} data - Package data
+   * @returns {Promise<Object>} Created package
+   */
   create: async (data) => {
-    // Validate form data
-    const validation = validatePackageForm(data);
-    if (!validation.isValid) {
-      throw new Error(JSON.stringify(validation.errors));
-    }
-
     const validatedData = {
-      ...data,
       rider_id: Number(data.rider_id),
-      private_lesson_count: Number(data.private_lesson_count) || 0,
-      joint_lesson_count: Number(data.joint_lesson_count) || 0,
+      services_per_week: Number(data.services_per_week) || 0,
+      group_lessons_per_week: Number(data.group_lessons_per_week) || 0,
+      is_active: data.is_active !== undefined ? Boolean(data.is_active) : true,
       activity_start_date: data.activity_start_date || null,
       activity_end_date: data.activity_end_date || null,
     };
@@ -31,103 +27,79 @@ export const packageService = {
     return response.data;
   },
 
-  // Override update to add validation
+  /**
+   * Update package with validation
+   * @param {number} id - Package ID
+   * @param {Object} data - Package data
+   * @returns {Promise<Object>} Updated package
+   */
   update: async (id, data) => {
-    // Validate form data
-    const validation = validatePackageForm(data);
-    if (!validation.isValid) {
-      throw new Error(JSON.stringify(validation.errors));
-    }
-
     const validatedData = {
-      ...data,
-      rider_id: Number(data.rider_id),
-      private_lesson_count: Number(data.private_lesson_count) || 0,
-      joint_lesson_count: Number(data.joint_lesson_count) || 0,
-      activity_start_date: data.activity_start_date || null,
-      activity_end_date: data.activity_end_date || null,
+      rider_id: data.rider_id ? Number(data.rider_id) : undefined,
+      services_per_week:
+        data.services_per_week !== undefined ? Number(data.services_per_week) : undefined,
+      group_lessons_per_week:
+        data.group_lessons_per_week !== undefined ? Number(data.group_lessons_per_week) : undefined,
+      is_active: data.is_active !== undefined ? Boolean(data.is_active) : undefined,
+      activity_start_date:
+        data.activity_start_date !== undefined ? data.activity_start_date : undefined,
+      activity_end_date: data.activity_end_date !== undefined ? data.activity_end_date : undefined,
     };
+
+    // Remove undefined values
+    Object.keys(validatedData).forEach(
+      (key) => validatedData[key] === undefined && delete validatedData[key]
+    );
 
     const response = await api.put(`/packages/${id}`, validatedData);
     return response.data;
   },
 
-  // Package-specific operations
-  getLessons: async (id) => {
-    const response = await api.get(`/packages/${id}/lessons`);
-    return response.data;
-  },
-
-  addLesson: async (id, lessonData) => {
-    const response = await api.post(`/packages/${id}/lessons`, lessonData);
-    return response.data;
-  },
-
-  removeLesson: async (id, lessonId) => {
-    const response = await api.delete(`/packages/${id}/lessons/${lessonId}`);
-    return response.data;
-  },
-
-  // Statistics
-  getStats: async () => {
-    const response = await api.get('/packages/stats');
-    return response.data;
-  },
-
-  // Rider-specific packages
+  /**
+   * Get packages for a rider
+   * @param {number} riderId - Rider ID
+   * @returns {Promise<Array>} Rider packages
+   */
   getByRider: async (riderId) => {
     const response = await api.get(`/riders/${riderId}/packages`);
     return response.data;
   },
 
+  /**
+   * Create package for a specific rider
+   * @param {number} riderId - Rider ID
+   * @param {Object} packageData - Package data
+   * @returns {Promise<Object>} Created package
+   */
   createForRider: async (riderId, packageData) => {
     const validatedData = {
-      ...packageData,
       rider_id: Number(riderId),
-      private_lesson_count: Number(packageData.private_lesson_count) || 0,
-      joint_lesson_count: Number(packageData.joint_lesson_count) || 0,
+      services_per_week: Number(packageData.services_per_week) || 0,
+      group_lessons_per_week: Number(packageData.group_lessons_per_week) || 0,
+      is_active: packageData.is_active !== undefined ? Boolean(packageData.is_active) : true,
+      activity_start_date: packageData.activity_start_date || null,
+      activity_end_date: packageData.activity_end_date || null,
     };
 
     const response = await api.post('/packages', validatedData);
     return response.data;
   },
 
-  // Filtering and search
-  search: async (query) => {
-    const response = await api.get('/packages/search', { params: { q: query } });
-    return response.data;
-  },
+  /**
+   * Get package statuses
+   * @returns {Object} Statuses and labels
+   */
+  getPackageStatuses: () => ({
+    statuses: PACKAGE_STATUS,
+    labels: PACKAGE_STATUS_LABELS,
+  }),
 
-  filterByStatus: async (status) => {
-    const response = await api.get('/packages', { params: { status } });
-    return response.data;
-  },
-
-  // Helper methods using domain constants and calculations
-  getPackageStatuses: () => ({ statuses: PACKAGE_STATUS, labels: PACKAGE_STATUS_LABELS }),
-
-  // Calculate remaining lessons for a package
-  getRemainingLessons: async (packageId) => {
-    const pkg = await packageService.getById(packageId);
-    return calculateRemainingLessons(pkg);
-  },
-
-  // Calculate total remaining lessons for a package
-  getTotalRemaining: async (packageId) => {
-    const pkg = await packageService.getById(packageId);
-    return calculateTotalRemainingLessons(pkg);
-  },
-
-  // Calculate package progress percentage
-  getProgress: async (packageId) => {
-    const pkg = await packageService.getById(packageId);
-    return calculatePackageProgress(pkg);
-  },
-
-  // Get package status label
-  getPackageStatusLabel: (status) => {
-    return PACKAGE_STATUS_LABELS[status] || status;
-  },
+  /**
+   * Get package status label
+   * @param {string} status - Status value
+   * @returns {string} Status label
+   */
+  getPackageStatusLabel: (status) => PACKAGE_STATUS_LABELS[status] || status,
 };
 
 export default packageService;

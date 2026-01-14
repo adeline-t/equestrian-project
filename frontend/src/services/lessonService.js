@@ -1,149 +1,149 @@
 /**
  * Lesson Service - Handles all lesson-related API operations
  */
-import api from './apiService';
-import { createCrudOperations } from './apiService';
-import { validateLessonForm } from '../lib/helpers/domains/lessons/validators';
-import { LESSON_TYPES } from '../lib/domains/lessons/types';
-import { LESSON_STATUSES } from '../lib/domains/lessons/statuses';
+import { LESSON_STATUSES, LESSON_TYPES } from '../lib/domain/lessons.js';
+import { api, createCrudOperations } from './apiService.js';
 
-export const lessonService = {
-  // Basic CRUD operations
+const lessonService = {
+  // Basic CRUD operations for /lessons
   ...createCrudOperations('lessons'),
 
-  // Override create to add validation
+  /**
+   * Create lesson with validation
+   * @param {Object} data - Lesson data
+   * @returns {Promise<Object>} Created lesson
+   */
   create: async (data) => {
-    // Validate form data
-    const validation = validateLessonForm(data);
-    if (!validation.isValid) {
-      throw new Error(JSON.stringify(validation.errors));
-    }
-
-    // Validate lesson type
-    const lessonType = LESSON_TYPES.find((t) => t.value === data.type);
+    const lessonType = LESSON_TYPES.find((t) => t.value === data.lesson_type);
     if (!lessonType) {
       throw new Error('Type de leçon invalide');
     }
 
-    // Ensure numeric fields
     const validatedData = {
-      ...data,
-      max_participants: Number(data.max_participants) || lessonType.defaultMax,
+      planning_slot_id: Number(data.planning_slot_id),
+      lesson_type: data.lesson_type,
+      status: data.status || 'scheduled',
+      instructor_id: Number(data.instructor_id),
+      actual_instructor_id: data.actual_instructor_id ? Number(data.actual_instructor_id) : null,
+      min_participants: data.min_participants ? Number(data.min_participants) : null,
+      max_participants: data.max_participants
+        ? Number(data.max_participants)
+        : lessonType.defaultMax,
+      cancellation_reason: data.cancellation_reason || null,
+      is_modified: data.is_modified || false,
+      modified_fields: data.modified_fields || null,
     };
 
     const response = await api.post('/lessons', validatedData);
     return response.data;
   },
 
-  // Override update to add validation
+  /**
+   * Update lesson with validation
+   * @param {number} id - Lesson ID
+   * @param {Object} data - Lesson data
+   * @returns {Promise<Object>} Updated lesson
+   */
   update: async (id, data) => {
-    // Validate form data
-    const validation = validateLessonForm(data);
-    if (!validation.isValid) {
-      throw new Error(JSON.stringify(validation.errors));
-    }
-
-    // Validate lesson type if provided
-    if (data.type) {
-      const lessonType = LESSON_TYPES.find((t) => t.value === data.type);
+    if (data.lesson_type) {
+      const lessonType = LESSON_TYPES.find((t) => t.value === data.lesson_type);
       if (!lessonType) {
         throw new Error('Type de leçon invalide');
       }
     }
 
-    // Ensure numeric fields
     const validatedData = {
-      ...data,
+      lesson_type: data.lesson_type,
+      status: data.status,
+      instructor_id: data.instructor_id ? Number(data.instructor_id) : undefined,
+      actual_instructor_id: data.actual_instructor_id
+        ? Number(data.actual_instructor_id)
+        : undefined,
+      min_participants: data.min_participants ? Number(data.min_participants) : undefined,
       max_participants: data.max_participants ? Number(data.max_participants) : undefined,
+      cancellation_reason: data.cancellation_reason,
+      is_modified: data.is_modified,
+      modified_fields: data.modified_fields,
     };
+
+    // Remove undefined values
+    Object.keys(validatedData).forEach(
+      (key) => validatedData[key] === undefined && delete validatedData[key]
+    );
 
     const response = await api.put(`/lessons/${id}`, validatedData);
     return response.data;
   },
 
-  // Lesson-specific operations
+  /**
+   * Get participants for a lesson
+   * @param {number} id - Lesson ID
+   * @returns {Promise<Array>} Lesson participants
+   */
   getParticipants: async (id) => {
     const response = await api.get(`/lessons/${id}/participants`);
     return response.data;
   },
 
+  /**
+   * Add participant to a lesson
+   * @param {number} lessonId - Lesson ID
+   * @param {Object} participantData - Participant data
+   * @returns {Promise<Object>} Added participant
+   */
   addParticipant: async (lessonId, participantData) => {
-    const response = await api.post(`/lessons/${lessonId}/participants`, participantData);
+    const validatedData = {
+      rider_id: Number(participantData.rider_id),
+      horse_id: participantData.horse_id ? Number(participantData.horse_id) : null,
+      horse_assignment_type: participantData.horse_assignment_type || 'primary',
+    };
+
+    const response = await api.post(`/lessons/${lessonId}/participants`, validatedData);
     return response.data;
   },
 
+  /**
+   * Remove participant from a lesson
+   * @param {number} lessonId - Lesson ID
+   * @param {number} participantId - Participant ID
+   * @returns {Promise<Object>} Deletion result
+   */
   removeParticipant: async (lessonId, participantId) => {
     const response = await api.delete(`/lessons/${lessonId}/participants/${participantId}`);
     return response.data;
   },
 
-  // Calendar operations
+  /**
+   * Get lessons by date range
+   * @param {string} startDate - Start date (ISO format)
+   * @param {string} endDate - End date (ISO format)
+   * @returns {Promise<Array>} Lessons in date range
+   */
   getByDateRange: async (startDate, endDate) => {
-    const response = await api.get('/lessons/calendar', {
+    const response = await api.get('/calendar/lessons', {
       params: { start_date: startDate, end_date: endDate },
     });
     return response.data;
   },
 
-  getByWeek: async (year, week) => {
-    const response = await api.get('/lessons/week', {
-      params: { year, week },
-    });
-    return response.data;
-  },
-
-  // Statistics
-  getStats: async (params = {}) => {
-    const response = await api.get('/lessons/stats', { params });
-    return response.data;
-  },
-
-  // Blocking operations
-  blockTimeSlot: async (data) => {
-    const response = await api.post('/lessons/block', data);
-    return response.data;
-  },
-
-  unblockTimeSlot: async (id) => {
-    const response = await api.delete(`/lessons/block/${id}`);
-    return response.data;
-  },
-
-  // Bulk operations
-  bulkCreate: async (lessons) => {
-    const response = await api.post('/lessons/bulk', { lessons });
-    return response.data;
-  },
-
-  bulkUpdate: async (lessons) => {
-    const response = await api.put('/lessons/bulk', { lessons });
-    return response.data;
-  },
-
-  // Filtering and search
-  search: async (query) => {
-    const response = await api.get('/lessons/search', { params: { q: query } });
-    return response.data;
-  },
-
-  filterByType: async (type) => {
-    const response = await api.get('/lessons', { params: { type } });
-    return response.data;
-  },
-
-  filterByStatus: async (status) => {
-    const response = await api.get('/lessons', { params: { status } });
-    return response.data;
-  },
-
-  // Helper methods using domain constants
+  /**
+   * Get lesson types
+   * @returns {Array} Lesson types
+   */
   getLessonTypes: () => LESSON_TYPES,
+
+  /**
+   * Get lesson statuses
+   * @returns {Object} Lesson statuses
+   */
   getLessonStatuses: () => LESSON_STATUSES,
 
-  // Get lesson type config by value
-  getLessonTypeConfig: (typeValue) => {
-    return LESSON_TYPES.find((t) => t.value === typeValue);
-  },
+  /**
+   * Get lesson type configuration
+   * @param {string} typeValue - Lesson type value
+   * @returns {Object|undefined} Lesson type config
+   */
+  getLessonTypeConfig: (typeValue) => LESSON_TYPES.find((t) => t.value === typeValue),
 };
 
 export default lessonService;

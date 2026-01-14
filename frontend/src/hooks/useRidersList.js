@@ -1,40 +1,28 @@
-import { useState, useEffect } from 'react';
-import { ridersApi } from '../services';
-import { isActive } from '../lib/helpers/shared/filters/activityFilters';
-import { ACTIVITY_STATUS_FILTERS, COMMON_FILTERS } from '../lib/domains/filters';
-import { calculateRiderStats, filterRiders } from '../lib/helpers/domains/riders';
+import { useEffect, useState } from 'react';
+import {
+  ACTIVITY_STATUS_FILTERS,
+  calculateRiderStats,
+  COMMON_FILTERS,
+  filterRiders,
+  isActive,
+} from '../lib/helpers/index.js';
+import { riderService } from '../services/index.js';
 
 /**
  * Custom hook for managing riders list data and operations
  */
 export function useRidersList() {
-  /* ------------------------------------------------------------------ */
-  /* State                                                              */
-  /* ------------------------------------------------------------------ */
-
   const [riders, setRiders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // UI state
   const [showModal, setShowModal] = useState(false);
   const [editingRider, setEditingRider] = useState(null);
   const [selectedRiderId, setSelectedRiderId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [riderToDelete, setRiderToDelete] = useState(null);
-
-  // Messages
   const [successMessage, setSuccessMessage] = useState('');
-
-  // Filters
-  const [activityFilter, setActivityFilter] = useState(
-    ACTIVITY_STATUS_FILTERS.ACTIVE // default: actifs uniquement
-  );
-  const [kindFilter, setKindFilter] = useState(COMMON_FILTERS.ALL);
-
-  /* ------------------------------------------------------------------ */
-  /* Data loading                                                       */
-  /* ------------------------------------------------------------------ */
+  const [activityFilter, setActivityFilter] = useState(ACTIVITY_STATUS_FILTERS.ACTIVE);
+  const [riderTypeFilter, setRiderTypeFilter] = useState(COMMON_FILTERS.ALL); // ✅ Renommé de kindFilter
 
   useEffect(() => {
     loadRiders();
@@ -44,7 +32,7 @@ export function useRidersList() {
     try {
       setLoading(true);
       setError(null);
-      const data = await ridersApi.getAll();
+      const data = await riderService.getAll();
       setRiders(data || []);
     } catch (err) {
       setError(err.message || 'Erreur lors du chargement des cavaliers');
@@ -52,10 +40,6 @@ export function useRidersList() {
       setLoading(false);
     }
   };
-
-  /* ------------------------------------------------------------------ */
-  /* CRUD actions                                                       */
-  /* ------------------------------------------------------------------ */
 
   const handleCreate = () => {
     setEditingRider(null);
@@ -79,10 +63,10 @@ export function useRidersList() {
   const handleFormSubmit = async (riderData) => {
     try {
       if (editingRider) {
-        await ridersApi.update(editingRider.id, riderData);
+        await riderService.update(editingRider.id, riderData);
         setSuccessMessage('Cavalier modifié avec succès');
       } else {
-        await ridersApi.create(riderData);
+        await riderService.create(riderData);
         setSuccessMessage('Cavalier créé avec succès');
       }
 
@@ -95,20 +79,14 @@ export function useRidersList() {
     }
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Delete logic                                                       */
-  /* ------------------------------------------------------------------ */
-
   const handleRemoveFromInventory = async () => {
     if (!riderToDelete) return;
 
     try {
       const today = new Date().toISOString().split('T')[0];
-
-      await ridersApi.update(riderToDelete.id, {
+      await riderService.update(riderToDelete.id, {
         activity_end_date: today,
       });
-
       setSuccessMessage("Cavalier retiré de l'inventaire");
       setTimeout(() => setSuccessMessage(''), 3000);
       closeDeleteModal();
@@ -123,7 +101,7 @@ export function useRidersList() {
     if (!riderToDelete) return;
 
     try {
-      await ridersApi.delete(riderToDelete.id);
+      await riderService.delete(riderToDelete.id);
       setSuccessMessage('Cavalier supprimé définitivement');
       setTimeout(() => setSuccessMessage(''), 3000);
       closeDeleteModal();
@@ -134,28 +112,16 @@ export function useRidersList() {
     }
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Derived data (domain logic delegated)                               */
-  /* ------------------------------------------------------------------ */
-
   const stats = calculateRiderStats(riders);
 
   const filteredRiders = filterRiders(riders, {
     activityStatus: activityFilter,
-    kind: kindFilter,
+    riderType: riderTypeFilter, // ✅ Utilise riderType au lieu de kind
   });
-
-  /* ------------------------------------------------------------------ */
-  /* Utilities                                                          */
-  /* ------------------------------------------------------------------ */
 
   const getRiderStatus = (rider) => isActive(rider.activity_start_date, rider.activity_end_date);
 
   const getStatusBadge = (rider) => (getRiderStatus(rider) ? 'Actif' : 'Inactif');
-
-  /* ------------------------------------------------------------------ */
-  /* Modal handlers                                                     */
-  /* ------------------------------------------------------------------ */
 
   const closeRiderModal = () => {
     setShowModal(false);
@@ -171,24 +137,13 @@ export function useRidersList() {
     setSelectedRiderId(null);
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Message helpers                                                    */
-  /* ------------------------------------------------------------------ */
-
   const clearSuccessMessage = () => setSuccessMessage('');
   const clearError = () => setError(null);
 
-  /* ------------------------------------------------------------------ */
-  /* Public API                                                         */
-  /* ------------------------------------------------------------------ */
-
   return {
-    // Data
     riders,
     filteredRiders,
     stats,
-
-    // UI state
     loading,
     error,
     showModal,
@@ -197,16 +152,12 @@ export function useRidersList() {
     showDeleteModal,
     riderToDelete,
     successMessage,
-
-    // Filters
     activityFilter,
-    kindFilter,
+    riderTypeFilter, // ✅ Renommé
     ACTIVITY_STATUS_FILTERS,
     COMMON_FILTERS,
     setActivityFilter,
-    setKindFilter,
-
-    // Actions
+    setRiderTypeFilter, // ✅ Renommé
     handleCreate,
     handleEdit,
     handleViewDetails,
@@ -214,19 +165,11 @@ export function useRidersList() {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
-
-    // Modal handlers
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
-
-    // Utilities
     getStatusBadge,
     getRiderStatus,
-    kindFilter,
-    setKindFilter,
-
-    // Message helpers
     clearSuccessMessage,
     clearError,
   };

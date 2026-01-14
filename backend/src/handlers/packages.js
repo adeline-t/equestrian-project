@@ -7,6 +7,9 @@ import {
   getSecurityHeaders,
 } from '../db.js';
 
+/**
+ * /api/packages
+ */
 export async function handlePackages(request, env) {
   const db = getDatabase(env);
   const url = new URL(request.url);
@@ -15,7 +18,7 @@ export async function handlePackages(request, env) {
 
   // Rate limiting
   if (!checkRateLimit(clientIP, 60, 60000)) {
-    return jsonResponse({ error: 'Trop de requêtes' }, 429);
+    return jsonResponse({ error: 'Trop de requêtes' }, 429, getSecurityHeaders());
   }
 
   if (request.method === 'OPTIONS') {
@@ -23,15 +26,18 @@ export async function handlePackages(request, env) {
   }
 
   try {
-    // GET /api/packages - List all packages with rider information
+    // -----------------------------
+    // GET /api/packages - List all packages with rider info
+    // -----------------------------
     if (request.method === 'GET' && pathParts.length === 2) {
       const { data, error } = await db
         .from('packages')
         .select(
           `
           id,
-          private_lesson_count,
-          joint_lesson_count,
+          services_per_week,
+          group_lessons_per_week,
+          is_active,
           activity_start_date,
           activity_end_date,
           rider_id,
@@ -41,31 +47,35 @@ export async function handlePackages(request, env) {
             id,
             name,
             email,
-            phone
+            phone,
+            deleted_at
           )
         `
         )
         .order('id', { ascending: true });
 
       if (error) return handleDbError(error);
-      return jsonResponse(data, 200, getSecurityHeaders());
+
+      const activeData = data.filter((pkg) => !pkg.riders?.deleted_at);
+
+      return jsonResponse(activeData, 200, getSecurityHeaders());
     }
 
-    // GET /api/packages/:id - Get single package with rider information
+    // -----------------------------
+    // GET /api/packages/:id - Single package
+    // -----------------------------
     if (request.method === 'GET' && pathParts.length === 3) {
       const id = parseInt(pathParts[2]);
-
-      if (isNaN(id)) {
-        return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-      }
+      if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
       const { data, error } = await db
         .from('packages')
         .select(
           `
           id,
-          private_lesson_count,
-          joint_lesson_count,
+          services_per_week,
+          group_lessons_per_week,
+          is_active,
           activity_start_date,
           activity_end_date,
           rider_id,
@@ -75,7 +85,8 @@ export async function handlePackages(request, env) {
             id,
             name,
             email,
-            phone
+            phone,
+            deleted_at
           )
         `
         )
@@ -83,51 +94,64 @@ export async function handlePackages(request, env) {
         .single();
 
       if (error) return handleDbError(error);
+      if (!data || data.riders?.deleted_at)
+        return jsonResponse({ error: 'Package non trouvé' }, 404, getSecurityHeaders());
+
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
+    // -----------------------------
     // POST /api/packages - Create package
+    // -----------------------------
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
-
-      if (!body) {
+      if (!body)
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
-      }
 
-      // Validate required fields (including rider_id)
-      const requiredFields = ['private_lesson_count', 'joint_lesson_count', 'rider_id'];
+      const requiredFields = ['services_per_week', 'group_lessons_per_week', 'rider_id'];
       const missingFields = validateRequired(requiredFields, body);
-      if (missingFields) {
+      if (missingFields)
         return jsonResponse(
           { error: `Champs requis: ${missingFields}` },
           400,
           getSecurityHeaders()
         );
-      }
 
-      // Validate rider_id
       const riderId = parseInt(body.rider_id);
-      if (isNaN(riderId)) {
+      if (isNaN(riderId))
         return jsonResponse({ error: 'rider_id invalide' }, 400, getSecurityHeaders());
-      }
 
-      // Check if rider exists
-      const { data: riderExists, error: riderError } = await db
+      // Check if rider exists and is not deleted
+      const { data: rider, error: riderError } = await db
         .from('riders')
         .select('id')
         .eq('id', riderId)
+        .is('deleted_at', null)
         .single();
 
-      if (riderError || !riderExists) {
+      if (riderError || !rider)
         return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
+
+      // Validate dates
+      if (
+        body.activity_start_date &&
+        body.activity_end_date &&
+        new Date(body.activity_start_date) > new Date(body.activity_end_date)
+      ) {
+        return jsonResponse(
+          { error: 'La date de début doit précéder la date de fin' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       const packageData = {
-        private_lesson_count: body.private_lesson_count ? parseInt(body.private_lesson_count) : 0,
-        joint_lesson_count: body.joint_lesson_count ? parseInt(body.joint_lesson_count) : 0,
+        services_per_week: parseInt(body.services_per_week),
+        group_lessons_per_week: parseInt(body.group_lessons_per_week),
+        rider_id: riderId,
+        is_active: body.is_active !== undefined ? Boolean(body.is_active) : true,
         activity_start_date: body.activity_start_date || null,
         activity_end_date: body.activity_end_date || null,
-        rider_id: riderId,
       };
 
       const { data, error } = await db
@@ -136,8 +160,9 @@ export async function handlePackages(request, env) {
         .select(
           `
           id,
-          private_lesson_count,
-          joint_lesson_count,
+          services_per_week,
+          group_lessons_per_week,
+          is_active,
           activity_start_date,
           activity_end_date,
           rider_id,
@@ -157,65 +182,74 @@ export async function handlePackages(request, env) {
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
+    // -----------------------------
     // PUT /api/packages/:id - Update package
+    // -----------------------------
     if (request.method === 'PUT' && pathParts.length === 3) {
       const id = parseInt(pathParts[2]);
       const body = await request.json().catch(() => null);
-
-      if (isNaN(id) || !body) {
+      if (isNaN(id) || !body)
         return jsonResponse(
           { error: 'ID ou corps de requête invalide' },
           400,
           getSecurityHeaders()
         );
-      }
 
-      // Get current package
       const { data: currentPackage, error: fetchError } = await db
         .from('packages')
         .select('*')
         .eq('id', id)
         .single();
-
       if (fetchError) return handleDbError(fetchError);
 
-      // If rider_id is being updated, validate it
+      // Validate rider if updating
+      let riderId = currentPackage.rider_id;
       if (body.rider_id !== undefined) {
-        const riderId = parseInt(body.rider_id);
-        if (isNaN(riderId)) {
+        riderId = parseInt(body.rider_id);
+        if (isNaN(riderId))
           return jsonResponse({ error: 'rider_id invalide' }, 400, getSecurityHeaders());
-        }
-
-        // Check if rider exists
-        const { data: riderExists, error: riderError } = await db
+        const { data: rider, error: riderError } = await db
           .from('riders')
           .select('id')
           .eq('id', riderId)
+          .is('deleted_at', null)
           .single();
-
-        if (riderError || !riderExists) {
+        if (riderError || !rider)
           return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
-        }
+      }
+
+      // Validate dates
+      const startDate =
+        body.activity_start_date !== undefined
+          ? body.activity_start_date
+          : currentPackage.activity_start_date;
+      const endDate =
+        body.activity_end_date !== undefined
+          ? body.activity_end_date
+          : currentPackage.activity_end_date;
+
+      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+        return jsonResponse(
+          { error: 'La date de début doit précéder la date de fin' },
+          400,
+          getSecurityHeaders()
+        );
       }
 
       const updateData = {
-        private_lesson_count:
-          body.private_lesson_count !== undefined
-            ? parseInt(body.private_lesson_count)
-            : currentPackage.private_lesson_count,
-        joint_lesson_count:
-          body.joint_lesson_count !== undefined
-            ? parseInt(body.joint_lesson_count)
-            : currentPackage.joint_lesson_count,
-        activity_start_date:
-          body.activity_start_date !== undefined
-            ? body.activity_start_date
-            : currentPackage.activity_start_date,
-        activity_end_date:
-          body.activity_end_date !== undefined
-            ? body.activity_end_date
-            : currentPackage.activity_end_date,
-        rider_id: body.rider_id !== undefined ? parseInt(body.rider_id) : currentPackage.rider_id,
+        services_per_week:
+          body.services_per_week !== undefined
+            ? parseInt(body.services_per_week)
+            : currentPackage.services_per_week,
+        group_lessons_per_week:
+          body.group_lessons_per_week !== undefined
+            ? parseInt(body.group_lessons_per_week)
+            : currentPackage.group_lessons_per_week,
+        is_active:
+          body.is_active !== undefined ? Boolean(body.is_active) : currentPackage.is_active,
+        activity_start_date: startDate,
+        activity_end_date: endDate,
+        rider_id,
         updated_at: new Date().toISOString(),
       };
 
@@ -226,8 +260,9 @@ export async function handlePackages(request, env) {
         .select(
           `
           id,
-          private_lesson_count,
-          joint_lesson_count,
+          services_per_week,
+          group_lessons_per_week,
+          is_active,
           activity_start_date,
           activity_end_date,
           rider_id,
@@ -247,17 +282,16 @@ export async function handlePackages(request, env) {
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // DELETE /api/packages/:id - Delete package
+    // -----------------------------
+    // DELETE /api/packages/:id
+    // -----------------------------
     if (request.method === 'DELETE' && pathParts.length === 3) {
       const id = parseInt(pathParts[2]);
-
-      if (isNaN(id)) {
-        return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-      }
+      if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
       const { error } = await db.from('packages').delete().eq('id', id);
-
       if (error) return handleDbError(error);
+
       return jsonResponse({ message: 'Package supprimé avec succès' }, 200, getSecurityHeaders());
     }
 
@@ -265,18 +299,16 @@ export async function handlePackages(request, env) {
   } catch (error) {
     console.error('Error in handlePackages:', error);
     return jsonResponse(
-      {
-        error: 'Erreur serveur interne',
-        message: error.message,
-        details: error.stack,
-      },
+      { error: 'Erreur serveur interne', message: error.message },
       500,
       getSecurityHeaders()
     );
   }
 }
 
-// New function: Get all packages for a specific rider
+/**
+ * GET /api/riders/:id/packages - Get all packages for a rider
+ */
 export async function handleRiderPackages(request, env, riderId) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
@@ -287,28 +319,26 @@ export async function handleRiderPackages(request, env, riderId) {
 
   try {
     const riderIdNum = parseInt(riderId);
-    if (isNaN(riderIdNum)) {
-      return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-    }
+    if (isNaN(riderIdNum)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
-    // Check if rider exists
-    const { data: riderExists, error: riderError } = await db
+    // Check rider exists and is not deleted
+    const { data: rider, error: riderError } = await db
       .from('riders')
       .select('id')
       .eq('id', riderIdNum)
+      .is('deleted_at', null)
       .single();
-
-    if (riderError || !riderExists) {
+    if (riderError || !rider)
       return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
-    }
 
     const { data, error } = await db
       .from('packages')
       .select(
         `
         id,
-        private_lesson_count,
-        joint_lesson_count,
+        services_per_week,
+        group_lessons_per_week,
+        is_active,
         activity_start_date,
         activity_end_date,
         rider_id,
@@ -324,10 +354,7 @@ export async function handleRiderPackages(request, env, riderId) {
   } catch (error) {
     console.error('Unexpected error in handleRiderPackages:', error);
     return jsonResponse(
-      {
-        error: 'Erreur serveur interne',
-        message: error.message,
-      },
+      { error: 'Erreur serveur interne', message: error.message },
       500,
       getSecurityHeaders()
     );

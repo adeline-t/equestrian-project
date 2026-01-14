@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/horses.js';
+import { validateHorseForm } from '../lib/helpers/index.js';
 import { riderService } from '../services';
-import { validateHorseForm } from '../lib/helpers/domains/horses/validators';
-import { OWNER_TYPES } from '../lib/domains/horses/owners';
-import { HORSE_KIND_LABELS } from '../lib/domains/horses/kinds';
 
 /**
  * Custom hook for managing horse form data and operations
@@ -12,10 +11,10 @@ import { HORSE_KIND_LABELS } from '../lib/domains/horses/kinds';
 export function useHorseForm(horse) {
   const [formData, setFormData] = useState({
     name: '',
-    kind: HORSE_KIND_LABELS.HORSE.value,
+    kind: HORSE_TYPES.HORSE,
     activity_start_date: '',
     activity_end_date: '',
-    is_owned_by: OWNER_TYPES.OWNER.value,
+    ownership_type: OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -43,18 +42,18 @@ export function useHorseForm(horse) {
     if (horse) {
       setFormData({
         name: horse.name || '',
-        kind: horse.kind || HORSE_KIND_LABELS.HORSE.value,
+        kind: horse.kind || HORSE_TYPES.HORSE,
         activity_start_date: horse.activity_start_date || '',
         activity_end_date: horse.activity_end_date || '',
-        is_owned_by: horse.is_owned_by || OWNER_TYPES.OWNER.value,
+        ownership_type: horse.ownership_type || OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
       });
     } else {
       setFormData({
         name: '',
-        kind: HORSE_KIND_LABELS.HORSE.value,
+        kind: HORSE_TYPES.HORSE,
         activity_start_date: '',
         activity_end_date: '',
-        is_owned_by: OWNER_TYPES.OWNER.value,
+        ownership_type: OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
       });
     }
   }, [horse]);
@@ -71,24 +70,23 @@ export function useHorseForm(horse) {
   };
 
   const validateForm = () => {
-    // Use centralized validation
     const validation = validateHorseForm(formData);
     if (!validation.isValid) {
       const firstError = Object.values(validation.errors)[0];
       setError(firstError);
       return false;
     }
-    setError(''); // Clear error if validation passes
+    setError('');
     return true;
   };
 
   const resetForm = () => {
     setFormData({
       name: '',
-      kind: HORSE_KIND_LABELS.HORSE.value,
+      kind: HORSE_TYPES.HORSE,
       activity_start_date: '',
       activity_end_date: '',
-      is_owned_by: OWNER_TYPES.OWNER.value,
+      ownership_type: OWNER_TYPES.PRIVATE_OWNER,
     });
     setError('');
   };
@@ -100,7 +98,7 @@ export function useHorseForm(horse) {
     submitting,
     riders,
     loadingRiders,
-    kindOptions: Object.values(HORSE_KIND_LABELS),
+    kindOptions: Object.values(HORSE_TYPES),
     ownershipOptions: Object.values(OWNER_TYPES),
 
     // Actions

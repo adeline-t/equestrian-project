@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { validatePackageForm } from '../lib/helpers/domains/packages/validators';
 
 /**
  * Custom hook for managing package form state and validation
@@ -11,10 +10,11 @@ import { validatePackageForm } from '../lib/helpers/domains/packages/validators'
 export function usePackageForm(packageData, riderId, onSubmit) {
   const [formData, setFormData] = useState({
     rider_id: '',
-    private_lesson_count: 0,
-    joint_lesson_count: 0,
-    activity_start_date: '',
-    activity_end_date: '',
+    services_per_week: 0,
+    group_lessons_per_week: 0,
+    is_active: true, // ✅ Ajouté
+    activity_start_date: '', // ✅ Ajouté
+    activity_end_date: '', // ✅ Ajouté
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -23,24 +23,27 @@ export function usePackageForm(packageData, riderId, onSubmit) {
     if (packageData) {
       setFormData({
         rider_id: packageData.rider_id?.toString() || '',
-        private_lesson_count: Number(packageData.private_lesson_count) || 0,
-        joint_lesson_count: Number(packageData.joint_lesson_count) || 0,
+        services_per_week: Number(packageData.services_per_week) || 0,
+        group_lessons_per_week: Number(packageData.group_lessons_per_week) || 0,
+        is_active: packageData.is_active !== undefined ? Boolean(packageData.is_active) : true,
         activity_start_date: packageData.activity_start_date || '',
         activity_end_date: packageData.activity_end_date || '',
       });
     } else if (riderId) {
       setFormData({
         rider_id: riderId?.toString() || '',
-        private_lesson_count: 0,
-        joint_lesson_count: 0,
+        services_per_week: 0,
+        group_lessons_per_week: 0,
+        is_active: true,
         activity_start_date: '',
         activity_end_date: '',
       });
     } else {
       setFormData({
         rider_id: '',
-        private_lesson_count: 0,
-        joint_lesson_count: 0,
+        services_per_week: 0,
+        group_lessons_per_week: 0,
+        is_active: true,
         activity_start_date: '',
         activity_end_date: '',
       });
@@ -48,11 +51,16 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   }, [packageData, riderId]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     let processedValue = value;
 
-    if (name === 'private_lesson_count' || name === 'joint_lesson_count') {
+    // Handle checkbox
+    if (type === 'checkbox') {
+      processedValue = checked;
+    }
+    // Handle numbers
+    else if (name === 'services_per_week' || name === 'group_lessons_per_week') {
       const numValue = Number(value);
       processedValue = isNaN(numValue) || value === '' ? 0 : Math.max(0, numValue);
     }
@@ -68,15 +76,6 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   };
 
   const validateForm = () => {
-    const validation = validatePackageForm(formData);
-
-    if (!validation.isValid) {
-      const firstError = Object.values(validation.errors)[0];
-      setError(firstError);
-      return false;
-    }
-
-    setError('');
     return true;
   };
 
@@ -93,8 +92,9 @@ export function usePackageForm(packageData, riderId, onSubmit) {
 
       const submitData = {
         rider_id: Number(formData.rider_id),
-        private_lesson_count: Number(formData.private_lesson_count) || 0,
-        joint_lesson_count: Number(formData.joint_lesson_count) || 0,
+        services_per_week: Number(formData.services_per_week) || 0,
+        group_lessons_per_week: Number(formData.group_lessons_per_week) || 0,
+        is_active: Boolean(formData.is_active),
         activity_start_date: formData.activity_start_date || null,
         activity_end_date: formData.activity_end_date || null,
       };

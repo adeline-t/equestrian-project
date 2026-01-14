@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { packagesApi } from '../services';
+import { packageService } from '../services/index.js';
 
 /**
  * Custom hook for managing package CRUD operations
@@ -30,10 +30,10 @@ export function usePackageActions(onSuccess) {
   const handleSubmit = async (riderId, packageData) => {
     try {
       if (editingPackage) {
-        await packagesApi.update(editingPackage.id, packageData);
+        await packageService.update(editingPackage.id, packageData);
         onSuccess('Forfait modifié avec succès');
       } else {
-        await packagesApi.createForRider(riderId, packageData);
+        await packageService.createForRider(riderId, packageData);
         onSuccess('Forfait créé avec succès');
       }
       setShowPackageModal(false);
@@ -47,7 +47,7 @@ export function usePackageActions(onSuccess) {
 
     try {
       const today = new Date().toISOString().split('T')[0];
-      await packagesApi.update(packageToDelete.id, {
+      await packageService.update(packageToDelete.id, {
         activity_end_date: today,
       });
       onSuccess("Forfait retiré de l'inventaire");
@@ -62,7 +62,7 @@ export function usePackageActions(onSuccess) {
     if (!packageToDelete) return;
 
     try {
-      await packagesApi.delete(packageToDelete.id);
+      await packageService.delete(packageToDelete.id);
       onSuccess('Forfait supprimé définitivement');
       setShowDeleteModal(false);
       setPackageToDelete(null);

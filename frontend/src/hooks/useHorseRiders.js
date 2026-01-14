@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { horsesApi } from '../services';
+import { horseService } from '../services/index.js';
 
 /**
  * Custom hook for managing horse riders modal
@@ -12,7 +12,6 @@ export function useHorseRiders() {
   const [error, setError] = useState(null);
 
   const handleRidersClick = async (horse) => {
-    // Early return if no riders
     if (!horse || horse.active_riders_count === 0) {
       return;
     }
@@ -22,9 +21,8 @@ export function useHorseRiders() {
       setShowRidersModal(true);
       setError(null);
 
-      const data = await horsesApi.getRiders(horse.id);
+      const data = await horseService.getRiders(horse.id);
 
-      // Handle empty riders array
       if (!data || data.length === 0) {
         setSelectedHorseRiders({
           horseName: horse.name,
@@ -60,13 +58,10 @@ export function useHorseRiders() {
   };
 
   return {
-    // State
     showRidersModal,
     selectedHorseRiders,
     loadingRiders,
     error,
-
-    // Actions
     handleRidersClick,
     closeRidersModal,
   };

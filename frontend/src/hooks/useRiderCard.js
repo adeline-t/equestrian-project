@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ridersApi, packagesApi, pairingsApi, horsesApi } from '../services';
+import { riderService, packageService, pairingService, horseService } from '../services/index.js';
 
 /**
  * Custom hook for managing rider card data and operations
@@ -10,7 +10,6 @@ export function useRiderCard(riderId) {
   const [rider, setRider] = useState(null);
   const [packages, setPackages] = useState([]);
   const [pairings, setPairings] = useState([]);
-  const [ownedHorses, setOwnedHorses] = useState([]);
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,15 +26,12 @@ export function useRiderCard(riderId) {
       setLoading(true);
       setError(null);
 
-      // Fetch rider details
-      const riderResponse = await ridersApi.getById(riderId);
+      const riderResponse = await riderService.getById(riderId);
       setRider(riderResponse);
 
-      // Fetch all data in parallel
       await Promise.all([
         fetchPackages(),
         fetchPairings(),
-        fetchOwnedHorses(),
         fetchAllRiders(),
         fetchAllHorses(),
       ]);
@@ -49,8 +45,7 @@ export function useRiderCard(riderId) {
 
   const fetchPackages = async () => {
     try {
-      // The API returns data directly, not wrapped in a response object
-      const data = await ridersApi.getPackages(riderId);
+      const data = await riderService.getPackages(riderId);
       console.log('Packages fetched:', data);
       setPackages(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -61,8 +56,7 @@ export function useRiderCard(riderId) {
 
   const fetchPairings = async () => {
     try {
-      // The API returns data directly, not wrapped in a response object
-      const data = await ridersApi.getHorses(riderId);
+      const data = await riderService.getHorses(riderId);
       console.log('Pairings fetched:', data);
       setPairings(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -71,20 +65,9 @@ export function useRiderCard(riderId) {
     }
   };
 
-  const fetchOwnedHorses = async () => {
-    try {
-      const data = await horsesApi.getByOwner(riderId);
-      console.log('Owned horses fetched:', data);
-      setOwnedHorses(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error fetching owned horses:', error);
-      setOwnedHorses([]);
-    }
-  };
-
   const fetchAllRiders = async () => {
     try {
-      const response = await ridersApi.getAll();
+      const response = await riderService.getAll();
       setRiders(response || []);
     } catch (error) {
       console.error('Error fetching all riders:', error);
@@ -94,7 +77,7 @@ export function useRiderCard(riderId) {
 
   const fetchAllHorses = async () => {
     try {
-      const response = await horsesApi.getAll();
+      const response = await horseService.getAll();
       setHorses(response || []);
     } catch (error) {
       console.error('Error fetching all horses:', error);
@@ -107,17 +90,13 @@ export function useRiderCard(riderId) {
   };
 
   return {
-    // State
     rider,
     packages,
     pairings,
-    ownedHorses,
     riders,
     horses,
     loading,
     error,
-
-    // Actions
     reload,
   };
 }

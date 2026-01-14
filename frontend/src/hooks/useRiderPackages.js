@@ -1,11 +1,7 @@
-import { useState, useEffect } from 'react';
-import { ridersApi, packagesApi } from '../services';
-import { isActive, filterActivePackages } from '../lib/helpers/shared/filters';
-import {
-  PACKAGE_STATUS,
-  PACKAGE_STATUS_LABELS,
-  getPackageStatusLabel,
-} from '../lib/domains/packages/statuses';
+import { useEffect, useState } from 'react';
+import { PACKAGE_STATUS, PACKAGE_STATUS_LABELS } from '../lib/domain/packages.js';
+import { filterActivePackages, getPackageStatusLabel, isActive } from '../lib/helpers/index.js';
+import { packageService, riderService } from '../services/index.js';
 
 /**
  * Custom hook for managing rider packages data and operations
@@ -27,7 +23,7 @@ export function useRiderPackages(riderId) {
     try {
       setLoading(true);
       setError(null);
-      const data = await ridersApi.getPackages(riderId);
+      const data = await riderService.getPackages(riderId);
       setPackages(data || []);
     } catch (err) {
       setError(err.message);
@@ -38,7 +34,7 @@ export function useRiderPackages(riderId) {
 
   const loadRiders = async () => {
     try {
-      const data = await ridersApi.getAll();
+      const data = await riderService.getAll();
       setRiders(data || []);
     } catch (err) {
       console.error('Error loading riders:', err);
@@ -65,7 +61,7 @@ export function useRiderPackages(riderId) {
 
     try {
       const today = new Date().toISOString().split('T')[0];
-      await packagesApi.update(packageToDelete.id, {
+      await packageService.update(packageToDelete.id, {
         activity_end_date: today,
       });
       setSuccessMessage("Forfait retiré de l'inventaire");
@@ -84,7 +80,7 @@ export function useRiderPackages(riderId) {
     if (!packageToDelete) return;
 
     try {
-      await packagesApi.delete(packageToDelete.id);
+      await packageService.delete(packageToDelete.id);
       setSuccessMessage('Forfait supprimé définitivement');
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
@@ -100,10 +96,10 @@ export function useRiderPackages(riderId) {
   const handleFormSubmit = async (packageData) => {
     try {
       if (editingPackage) {
-        await packagesApi.update(editingPackage.id, packageData);
+        await packageService.update(editingPackage.id, packageData);
         setSuccessMessage('Forfait modifié avec succès');
       } else {
-        await packagesApi.createForRider(riderId, packageData);
+        await packageService.createForRider(riderId, packageData);
         setSuccessMessage('Forfait créé avec succès');
       }
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -115,36 +111,21 @@ export function useRiderPackages(riderId) {
     }
   };
 
-  /**
-   * Determine package status based on dates
-   * @param {Object} pkg - Package object
-   * @returns {string} Package status (active, expired, or suspended)
-   */
   const getPackageStatus = (pkg) => {
-    if (!pkg) return PACKAGE_STATUS.SUSPENDED;
-
-    // Check if package is within active date range
+    if (!pkg) return PACKAGE_STATUS.INACTIVE;
     if (!isActive(pkg.activity_start_date, pkg.activity_end_date)) {
       return PACKAGE_STATUS.EXPIRED;
     }
-
     return PACKAGE_STATUS.ACTIVE;
   };
 
-  /**
-   * Get status badge label for display
-   * @param {Object} pkg - Package object
-   * @returns {string} Human-readable status label
-   */
   const getStatusBadge = (pkg) => {
     const status = getPackageStatus(pkg);
     return getPackageStatusLabel(status);
   };
 
-  // Filter active packages using helper function
   const activePackages = filterActivePackages(packages);
 
-  // Modal handlers
   const closePackageModal = () => {
     setShowModal(false);
     setEditingPackage(null);
@@ -171,7 +152,6 @@ export function useRiderPackages(riderId) {
   }, [riderId]);
 
   return {
-    // State
     packages,
     riders,
     loading,
@@ -182,12 +162,8 @@ export function useRiderPackages(riderId) {
     showDeleteModal,
     packageToDelete,
     activePackages,
-
-    // Status constants
     PACKAGE_STATUS,
     PACKAGE_STATUS_LABELS,
-
-    // Actions
     loadPackages,
     handleCreate,
     handleEdit,
@@ -195,18 +171,12 @@ export function useRiderPackages(riderId) {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
-
-    // Modal handlers
     closePackageModal,
     closeDeleteModal,
-
-    // Utility functions
     isActive,
     getPackageStatus,
     getStatusBadge,
     getPackageStatusLabel,
-
-    // State setters
     clearSuccessMessage,
     clearError,
   };

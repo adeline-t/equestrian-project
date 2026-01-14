@@ -1,5 +1,5 @@
 /* ============================================
-   RIDERS COMPONENT STYLES
+   RIDERS COMPONENT STYLES - VERSION UNIFIÉE
    ============================================ */
 
 @import '../common/index.css';
@@ -195,10 +195,10 @@
 }
 
 /* ============================================
-   KIND FILTER TABS
+   FILTER PILLS (Rider Type Filters) - VERSION UNIFIÉE
    ============================================ */
 
-.kind-filter-pills {
+.filter-pills {
   display: inline-flex;
   background: var(--color-gray-100);
   border-radius: var(--radius-xl);
@@ -207,7 +207,7 @@
   margin-top: var(--spacing-md);
 }
 
-.kind-pill {
+.pill {
   display: inline-flex;
   align-items: center;
   padding: 10px 20px;
@@ -222,24 +222,21 @@
   white-space: nowrap;
 }
 
-.kind-pill.kind-pill-active {
+.pill:not(.pill-active):hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.pill.pill-active {
   background: var(--color-white);
   color: var(--color-gray-900);
   box-shadow: var(--shadow-sm);
   font-weight: var(--font-weight-semibold);
-}
-
-.kind-pill:not(.kind-pill-active):hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-/* Color indicator bar */
-.kind-pill.kind-pill-active {
   position: relative;
   padding-left: 24px;
 }
 
-.kind-pill.kind-pill-active::before {
+/* Color indicator bar for active pills */
+.pill.pill-active::before {
   content: '';
   position: absolute;
   left: 8px;
@@ -250,43 +247,21 @@
   border-radius: 2px;
 }
 
-/* Dynamic colors based on data-kind and data-gradient */
-.kind-pill[data-kind='owner'].kind-pill-active::before {
+/* Dynamic colors based on data-rider-type attribute */
+.pill[data-rider-type='owner'].pill-active::before {
   background: var(--gradient-warning);
 }
 
-.kind-pill[data-kind='club'].kind-pill-active::before {
+.pill[data-rider-type='club'].pill-active::before {
   background: var(--gradient-info);
 }
 
-.kind-pill[data-kind='boarder'].kind-pill-active::before {
+.pill[data-rider-type='boarder'].pill-active::before {
   background: var(--gradient-success);
 }
 
-.kind-pill[data-kind='all'].kind-pill-active::before {
+.pill[data-rider-type='all'].pill-active::before {
   background: var(--gradient-secondary);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .kind-filter-pills {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .kind-pill {
-    padding: 8px 16px;
-    font-size: var(--font-size-xs);
-  }
-
-  .kind-pill.kind-pill-active {
-    padding-left: 20px;
-  }
-
-  .kind-pill.kind-pill-active::before {
-    width: 3px;
-    height: 16px;
-  }
 }
 
 /* ============================================
@@ -742,6 +717,26 @@
 
   .actions-menu-mobile .menu-delete:hover {
     background: var(--color-danger-badge-light);
+  }
+
+  /* Filter Pills Responsive */
+  .filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 8px 16px;
+    font-size: var(--font-size-xs);
+  }
+
+  .pill.pill-active {
+    padding-left: 20px;
+  }
+
+  .pill.pill-active::before {
+    width: 3px;
+    height: 16px;
   }
 }
 

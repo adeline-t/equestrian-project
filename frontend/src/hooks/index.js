@@ -1,12 +1,26 @@
 /**
- * Centralized export for all custom hooks
+ * Centralized export for all custom hooks (barrel file)
  */
 
-export { useLessonData } from './useLessonData.js';
-export { useLessonEdit } from './useLessonEdit.js';
-export { useRiderHorses } from './useRiderHorses.js';
-export { useParticipants } from './useParticipants.js';
-export { useRiders } from './useRiders.js';
-export { useHorses } from './useHorses.js';
-export { useFormState } from './useFormState.js';
-export { useCalendarView } from './useCalendarView.js';
+// Horses
+export * from './useHorseActions.js';
+export * from './useHorseForm.js';
+export * from './useHorseRiders.js';
+export * from './useHorsesList.js';
+
+// Packages
+export * from './usePackageActions.js';
+export * from './usePackageForm.js';
+export * from './usePackagesList.js';
+
+// Pairings
+export * from './usePairingActions.js';
+export * from './usePairingForm.js';
+export * from './usePairingsList.js';
+
+// Riders
+export * from './useRiderCard.js';
+export * from './useRiderForm.js';
+
+// Other hooks
+export * from './useRiderHorses.js';

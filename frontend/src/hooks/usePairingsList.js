@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { pairingsApi, ridersApi, horsesApi } from '../services';
+import { pairingService, riderService, horseService } from '../services/index.js';
 
 /**
  * Custom hook for managing pairings list data
@@ -17,9 +17,9 @@ export function usePairingsList() {
       setLoading(true);
       setError(null);
       const [pairingsData, ridersData, horsesData] = await Promise.all([
-        pairingsApi.getAll(),
-        ridersApi.getAll(),
-        horsesApi.getAll(),
+        pairingService.getAll(),
+        riderService.getAll(),
+        horseService.getAll(),
       ]);
       setPairings(pairingsData || []);
       setRiders(ridersData || []);

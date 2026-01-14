@@ -160,35 +160,35 @@
 }
 
 /* ============================================
-   RIDER KIND BADGES - Dynamic with data-kind
+   RIDER TYPE BADGES - Dynamic with data-rider-type
    ============================================ */
 
-.badge-kind {
+.badge-rider-type {
   font-weight: var(--font-weight-semibold);
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Owner - Orange gradient */
-.badge-kind[data-kind='owner'] {
+.badge-rider-type[data-rider-type='owner'] {
   background: var(--gradient-warning);
   color: var(--color-white);
 }
 
 /* Club - Blue gradient */
-.badge-kind[data-kind='club'] {
+.badge-rider-type[data-rider-type='club'] {
   background: var(--gradient-info);
   color: var(--color-white);
 }
 
 /* Boarder - Green gradient */
-.badge-kind[data-kind='boarder'] {
+.badge-rider-type[data-rider-type='boarder'] {
   background: var(--gradient-success);
   color: var(--color-white);
 }
 
 /* Hover effects */
-.badge-kind:hover {
+.badge-rider-type:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: all var(--transition-base);

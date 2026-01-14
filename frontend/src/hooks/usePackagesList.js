@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { packagesApi, ridersApi } from '../services';
+import { useEffect, useState } from 'react';
 import {
   PACKAGE_STATUS,
   getPackageStatusLabel,
   isPackageActive,
   isPackageExpired,
-} from '../lib/domains/packages/statuses';
-import { isActive } from '../lib/helpers/shared/filters';
+} from '../lib/domain/packages.js';
+import { isActive } from '../lib/helpers/index.js';
+import { packageService, riderService } from '../services/index.js';
 
 /**
  * Custom hook for managing packages list data and operations
@@ -29,8 +29,8 @@ export function usePackagesList() {
       setLoading(true);
       setError(null);
       const [packagesData, ridersData] = await Promise.all([
-        packagesApi.getAll(),
-        ridersApi.getAll(),
+        packageService.getAll(),
+        riderService.getAll(),
       ]);
       setPackages(packagesData || []);
       setRiders(ridersData || []);
@@ -61,18 +61,16 @@ export function usePackagesList() {
   const handleFormSubmit = async (packageData) => {
     try {
       if (editingPackage) {
-        await packagesApi.update(editingPackage.id, packageData);
+        await packageService.update(editingPackage.id, packageData);
         setSuccessMessage('Forfait modifié avec succès');
       } else {
-        await packagesApi.create(packageData);
+        await packageService.create(packageData);
         setSuccessMessage('Forfait créé avec succès');
       }
 
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
       setEditingPackage(null);
-
-      // Reload data after successful submission
       await loadData();
     } catch (err) {
       setError(err.message || 'Une erreur est survenue');
@@ -85,7 +83,7 @@ export function usePackagesList() {
 
     try {
       const today = new Date().toISOString().split('T')[0];
-      await packagesApi.update(packageToDelete.id, {
+      await packageService.update(packageToDelete.id, {
         activity_end_date: today,
       });
       setSuccessMessage("Forfait retiré de l'inventaire");
@@ -104,7 +102,7 @@ export function usePackagesList() {
     if (!packageToDelete) return;
 
     try {
-      await packagesApi.delete(packageToDelete.id);
+      await packageService.delete(packageToDelete.id);
       setSuccessMessage('Forfait supprimé définitivement');
       setTimeout(() => setSuccessMessage(''), 3000);
       setShowDeleteModal(false);
@@ -118,27 +116,14 @@ export function usePackagesList() {
     }
   };
 
-  /**
-   * Determine package status based on dates
-   * @param {Object} pkg - Package object
-   * @returns {string} Package status (active, expired, or suspended)
-   */
   const getPackageStatus = (pkg) => {
     if (!pkg) return PACKAGE_STATUS.SUSPENDED;
-
-    // Check if package is within active date range
     if (!isActive(pkg.activity_start_date, pkg.activity_end_date)) {
       return PACKAGE_STATUS.EXPIRED;
     }
-
     return PACKAGE_STATUS.ACTIVE;
   };
 
-  /**
-   * Get status badge label for display
-   * @param {Object} pkg - Package object
-   * @returns {string} Human-readable status label
-   */
   const getStatusBadge = (pkg) => {
     const status = getPackageStatus(pkg);
     return getPackageStatusLabel(status);
@@ -190,7 +175,6 @@ export function usePackagesList() {
   }, []);
 
   return {
-    // State
     packages,
     riders,
     loading,
@@ -203,11 +187,7 @@ export function usePackagesList() {
     packageToDelete,
     filteredPackages,
     stats,
-
-    // Status constants
     PACKAGE_STATUS,
-
-    // Actions
     loadData,
     handleCreate,
     handleEdit,
@@ -216,19 +196,13 @@ export function usePackagesList() {
     handlePermanentDelete,
     handleFormSubmit,
     setFilter,
-
-    // Modal handlers
     closePackageModal,
     closeDeleteModal,
-
-    // Utility functions
     getPackageStatus,
     getStatusBadge,
     getRiderName,
     isPackageActive,
     isPackageExpired,
-
-    // State setters
     clearSuccessMessage,
     clearError,
   };

@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
-import { validateRiderForm } from '../lib/helpers/domains/riders/validators';
+import { useEffect, useState } from 'react';
+import { RIDER_TYPES } from '../lib/domain/riders.js';
+import { validateRiderForm } from '../lib/helpers/index.js';
 
 /**
  * Custom hook for managing rider form data and operations
+ * @param {Object} rider - The rider object for editing
+ * @param {Function} onSubmit - Submit handler
+ * @param {Function} onCancel - Cancel handler
+ * @returns {Object} Form data, handlers, and state
  */
 export function useRiderForm(rider, onSubmit, onCancel) {
   const [formData, setFormData] = useState({
@@ -11,7 +16,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     email: '',
     activity_start_date: '',
     activity_end_date: '',
-    kind: 'boarder',
+    rider_type: RIDER_TYPES.BOARDER, // ✅ Renommé de 'kind' vers 'rider_type'
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -24,7 +29,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
         email: rider.email || '',
         activity_start_date: rider.activity_start_date || '',
         activity_end_date: rider.activity_end_date || '',
-        kind: rider.kind || 'boarder',
+        rider_type: rider.rider_type || RIDER_TYPES.BOARDER, // ✅ Renommé
       });
     } else {
       resetForm();
@@ -53,6 +58,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     e.preventDefault();
     setErrors({});
     if (!validateForm()) return;
+
     try {
       setSubmitting(true);
       if (onSubmit) await onSubmit(formData);
@@ -75,7 +81,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
       email: '',
       activity_start_date: '',
       activity_end_date: '',
-      kind: 'boarder',
+      rider_type: RIDER_TYPES.BOARDER,
     });
     setErrors({});
   };
@@ -84,6 +90,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     formData,
     errors,
     submitting,
+    riderTypeOptions: Object.values(RIDER_TYPES), // ✅ Ajouté
     handleChange,
     handleSubmit,
     handleCancel,

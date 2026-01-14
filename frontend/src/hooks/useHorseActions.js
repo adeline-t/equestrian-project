@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { horsesApi } from '../services';
+import { horseService } from '../services/index.js';
 
 /**
  * Custom hook for managing horse CRUD operations
@@ -30,10 +30,10 @@ export function useHorseActions(onSuccess) {
   const handleSubmit = async (horseData) => {
     try {
       if (editingHorse) {
-        await horsesApi.update(editingHorse.id, horseData);
+        await horseService.update(editingHorse.id, horseData);
         onSuccess('Cheval modifié avec succès');
       } else {
-        await horsesApi.create(horseData);
+        await horseService.create(horseData);
         onSuccess('Cheval créé avec succès');
       }
       closeModal();
@@ -47,7 +47,7 @@ export function useHorseActions(onSuccess) {
 
     try {
       const today = new Date().toISOString().split('T')[0];
-      await horsesApi.update(horseToDelete.id, {
+      await horseService.update(horseToDelete.id, {
         activity_end_date: today,
       });
       onSuccess(`${horseToDelete.name} a été retiré de l'inventaire`);
@@ -61,7 +61,7 @@ export function useHorseActions(onSuccess) {
     if (!horseToDelete) return;
 
     try {
-      await horsesApi.delete(horseToDelete.id);
+      await horseService.delete(horseToDelete.id);
       onSuccess(`${horseToDelete.name} a été supprimé définitivement`);
       closeDeleteModal();
     } catch (err) {
@@ -71,7 +71,7 @@ export function useHorseActions(onSuccess) {
 
   const closeModal = () => {
     setShowModal(false);
-    setEditingHorse(null); // Clear editing state when closing
+    setEditingHorse(null);
   };
 
   const closeDeleteModal = () => {
@@ -80,21 +80,16 @@ export function useHorseActions(onSuccess) {
   };
 
   return {
-    // State
     showModal,
     editingHorse,
     showDeleteModal,
     horseToDelete,
-
-    // Actions
     handleCreate,
     handleEdit,
     handleDeleteClick,
     handleSubmit,
     handleRemoveFromInventory,
     handlePermanentDelete,
-
-    // Modal handlers
     closeModal,
     closeDeleteModal,
   };

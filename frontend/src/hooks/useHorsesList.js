@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { horsesApi } from '../services';
+import { horseService } from '../services/index.js';
 
 /**
  * Custom hook for managing horses list data
@@ -14,7 +14,7 @@ export function useHorsesList() {
     try {
       setLoading(true);
       setError(null);
-      const data = await horsesApi.getAll();
+      const data = await horseService.getAll();
       setHorses(data || []);
     } catch (err) {
       console.error('Error fetching horses:', err);
@@ -28,21 +28,15 @@ export function useHorsesList() {
     fetchHorses();
   }, []);
 
-  // Reload function to refresh the list
   const reload = async () => {
     await fetchHorses();
   };
 
   return {
-    // State
     horses,
     loading,
     error,
-
-    // Actions
     reload,
-
-    // State setters
     setError,
     setHorses,
   };
