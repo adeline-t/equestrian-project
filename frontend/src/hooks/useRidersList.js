@@ -22,7 +22,7 @@ export function useRidersList() {
   const [riderToDelete, setRiderToDelete] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [activityFilter, setActivityFilter] = useState(ACTIVITY_STATUS_FILTERS.ACTIVE);
-  const [riderTypeFilter, setRiderTypeFilter] = useState(COMMON_FILTERS.ALL); // ✅ Renommé de kindFilter
+  const [riderTypeFilter, setRiderTypeFilter] = useState(COMMON_FILTERS.ALL);
 
   useEffect(() => {
     loadRiders();
@@ -116,7 +116,7 @@ export function useRidersList() {
 
   const filteredRiders = filterRiders(riders, {
     activityStatus: activityFilter,
-    riderType: riderTypeFilter, // ✅ Utilise riderType au lieu de kind
+    riderType: riderTypeFilter,
   });
 
   const getRiderStatus = (rider) => isActive(rider.activity_start_date, rider.activity_end_date);

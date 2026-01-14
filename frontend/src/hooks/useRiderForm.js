@@ -16,7 +16,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     email: '',
     activity_start_date: '',
     activity_end_date: '',
-    rider_type: RIDER_TYPES.BOARDER, // ✅ Renommé de 'kind' vers 'rider_type'
+    rider_type: RIDER_TYPES.BOARDER,
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
