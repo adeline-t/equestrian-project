@@ -53,17 +53,17 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     <form onSubmit={handleFormSubmit} className="horse-form">
       {/* Error Alert */}
       {error && (
-        <div className="alert alert-error mb-20">
+        <div className="alert alert-error mb-5">
           <Icons.Warning style={{ marginRight: '8px' }} />
           <strong>Erreur:</strong> {error}
         </div>
       )}
 
       {/* Basic Information */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      <div className="form-section mb-5">
+        <h3 className="mb-5">Informations générales</h3>
 
-        <div className="form-group mb-15">
+        <div className="form-group mb-5">
           <label htmlFor="name">
             Nom du cheval <span className="required">*</span>
           </label>
@@ -78,48 +78,67 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           />
         </div>
 
-        <div className="form-group mb-15">
-          <label htmlFor="kind">
+        <div className="form-group mb-5">
+          <label>
             Type <span className="required">*</span>
           </label>
-          <select
-            id="kind"
-            value={formData.kind}
-            onChange={(e) => handleChange('kind', e.target.value)}
-            className="form-input"
-            required
-          >
-            <option value={HORSE_TYPES.HORSE}>Cheval</option>
-            <option value={HORSE_TYPES.PONY}>Poney</option>
-          </select>
+
+          <div className="segmented-control">
+            {kindOptions.map((type) => {
+              const label = type === HORSE_TYPES.HORSE ? 'Cheval' : 'Poney';
+
+              const isActive = formData.kind === type;
+
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  className={`segment-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => handleChange('kind', type)}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="form-group mb-15">
-          <label htmlFor="ownership_type">
+        <div className="form-group mb-5">
+          <label>
             Propriétaire <span className="required">*</span>
           </label>
-          <select
-            id="ownership_type"
-            value={formData.ownership_type}
-            onChange={(e) => handleChange('ownership_type', e.target.value)}
-            className="form-input"
-            required
-          >
-            {ownershipOptions.map((type) => (
-              <option key={type} value={type}>
-                {type === OWNER_TYPES.LAURY && 'Laury'}
-                {type === OWNER_TYPES.PRIVATE_OWNER && 'Propriétaire privé'}
-                {type === OWNER_TYPES.CLUB && 'Club'}
-                {type === OWNER_TYPES.OTHER && 'Autre'}
-              </option>
-            ))}
-          </select>
+
+          <div className="segmented-control">
+            {ownershipOptions.map((type) => {
+              const label =
+                type === OWNER_TYPES.LAURY
+                  ? 'Laury'
+                  : type === OWNER_TYPES.PRIVATE_OWNER
+                  ? 'Propriétaire privé'
+                  : type === OWNER_TYPES.CLUB
+                  ? 'Club'
+                  : 'Autre';
+
+              const isActive = formData.ownership_type === type;
+
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  className={`segment-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => handleChange('ownership_type', type)}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Activity Period */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Période d'activité</h3>
+      <div className="form-section mb-5">
+        <h3 className="mb-5">Période d'activité</h3>
 
         <div className="form-row">
           <div className="form-group">

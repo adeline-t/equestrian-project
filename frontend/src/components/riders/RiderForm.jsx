@@ -54,25 +54,38 @@ function RiderForm({ rider, onSubmit, onCancel }) {
         </div>
 
         <div className="form-group mb-15">
-          <label htmlFor="rider_type">
+          <label>
             Type de cavalier <span className="required">*</span>
           </label>
-          <select
-            id="rider_type"
-            name="rider_type"
-            value={formData.rider_type}
-            onChange={handleChange}
-            className={`form-input ${errors.rider_type ? 'error' : ''}`}
-            required
-          >
-            {riderTypeOptions.map((type) => (
-              <option key={type} value={type}>
-                {type === RIDER_TYPES.OWNER && 'Propriétaire'}
-                {type === RIDER_TYPES.CLUB && 'Club'}
-                {type === RIDER_TYPES.BOARDER && 'Pensionnaire'}
-              </option>
-            ))}
-          </select>
+
+          <div className="segmented-control">
+            {riderTypeOptions.map((type) => {
+              const label =
+                type === RIDER_TYPES.OWNER
+                  ? 'Propriétaire'
+                  : type === RIDER_TYPES.CLUB
+                  ? 'Club'
+                  : 'Pensionnaire';
+
+              const isActive = formData.rider_type === type;
+
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  className={`segment-btn ${isActive ? 'active' : ''}`}
+                  onClick={() =>
+                    handleChange({
+                      target: { name: 'rider_type', value: type },
+                    })
+                  }
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+
           {errors.rider_type && (
             <span className="error-message">
               <Icons.Warning style={{ marginRight: '4px' }} />
