@@ -128,3 +128,152 @@
     font-size: 1.25rem;
   }
 }
+
+/* ============================================
+FILTER SECTION - Modern Pills
+ ============================================ */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.pill:hover:not(.pill-active) {
+  border-color: var(--color-primary-light);
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-1px);
+}
+
+.pill.pill-active {
+  background: var(--gradient-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Pills with data attributes for rider types */
+.pill[data-rider-type='owner'].pill-active {
+  background: var(--gradient-success);
+  border-color: var(--color-success);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.pill[data-rider-type='club'].pill-active {
+  background: var(--gradient-info);
+  border-color: var(--color-info);
+  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+.pill[data-rider-type='boarder'].pill-active {
+  background: var(--gradient-warning);
+  border-color: var(--color-warning);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.pill[data-rider-type='all'].pill-active {
+  background: var(--gradient-secondary);
+  border-color: var(--color-secondary);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Pills with data attributes for ownership types */
+.pill[data-ownership-type='all'].pill-active {
+  background: var(--gradient-secondary);
+  border-color: var(--color-secondary);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+.pill[data-ownership-type='laury'].pill-active {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-color: #f5576c;
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+.pill[data-ownership-type='private_owner'].pill-active {
+  background: var(--gradient-success);
+  border-color: var(--color-success);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.pill[data-ownership-type='club'].pill-active {
+  background: var(--gradient-info);
+  border-color: var(--color-info);
+  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+.pill[data-ownership-type='other'].pill-active {
+  background: var(--gradient-warning);
+  border-color: var(--color-warning);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+/* ============================================
+   RESPONSIVE FILTERS
+   ============================================ */
+
+@media (max-width: 768px) {
+  .filter-buttons {
+    justify-content: center;
+  }
+
+  .filter-pills {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .pill {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-section {
+    gap: 12px;
+  }
+
+  .filter-buttons {
+    gap: 8px;
+  }
+
+  .filter-pills {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .pill {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}

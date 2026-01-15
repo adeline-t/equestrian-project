@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useHorseActions, useHorseRiders, useHorsesList } from '../../hooks';
+import { useHorseActions, useHorseRiders } from '../../hooks';
+import { useHorsesList } from '../../hooks/useHorsesList.js';
 import { Icons } from '../../lib/icons.jsx';
 import { getHorseKindLabel } from '../../lib/domain/horses.js';
 import { isActive } from '../../lib/helpers/index.js';
@@ -10,14 +11,30 @@ import RidersModal from './RidersModal.jsx';
 
 /**
  * HorsesList - Main horses list component
- * Uses ownership_type (not is_owned_by)
+ * Modern design with improved filters like RidersList
  */
 function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [filter, setFilter] = useState('all');
 
-  const { horses, loading, error, reload } = useHorsesList();
+  const {
+    horses,
+    filteredHorses,
+    stats,
+    loading,
+    error,
+    activityFilter,
+    kindFilter,
+    ownershipFilter,
+    ACTIVITY_STATUS_FILTERS,
+    HORSE_KIND_FILTERS,
+    OWNERSHIP_TYPE_FILTERS,
+    setActivityFilter,
+    setKindFilter,
+    setOwnershipFilter,
+    reload,
+    clearError,
+  } = useHorsesList();
 
   const handleSuccess = (message) => {
     setSuccessMessage(message);
@@ -53,25 +70,11 @@ function HorsesList() {
     }
   };
 
-  // Calculate stats
-  const stats = {
-    total: horses.length,
-    horse: horses.filter((h) => h.kind === 'horse').length,
-    pony: horses.filter((h) => h.kind === 'pony').length,
+  const clearSuccessMessage = () => setSuccessMessage('');
+  const clearErrorMessage = () => {
+    setErrorMessage('');
+    clearError();
   };
-
-  // Filter horses
-  const filteredHorses = filter === 'all' ? horses : horses.filter((h) => h.kind === filter);
-
-  const displayError = errorMessage || error;
-
-  if (loading) {
-    return (
-      <div className="loading">
-        <Icons.Loading className="spin" /> Chargement des chevaux...
-      </div>
-    );
-  }
 
   const getOwnershipLabel = (ownership) => {
     const labels = {
@@ -82,6 +85,16 @@ function HorsesList() {
     };
     return labels[ownership] || ownership;
   };
+
+  const displayError = errorMessage || error;
+
+  if (loading) {
+    return (
+      <div className="loading">
+        <Icons.Loading className="spin" /> Chargement des chevaux...
+      </div>
+    );
+  }
 
   return (
     <div className="card-enhanced">
@@ -96,25 +109,107 @@ function HorsesList() {
 
       {/* Filters */}
       {horses.length > 0 && (
-        <div className="filter-buttons mb-20">
-          <button
-            className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('all')}
-          >
-            Tous ({stats.total})
-          </button>
-          <button
-            className={`btn ${filter === 'horse' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('horse')}
-          >
-            Chevaux ({stats.horse})
-          </button>
-          <button
-            className={`btn ${filter === 'pony' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('pony')}
-          >
-            Poneys ({stats.pony})
-          </button>
+        <div className="filter-section mb-20">
+          {/* Activity Filter */}
+          <div className="filter-buttons mb-15">
+            <button
+              className={`btn ${
+                activityFilter === ACTIVITY_STATUS_FILTERS.ACTIVE ? 'btn-primary' : 'btn-secondary'
+              }`}
+              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.ACTIVE)}
+            >
+              Actifs ({stats.active})
+            </button>
+            <button
+              className={`btn ${
+                activityFilter === ACTIVITY_STATUS_FILTERS.INACTIVE
+                  ? 'btn-primary'
+                  : 'btn-secondary'
+              }`}
+              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.INACTIVE)}
+            >
+              Inactifs ({stats.inactive})
+            </button>
+            <button
+              className={`btn ${
+                activityFilter === ACTIVITY_STATUS_FILTERS.ALL ? 'btn-primary' : 'btn-secondary'
+              }`}
+              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.ALL)}
+            >
+              Tous ({stats.total})
+            </button>
+          </div>
+
+          {/* Horse Kind Filter */}
+          <div className="filter-pills mb-10">
+            <button
+              className={`pill ${kindFilter === HORSE_KIND_FILTERS.ALL ? 'pill-active' : ''}`}
+              onClick={() => setKindFilter(HORSE_KIND_FILTERS.ALL)}
+            >
+              Tous
+            </button>
+            <button
+              className={`pill ${kindFilter === HORSE_KIND_FILTERS.HORSE ? 'pill-active' : ''}`}
+              onClick={() => setKindFilter(HORSE_KIND_FILTERS.HORSE)}
+            >
+              Chevaux ({stats.horse})
+            </button>
+            <button
+              className={`pill ${kindFilter === HORSE_KIND_FILTERS.PONY ? 'pill-active' : ''}`}
+              onClick={() => setKindFilter(HORSE_KIND_FILTERS.PONY)}
+            >
+              Poneys ({stats.pony})
+            </button>
+          </div>
+
+          {/* Ownership Type Filter */}
+          <div className="filter-pills">
+            <button
+              className={`pill ${
+                ownershipFilter === OWNERSHIP_TYPE_FILTERS.ALL ? 'pill-active' : ''
+              }`}
+              onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.ALL)}
+              data-ownership-type="all"
+            >
+              Tous propriétaires
+            </button>
+            <button
+              className={`pill ${
+                ownershipFilter === OWNERSHIP_TYPE_FILTERS.LAURY ? 'pill-active' : ''
+              }`}
+              onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.LAURY)}
+              data-ownership-type="laury"
+            >
+              Laury ({stats.laury})
+            </button>
+            <button
+              className={`pill ${
+                ownershipFilter === OWNERSHIP_TYPE_FILTERS.PRIVATE_OWNER ? 'pill-active' : ''
+              }`}
+              onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.PRIVATE_OWNER)}
+              data-ownership-type="private_owner"
+            >
+              Propriétaires ({stats.private_owner})
+            </button>
+            <button
+              className={`pill ${
+                ownershipFilter === OWNERSHIP_TYPE_FILTERS.CLUB ? 'pill-active' : ''
+              }`}
+              onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.CLUB)}
+              data-ownership-type="club"
+            >
+              Club ({stats.club})
+            </button>
+            <button
+              className={`pill ${
+                ownershipFilter === OWNERSHIP_TYPE_FILTERS.OTHER ? 'pill-active' : ''
+              }`}
+              onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.OTHER)}
+              data-ownership-type="other"
+            >
+              Autre ({stats.other})
+            </button>
+          </div>
         </div>
       )}
 
@@ -123,7 +218,7 @@ function HorsesList() {
         <div className="alert alert-error mb-20">
           <Icons.Warning style={{ marginRight: '8px' }} />
           {displayError}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={() => setErrorMessage('')}>
+          <button className="btn btn-sm btn-secondary ml-10" onClick={clearErrorMessage}>
             Effacer
           </button>
         </div>
@@ -133,6 +228,9 @@ function HorsesList() {
         <div className="alert alert-success mb-20">
           <Icons.Check style={{ marginRight: '8px' }} />
           {successMessage}
+          <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
+            OK
+          </button>
         </div>
       )}
 
@@ -160,8 +258,6 @@ function HorsesList() {
                 <th>Type</th>
                 <th>Propriétaire</th>
                 <th>Cavaliers Actifs</th>
-                <th>Début</th>
-                <th>Fin</th>
                 <th>Statut</th>
                 <th>Actions</th>
               </tr>
@@ -199,8 +295,6 @@ function HorsesList() {
                       {horse.active_riders_count || 0}
                     </span>
                   </td>
-                  <td>{horse.activity_start_date || '-'}</td>
-                  <td>{horse.activity_end_date || '-'}</td>
                   <td>
                     <span
                       className={`badge ${
