@@ -85,9 +85,7 @@ export async function handleRiders(request, env) {
           let groupLessonsPerWeek = 0;
 
           packages?.forEach((pkg) => {
-            const active =
-              (!pkg.activity_start_date || new Date(pkg.activity_start_date) <= today) &&
-              (!pkg.activity_end_date || new Date(pkg.activity_end_date) >= today);
+            const active = pkg.is_active;
 
             if (active) {
               activePackagesCount++;

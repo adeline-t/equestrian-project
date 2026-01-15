@@ -27,7 +27,7 @@ export async function handlePackages(request, env) {
 
   try {
     // -----------------------------
-    // GET /api/packages - List all packages with rider info
+    // GET /api/packages - List all active (non-deleted) packages
     // -----------------------------
     if (request.method === 'GET' && pathParts.length === 2) {
       const { data, error } = await db
@@ -38,20 +38,13 @@ export async function handlePackages(request, env) {
           services_per_week,
           group_lessons_per_week,
           is_active,
-          activity_start_date,
-          activity_end_date,
           rider_id,
           created_at,
           updated_at,
-          riders (
-            id,
-            name,
-            email,
-            phone,
-            deleted_at
-          )
+          deleted_at
         `
         )
+        .is('deleted_at', null)
         .order('id', { ascending: true });
 
       if (error) return handleDbError(error);
@@ -76,21 +69,14 @@ export async function handlePackages(request, env) {
           services_per_week,
           group_lessons_per_week,
           is_active,
-          activity_start_date,
-          activity_end_date,
           rider_id,
           created_at,
           updated_at,
-          riders (
-            id,
-            name,
-            email,
-            phone,
-            deleted_at
-          )
+          deleted_at
         `
         )
         .eq('id', id)
+        .is('deleted_at', null)
         .single();
 
       if (error) return handleDbError(error);
@@ -132,26 +118,52 @@ export async function handlePackages(request, env) {
       if (riderError || !rider)
         return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
 
-      // Validate dates
-      if (
-        body.activity_start_date &&
-        body.activity_end_date &&
-        new Date(body.activity_start_date) > new Date(body.activity_end_date)
-      ) {
-        return jsonResponse(
-          { error: 'La date de début doit précéder la date de fin' },
-          400,
-          getSecurityHeaders()
-        );
+      const isActive = body.is_active !== undefined ? Boolean(body.is_active) : true;
+
+      // ✅ SOLUTION ROBUSTE : Si on crée un package actif,
+      // on SOFT DELETE tous les packages actifs existants
+      // (évite les problèmes de séquence causés par le hard delete)
+      if (isActive) {
+        console.log(`[CLEANUP] Deactivating all active packages for rider ${riderId}...`);
+
+        // Récupérer TOUS les packages actifs (sans filtre deleted_at)
+        const { data: existingPackages, error: fetchError } = await db
+          .from('packages')
+          .select('id, is_active, deleted_at')
+          .eq('rider_id', riderId)
+          .eq('is_active', true);
+
+        if (fetchError) {
+          console.error('[CLEANUP] Error fetching existing packages:', fetchError);
+        } else if (existingPackages && existingPackages.length > 0) {
+          console.log(`[CLEANUP] Found ${existingPackages.length} active package(s) to deactivate`);
+
+          // SOFT DELETE : désactiver et marquer comme supprimé
+          const idsToUpdate = existingPackages.map((pkg) => pkg.id);
+          const { error: updateError } = await db
+            .from('packages')
+            .update({
+              is_active: false,
+              deleted_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .in('id', idsToUpdate);
+
+          if (updateError) {
+            console.error('[CLEANUP] Error deactivating existing packages:', updateError);
+          } else {
+            console.log(`[CLEANUP] Successfully deactivated ${idsToUpdate.length} package(s)`);
+          }
+        } else {
+          console.log('[CLEANUP] No active packages found, proceeding with insert');
+        }
       }
 
       const packageData = {
         services_per_week: parseInt(body.services_per_week),
         group_lessons_per_week: parseInt(body.group_lessons_per_week),
         rider_id: riderId,
-        is_active: body.is_active !== undefined ? Boolean(body.is_active) : true,
-        activity_start_date: body.activity_start_date || null,
-        activity_end_date: body.activity_end_date || null,
+        is_active: isActive,
       };
 
       const { data, error } = await db
@@ -163,22 +175,47 @@ export async function handlePackages(request, env) {
           services_per_week,
           group_lessons_per_week,
           is_active,
-          activity_start_date,
-          activity_end_date,
           rider_id,
           created_at,
           updated_at,
-          riders (
-            id,
-            name,
-            email,
-            phone
-          )
+          deleted_at
         `
         )
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) {
+        console.error('[INSERT] Error inserting package:', error);
+
+        // Erreur de séquence (ID dupliqué)
+        if (error.code === '23505' && error.message.includes('packages_pkey')) {
+          return jsonResponse(
+            {
+              error: 'SEQUENCE_ERROR',
+              message:
+                "Erreur de séquence d'ID. Exécutez la commande SQL suivante puis réessayez : SELECT setval('packages_id_seq', (SELECT COALESCE(MAX(id), 0) FROM packages) + 1, false);",
+              details: error.message,
+            },
+            409,
+            getSecurityHeaders()
+          );
+        }
+
+        // Erreur de contrainte unique (package actif existant)
+        if (error.code === '23505') {
+          return jsonResponse(
+            {
+              error: 'ACTIVE_PACKAGE_EXISTS',
+              message:
+                "Impossible de créer le forfait. Un conflit de contrainte unique s'est produit. Veuillez réessayer.",
+            },
+            409,
+            getSecurityHeaders()
+          );
+        }
+
+        return handleDbError(error);
+      }
+
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
@@ -199,8 +236,12 @@ export async function handlePackages(request, env) {
         .from('packages')
         .select('*')
         .eq('id', id)
+        .is('deleted_at', null)
         .single();
+
       if (fetchError) return handleDbError(fetchError);
+      if (!currentPackage)
+        return jsonResponse({ error: 'Package non trouvé' }, 404, getSecurityHeaders());
 
       // Validate rider if updating
       let riderId = currentPackage.rider_id;
@@ -218,22 +259,41 @@ export async function handlePackages(request, env) {
           return jsonResponse({ error: 'Cavalier non trouvé' }, 404, getSecurityHeaders());
       }
 
-      // Validate dates
-      const startDate =
-        body.activity_start_date !== undefined
-          ? body.activity_start_date
-          : currentPackage.activity_start_date;
-      const endDate =
-        body.activity_end_date !== undefined
-          ? body.activity_end_date
-          : currentPackage.activity_end_date;
+      const willBeActive =
+        body.is_active !== undefined ? Boolean(body.is_active) : currentPackage.is_active;
 
-      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-        return jsonResponse(
-          { error: 'La date de début doit précéder la date de fin' },
-          400,
-          getSecurityHeaders()
-        );
+      const wasInactive = !currentPackage.is_active;
+
+      // ✅ Si on passe de inactif à actif, soft delete tous les autres packages actifs
+      if (willBeActive && wasInactive) {
+        const { data: existingPackages, error: fetchError } = await db
+          .from('packages')
+          .select('id, is_active, deleted_at')
+          .eq('rider_id', riderId)
+          .eq('is_active', true)
+          .neq('id', id);
+
+        if (fetchError) {
+          console.error('Error fetching existing packages:', fetchError);
+        } else if (existingPackages && existingPackages.length > 0) {
+          const idsToUpdate = existingPackages.map((pkg) => pkg.id);
+          const { error: updateError } = await db
+            .from('packages')
+            .update({
+              is_active: false,
+              deleted_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .in('id', idsToUpdate);
+
+          if (updateError) {
+            console.error('Error deactivating existing packages:', updateError);
+          } else {
+            console.log(
+              `Deactivated ${idsToUpdate.length} existing package(s) for rider ${riderId}`
+            );
+          }
+        }
       }
 
       const updateData = {
@@ -245,10 +305,7 @@ export async function handlePackages(request, env) {
           body.group_lessons_per_week !== undefined
             ? parseInt(body.group_lessons_per_week)
             : currentPackage.group_lessons_per_week,
-        is_active:
-          body.is_active !== undefined ? Boolean(body.is_active) : currentPackage.is_active,
-        activity_start_date: startDate,
-        activity_end_date: endDate,
+        is_active: willBeActive,
         rider_id,
         updated_at: new Date().toISOString(),
       };
@@ -263,36 +320,88 @@ export async function handlePackages(request, env) {
           services_per_week,
           group_lessons_per_week,
           is_active,
-          activity_start_date,
-          activity_end_date,
           rider_id,
           created_at,
           updated_at,
-          riders (
-            id,
-            name,
-            email,
-            phone
-          )
+          deleted_at
         `
         )
         .single();
 
-      if (error) return handleDbError(error);
+      if (error) {
+        // Erreur de séquence (ID dupliqué)
+        if (error.code === '23505' && error.message.includes('packages_pkey')) {
+          return jsonResponse(
+            {
+              error: 'SEQUENCE_ERROR',
+              message:
+                "Erreur de séquence d'ID. Exécutez : SELECT setval('packages_id_seq', (SELECT COALESCE(MAX(id), 0) FROM packages) + 1, false);",
+            },
+            409,
+            getSecurityHeaders()
+          );
+        }
+
+        // Erreur de contrainte unique
+        if (error.code === '23505') {
+          return jsonResponse(
+            {
+              error: 'ACTIVE_PACKAGE_EXISTS',
+              message:
+                "Impossible de modifier le forfait. Un conflit de contrainte unique s'est produit. Veuillez réessayer.",
+            },
+            409,
+            getSecurityHeaders()
+          );
+        }
+
+        return handleDbError(error);
+      }
+
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
     // -----------------------------
-    // DELETE /api/packages/:id
+    // DELETE /api/packages/:id - Soft delete
     // -----------------------------
     if (request.method === 'DELETE' && pathParts.length === 3) {
       const id = parseInt(pathParts[2]);
       if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
-      const { error } = await db.from('packages').delete().eq('id', id);
+      // Vérifier que le package existe et n'est pas déjà supprimé
+      const { data: currentPackage, error: fetchError } = await db
+        .from('packages')
+        .select('id, rider_id, is_active')
+        .eq('id', id)
+        .is('deleted_at', null)
+        .single();
+
+      if (fetchError) return handleDbError(fetchError);
+      if (!currentPackage)
+        return jsonResponse({ error: 'Package non trouvé' }, 404, getSecurityHeaders());
+
+      // ✅ Soft delete: mettre deleted_at et is_active à false
+      const { data, error } = await db
+        .from('packages')
+        .update({
+          deleted_at: new Date().toISOString(),
+          is_active: false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select('id, rider_id, deleted_at, is_active')
+        .single();
+
       if (error) return handleDbError(error);
 
-      return jsonResponse({ message: 'Package supprimé avec succès' }, 200, getSecurityHeaders());
+      return jsonResponse(
+        {
+          message: 'Package supprimé avec succès',
+          package: data,
+        },
+        200,
+        getSecurityHeaders()
+      );
     }
 
     return jsonResponse({ error: 'Méthode non autorisée' }, 405, getSecurityHeaders());
@@ -339,14 +448,14 @@ export async function handleRiderPackages(request, env, riderId) {
         services_per_week,
         group_lessons_per_week,
         is_active,
-        activity_start_date,
-        activity_end_date,
         rider_id,
         created_at,
-        updated_at
+        updated_at,
+        deleted_at
       `
       )
       .eq('rider_id', riderIdNum)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (error) return handleDbError(error);

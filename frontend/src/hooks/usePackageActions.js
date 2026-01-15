@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { packageService } from '../services/index.js';
 
-/**
- * Custom hook for managing package CRUD operations
- * @param {Function} onSuccess - Callback function to execute on successful operation
- * @returns {Object} Package action handlers and state
- */
 export function usePackageActions(onSuccess) {
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
@@ -29,15 +24,28 @@ export function usePackageActions(onSuccess) {
 
   const handleSubmit = async (riderId, packageData) => {
     try {
+      let result;
       if (editingPackage) {
-        await packageService.update(editingPackage.id, packageData);
+        // Soft delete ancien forfait
+        await packageService.delete(editingPackage.id);
+
+        // Create new
+        result = await packageService.createForRider(riderId, packageData);
+
         onSuccess('Forfait modifié avec succès');
-      } else {
-        await packageService.createForRider(riderId, packageData);
-        onSuccess('Forfait créé avec succès');
+        setShowPackageModal(false);
+        setEditingPackage(null);
+        return result;
       }
+
+      // Create
+      result = await packageService.createForRider(riderId, packageData);
+
+      onSuccess('Forfait créé avec succès');
       setShowPackageModal(false);
+      return result;
     } catch (err) {
+      // Remonter l'erreur au parent pour affichage
       throw err;
     }
   };
@@ -46,11 +54,8 @@ export function usePackageActions(onSuccess) {
     if (!packageToDelete) return;
 
     try {
-      const today = new Date().toISOString().split('T')[0];
-      await packageService.update(packageToDelete.id, {
-        activity_end_date: today,
-      });
-      onSuccess("Forfait retiré de l'inventaire");
+      await packageService.delete(packageToDelete.id);
+      onSuccess('Forfait supprimé');
       setShowDeleteModal(false);
       setPackageToDelete(null);
     } catch (err) {
@@ -59,20 +64,12 @@ export function usePackageActions(onSuccess) {
   };
 
   const handlePermanentDelete = async () => {
-    if (!packageToDelete) return;
-
-    try {
-      await packageService.delete(packageToDelete.id);
-      onSuccess('Forfait supprimé définitivement');
-      setShowDeleteModal(false);
-      setPackageToDelete(null);
-    } catch (err) {
-      throw err;
-    }
+    await handleRemoveFromInventory();
   };
 
   const closeModal = () => {
     setShowPackageModal(false);
+    setEditingPackage(null);
   };
 
   const closeDeleteModal = () => {

@@ -4,6 +4,7 @@
 
 .form-group {
   margin-bottom: var(--spacing-md);
+  padding: 20px;
 }
 
 .form-group label {

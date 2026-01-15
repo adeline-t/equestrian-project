@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { riderService, packageService, pairingService, horseService } from '../services/index.js';
+import { riderService, horseService } from '../services/index.js';
 
 /**
  * Custom hook for managing rider card data and operations
@@ -29,14 +29,9 @@ export function useRiderCard(riderId) {
       const riderResponse = await riderService.getById(riderId);
       setRider(riderResponse);
 
-      await Promise.all([
-        fetchPackages(),
-        fetchPairings(),
-        fetchAllRiders(),
-        fetchAllHorses(),
-      ]);
+      await Promise.all([fetchPackages(), fetchPairings(), fetchAllRiders(), fetchAllHorses()]);
     } catch (error) {
-      console.error('Error fetching rider data:', error);
+      console.error('❌ Error fetching rider data:', error);
       setError('Erreur lors du chargement des données');
     } finally {
       setLoading(false);
@@ -46,10 +41,21 @@ export function useRiderCard(riderId) {
   const fetchPackages = async () => {
     try {
       const data = await riderService.getPackages(riderId);
-      console.log('Packages fetched:', data);
-      setPackages(Array.isArray(data) ? data : []);
+      console.log('📦 Packages fetched:', data);
+
+      // ✅ Filtrer les packages supprimés côté client si besoin
+      const activePackages = Array.isArray(data) ? data.filter((pkg) => !pkg.deleted_at) : [];
+
+      setPackages(activePackages);
+
+      if (activePackages.length > 0) {
+        console.log(
+          '✅ Active package:',
+          activePackages.find((pkg) => pkg.is_active)
+        );
+      }
     } catch (error) {
-      console.error('Error fetching packages:', error);
+      console.error('❌ Error fetching packages:', error);
       setPackages([]);
     }
   };
@@ -57,10 +63,10 @@ export function useRiderCard(riderId) {
   const fetchPairings = async () => {
     try {
       const data = await riderService.getHorses(riderId);
-      console.log('Pairings fetched:', data);
+      console.log('🐴 Pairings fetched:', data);
       setPairings(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error fetching pairings:', error);
+      console.error('❌ Error fetching pairings:', error);
       setPairings([]);
     }
   };
@@ -70,7 +76,7 @@ export function useRiderCard(riderId) {
       const response = await riderService.getAll();
       setRiders(response || []);
     } catch (error) {
-      console.error('Error fetching all riders:', error);
+      console.error('❌ Error fetching all riders:', error);
       setRiders([]);
     }
   };
@@ -80,12 +86,13 @@ export function useRiderCard(riderId) {
       const response = await horseService.getAll();
       setHorses(response || []);
     } catch (error) {
-      console.error('Error fetching all horses:', error);
+      console.error('❌ Error fetching all horses:', error);
       setHorses([]);
     }
   };
 
   const reload = () => {
+    console.log('🔄 Reloading rider data...');
     fetchRiderData();
   };
 

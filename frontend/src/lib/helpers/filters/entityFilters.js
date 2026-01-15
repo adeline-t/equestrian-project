@@ -11,7 +11,7 @@ import { isActive } from './activityFilters';
  */
 export function filterActivePackages(packages) {
   if (!packages || !Array.isArray(packages)) return [];
-  return packages.filter((pkg) => isActive(pkg.activity_start_date, pkg.activity_end_date));
+  return packages.filter((pkg) => pkg.is_active);
 }
 
 /**

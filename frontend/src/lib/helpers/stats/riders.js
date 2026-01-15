@@ -31,9 +31,7 @@ export function calculateRiderStatsWithPackages(riders) {
     total: riders.length,
     active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
     withActivePackages: riders.filter(
-      (r) =>
-        r.packages &&
-        r.packages.filter((p) => isActive(p.activity_start_date, p.activity_end_date)).length > 0
+      (r) => r.packages && r.packages.filter((p) => p.is_active).length > 0
     ).length,
   };
 }

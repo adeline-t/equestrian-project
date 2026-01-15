@@ -7,6 +7,18 @@ import {
 } from '../db.js';
 import { handleDatabaseError, handleRateLimitError } from '../utils/errorHandler.js';
 
+const LINK_TYPES = ['own', 'loan'];
+
+/**
+ * Helper function to convert empty strings to null
+ */
+function sanitizeDate(value) {
+  if (value === '' || value === null || value === undefined) {
+    return null;
+  }
+  return value;
+}
+
 /**
  * /api/pairings
  */
@@ -16,8 +28,13 @@ export async function handlePairings(request, env) {
   const pathParts = url.pathname.split('/').filter(Boolean);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
 
-  if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('pairings.rateLimit');
-  if (request.method === 'OPTIONS') return jsonResponse({}, 204, getSecurityHeaders());
+  if (!checkRateLimit(clientIP, 60, 60000)) {
+    return handleRateLimitError('pairings.rateLimit');
+  }
+
+  if (request.method === 'OPTIONS') {
+    return jsonResponse({}, 204, getSecurityHeaders());
+  }
 
   try {
     // -----------------------------
@@ -31,6 +48,8 @@ export async function handlePairings(request, env) {
           id,
           rider_id,
           horse_id,
+          link_type,
+          loan_days_per_week,
           pairing_start_date,
           pairing_end_date,
           riders (
@@ -51,7 +70,6 @@ export async function handlePairings(request, env) {
 
       if (error) return handleDatabaseError(error, 'pairings.list');
 
-      // Optional: filter out deleted horses/riders
       const activeData = data.filter((p) => !p.riders?.deleted_at && !p.horses?.deleted_at);
 
       return jsonResponse(activeData, 200, getSecurityHeaders());
@@ -61,9 +79,10 @@ export async function handlePairings(request, env) {
     // GET /api/pairings/:id
     // -----------------------------
     if (request.method === 'GET' && pathParts.length === 3) {
-      const pairingId = parseInt(pathParts[2]);
-      if (isNaN(pairingId))
+      const pairingId = parseInt(pathParts[2], 10);
+      if (isNaN(pairingId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
+      }
 
       const { data, error } = await db
         .from('rider_horse_pairings')
@@ -72,6 +91,8 @@ export async function handlePairings(request, env) {
           id,
           rider_id,
           horse_id,
+          link_type,
+          loan_days_per_week,
           pairing_start_date,
           pairing_end_date,
           riders (id, name, phone, email, deleted_at),
@@ -82,8 +103,10 @@ export async function handlePairings(request, env) {
         .single();
 
       if (error) return handleDatabaseError(error, 'pairings.get');
-      if (data.riders?.deleted_at || data.horses?.deleted_at)
+
+      if (data.riders?.deleted_at || data.horses?.deleted_at) {
         return jsonResponse({ error: 'Pairing non trouvée' }, 404, getSecurityHeaders());
+      }
 
       return jsonResponse(data, 200, getSecurityHeaders());
     }
@@ -93,49 +116,72 @@ export async function handlePairings(request, env) {
     // -----------------------------
     if (request.method === 'POST' && pathParts.length === 2) {
       const body = await request.json().catch(() => null);
-      if (!body)
+      if (!body) {
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
+      }
 
       const missingFields = validateRequired(['rider_id', 'horse_id'], body);
-      if (missingFields)
+      if (missingFields) {
         return jsonResponse(
           { error: `Champs requis: ${missingFields}` },
           400,
           getSecurityHeaders()
         );
-
-      const riderId = parseInt(body.rider_id);
-      const horseId = parseInt(body.horse_id);
-      if (isNaN(riderId) || isNaN(horseId))
-        return jsonResponse({ error: 'IDs invalides' }, 400, getSecurityHeaders());
-
-      // Check existence of rider and horse (skip deleted)
-      const [riderCheck, horseCheck] = await Promise.all([
-        db.from('riders').select('id').eq('id', riderId).is('deleted_at', null).single(),
-        db.from('horses').select('id').eq('id', horseId).is('deleted_at', null).single(),
-      ]);
-
-      if (riderCheck.error || horseCheck.error)
-        return jsonResponse({ error: 'Cavalier ou cheval invalide' }, 400, getSecurityHeaders());
-
-      // Validate dates
-      if (
-        body.pairing_start_date &&
-        body.pairing_end_date &&
-        new Date(body.pairing_start_date) > new Date(body.pairing_end_date)
-      ) {
-        return jsonResponse(
-          { error: 'La date de début doit précéder la date de fin' },
-          400,
-          getSecurityHeaders()
-        );
       }
 
+      const riderId = parseInt(body.rider_id, 10);
+      const horseId = parseInt(body.horse_id, 10);
+      if (isNaN(riderId) || isNaN(horseId)) {
+        return jsonResponse({ error: 'IDs invalides' }, 400, getSecurityHeaders());
+      }
+
+      const linkType = body.link_type ?? 'own';
+      const loanDaysPerWeek = body.loan_days_per_week ?? null;
+      const loanDays = body.loan_days ?? [];
+
+      if (!LINK_TYPES.includes(linkType)) {
+        return jsonResponse({ error: 'link_type invalide' }, 400, getSecurityHeaders());
+      }
+
+      // Validation loan_days_per_week et loan_days
+      if (linkType === 'loan') {
+        if (!Number.isInteger(loanDaysPerWeek) || loanDaysPerWeek < 1 || loanDaysPerWeek > 7) {
+          return jsonResponse(
+            { error: 'loan_days_per_week doit être un entier entre 1 et 7' },
+            400,
+            getSecurityHeaders()
+          );
+        }
+
+        // Validation des jours
+        const validDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        if (!Array.isArray(loanDays) || !loanDays.every((d) => validDays.includes(d))) {
+          return jsonResponse(
+            { error: 'loan_days doit être un tableau valide de jours (mon, tue, ...)' },
+            400,
+            getSecurityHeaders()
+          );
+        }
+      } else {
+        // lien own : pas de jours
+        if (loanDaysPerWeek !== null || loanDays.length > 0) {
+          return jsonResponse(
+            { error: 'loan_days_per_week et loan_days interdits pour link_type own' },
+            400,
+            getSecurityHeaders()
+          );
+        }
+      }
+
+      // ✅ CORRECTION : Traiter les chaînes vides comme null pour les dates
       const pairingData = {
         rider_id: riderId,
         horse_id: horseId,
-        pairing_start_date: body.pairing_start_date ?? null,
-        pairing_end_date: body.pairing_end_date ?? null,
+        link_type: linkType,
+        loan_days_per_week: linkType === 'loan' ? loanDaysPerWeek : null,
+        loan_days: linkType === 'loan' ? loanDays : [],
+        pairing_start_date: sanitizeDate(body.pairing_start_date),
+        pairing_end_date: sanitizeDate(body.pairing_end_date),
       };
 
       const { data, error } = await db
@@ -143,18 +189,22 @@ export async function handlePairings(request, env) {
         .insert(pairingData)
         .select(
           `
-          id,
-          rider_id,
-          horse_id,
-          pairing_start_date,
-          pairing_end_date,
-          riders (id, name),
-          horses (id, name, kind, ownership_type)
-        `
+    id,
+    rider_id,
+    horse_id,
+    link_type,
+    loan_days_per_week,
+    loan_days,
+    pairing_start_date,
+    pairing_end_date,
+    riders (id, name),
+    horses (id, name, kind, ownership_type)
+  `
         )
         .single();
 
       if (error) return handleDatabaseError(error, 'pairings.create');
+
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
@@ -162,21 +212,24 @@ export async function handlePairings(request, env) {
     // PUT /api/pairings/:id
     // -----------------------------
     if (request.method === 'PUT' && pathParts.length === 3) {
-      const pairingId = parseInt(pathParts[2]);
+      const pairingId = parseInt(pathParts[2], 10);
       const body = await request.json().catch(() => null);
-      if (isNaN(pairingId) || !body)
+
+      if (isNaN(pairingId) || !body) {
         return jsonResponse(
           { error: 'ID ou corps de requête invalide' },
           400,
           getSecurityHeaders()
         );
+      }
 
-      // Validate dates
-      if (
-        body.pairing_start_date &&
-        body.pairing_end_date &&
-        new Date(body.pairing_start_date) > new Date(body.pairing_end_date)
-      ) {
+      const updateData = { updated_at: new Date().toISOString() };
+
+      // ✅ CORRECTION : Valider les dates seulement si elles ne sont pas vides
+      const startDate = sanitizeDate(body.pairing_start_date);
+      const endDate = sanitizeDate(body.pairing_end_date);
+
+      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
         return jsonResponse(
           { error: 'La date de début doit précéder la date de fin' },
           400,
@@ -184,35 +237,62 @@ export async function handlePairings(request, env) {
         );
       }
 
-      const updateData = { updated_at: new Date().toISOString() };
-      if (body.pairing_start_date !== undefined)
-        updateData.pairing_start_date = body.pairing_start_date;
-      if (body.pairing_end_date !== undefined) updateData.pairing_end_date = body.pairing_end_date;
-
-      // Optional: allow updating rider_id and horse_id if they exist and are not deleted
-      if (body.rider_id !== undefined) {
-        const riderId = parseInt(body.rider_id);
-        if (!isNaN(riderId)) {
-          const { error } = await db
-            .from('riders')
-            .select('id')
-            .eq('id', riderId)
-            .is('deleted_at', null)
-            .single();
-          if (!error) updateData.rider_id = riderId;
-        }
+      if (body.pairing_start_date !== undefined) {
+        updateData.pairing_start_date = sanitizeDate(body.pairing_start_date);
+      }
+      if (body.pairing_end_date !== undefined) {
+        updateData.pairing_end_date = sanitizeDate(body.pairing_end_date);
       }
 
-      if (body.horse_id !== undefined) {
-        const horseId = parseInt(body.horse_id);
-        if (!isNaN(horseId)) {
-          const { error } = await db
-            .from('horses')
-            .select('id')
-            .eq('id', horseId)
-            .is('deleted_at', null)
-            .single();
-          if (!error) updateData.horse_id = horseId;
+      if (body.link_type !== undefined) {
+        if (!LINK_TYPES.includes(body.link_type)) {
+          return jsonResponse({ error: 'link_type invalide' }, 400, getSecurityHeaders());
+        }
+        updateData.link_type = body.link_type;
+      }
+
+      if (body.loan_days_per_week !== undefined) {
+        updateData.loan_days_per_week = body.loan_days_per_week;
+      }
+      if (body.loan_days !== undefined) {
+        updateData.loan_days = body.loan_days;
+      }
+
+      // Cohérence link_type / loan_days_per_week / loan_days
+      const finalLinkType = updateData.link_type ?? body.link_type;
+      const finalLoanDaysPerWeek =
+        updateData.loan_days_per_week !== undefined
+          ? updateData.loan_days_per_week
+          : body.loan_days_per_week;
+      const finalLoanDays = updateData.loan_days ?? body.loan_days ?? [];
+
+      if (finalLinkType === 'loan') {
+        if (
+          !Number.isInteger(finalLoanDaysPerWeek) ||
+          finalLoanDaysPerWeek < 1 ||
+          finalLoanDaysPerWeek > 7
+        ) {
+          return jsonResponse(
+            { error: 'loan_days_per_week doit être un entier entre 1 et 7' },
+            400,
+            getSecurityHeaders()
+          );
+        }
+        const validDays = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        if (!Array.isArray(finalLoanDays) || !finalLoanDays.every((d) => validDays.includes(d))) {
+          return jsonResponse(
+            { error: 'loan_days doit être un tableau valide de jours (mon, tue, ...)' },
+            400,
+            getSecurityHeaders()
+          );
+        }
+      } else {
+        if (finalLoanDaysPerWeek != null || finalLoanDays.length > 0) {
+          return jsonResponse(
+            { error: 'loan_days_per_week et loan_days interdits pour link_type own' },
+            400,
+            getSecurityHeaders()
+          );
         }
       }
 
@@ -225,6 +305,8 @@ export async function handlePairings(request, env) {
           id,
           rider_id,
           horse_id,
+          link_type,
+          loan_days_per_week,
           pairing_start_date,
           pairing_end_date,
           riders (id, name),
@@ -234,6 +316,7 @@ export async function handlePairings(request, env) {
         .single();
 
       if (error) return handleDatabaseError(error, 'pairings.update');
+
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
@@ -241,11 +324,13 @@ export async function handlePairings(request, env) {
     // DELETE /api/pairings/:id
     // -----------------------------
     if (request.method === 'DELETE' && pathParts.length === 3) {
-      const pairingId = parseInt(pathParts[2]);
-      if (isNaN(pairingId))
+      const pairingId = parseInt(pathParts[2], 10);
+      if (isNaN(pairingId)) {
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
+      }
 
       const { error } = await db.from('rider_horse_pairings').delete().eq('id', pairingId);
+
       if (error) return handleDatabaseError(error, 'pairings.delete');
 
       return jsonResponse({ message: 'Pairing supprimée avec succès' }, 200, getSecurityHeaders());

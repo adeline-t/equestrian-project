@@ -1,59 +1,58 @@
-import { useEffect, useState } from 'react';
-import { PACKAGE_STATUS, PACKAGE_STATUS_LABELS } from '../lib/domain/packages.js';
-import { filterActivePackages, getPackageStatusLabel, isActive } from '../lib/helpers/index.js';
-import { packageService, riderService } from '../services/index.js';
+import { useState } from 'react';
+import { packageService } from '../services/index.js';
 
 /**
- * Custom hook for managing rider packages data and operations
- * @param {string|number} riderId - The ID of the rider
- * @returns {Object} Packages data, loading state, error, and handler functions
+ * Custom hook for managing package actions (create, edit, delete)
+ * @param {Function} onSuccess - Callback function called on successful operation
+ * @returns {Object} Package actions state and handlers
  */
-export function useRiderPackages(riderId) {
-  const [packages, setPackages] = useState([]);
-  const [riders, setRiders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+export function usePackageActions(onSuccess) {
+  const [showPackageModal, setShowPackageModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [packageToDelete, setPackageToDelete] = useState(null);
 
-  const loadPackages = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await riderService.getPackages(riderId);
-      setPackages(data || []);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadRiders = async () => {
-    try {
-      const data = await riderService.getAll();
-      setRiders(data || []);
-    } catch (err) {
-      console.error('Error loading riders:', err);
-    }
-  };
-
   const handleCreate = () => {
     setEditingPackage(null);
-    setShowModal(true);
+    setShowPackageModal(true);
   };
 
   const handleEdit = (pkg) => {
     setEditingPackage(pkg);
-    setShowModal(true);
+    setShowPackageModal(true);
   };
 
   const handleDeleteClick = (pkg) => {
     setPackageToDelete(pkg);
     setShowDeleteModal(true);
+  };
+
+  /**
+   * Submit package form (create or update)
+   * @param {number} riderId - The rider ID
+   * @param {Object} packageData - Package form data
+   */
+  const handleSubmit = async (riderId, packageData) => {
+    try {
+      if (editingPackage) {
+        // Update existing package
+        await packageService.update(editingPackage.id, packageData);
+        onSuccess?.('Forfait modifié avec succès');
+      } else {
+        // Create new package
+        // ✅ CORRECTION: Inclure rider_id dans packageData
+        const dataWithRider = {
+          ...packageData,
+          rider_id: riderId,
+        };
+        await packageService.create(dataWithRider);
+        onSuccess?.('Forfait créé avec succès');
+      }
+      closeModal();
+    } catch (error) {
+      console.error('❌ Error submitting package:', error);
+      throw error;
+    }
   };
 
   const handleRemoveFromInventory = async () => {
@@ -64,15 +63,11 @@ export function useRiderPackages(riderId) {
       await packageService.update(packageToDelete.id, {
         activity_end_date: today,
       });
-      setSuccessMessage("Forfait retiré de l'inventaire");
-      setTimeout(() => setSuccessMessage(''), 3000);
-      setShowDeleteModal(false);
-      setPackageToDelete(null);
-      await loadPackages();
-    } catch (err) {
-      setError(err.message);
-      setShowDeleteModal(false);
-      setPackageToDelete(null);
+      onSuccess?.("Forfait retiré de l'inventaire");
+      closeDeleteModal();
+    } catch (error) {
+      console.error('❌ Error removing package from inventory:', error);
+      throw error;
     }
   };
 
@@ -81,53 +76,16 @@ export function useRiderPackages(riderId) {
 
     try {
       await packageService.delete(packageToDelete.id);
-      setSuccessMessage('Forfait supprimé définitivement');
-      setTimeout(() => setSuccessMessage(''), 3000);
-      setShowDeleteModal(false);
-      setPackageToDelete(null);
-      await loadPackages();
-    } catch (err) {
-      setError(err.message);
-      setShowDeleteModal(false);
-      setPackageToDelete(null);
+      onSuccess?.('Forfait supprimé définitivement');
+      closeDeleteModal();
+    } catch (error) {
+      console.error('❌ Error deleting package:', error);
+      throw error;
     }
   };
 
-  const handleFormSubmit = async (packageData) => {
-    try {
-      if (editingPackage) {
-        await packageService.update(editingPackage.id, packageData);
-        setSuccessMessage('Forfait modifié avec succès');
-      } else {
-        await packageService.createForRider(riderId, packageData);
-        setSuccessMessage('Forfait créé avec succès');
-      }
-      setTimeout(() => setSuccessMessage(''), 3000);
-      setShowModal(false);
-      setEditingPackage(null);
-      await loadPackages();
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  const getPackageStatus = (pkg) => {
-    if (!pkg) return PACKAGE_STATUS.INACTIVE;
-    if (!isActive(pkg.activity_start_date, pkg.activity_end_date)) {
-      return PACKAGE_STATUS.EXPIRED;
-    }
-    return PACKAGE_STATUS.ACTIVE;
-  };
-
-  const getStatusBadge = (pkg) => {
-    const status = getPackageStatus(pkg);
-    return getPackageStatusLabel(status);
-  };
-
-  const activePackages = filterActivePackages(packages);
-
-  const closePackageModal = () => {
-    setShowModal(false);
+  const closeModal = () => {
+    setShowPackageModal(false);
     setEditingPackage(null);
   };
 
@@ -136,48 +94,18 @@ export function useRiderPackages(riderId) {
     setPackageToDelete(null);
   };
 
-  const clearSuccessMessage = () => {
-    setSuccessMessage('');
-  };
-
-  const clearError = () => {
-    setError(null);
-  };
-
-  useEffect(() => {
-    if (riderId) {
-      loadPackages();
-      loadRiders();
-    }
-  }, [riderId]);
-
   return {
-    packages,
-    riders,
-    loading,
-    error,
-    showModal,
+    showPackageModal,
     editingPackage,
-    successMessage,
     showDeleteModal,
     packageToDelete,
-    activePackages,
-    PACKAGE_STATUS,
-    PACKAGE_STATUS_LABELS,
-    loadPackages,
     handleCreate,
     handleEdit,
     handleDeleteClick,
+    handleSubmit,
     handleRemoveFromInventory,
     handlePermanentDelete,
-    handleFormSubmit,
-    closePackageModal,
+    closeModal,
     closeDeleteModal,
-    isActive,
-    getPackageStatus,
-    getStatusBadge,
-    getPackageStatusLabel,
-    clearSuccessMessage,
-    clearError,
   };
 }

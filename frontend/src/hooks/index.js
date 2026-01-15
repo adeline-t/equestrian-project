@@ -11,12 +11,10 @@ export * from './useHorsesList.js';
 // Packages
 export * from './usePackageActions.js';
 export * from './usePackageForm.js';
-export * from './usePackagesList.js';
 
 // Pairings
 export * from './usePairingActions.js';
 export * from './usePairingForm.js';
-export * from './usePairingsList.js';
 
 // Riders
 export * from './useRiderCard.js';
