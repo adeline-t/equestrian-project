@@ -30,17 +30,54 @@ export function usePairingForm(pairing, rider, riderId) {
   useEffect(() => {
     if (pairing) {
       // Editing mode
+      console.log('📝 Initializing form for editing:', pairing);
+
+      // Extract IDs from available data
+      // Priority: direct field > joined data > prop
+      const extractedRiderId = pairing.rider_id
+        ? parseInt(pairing.rider_id)
+        : pairing.riders?.id
+        ? parseInt(pairing.riders.id)
+        : riderId
+        ? parseInt(riderId)
+        : null;
+
+      const extractedHorseId = pairing.horse_id
+        ? parseInt(pairing.horse_id)
+        : pairing.horses?.id
+        ? parseInt(pairing.horses.id)
+        : null;
+
+      console.log('🔑 Extracted IDs:', {
+        riderId: extractedRiderId,
+        horseId: extractedHorseId,
+        from: {
+          'pairing.rider_id': pairing.rider_id,
+          'pairing.riders?.id': pairing.riders?.id,
+          'riderId prop': riderId,
+          'pairing.horse_id': pairing.horse_id,
+          'pairing.horses?.id': pairing.horses?.id,
+        },
+      });
+
       setFormData({
-        rider_id: pairing.rider_id ? parseInt(pairing.rider_id) : null,
-        horse_id: pairing.horse_id ? parseInt(pairing.horse_id) : null,
+        rider_id: extractedRiderId,
+        horse_id: extractedHorseId,
         pairing_start_date: pairing.pairing_start_date || '',
         pairing_end_date: pairing.pairing_end_date || '',
         link_type: pairing.link_type || RIDER_HORSE_LINK_TYPE.OWN,
         loan_days_per_week: pairing.loan_days_per_week || 1,
-        loan_days: pairing.loan_days || [],
+        loan_days: Array.isArray(pairing.loan_days) ? pairing.loan_days : [],
       });
+      console.log(
+        '✅ Form initialized with horse_id:',
+        extractedHorseId,
+        'rider_id:',
+        extractedRiderId
+      );
     } else if (riderId) {
       // Creating mode with pre-filled riderId
+      console.log('🆕 Initializing form for creation with riderId:', riderId);
       setFormData((prev) => ({
         ...prev,
         rider_id: parseInt(riderId),
@@ -96,8 +133,17 @@ export function usePairingForm(pairing, rider, riderId) {
 
   // Basic validation
   const validateForm = () => {
+    console.log('🔍 Validating form data:', formData);
+
     if (!formData.rider_id || !formData.horse_id || !formData.pairing_start_date) {
-      setError('Rider, cheval et date de début sont requis.');
+      const missingFields = [];
+      if (!formData.rider_id) missingFields.push('Rider');
+      if (!formData.horse_id) missingFields.push('Cheval');
+      if (!formData.pairing_start_date) missingFields.push('Date de début');
+
+      const errorMsg = `Les champs suivants sont requis: ${missingFields.join(', ')}`;
+      console.error('❌ Validation failed:', errorMsg);
+      setError(errorMsg);
       return false;
     }
 
@@ -112,6 +158,7 @@ export function usePairingForm(pairing, rider, riderId) {
       }
     }
 
+    console.log('✅ Validation passed');
     return true;
   };
 

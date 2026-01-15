@@ -9,6 +9,8 @@ import Modal from '../common/Modal.jsx';
 import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
 import { getRiderHorseLinkDescription } from '../../lib/domain/pairings.js';
+import '../../styles/components/riders.css';
+import '../../styles/components/pairing.css';
 
 /**
  * RiderCard - Detailed rider information card
@@ -282,37 +284,61 @@ function RiderCard({ riderId, onClose }) {
                     </div>
                   ) : (
                     <div className="pairings-list-modern">
-                      {activePairings.map((pairing) => (
-                        <div key={pairing.id} className="pairing-item-modern">
-                          <div className="pairing-icon">
-                            <Icons.Horse />
+                      {activePairings.map((pairing) => {
+                        // Mapping des noms de jours vers les abréviations
+                        const dayLabels = {
+                          mon: 'Lun',
+                          tue: 'Mar',
+                          wed: 'Mer',
+                          thu: 'Jeu',
+                          fri: 'Ven',
+                          sat: 'Sam',
+                          sun: 'Dim',
+                        };
+
+                        const isLoan = pairing.link_type === 'loan';
+                        const loanDays = pairing.loan_days || [];
+
+                        return (
+                          <div key={pairing.id} className="pairing-item-modern">
+                            <div className="pairing-info">
+                              <div className="pairing-header">
+                                <span className="pairing-horse-name">
+                                  {pairing.horses?.name || 'N/A'}
+                                </span>
+                                <span className={`pairing-type-badge ${isLoan ? 'loan' : 'own'}`}>
+                                  {isLoan ? 'Demi-pension' : 'Propriétaire'}
+                                </span>
+                              </div>
+                              {isLoan && loanDays.length > 0 && (
+                                <div className="pairing-days">
+                                  {loanDays.map((day, idx) => (
+                                    <span key={idx} className="day-badge">
+                                      {dayLabels[day] || day}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <div className="pairing-actions">
+                              <button
+                                className="btn-icon-modern"
+                                onClick={() => pairingActions.handleEdit(pairing)}
+                                title="Modifier"
+                              >
+                                <Icons.Edit />
+                              </button>
+                              <button
+                                className="btn-icon-modern danger"
+                                onClick={() => pairingActions.handleDeleteClick(pairing)}
+                                title="Supprimer"
+                              >
+                                <Icons.Delete />
+                              </button>
+                            </div>
                           </div>
-                          <div className="pairing-info">
-                            <span className="pairing-horse-name">
-                              {pairing.horses?.name || 'N/A'}
-                            </span>
-                            <span className="pairing-meta">
-                              {getRiderHorseLinkDescription(pairing)}
-                            </span>
-                          </div>
-                          <div className="pairing-actions">
-                            <button
-                              className="btn-icon-modern"
-                              onClick={() => pairingActions.handleEdit(pairing)}
-                              title="Modifier"
-                            >
-                              <Icons.Edit />
-                            </button>
-                            <button
-                              className="btn-icon-modern danger"
-                              onClick={() => pairingActions.handleDeleteClick(pairing)}
-                              title="Supprimer"
-                            >
-                              <Icons.Delete />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>

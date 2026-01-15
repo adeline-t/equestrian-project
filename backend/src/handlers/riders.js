@@ -264,6 +264,7 @@ export async function handleRiders(request, env) {
 
 /**
  * GET /api/riders/:id/horses
+ * ✅ CORRECTION: Ajout de tous les champs nécessaires du pairing
  */
 export async function handleRiderHorses(request, env, riderId) {
   const db = getDatabase(env);
@@ -282,6 +283,11 @@ export async function handleRiderHorses(request, env, riderId) {
       .select(
         `
         id,
+        rider_id,
+        horse_id,
+        link_type,
+        loan_days_per_week,
+        loan_days,
         pairing_start_date,
         pairing_end_date,
         horses (
