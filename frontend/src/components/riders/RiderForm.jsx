@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useRiderForm } from '../../hooks';
-import { RIDER_TYPES } from '../../lib/domain/riders.js';
+import { RIDER_TYPES } from '../../lib/domain/index.js';
 import { Icons } from '../../lib/icons.jsx';
 
 /**

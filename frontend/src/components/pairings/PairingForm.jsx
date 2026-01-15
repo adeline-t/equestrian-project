@@ -1,15 +1,13 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../lib/icons';
 import { usePairingForm } from '../../hooks/usePairingForm';
 import {
   RIDER_HORSE_LINK_TYPE,
   getRiderHorseLinkLabel,
   isLoanPairing,
   isValidLoanDaysPerWeek,
-} from '../../lib/domain/pairings';
-import { RIDER_TYPES } from '../../lib/domain/riders';
+} from '../../lib/domain/index.js';
 import { isActive } from '../../lib/helpers';
+import { Icons } from '../../lib/icons';
 import '../../styles/components/pairing.css';
 
 /**

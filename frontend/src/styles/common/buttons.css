@@ -1,5 +1,5 @@
 /* ============================================
-   BUTTON STYLES - Consolidated
+   BUTTON STYLES
    ============================================ */
 
 .btn {
@@ -23,7 +23,10 @@
   cursor: not-allowed;
 }
 
-/* Icon alignment in buttons */
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
 .btn svg,
 .btn i {
   display: flex;
@@ -60,74 +63,63 @@
 /* ============================================
    BUTTON VARIANTS - SOLID
    ============================================ */
-/* PRIMARY BUTTON */
+
 .btn-primary {
   background-image: var(--gradient-primary);
   color: var(--color-white);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-image: var(--gradient-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* SUCCESS BUTTON */
 .btn-success {
   background-image: var(--gradient-success);
   color: var(--color-white);
 }
 
 .btn-success:hover:not(:disabled) {
-  background-image: var(--gradient-success);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
 }
 
-/* DANGER BUTTON */
 .btn-danger {
   background-image: var(--gradient-danger);
   color: var(--color-white);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-image: var(--gradient-danger);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
 }
 
-/* SECONDARY BUTTON */
 .btn-secondary {
   background-image: var(--gradient-secondary);
   color: var(--color-white);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-image: var(--gradient-secondary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
 }
 
-/* WARNING BUTTON */
 .btn-warning {
   background-image: var(--gradient-warning);
   color: var(--color-white);
 }
 
 .btn-warning:hover:not(:disabled) {
-  background-image: var(--gradient-warning);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(237, 137, 54, 0.4);
 }
 
-/* INFO BUTTON */
 .btn-info {
   background-image: var(--gradient-info);
   color: var(--color-white);
 }
 
 .btn-info:hover:not(:disabled) {
-  background-image: var(--gradient-info);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
 }
@@ -136,26 +128,17 @@
    BUTTON VARIANTS - OUTLINE
    ============================================ */
 
-.btn-outline-primary {
-  background-color: transparent;
-  color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 1px solid linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.btn-outline-primary:hover:not(:disabled) {
-  background-color: vlinear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: var(--color-white);
-}
-
 .btn-outline-secondary {
-  background-color: transparent;
-  color: var(--color-secondary);
-  border: 1px solid var(--color-secondary);
+  background: transparent;
+  color: var(--color-gray-600);
+  border: 2px solid var(--color-gray-300);
 }
 
 .btn-outline-secondary:hover:not(:disabled) {
-  background-color: var(--color-secondary);
-  color: var(--color-white);
+  background: rgba(108, 117, 125, 0.1);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+  transform: translateY(-1px);
 }
 
 .btn-outline-danger {
@@ -170,6 +153,94 @@
 }
 
 /* ============================================
+   CLOSE BUTTON
+   ============================================ */
+
+.btn-close,
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-base);
+  color: var(--color-gray-600);
+  flex-shrink: 0;
+  font-size: 24px;
+}
+
+.btn-close:hover,
+.modal-close:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+
+/* ============================================
+   ICON BUTTONS
+   ============================================ */
+
+.btn-icon-modern {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-300);
+  background: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  color: var(--color-gray-600);
+  font-size: 16px;
+}
+
+.btn-icon-modern:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.btn-icon-modern.danger:hover {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* Legacy icon buttons */
+.btn-icon-view {
+  color: var(--color-info-blue);
+}
+
+.btn-icon-view:hover {
+  background: var(--color-info-light);
+  color: var(--color-info-blue-dark);
+  transform: scale(1.15);
+}
+
+.btn-icon-edit {
+  color: var(--color-gray-500);
+}
+
+.btn-icon-edit:hover {
+  background: var(--color-gray-150);
+  color: var(--color-gray-800);
+  transform: scale(1.15);
+}
+
+.btn-icon-delete {
+  color: var(--color-danger-medium-dark);
+}
+
+.btn-icon-delete:hover {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+  transform: scale(1.15);
+}
+
+/* ============================================
    BUTTON GROUPS
    ============================================ */
 
@@ -179,19 +250,7 @@
 }
 
 /* ============================================
-   BUTTON STATES
-   ============================================ */
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-/* ============================================
-   RESPONSIVE ADJUSTMENTS
+   RESPONSIVE
    ============================================ */
 
 @media (max-width: 768px) {

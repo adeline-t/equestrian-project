@@ -1,7 +1,7 @@
 /**
  * Rider Service - Handles all rider-related API operations
  */
-import { RIDER_TYPES } from '../lib/domain/riders.js';
+import { RIDER_TYPES } from '../lib/domain/domain-constants.js';
 import { validateRiderForm } from '../lib/helpers/index.js';
 import { api, createCrudOperations } from './apiService.js';
 

@@ -60,7 +60,7 @@ function DeleteConfirmationModal({
         <h4
           style={{
             margin: '0 0 8px 0',
-            color: '#2d3748',
+            color: 'var(--color-gray-800)',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
@@ -69,7 +69,7 @@ function DeleteConfirmationModal({
           <Icons.Remove style={{ flexShrink: 0 }} />
           {label.removeText}
         </h4>
-        <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+        <p style={{ margin: '0 0 12px 0', color: 'var(--color-gray-500)', fontSize: '0.9rem' }}>
           {label.removeDescription}
         </p>
         <button
@@ -82,11 +82,11 @@ function DeleteConfirmationModal({
         </button>
       </div>
 
-      <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+      <div style={{ borderTop: '1px solid var(--color-gray-200)', paddingTop: '12px' }}>
         <h4
           style={{
             margin: '0 0 8px 0',
-            color: '#2d3748',
+            color: 'var(--color-gray-800)',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
@@ -95,7 +95,7 @@ function DeleteConfirmationModal({
           <Icons.Delete style={{ flexShrink: 0 }} />
           Supprimer définitivement
         </h4>
-        <p style={{ margin: '0 0 12px 0', color: '#718096', fontSize: '0.9rem' }}>
+        <p style={{ margin: '0 0 12px 0', color: 'var(--color-gray-500)', fontSize: '0.9rem' }}>
           {label.deleteDescription}
         </p>
         <button className="btn btn-danger" onClick={onPermanentDelete} style={{ width: '100%' }}>
@@ -117,14 +117,16 @@ function DeleteConfirmationModal({
       onClose={onClose}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Icons.Warning style={{ color: '#ed8936', flexShrink: 0 }} />
+          <Icons.Warning style={{ color: 'var(--color-warning-orange)', flexShrink: 0 }} />
           {label.title}
         </div>
       }
       footer={footer}
       size="small"
     >
-      <p style={{ marginBottom: '20px', color: '#4a5568' }}>Choisissez l'action à effectuer :</p>
+      <p style={{ marginBottom: '20px', color: 'var(--color-gray-650)' }}>
+        Choisissez l'action à effectuer :
+      </p>
     </Modal>
   );
 }

@@ -1,8 +1,8 @@
 /**
  * Horse Service - Handles all horse-related API operations
  */
+import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/domain-constants.js';
 import { validateHorseForm } from '../lib/helpers/index.js';
-import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/horses.js';
 import { api, createCrudOperations } from './apiService.js';
 
 const horseService = {

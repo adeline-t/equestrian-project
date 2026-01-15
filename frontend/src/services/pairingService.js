@@ -1,10 +1,9 @@
-import { api, createCrudOperations } from './apiService.js';
 import {
   RIDER_HORSE_LINK_TYPE,
-  isValidLoanDaysPerWeek,
-  validWeekDays,
   isValidLoanDays,
-} from '../lib/domain/pairings.js';
+  isValidLoanDaysPerWeek,
+} from '../lib/domain/domain-constants.js';
+import { api, createCrudOperations } from './apiService.js';
 
 const pairingService = {
   ...createCrudOperations('pairings'),

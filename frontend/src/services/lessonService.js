@@ -1,7 +1,7 @@
 /**
  * Lesson Service - Handles all lesson-related API operations
  */
-import { LESSON_STATUSES, LESSON_TYPES } from '../lib/domain/lessons.js';
+import { LESSON_STATUSES, LESSON_TYPES } from '../lib/domain/domain-constants.js';
 import { api, createCrudOperations } from './apiService.js';
 
 const lessonService = {

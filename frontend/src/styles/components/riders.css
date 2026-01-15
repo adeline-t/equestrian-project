@@ -1,5 +1,5 @@
 /* ============================================
-   RIDERS COMPONENT STYLES - VERSION FINALE UNIFIÉE
+   RIDERS COMPONENT - Specific Styles Only
    ============================================ */
 
 @import '../common/index.css';
@@ -7,22 +7,6 @@
 /* ============================================
    RIDERS TABLE - GRID LAYOUT
    ============================================ */
-
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-gray-200);
-  box-shadow: var(--shadow-md);
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background-image: var(--gradient-light);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
 
 .table thead,
 .table tbody {
@@ -45,41 +29,8 @@
   display: grid;
   grid-template-columns: 220px 140px 220px 140px 100px 1fr;
   gap: 0;
-  border-bottom: 1px solid var(--color-gray-200);
-  transition: all var(--transition-base);
-  background-image: var(--gradient-light);
 }
 
-.table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.table th,
-.table td {
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.table th {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-  text-transform: capitalize;
-  letter-spacing: 0.5px;
-}
-
-.table td {
-  font-size: var(--font-size-sm);
-}
-
-.table th:last-child,
-.table td:last-child {
-  border-right: none;
-}
-
-/* Column-specific alignment */
 .table th:nth-child(1),
 .table td:nth-child(1) {
   justify-content: flex-start;
@@ -105,12 +56,6 @@
   cursor: pointer;
 }
 
-/* Table Actions Container */
-.table-actions {
-  position: relative;
-}
-
-/* Desktop: Hover to reveal */
 .action-buttons-desktop {
   display: flex;
   gap: var(--spacing-xs);
@@ -124,151 +69,14 @@
   opacity: 1;
 }
 
-/* Mobile menu hidden by default */
 .action-buttons-mobile {
   display: none;
 }
 
 /* ============================================
-   ACTION BUTTONS (ICONS)
+   RIDER CARD
    ============================================ */
 
-.btn-icon {
-  background: none;
-  border: none;
-  padding: var(--spacing-sm);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  border-radius: var(--radius-md);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-}
-
-.btn-icon-view {
-  color: var(--color-info-blue);
-}
-
-.btn-icon-view:hover {
-  background: var(--color-info-light);
-  color: var(--color-info-blue-dark);
-  transform: scale(1.15);
-}
-
-.btn-icon-edit {
-  color: var(--color-gray-500);
-}
-
-.btn-icon-edit:hover {
-  background: var(--color-gray-150);
-  color: var(--color-gray-800);
-  transform: scale(1.15);
-}
-
-.btn-icon-delete {
-  color: var(--color-danger-medium-dark);
-}
-
-.btn-icon-delete:hover {
-  background: var(--color-danger-light);
-  color: var(--color-danger-dark);
-  transform: scale(1.15);
-}
-
-/* ============================================
-   EMPTY STATE
-   ============================================ */
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--color-gray-600);
-  border-radius: var(--radius-lg);
-  border: 2px dashed var(--color-gray-400);
-}
-
-.empty-state h3 {
-  margin: 20px 0 0 0;
-  color: var(--color-gray-800);
-  font-size: var(--font-size-2xl);
-}
-
-/* ============================================
-   FILTER PILLS (Rider Type Filters)
-   ============================================ */
-
-.filter-pills {
-  display: inline-flex;
-  background: var(--color-gray-100);
-  border-radius: var(--radius-xl);
-  padding: 4px;
-  gap: 4px;
-  margin-top: var(--spacing-md);
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 20px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
-  white-space: nowrap;
-}
-
-.pill:not(.pill-active):hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.pill.pill-active {
-  background: var(--color-white);
-  color: var(--color-gray-900);
-  box-shadow: var(--shadow-sm);
-  font-weight: var(--font-weight-semibold);
-  position: relative;
-  padding-left: 24px;
-}
-
-/* Color indicator bar for active pills */
-.pill.pill-active::before {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 20px;
-  border-radius: 2px;
-}
-
-/* Dynamic colors based on data-rider-type attribute */
-.pill[data-rider-type='owner'].pill-active::before {
-  background: var(--gradient-warning);
-}
-
-.pill[data-rider-type='club'].pill-active::before {
-  background: var(--gradient-info);
-}
-
-.pill[data-rider-type='boarder'].pill-active::before {
-  background: var(--gradient-success);
-}
-
-.pill[data-rider-type='all'].pill-active::before {
-  background: var(--gradient-secondary);
-}
-
-/* ============================================
-   RIDER CARD - MODERN DESIGN
-   ============================================ */
-
-/* Card Title (Header) */
 .rider-card-title {
   display: flex;
   align-items: center;
@@ -279,7 +87,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-purple));
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -310,7 +118,6 @@
   flex-wrap: wrap;
 }
 
-/* Card Content Layout */
 .rider-card-modal {
   max-width: 1200px;
   width: 95%;
@@ -329,220 +136,16 @@
   margin-top: 16px;
 }
 
-/* Sidebar */
 .rider-card-sidebar {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* Info Card */
-.info-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all var(--transition-base);
-}
-
-.info-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-gray-300);
-}
-
-.info-card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: var(--gradient-light);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.info-card-header svg {
-  color: var(--color-primary);
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.info-card-header h3 {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-800);
-}
-
-.info-card-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* Modern Info Item */
-.info-item-modern {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.info-icon {
-  width: 34;
-  height: 34;
-  border-radius: var(--radius-md);
-  background: var(--gradient-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--color-primary);
-  font-size: 16px;
-  transition: all var(--transition-base);
-}
-
-.info-icon.success {
-  background: var(--color-success-light);
-  color: var(--color-success-dark);
-}
-
-.info-icon.warning {
-  background: var(--color-warning-light);
-  color: var(--color-warning-dark);
-}
-
-.info-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.info-label {
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-  word-wrap: break-word;
-}
-
-/* Stats Card */
-.stats-card {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
-}
-
-.stat-item:hover {
-  border-color: var(--color-primary-light);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-  transform: translateY(-2px);
-}
-
-.stat-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.stat-icon.packages {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-  color: var(--color-primary);
-}
-
-.stat-icon.pairings {
-  background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(56, 161, 105, 0.1));
-  color: var(--color-success-medium);
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-value {
-  font-size: 1.2rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-900);
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: 0.7rem;
-  color: var(--color-gray-600);
-  font-weight: var(--font-weight-medium);
-}
-
-/* Data Card (Main Content) */
 .rider-card-main {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.data-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  overflow: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all var(--transition-base);
-}
-
-.data-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-.data-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 8px;
-  background: var(--gradient-light);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.data-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.data-card-title svg {
-  color: var(--color-secondary);
-  font-size: 18px;
-}
-
-.data-card-title h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
 }
 
 .count-badge {
@@ -559,12 +162,12 @@
   font-weight: var(--font-weight-bold);
 }
 
-.data-card-body {
-  padding: 0px;
-}
+/* ============================================
+   PACKAGES & PAIRINGS
+   ============================================ */
 
-/* Packages List (Modern) */
-.packages-list-modern {
+.packages-list-modern,
+.pairings-list-modern {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -612,19 +215,6 @@
   font-size: 1.25rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
-}
-
-.package-separator {
-  color: var(--color-gray-400);
-  font-size: 1.2rem;
-  font-weight: var(--font-weight-bold);
-}
-
-/* Pairings List (Modern) */
-.pairings-list-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 .pairing-item-modern {
@@ -685,366 +275,20 @@
   flex-shrink: 0;
 }
 
-/* Modern Icon Button */
-.btn-icon-modern {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-300);
-  background: var(--color-white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  color: var(--color-gray-600);
-  font-size: 16px;
-}
-
-.btn-icon-modern:hover {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: white;
-  transform: scale(1.1);
-}
-
-.btn-icon-modern.danger:hover {
-  background: var(--color-danger);
-  border-color: var(--color-danger);
-}
-
-/* Empty State Inline */
-.empty-state-inline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 20px;
-  text-align: center;
-  gap: 14px;
-}
-
-.empty-state-inline svg {
-  font-size: 48px;
-  color: var(--color-gray-400);
-}
-
-.empty-state-inline p {
-  margin: 0;
-  color: var(--color-gray-600);
-  font-size: 0.95rem;
-}
-
-/* ============================================
-   LEGACY STYLES (pour compatibilité)
-   ============================================ */
-
-/* Force badge consistency */
-.badge,
-.horse-name-type .badge,
-.owned-horse-item .badge {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 6px 12px !important;
-  border-radius: 20px !important;
-  font-size: var(--font-size-xs) !important;
-  font-weight: var(--font-weight-semibold) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  white-space: nowrap !important;
-  height: 28px !important;
-  min-width: 28px !important;
-}
-
-/* Legacy Rider Info Section */
-.rider-info-section {
-  background: var(--color-gray-50);
-  padding: 20px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-gray-200);
-  margin-bottom: 20px;
-}
-
-.rider-info-section h3 {
-  margin: 0 0 15px 0;
-  color: var(--color-gray-800);
-  font-size: var(--font-size-lg);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-/* Legacy Date Status Row */
-.date-status-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-top: 15px;
-}
-
-.date-status-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  white-space: nowrap;
-}
-
-.date-status-item .info-label {
-  margin: 0;
-  font-size: var(--font-size-xs);
-}
-
-.date-status-item .info-value {
-  margin: 0;
-  font-size: var(--font-size-sm);
-}
-
-/* Legacy Owned Horses List */
-.owned-horses-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.owned-horse-item {
-  padding: 12px;
-  background: var(--color-gray-50);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-200);
-  transition: all var(--transition-base);
-}
-
-.owned-horse-item:hover {
-  border-color: var(--color-gray-400);
-  box-shadow: var(--shadow-sm);
-}
-
-.horse-name-type {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.horse-name-type strong {
-  color: var(--color-gray-800);
-  font-weight: var(--font-weight-semibold);
-}
-
-.horse-name-type .badge {
-  padding: 4px 8px;
-  font-size: var(--font-size-xs);
-  border-radius: var(--radius-sm);
-  font-weight: var(--font-weight-medium);
-}
-
-/* Legacy Packages Table */
-.packages-table-wrapper {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-}
-
-.packages-table-header {
-  display: grid;
-  grid-template-columns: 140px 180px 180px 140px 140px;
-  gap: 0;
-  background: var(--gradient-light);
-  border-bottom: 2px solid var(--color-gray-200);
-  padding: 0;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.packages-table-header > div {
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-right: 1px solid var(--color-gray-200);
-}
-
-.packages-table-header > div:last-child {
-  border-right: none;
-}
-
-.packages-table-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.package-row {
-  display: grid;
-  grid-template-columns: 140px 180px 180px 140px 140px;
-  gap: 0;
-  border-bottom: 1px solid var(--color-gray-200);
-  transition: all var(--transition-base);
-  background: var(--color-white);
-}
-
-.package-row:hover {
-  background: var(--color-gray-50);
-  box-shadow: inset 0 0 0 1px var(--color-gray-150);
-}
-
-.package-row:last-child {
-  border-bottom: none;
-}
-
-.package-row > div {
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-right: 1px solid var(--color-gray-150);
-  min-height: 50px;
-}
-
-.package-row > div:last-child {
-  border-right: none;
-}
-
-.col-status {
-  justify-content: center;
-}
-
-.package-status-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: var(--radius-xl);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.package-status-badge.active {
-  background: var(--color-success-badge-light);
-  color: var(--color-success-dark);
-}
-
-.package-status-badge.expired {
-  background: var(--color-gray-200);
-  color: var(--color-gray-650);
-}
-
-.package-status-badge.upcoming {
-  background: var(--color-info-light);
-  color: var(--color-info-dark);
-}
-
-.package-status-badge.inactive {
-  background: var(--color-danger-badge-light);
-  color: var(--color-danger-dark);
-}
-
-.col-particuliers,
-.col-prestations {
-  justify-content: center;
-}
-
-.lesson-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--gradient-info);
-  color: white;
-  padding: 4px 10px;
-  border-radius: var(--radius-xl);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
-  min-width: 40px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
-  transition: transform var(--transition-base);
-}
-
-.lesson-badge:hover {
-  transform: scale(1.05);
-}
-
-.col-debut,
-.col-fin {
-  justify-content: center;
-}
-
-.date-value {
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-800);
-  font-weight: var(--font-weight-medium);
-  white-space: nowrap;
-}
-
-.col-actions {
-  justify-content: center;
-}
-
-/* Legacy Pairings List */
-.pairings-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pairing-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: var(--color-gray-50);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-200);
-  transition: all var(--transition-base);
-}
-
-.pairing-item:hover {
-  border-color: var(--color-gray-400);
-  box-shadow: var(--shadow-sm);
-}
-
 /* ============================================
    MOBILE MENU
    ============================================ */
 
 @media (max-width: 768px) {
-  /* Hide desktop buttons */
   .action-buttons-desktop {
     display: none;
   }
 
-  /* Show mobile menu */
   .action-buttons-mobile {
     display: block;
     position: relative;
   }
 
-  /* Disable row hover and click */
   .rider-row {
     cursor: default;
   }
@@ -1053,7 +297,6 @@
     background: transparent;
   }
 
-  /* Menu button */
   .btn-menu {
     color: var(--color-info-blue);
     padding: 10px;
@@ -1062,7 +305,6 @@
     min-height: 44px;
   }
 
-  /* Backdrop */
   .menu-backdrop {
     position: fixed;
     top: 0;
@@ -1074,7 +316,6 @@
     animation: fadeIn var(--transition-base) ease;
   }
 
-  /* Mobile menu */
   .actions-menu-mobile {
     position: fixed;
     bottom: 0;
@@ -1111,10 +352,6 @@
     background: var(--color-gray-150);
   }
 
-  .actions-menu-mobile button:last-child {
-    margin-bottom: 0;
-  }
-
   .actions-menu-mobile .menu-delete {
     background: var(--color-danger-light);
     color: var(--color-danger-medium-dark);
@@ -1123,88 +360,20 @@
   .actions-menu-mobile .menu-delete:hover {
     background: var(--color-danger-badge-light);
   }
-
-  /* Filter Pills Responsive */
-  .filter-pills {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .pill {
-    padding: 8px 16px;
-    font-size: var(--font-size-xs);
-  }
-
-  .pill.pill-active {
-    padding-left: 20px;
-  }
-
-  .pill.pill-active::before {
-    width: 3px;
-    height: 16px;
-  }
 }
 
 /* ============================================
-   RESPONSIVE DESIGN
+   RESPONSIVE
    ============================================ */
 
 @media (max-width: 1200px) {
   .rider-card-grid {
     grid-template-columns: 280px 1fr;
-    gap: 20px;
   }
 
-  .rider-card-modal {
-    max-width: 90%;
-    width: 90%;
-  }
-
-  .info-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* Riders Table */
   .table thead tr,
   .table tbody tr {
     grid-template-columns: 180px 100px 180px 120px 90px 1fr;
-  }
-
-  /* Packages Table */
-  .packages-table-header,
-  .package-row {
-    grid-template-columns: 100px 160px 140px 120px 120px;
-  }
-
-  .packages-table-header > div,
-  .package-row > div {
-    padding: 10px 12px;
-    font-size: var(--font-size-xs);
-  }
-}
-
-@media (max-width: 1024px) {
-  /* Packages Table */
-  .packages-table-header,
-  .package-row {
-    grid-template-columns: 80px 100px 100px 100px 100px;
-  }
-
-  .packages-table-header > div,
-  .package-row > div {
-    padding: var(--spacing-sm) 10px;
-    min-height: 45px;
-  }
-
-  .lesson-badge {
-    font-size: var(--font-size-xs);
-    min-width: 32px;
-    padding: 2px 6px;
-  }
-
-  .package-status-badge {
-    font-size: var(--font-size-xs);
-    padding: 3px 10px;
   }
 }
 
@@ -1225,41 +394,17 @@
 }
 
 @media (max-width: 768px) {
-  /* Rider Card */
   .rider-card-content {
     padding: 16px;
-  }
-
-  .rider-card-grid {
-    gap: 16px;
   }
 
   .rider-card-sidebar {
     grid-template-columns: 1fr;
   }
 
-  .rider-card-avatar {
-    width: 48px;
-    height: 48px;
-    font-size: 20px;
-  }
-
-  .rider-card-title-text h2 {
-    font-size: 1.25rem;
-  }
-
-  .stats-card {
-    grid-template-columns: 1fr;
-  }
-
-  .data-card-header {
-    padding: 16px 20px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .data-card-body {
-    padding: 20px 16px;
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 150px 90px 150px 100px 80px 60px;
   }
 
   .package-item-modern,
@@ -1273,120 +418,13 @@
     width: 100%;
     justify-content: flex-end;
   }
-
-  .rider-card-modal {
-    width: 95%;
-    max-height: 95vh;
-  }
-
-  .rider-info-section {
-    padding: 15px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .date-status-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .date-status-item {
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
-
-  .owned-horses-list {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-
-  .owned-horse-item {
-    width: 100%;
-  }
-
-  /* Riders Table */
-  .table thead tr,
-  .table tbody tr {
-    grid-template-columns: 150px 90px 150px 100px 80px 60px;
-  }
-
-  .table th,
-  .table td {
-    padding: var(--spacing-sm) 12px;
-    font-size: 13px;
-  }
-
-  /* Packages Table - Card Layout */
-  .packages-table-wrapper {
-    border: none;
-    box-shadow: none;
-  }
-
-  .packages-table-header {
-    display: none;
-  }
-
-  .packages-table-body {
-    gap: 12px;
-  }
-
-  .package-row {
-    display: flex;
-    flex-direction: column;
-    grid-template-columns: none;
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-lg);
-    padding: 12px;
-    gap: var(--spacing-sm);
-    background: var(--color-white);
-  }
-
-  .package-row:hover {
-    background: var(--color-white);
-    box-shadow: var(--shadow-md);
-  }
-
-  .package-row > div {
-    border: none;
-    border-bottom: 1px solid var(--color-gray-150);
-    padding: var(--spacing-sm) 0;
-    justify-content: space-between;
-    text-align: left;
-    min-height: auto;
-  }
-
-  .package-row > div:last-child {
-    border-bottom: none;
-  }
-
-  .col-actions {
-    justify-content: flex-end;
-  }
-
-  .pairing-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .pairing-info {
-    width: 100%;
-  }
 }
 
 @media (max-width: 480px) {
-  /* Rider Card */
   .rider-card-title {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-  }
-
-  .rider-card-meta {
-    width: 100%;
   }
 
   .package-info {
@@ -1395,62 +433,8 @@
     gap: 12px;
   }
 
-  .package-separator {
-    display: none;
-  }
-
-  .info-card-body {
-    padding: 16px;
-  }
-
-  .rider-card-modal {
-    width: 98%;
-    max-height: 98vh;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .rider-info-section {
-    padding: 12px;
-  }
-
-  /* Riders Table */
   .table thead tr,
   .table tbody tr {
     grid-template-columns: 120px 70px 120px 90px 70px 50px;
-  }
-
-  .table th,
-  .table td {
-    padding: 6px var(--spacing-sm);
-    font-size: var(--font-size-xs);
-  }
-
-  .package-row {
-    padding: 10px;
-    gap: 6px;
-  }
-
-  .package-row > div {
-    padding: 6px 0;
-    font-size: var(--font-size-xs);
-  }
-
-  .lesson-badge {
-    font-size: var(--font-size-xs);
-    min-width: 28px;
-    padding: 2px 6px;
-  }
-
-  .date-value {
-    font-size: var(--font-size-xs);
-  }
-
-  .package-status-badge {
-    font-size: var(--font-size-xs);
-    padding: 2px var(--spacing-sm);
   }
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { RIDER_HORSE_LINK_TYPE } from '../lib/domain/index.js';
 import pairingService from '../services/pairingService.js';
-import { RIDER_HORSE_LINK_TYPE } from '../lib/domain/pairings.js';
 
 // Mapping des indices vers les noms de jours en anglais (format backend)
 const DAY_INDEX_TO_NAME = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];

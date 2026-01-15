@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useHorseForm } from '../../hooks/index.js';
-import { HORSE_TYPES, OWNER_TYPES } from '../../lib/domain/horses.js';
+import { HORSE_TYPES, OWNER_TYPES } from '../../lib/domain/index.js';
 import { Icons } from '../../lib/icons.jsx';
 
 /**

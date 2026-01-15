@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/horses.js';
+import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/index.js';
 import { validateHorseForm } from '../lib/helpers/index.js';
 import { riderService } from '../services';
 

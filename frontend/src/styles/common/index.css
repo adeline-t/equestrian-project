@@ -1,14 +1,16 @@
 /* ============================================
-   COMMON STYLES - Main Import File
+   MAIN CSS - Import all styles
    ============================================ */
 
+/* Common foundation */
 @import './base.css';
+@import './layout.css';
 @import './buttons.css';
 @import './forms.css';
-@import './alerts.css';
 @import './badges.css';
-@import './modal.css';
+@import './alerts.css';
 @import './tables.css';
+@import './modals.css';
+@import './filters.css';
+@import './cards.css';
 @import './utilities.css';
-@import './infotooltip.css';
-@import './list-view.css';

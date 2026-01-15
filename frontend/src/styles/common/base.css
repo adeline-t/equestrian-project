@@ -58,15 +58,29 @@
   --color-gray-800: #2d3748;
   --color-gray-900: #212529;
 
-  /* Alert/Badge Colors */
+  /* Badge Colors */
   --color-success-badge-light: #c6f6d5;
   --color-success-badge-medium: #9ae6b4;
   --color-danger-badge-light: #fed7d7;
   --color-danger-badge-medium: #fc8181;
 
-  /* Pony Colors (Pink) */
+  /* Pony Colors */
   --color-pony-light: #ed64a6;
   --color-pony-dark: #d53f8c;
+
+  /* Component-specific colors */
+  --color-horse: #4299e1;
+  --color-owner: #ed8936;
+  --color-club: #4299e1;
+  --color-boarder: #48bb78;
+  --color-laury: #f5576c;
+
+  /* Status Colors */
+  --color-status-active: #48bb78;
+  --color-status-inactive: #f56565;
+  --color-status-pending: #ed8936;
+  --color-status-completed: #4299e1;
+  --color-status-cancelled: #718096;
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -108,85 +122,17 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* ============================================
-     GRADIENT COLORS
-     ============================================ */
-
-  /* Primary Gradient */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--color-primary-light) 0%,
-    var(--color-primary-purple) 100%
-  );
-  --gradient-primary-start: var(--color-primary-light);
-  --gradient-primary-end: var(--color-primary-purple);
-
-  /* Pony Gradient */
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-purple) 100%);
   --gradient-pony: linear-gradient(135deg, var(--color-pony-light) 0%, var(--color-pony-dark) 100%);
-  --gradient-pony-start: var(--color-pony-light);
-  --gradient-pony-end: var(--color-pony-dark);
-
-  /* Success Gradient */
-  --gradient-success: linear-gradient(
-    135deg,
-    var(--color-success-medium) 0%,
-    var(--color-success-medium-dark) 100%
-  );
-  --gradient-success-start: var(--color-success-medium);
-  --gradient-success-end: var(--color-success-medium-dark);
-
-  /* Danger Gradient */
-  --gradient-danger: linear-gradient(
-    135deg,
-    var(--color-danger-medium) 0%,
-    var(--color-danger-medium-dark) 100%
-  );
-  --gradient-danger-start: var(--color-danger-medium);
-  --gradient-danger-end: var(--color-danger-medium-dark);
-
-  /* Secondary Gradient */
-  --gradient-secondary: linear-gradient(
-    135deg,
-    var(--color-gray-500) 0%,
-    var(--color-gray-650) 100%
-  );
-  --gradient-secondary-start: var(--color-gray-500);
-  --gradient-secondary-end: var(--color-gray-650);
-
-  /* Warning Gradient */
-  --gradient-warning: linear-gradient(
-    135deg,
-    var(--color-warning-orange) 0%,
-    var(--color-warning-orange-dark) 100%
-  );
-  --gradient-warning-start: var(--color-warning-orange);
-  --gradient-warning-end: var(--color-warning-orange-dark);
-
-  /* Info Gradient */
-  --gradient-info: linear-gradient(
-    135deg,
-    var(--color-info-blue) 0%,
-    var(--color-info-blue-dark) 100%
-  );
-  --gradient-info-start: var(--color-info-blue);
-  --gradient-info-end: var(--color-info-blue-dark);
-
-  /* Light Gradient (for tables/headers) */
+  --gradient-success: linear-gradient(135deg, var(--color-success-medium) 0%, var(--color-success-medium-dark) 100%);
+  --gradient-danger: linear-gradient(135deg, var(--color-danger-medium) 0%, var(--color-danger-medium-dark) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--color-gray-500) 0%, var(--color-gray-650) 100%);
+  --gradient-warning: linear-gradient(135deg, var(--color-warning-orange) 0%, var(--color-warning-orange-dark) 100%);
+  --gradient-info: linear-gradient(135deg, var(--color-info-blue) 0%, var(--color-info-blue-dark) 100%);
   --gradient-light: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-150) 100%);
-  --gradient-light-start: var(--color-gray-50);
-  --gradient-light-end: var(--color-gray-150);
-
-  /* Alert Gradients */
-  --gradient-alert-success: linear-gradient(
-    135deg,
-    var(--color-success-badge-light) 0%,
-    var(--color-success-badge-medium) 100%
-  );
-  --gradient-alert-error: linear-gradient(
-    135deg,
-    var(--color-danger-badge-light) 0%,
-    var(--color-danger-badge-medium) 100%
-  );
+  --gradient-alert-success: linear-gradient(135deg, var(--color-success-badge-light) 0%, var(--color-success-badge-medium) 100%);
+  --gradient-alert-error: linear-gradient(135deg, var(--color-danger-badge-light) 0%, var(--color-danger-badge-medium) 100%);
 }
 
 /* ============================================
@@ -214,21 +160,13 @@ body {
    ============================================ */
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideIn {

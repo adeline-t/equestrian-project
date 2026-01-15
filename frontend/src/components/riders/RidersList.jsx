@@ -1,10 +1,11 @@
 import { useRidersList } from '../../hooks/useRidersList.js';
-import { RIDER_TYPES, getRiderTypeLabel } from '../../lib/domain/riders.js';
+import { getRiderTypeLabel } from '../../lib/domain/domain-constants.js';
 import { Icons } from '../../lib/icons.jsx';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import RiderCard from './RiderCard.jsx';
 import RiderForm from './RiderForm.jsx';
+import '../../styles/common/index.css';
 import '../../styles/components/riders.css';
 
 /**
@@ -23,11 +24,10 @@ function RidersList() {
     showDeleteModal,
     riderToDelete,
     successMessage,
-    activityFilter,
     riderTypeFilter,
-    ACTIVITY_STATUS_FILTERS,
     COMMON_FILTERS,
-    setActivityFilter,
+    includeInactive,
+    toggleIncludeInactive,
     setRiderTypeFilter,
     handleCreate,
     handleEdit,
@@ -54,48 +54,31 @@ function RidersList() {
 
   return (
     <div className="card-enhanced">
-      {/* Header */}
       <div className="flex-between mb-20">
         <h2>Liste des Cavaliers</h2>
-        <button className="btn btn-primary" onClick={handleCreate}>
-          <Icons.Add style={{ marginRight: '8px' }} />
-          Nouveau Cavalier
-        </button>
+
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button
+            className={`btn ${includeInactive ? 'btn-secondary' : 'btn-outline-secondary'}`}
+            onClick={toggleIncludeInactive}
+            title={includeInactive ? 'Masquer les inactifs' : 'Afficher les inactifs'}
+          >
+            <Icons.Filter style={{ marginRight: '8px' }} />
+            {includeInactive
+              ? `Inactifs inclus (${stats.inactive})`
+              : `Afficher inactifs (${stats.inactive})`}
+          </button>
+
+          <button className="btn btn-primary" onClick={handleCreate}>
+            <Icons.Add style={{ marginRight: '8px' }} />
+            Nouveau Cavalier
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
       {riders.length > 0 && (
         <div className="filter-section mb-20">
-          {/* Activity Filter */}
-          <div className="filter-buttons mb-15">
-            <button
-              className={`btn ${
-                activityFilter === ACTIVITY_STATUS_FILTERS.ACTIVE ? 'btn-primary' : 'btn-secondary'
-              }`}
-              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.ACTIVE)}
-            >
-              Actifs ({stats.active})
-            </button>
-            <button
-              className={`btn ${
-                activityFilter === ACTIVITY_STATUS_FILTERS.INACTIVE
-                  ? 'btn-primary'
-                  : 'btn-secondary'
-              }`}
-              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.INACTIVE)}
-            >
-              Inactifs ({stats.inactive})
-            </button>
-            <button
-              className={`btn ${
-                activityFilter === ACTIVITY_STATUS_FILTERS.ALL ? 'btn-primary' : 'btn-secondary'
-              }`}
-              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.ALL)}
-            >
-              Tous ({stats.total})
-            </button>
-          </div>
-
           {/* Rider Type Filter */}
           <div className="filter-pills">
             <button
@@ -105,16 +88,27 @@ function RidersList() {
             >
               Tous
             </button>
-            {Object.values(RIDER_TYPES).map((type) => (
-              <button
-                key={type}
-                className={`pill ${riderTypeFilter === type ? 'pill-active' : ''}`}
-                onClick={() => setRiderTypeFilter(type)}
-                data-rider-type={type}
-              >
-                {getRiderTypeLabel(type)}
-              </button>
-            ))}
+            <button
+              className={`pill ${riderTypeFilter === 'owner' ? 'pill-active' : ''}`}
+              onClick={() => setRiderTypeFilter('owner')}
+              data-rider-type="owner"
+            >
+              {getRiderTypeLabel('owner')}
+            </button>
+            <button
+              className={`pill ${riderTypeFilter === 'club' ? 'pill-active' : ''}`}
+              onClick={() => setRiderTypeFilter('club')}
+              data-rider-type="club"
+            >
+              {getRiderTypeLabel('club')}
+            </button>
+            <button
+              className={`pill ${riderTypeFilter === 'boarder' ? 'pill-active' : ''}`}
+              onClick={() => setRiderTypeFilter('boarder')}
+              data-rider-type="boarder"
+            >
+              {getRiderTypeLabel('boarder')}
+            </button>
           </div>
         </div>
       )}
@@ -143,7 +137,9 @@ function RidersList() {
       {/* Table */}
       {riders.length === 0 ? (
         <div className="empty-state">
-          <Icons.Users style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <Icons.Users
+            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
+          />
           <p>Aucun cavalier trouvé</p>
           <button className="btn btn-primary mt-20" onClick={handleCreate}>
             <Icons.Add style={{ marginRight: '8px' }} />
@@ -152,7 +148,9 @@ function RidersList() {
         </div>
       ) : filteredRiders.length === 0 ? (
         <div className="empty-state">
-          <Icons.Filter style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <Icons.Filter
+            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
+          />
           <p>Aucun cavalier ne correspond au filtre</p>
         </div>
       ) : (
@@ -191,27 +189,29 @@ function RidersList() {
                     </span>
                   </td>
                   <td className="table-actions">
-                    <button
-                      className="btn-icon btn-icon-view"
-                      onClick={() => handleViewDetails(rider.id)}
-                      title="Voir les détails"
-                    >
-                      <Icons.View />
-                    </button>
-                    <button
-                      className="btn-icon btn-icon-edit"
-                      onClick={() => handleEdit(rider)}
-                      title="Modifier"
-                    >
-                      <Icons.Edit />
-                    </button>
-                    <button
-                      className="btn-icon btn-icon-delete"
-                      onClick={() => handleDeleteClick(rider)}
-                      title="Supprimer"
-                    >
-                      <Icons.Delete />
-                    </button>
+                    <div className="action-buttons-desktop">
+                      <button
+                        className="btn-icon btn-icon-view"
+                        onClick={() => handleViewDetails(rider.id)}
+                        title="Voir les détails"
+                      >
+                        <Icons.View />
+                      </button>
+                      <button
+                        className="btn-icon btn-icon-edit"
+                        onClick={() => handleEdit(rider)}
+                        title="Modifier"
+                      >
+                        <Icons.Edit />
+                      </button>
+                      <button
+                        className="btn-icon btn-icon-delete"
+                        onClick={() => handleDeleteClick(rider)}
+                        title="Supprimer"
+                      >
+                        <Icons.Delete />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

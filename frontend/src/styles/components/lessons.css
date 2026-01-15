@@ -1,12 +1,8 @@
 /* ============================================
-   LESSONS COMPONENT STYLES
+   LESSONS COMPONENT - Specific Styles Only
    ============================================ */
 
 @import '../common/index.css';
-
-/* ============================================
-   LESSON CARD CONTENT
-   ============================================ */
 
 .lesson-card-content {
   display: flex;
@@ -15,10 +11,6 @@
   width: 100%;
   height: 100%;
 }
-
-/* ============================================
-   LESSON CARD - COMPACT LAYOUT
-   ============================================ */
 
 .lesson-card.compact .lesson-card-content {
   gap: 2px;
@@ -30,24 +22,16 @@
   white-space: nowrap;
 }
 
-/* ============================================
-   LESSON CARD - STANDARD LAYOUT
-   ============================================ */
-
 .lesson-card.standard .lesson-card-content {
   gap: 4px;
 }
-
-/* ============================================
-   DETAIL ROW STYLES
-   ============================================ */
 
 .detail-row {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--color-gray-150);
 }
 
 .detail-row:last-child {
@@ -70,10 +54,6 @@
   font-size: 14px;
   margin: 0;
 }
-
-/* ============================================
-   PARTICIPANTS SECTION
-   ============================================ */
 
 .participants-list {
   display: flex;
@@ -141,10 +121,6 @@
   flex-shrink: 0;
 }
 
-/* ============================================
-   ADD PARTICIPANT FORM
-   ============================================ */
-
 .add-participant-form {
   background-color: var(--color-gray-100);
   padding: 20px;
@@ -160,10 +136,6 @@
   display: flex;
   align-items: center;
 }
-
-/* ============================================
-   ADVANCED TAB STYLES
-   ============================================ */
 
 .advanced-tab {
   display: flex;
@@ -185,7 +157,7 @@
   color: var(--color-gray-800);
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--color-gray-200);
 }
 
 .advanced-section .detail-row {
@@ -193,7 +165,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 12px 0;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--color-gray-200);
 }
 
 .advanced-section .detail-row:last-child {
@@ -216,18 +188,6 @@
   flex: 1;
 }
 
-.advanced-section .alert {
-  margin-bottom: 16px;
-}
-
-.advanced-section .alert:last-child {
-  margin-bottom: 0;
-}
-
-/* ============================================
-   EDIT FORM - COMPACT ADJUSTMENTS
-   ============================================ */
-
 .edit-form .form-group {
   margin-bottom: 12px !important;
 }
@@ -243,10 +203,6 @@
   font-size: 13px !important;
   margin-bottom: 4px !important;
 }
-
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
 
 @media (max-width: 768px) {
   .advanced-section .detail-row {

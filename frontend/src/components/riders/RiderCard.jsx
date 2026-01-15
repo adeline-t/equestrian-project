@@ -1,16 +1,15 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { usePackageActions, usePairingActions, useRiderCard } from '../../hooks/index.js';
-import { getRiderTypeLabel } from '../../lib/domain/riders.js';
+import { getRiderTypeLabel } from '../../lib/domain/index.js';
 import { formatDate, isActive } from '../../lib/helpers/index.js';
 import { Icons } from '../../lib/icons.jsx';
+import '../../styles/components/pairing.css';
+import '../../styles/components/riders.css';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
-import { getRiderHorseLinkDescription } from '../../lib/domain/pairings.js';
-import '../../styles/components/riders.css';
-import '../../styles/components/pairing.css';
 
 /**
  * RiderCard - Detailed rider information card

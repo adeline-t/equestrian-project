@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useHorseActions, useHorseRiders } from '../../hooks';
 import { useHorsesList } from '../../hooks/useHorsesList.js';
 import { Icons } from '../../lib/icons.jsx';
-import { getHorseKindLabel } from '../../lib/domain/horses.js';
+import { getHorseKindLabel } from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers/index.js';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import HorseForm from './HorseForm.jsx';
 import RidersModal from './RidersModal.jsx';
+import '../../styles/common/index.css';
+import '../../styles/common/filters.css';
 
 /**
  * HorsesList - Main horses list component
@@ -23,15 +25,14 @@ function HorsesList() {
     stats,
     loading,
     error,
-    activityFilter,
+    includeInactive,
     kindFilter,
     ownershipFilter,
-    ACTIVITY_STATUS_FILTERS,
     HORSE_KIND_FILTERS,
     OWNERSHIP_TYPE_FILTERS,
-    setActivityFilter,
     setKindFilter,
     setOwnershipFilter,
+    toggleIncludeInactive,
     reload,
     clearError,
   } = useHorsesList();
@@ -100,46 +101,30 @@ function HorsesList() {
     <div className="card-enhanced">
       {/* Header */}
       <div className="flex-between mb-20">
-        <h2>Liste des Chevaux</h2>
-        <button className="btn btn-primary" onClick={horseActions.handleCreate}>
-          <Icons.Add style={{ marginRight: '8px' }} />
-          Nouveau Cheval
-        </button>
+        <div className="header-title">
+          <h2>Liste des Chevaux</h2>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <button
+            className={`btn ${includeInactive ? 'btn-secondary' : 'btn-outline-secondary'}`}
+            onClick={toggleIncludeInactive}
+            title={includeInactive ? 'Masquer les inactifs' : 'Afficher les inactifs'}
+          >
+            <Icons.Filter style={{ marginRight: '8px' }} />
+            {includeInactive
+              ? `Inactifs inclus (${stats.inactive})`
+              : `Afficher inactifs (${stats.inactive})`}
+          </button>
+          <button className="btn btn-primary" onClick={horseActions.handleCreate}>
+            <Icons.Add style={{ marginRight: '8px' }} />
+            Nouveau Cheval
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
       {horses.length > 0 && (
         <div className="filter-section mb-20">
-          {/* Activity Filter */}
-          <div className="filter-buttons mb-15">
-            <button
-              className={`btn ${
-                activityFilter === ACTIVITY_STATUS_FILTERS.ACTIVE ? 'btn-primary' : 'btn-secondary'
-              }`}
-              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.ACTIVE)}
-            >
-              Actifs ({stats.active})
-            </button>
-            <button
-              className={`btn ${
-                activityFilter === ACTIVITY_STATUS_FILTERS.INACTIVE
-                  ? 'btn-primary'
-                  : 'btn-secondary'
-              }`}
-              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.INACTIVE)}
-            >
-              Inactifs ({stats.inactive})
-            </button>
-            <button
-              className={`btn ${
-                activityFilter === ACTIVITY_STATUS_FILTERS.ALL ? 'btn-primary' : 'btn-secondary'
-              }`}
-              onClick={() => setActivityFilter(ACTIVITY_STATUS_FILTERS.ALL)}
-            >
-              Tous ({stats.total})
-            </button>
-          </div>
-
           {/* Horse Kind Filter */}
           <div className="filter-pills mb-10">
             <button
@@ -237,7 +222,9 @@ function HorsesList() {
       {/* Table */}
       {horses.length === 0 ? (
         <div className="empty-state">
-          <Icons.Horse style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <Icons.Horse
+            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
+          />
           <p>Aucun cheval trouvé</p>
           <button className="btn btn-primary mt-20" onClick={horseActions.handleCreate}>
             <Icons.Add style={{ marginRight: '8px' }} />
@@ -246,7 +233,9 @@ function HorsesList() {
         </div>
       ) : filteredHorses.length === 0 ? (
         <div className="empty-state">
-          <Icons.Filter style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+          <Icons.Filter
+            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
+          />
           <p>Aucun cheval ne correspond au filtre</p>
         </div>
       ) : (
@@ -269,7 +258,7 @@ function HorsesList() {
                     <strong>{horse.name}</strong>
                   </td>
                   <td>
-                    <span className={`badge badge-${horse.kind}`}>
+                    <span className="badge badge-kind" data-kind={horse.kind}>
                       {getHorseKindLabel(horse.kind)}
                     </span>
                   </td>

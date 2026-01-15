@@ -1,5 +1,5 @@
 /* ============================================
-   FORM STYLES - Consolidated
+   FORM STYLES
    ============================================ */
 
 .form-group {
@@ -85,10 +85,6 @@
 .form-textarea.is-valid:focus {
   box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
-
-/* ============================================
-   VALIDATION MESSAGES
-   ============================================ */
 
 .invalid-feedback {
   display: block;

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { Icons } from '../../lib/icons.jsx';
 import Modal from '../common/Modal.jsx';
+import '../../styles/common/alerts.css';
 
 /**
  * RidersModal - Shows riders for a horse
@@ -27,7 +28,7 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
 
     if (!horseRiders?.riders || horseRiders.riders.length === 0) {
       return (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-gray-500)' }}>
           <Icons.Users style={{ fontSize: '48px', marginBottom: '12px' }} />
           <p>Aucun cavalier actif pour ce cheval</p>
         </div>
@@ -39,7 +40,7 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
         <p
           style={{
             marginBottom: '16px',
-            color: '#666',
+            color: 'var(--color-gray-600)',
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
@@ -62,13 +63,13 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
               key={rider.id}
               style={{
                 padding: '12px 16px',
-                borderBottom: '1px solid #eee',
+                borderBottom: '1px solid var(--color-gray-200)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
               }}
             >
-              <Icons.User style={{ color: '#0066cc', flexShrink: 0 }} />
+              <Icons.User style={{ color: 'var(--color-info-blue)', flexShrink: 0 }} />
               <div style={{ fontWeight: '500' }}>{rider.name}</div>
             </li>
           ))}

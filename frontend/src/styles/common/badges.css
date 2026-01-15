@@ -1,5 +1,5 @@
 /* ============================================
-   BADGE STYLES - Consolidated
+   BADGE STYLES
    ============================================ */
 
 .badge {
@@ -9,7 +9,7 @@
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xl);
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -21,6 +21,40 @@
   transform: scale(1.05);
   transition: all var(--transition-base);
   cursor: pointer;
+}
+
+/* ============================================
+   COLOR VARIANT BADGES
+   ============================================ */
+
+.badge-primary {
+  background-image: var(--gradient-primary);
+  color: var(--color-white);
+}
+
+.badge-success {
+  background-image: var(--gradient-success);
+  color: var(--color-white);
+}
+
+.badge-danger {
+  background-image: var(--gradient-danger);
+  color: var(--color-white);
+}
+
+.badge-secondary {
+  background-image: var(--gradient-secondary);
+  color: var(--color-white);
+}
+
+.badge-warning {
+  background-image: var(--gradient-warning);
+  color: var(--color-white);
+}
+
+.badge-info {
+  background-image: var(--gradient-info);
+  color: var(--color-white);
 }
 
 /* ============================================
@@ -82,40 +116,6 @@
 }
 
 /* ============================================
-   COLOR VARIANT BADGES (Gradient versions)
-   ============================================ */
-
-.badge-info {
-  background-image: var(--gradient-info);
-  color: var(--color-white);
-}
-
-.badge-success {
-  background-image: var(--gradient-success);
-  color: var(--color-white);
-}
-
-.badge-warning {
-  background-image: var(--gradient-warning);
-  color: var(--color-white);
-}
-
-.badge-danger {
-  background-image: var(--gradient-danger);
-  color: var(--color-white);
-}
-
-.badge-secondary {
-  background-image: var(--gradient-secondary);
-  color: var(--color-white);
-}
-
-.badge-primary {
-  background-image: var(--gradient-primary);
-  color: var(--color-white);
-}
-
-/* ============================================
    LESSON TYPE BADGES
    ============================================ */
 
@@ -160,7 +160,7 @@
 }
 
 /* ============================================
-   RIDER TYPE BADGES - Dynamic with data-rider-type
+   RIDER TYPE BADGES
    ============================================ */
 
 .badge-rider-type {
@@ -169,25 +169,21 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Owner - Orange gradient */
 .badge-rider-type[data-rider-type='owner'] {
   background: var(--gradient-warning);
   color: var(--color-white);
 }
 
-/* Club - Blue gradient */
 .badge-rider-type[data-rider-type='club'] {
   background: var(--gradient-info);
   color: var(--color-white);
 }
 
-/* Boarder - Green gradient */
 .badge-rider-type[data-rider-type='boarder'] {
   background: var(--gradient-success);
   color: var(--color-white);
 }
 
-/* Hover effects */
 .badge-rider-type:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -195,24 +191,18 @@
 }
 
 /* ============================================
-   HORSE KIND BADGES - Dynamic with data-kind
+   HORSE KIND BADGES
    ============================================ */
 
-/* Pony - Pink gradient */
 .badge-kind[data-kind='pony'] {
   background: var(--gradient-pony);
   color: var(--color-white);
 }
 
-/* Horse - Blue gradient */
 .badge-kind[data-kind='horse'] {
   background: var(--gradient-info);
   color: var(--color-white);
 }
-
-/* ============================================
-   LEGACY HORSE BADGES (For backwards compatibility)
-   ============================================ */
 
 .badge-horse {
   background-image: var(--gradient-info);
@@ -262,16 +252,6 @@
 .package-status-badge.suspended {
   background: var(--color-warning-light);
   color: var(--color-warning-dark);
-}
-
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-
-.empty-message {
-  color: var(--color-gray-500);
-  margin: 0;
-  font-size: var(--font-size-sm);
 }
 
 /* ============================================

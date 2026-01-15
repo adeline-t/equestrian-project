@@ -1,28 +1,23 @@
 /* ============================================
    CALENDAR COMPONENT STYLES
+   Conservé tel quel - déjà bien organisé
    ============================================ */
 
 @import '../common/index.css';
 
-/* ============================================
-   VARIABLES GLOBALES
-   ============================================ */
 :root {
   --hour-height: 60px;
   --start-hour: 8;
   --end-hour: 22;
   --selection-color: rgba(66, 153, 225, 0.2);
-  --selection-border: #4299e1;
+  --selection-border: var(--color-info-blue);
   --today-bg: #ebf8ff;
-  --hour-line-color: #e2e8f0;
-  --text-color: #2d3748;
-  --label-color: #718096;
+  --hour-line-color: var(--color-gray-200);
+  --text-color: var(--color-gray-800);
+  --label-color: var(--color-gray-500);
   --lesson-card-padding: 4px;
 }
 
-/* ============================================
-   BASE LAYOUT
-   ============================================ */
 .calendar-view {
   padding: 20px;
   background: var(--color-gray-100);
@@ -45,9 +40,6 @@
   margin: 20px;
 }
 
-/* ============================================
-   CALENDAR HEADER
-   ============================================ */
 .calendar-header {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -74,7 +66,7 @@
   content: '';
   width: 4px;
   height: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   border-radius: 2px;
   position: absolute;
   left: -16px;
@@ -106,9 +98,6 @@
   justify-content: flex-start;
 }
 
-/* ============================================
-   COMPACT STATS
-   ============================================ */
 .calendar-stats-compact {
   display: flex;
   gap: 16px;
@@ -149,9 +138,6 @@
   white-space: nowrap;
 }
 
-/* ============================================
-   CALENDAR FILTERS
-   ============================================ */
 .calendar-filters {
   background: var(--color-white);
   padding: 16px;
@@ -179,9 +165,6 @@
   gap: 12px;
 }
 
-/* ============================================
-   CALENDAR CONTENT
-   ============================================ */
 .calendar-content {
   flex: 1;
   display: flex;
@@ -191,9 +174,6 @@
   padding: 8px;
 }
 
-/* ============================================
-   WEEK VIEW
-   ============================================ */
 .week-view {
   background: var(--color-white);
   border-radius: var(--radius-lg);
@@ -212,12 +192,9 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-  gap: 4px; /* effet "grid gaps" dynamique */
+  gap: 4px;
 }
 
-/* ============================================
-   TIME COLUMN (Colonne des heures)
-   ============================================ */
 .time-column {
   background: var(--color-gray-100);
   border-right: 2px solid var(--color-gray-300);
@@ -255,45 +232,9 @@
   flex-shrink: 0;
 }
 
-/* ============================================
-   Responsive : ajustement pour mobile
-   ============================================ */
-@media (max-width: 768px) {
-  .time-column {
-    min-width: 50px;
-  }
-  .time-slot {
-    font-size: 0.65rem;
-    padding-right: 4px;
-    height: 50px;
-  }
-  .time-header {
-    height: 60px;
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .time-column {
-    min-width: 40px;
-  }
-  .time-slot {
-    font-size: 0.6rem;
-    height: 40px;
-    padding-right: 2px;
-  }
-  .time-header {
-    height: 50px;
-    font-size: 0.7rem;
-  }
-}
-
-/* ============================================
-   DAY COLUMN
-   ============================================ */
 .day-column {
   border-right: 1px solid var(--color-gray-300);
-  border-left: 1px solid #e2e8f0;
+  border-left: 1px solid var(--color-gray-200);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -339,7 +280,7 @@
 
 .today-badge {
   display: inline-block;
-  background: #48bb78;
+  background: var(--color-success-medium);
   color: var(--color-white);
   padding: 2px 8px;
   border-radius: 12px;
@@ -348,9 +289,6 @@
   white-space: nowrap;
 }
 
-/* ============================================
-   DAY GRID
-   ============================================ */
 .day-grid-container {
   position: relative;
   flex: 1;
@@ -394,9 +332,6 @@
   z-index: 10;
 }
 
-/* ============================================
-   LESSONS CONTAINER & CARDS
-   ============================================ */
 .lessons-container {
   position: relative;
   width: 100%;
@@ -450,7 +385,7 @@
   border-radius: var(--radius-md);
   overflow: visible;
   width: 100%;
-  height: auto; /* changer de 100% à auto */
+  height: auto;
   min-height: inherit;
   box-sizing: border-box;
 }
@@ -464,9 +399,6 @@
   display: block;
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
 @media (max-width: 1400px) {
   .week-grid {
     grid-template-columns: 70px repeat(7, 1fr);
@@ -517,9 +449,6 @@
   }
   .hour-marker-row {
     height: 50px;
-  }
-  .hour-label {
-    font-size: 0.75rem;
   }
   .lessons-container > div {
     left: 4px;

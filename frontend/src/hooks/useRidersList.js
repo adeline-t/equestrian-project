@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import {
-  ACTIVITY_STATUS_FILTERS,
   calculateRiderStats,
   COMMON_FILTERS,
   filterRiders,
@@ -21,8 +20,8 @@ export function useRidersList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [riderToDelete, setRiderToDelete] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [activityFilter, setActivityFilter] = useState(ACTIVITY_STATUS_FILTERS.ACTIVE);
   const [riderTypeFilter, setRiderTypeFilter] = useState(COMMON_FILTERS.ALL);
+  const [includeInactive, setIncludeInactive] = useState(false);
 
   useEffect(() => {
     loadRiders();
@@ -112,11 +111,24 @@ export function useRidersList() {
     }
   };
 
+  const toggleIncludeInactive = () => {
+    setIncludeInactive((prev) => !prev);
+  };
+
   const stats = calculateRiderStats(riders);
 
-  const filteredRiders = filterRiders(riders, {
-    activityStatus: activityFilter,
-    riderType: riderTypeFilter,
+  const filteredRiders = riders.filter((rider) => {
+    const active = isActive(rider.activity_start_date, rider.activity_end_date);
+
+    if (!includeInactive && !active) {
+      return false;
+    }
+
+    if (riderTypeFilter !== COMMON_FILTERS.ALL && rider.rider_type !== riderTypeFilter) {
+      return false;
+    }
+
+    return true;
   });
 
   const getRiderStatus = (rider) => isActive(rider.activity_start_date, rider.activity_end_date);
@@ -152,12 +164,11 @@ export function useRidersList() {
     showDeleteModal,
     riderToDelete,
     successMessage,
-    activityFilter,
-    riderTypeFilter, // ✅ Renommé
-    ACTIVITY_STATUS_FILTERS,
+    riderTypeFilter,
     COMMON_FILTERS,
-    setActivityFilter,
-    setRiderTypeFilter, // ✅ Renommé
+    includeInactive,
+    toggleIncludeInactive,
+    setRiderTypeFilter,
     handleCreate,
     handleEdit,
     handleViewDetails,

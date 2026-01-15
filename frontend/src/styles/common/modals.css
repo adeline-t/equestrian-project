@@ -1,5 +1,5 @@
 /* ============================================
-   MODAL STYLES - Consolidated
+   MODAL STYLES
    ============================================ */
 
 .modal-overlay {
@@ -83,32 +83,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-}
-
-/* ============================================
-   CLOSE BUTTON
-   ============================================ */
-
-.btn-close,
-.modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-md);
-  transition: background-color var(--transition-base);
-  color: var(--color-gray-600);
-  flex-shrink: 0;
-  font-size: 24px;
-}
-
-.btn-close:hover,
-.modal-close:hover {
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-900);
 }
 
 /* ============================================
@@ -220,24 +194,7 @@
 }
 
 /* ============================================
-   SPECIAL MODAL SIZES
-   ============================================ */
-
-.rider-card-modal {
-  max-width: 1400px;
-  width: 95%;
-  max-height: 90vh;
-}
-
-.template-modal {
-  max-width: 700px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-/* ============================================
-   RESPONSIVE DESIGN
+   RESPONSIVE
    ============================================ */
 
 @media (max-width: 768px) {

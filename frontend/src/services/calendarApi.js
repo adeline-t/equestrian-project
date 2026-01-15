@@ -2,7 +2,7 @@
  * Calendar API - Specialized endpoints for calendar operations
  */
 import axios from 'axios';
-import { LESSON_TYPES, LESSON_STATUSES, PLANNING_SLOT_TYPES } from '../lib/domain/lessons.js';
+import { LESSON_STATUSES, LESSON_TYPES, PLANNING_SLOT_TYPES } from '../lib/domain/domain-constants';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
 

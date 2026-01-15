@@ -7,7 +7,7 @@
  * - domain validators: horse and rider
  */
 
-import { RIDER_TYPE_LABELS } from '../domain/riders.js';
+import { RIDER_TYPE_LABELS } from '../domain/index.js';
 
 /**
  * Form validation messages

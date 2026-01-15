@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { RIDER_TYPES } from '../lib/domain/riders.js';
+import { RIDER_TYPES } from '../lib/domain/index.js';
 import { validateRiderForm } from '../lib/helpers/index.js';
 
 /**

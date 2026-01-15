@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   RIDER_HORSE_LINK_TYPE,
+  RIDER_TYPES,
   isLoanPairing,
   isValidLoanDaysPerWeek,
-} from '../lib/domain/pairings';
-import { RIDER_TYPES } from '../lib/domain/riders';
+} from '../lib/domain/index.js';
 
 /**
  * Custom hook for managing pairing form data and operations

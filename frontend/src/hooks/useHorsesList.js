@@ -2,13 +2,6 @@ import { useState, useEffect } from 'react';
 import { horseService } from '../services/index.js';
 import { isActive } from '../lib/helpers/index.js';
 
-// Filtres de statut d'activité
-export const ACTIVITY_STATUS_FILTERS = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  ALL: 'all',
-};
-
 // Filtres de type de cheval
 export const HORSE_KIND_FILTERS = {
   ALL: 'all',
@@ -35,7 +28,7 @@ export function useHorsesList() {
   const [error, setError] = useState(null);
 
   // Filters
-  const [activityFilter, setActivityFilter] = useState(ACTIVITY_STATUS_FILTERS.ACTIVE);
+  const [includeInactive, setIncludeInactive] = useState(false);
   const [kindFilter, setKindFilter] = useState(HORSE_KIND_FILTERS.ALL);
   const [ownershipFilter, setOwnershipFilter] = useState(OWNERSHIP_TYPE_FILTERS.ALL);
 
@@ -72,10 +65,9 @@ export function useHorsesList() {
 
   // Filter horses
   const filteredHorses = horses.filter((horse) => {
-    // Activity filter
+    // Activity filter - par défaut, exclure les inactifs
     const horseIsActive = isActive(horse.activity_start_date, horse.activity_end_date);
-    if (activityFilter === ACTIVITY_STATUS_FILTERS.ACTIVE && !horseIsActive) return false;
-    if (activityFilter === ACTIVITY_STATUS_FILTERS.INACTIVE && horseIsActive) return false;
+    if (!includeInactive && !horseIsActive) return false;
 
     // Kind filter
     if (kindFilter !== HORSE_KIND_FILTERS.ALL && horse.kind !== kindFilter) return false;
@@ -91,6 +83,10 @@ export function useHorsesList() {
     await fetchHorses();
   };
 
+  const toggleIncludeInactive = () => {
+    setIncludeInactive(!includeInactive);
+  };
+
   const clearError = () => setError(null);
 
   return {
@@ -99,15 +95,14 @@ export function useHorsesList() {
     stats,
     loading,
     error,
-    activityFilter,
+    includeInactive,
     kindFilter,
     ownershipFilter,
-    ACTIVITY_STATUS_FILTERS,
     HORSE_KIND_FILTERS,
     OWNERSHIP_TYPE_FILTERS,
-    setActivityFilter,
     setKindFilter,
     setOwnershipFilter,
+    toggleIncludeInactive,
     reload,
     clearError,
     setError,
