@@ -9,7 +9,7 @@ import {
   validateRequired,
 } from '../db.js';
 
-const RIDER_TYPES = ['owner', 'club', 'boarder'];
+const RIDER_TYPES = ['owner', 'club', 'loaner'];
 const isValidRiderType = (type) => RIDER_TYPES.includes(type);
 
 /**
@@ -146,7 +146,7 @@ export async function handleRiders(request, env) {
 
       if (!isValidRiderType(body.rider_type))
         return jsonResponse(
-          { error: 'Le type doit être "owner", "club" ou "boarder"' },
+          { error: 'Le type doit être "owner", "club" ou "loaner"' },
           400,
           getSecurityHeaders()
         );
@@ -198,7 +198,7 @@ export async function handleRiders(request, env) {
 
       if (body.rider_type !== undefined && !isValidRiderType(body.rider_type))
         return jsonResponse(
-          { error: 'Le type doit être "owner", "club" ou "boarder"' },
+          { error: 'Le type doit être "owner", "club" ou "loaner"' },
           400,
           getSecurityHeaders()
         );

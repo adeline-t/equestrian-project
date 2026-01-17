@@ -1,9 +1,15 @@
-import { handleRiders, handleRiderHorses } from './handlers/riders.js';
-import { handleHorses, handleHorseRiders } from './handlers/horses.js';
-import { handlePairings } from './handlers/pairings.js';
+import { runRecurrenceCron } from './cron';
+import { getSecurityHeaders, jsonResponse } from './db.js';
+import {
+  handleCalendar,
+  handleLessonParticipants,
+  handlePlanningSlots,
+} from './handlers/calendar.js';
+import { handleHorseRiders, handleHorses } from './handlers/horses.js';
 import { handlePackages, handleRiderPackages } from './handlers/packages.js';
-import { handleCalendar } from './handlers/calendar.js';
-import { jsonResponse, getSecurityHeaders } from './db.js';
+import { handlePairings } from './handlers/pairings.js';
+import { handleRecurrences } from './handlers/recurrences.js';
+import { handleRiderHorses, handleRiders } from './handlers/riders.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -13,7 +19,9 @@ export default {
 
     console.log(`${method} ${path} - ${new Date().toISOString()}`);
 
+    // -----------------------
     // CORS preflight
+    // -----------------------
     if (method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
@@ -28,27 +36,6 @@ export default {
     }
 
     try {
-      // -----------------------
-      // Calendar routes (lessons)
-      // -----------------------
-      if (path.startsWith('/api/calendar/lessons')) {
-        return handleCalendar(request, env);
-      }
-
-      // -----------------------
-      // Calendar routes (slots)
-      // -----------------------
-      if (path.startsWith('/api/calendar/slots')) {
-        return jsonResponse(
-          {
-            error: 'Not yet implemented',
-            message: error.message,
-            timestamp: new Date().toISOString(),
-          },
-          404
-        );
-      }
-
       // -----------------------
       // Riders routes
       // -----------------------
@@ -90,6 +77,22 @@ export default {
       }
 
       // -----------------------
+      // Calendar routes
+      // -----------------------
+      if (path.startsWith('/api/calendar/lessons/participants')) {
+        return handleLessonParticipants(request, env, path.split('/').filter(Boolean));
+      }
+      if (path.startsWith('/api/calendar/lessons')) {
+        return handleCalendar(request, env);
+      }
+      if (path.startsWith('/api/calendar/slots')) {
+        return handlePlanningSlots(request, env);
+      }
+      if (path.startsWith('/api/calendar/recurrences')) {
+        return handleRecurrences(request, env);
+      }
+
+      // -----------------------
       // Health check
       // -----------------------
       if (['/api/health', '/api', '/api/'].includes(path)) {
@@ -100,7 +103,15 @@ export default {
             timestamp: new Date().toISOString(),
             version: '1.2.0',
             environment: env.ENVIRONMENT || 'unknown',
-            features: ['riders', 'horses', 'pairings', 'packages', 'calendar', 'slots'],
+            features: [
+              'riders',
+              'horses',
+              'pairings',
+              'packages',
+              'calendar',
+              'slots',
+              'recurrences',
+            ],
           },
           200
         );
@@ -115,23 +126,6 @@ export default {
             title: 'Equestrian Management API',
             version: '1.2.0',
             endpoints: {
-              calendar: {
-                'GET /api/calendar/lessons': 'List lessons',
-                'POST /api/calendar/lessons': 'Create lesson',
-                'GET /api/calendar/lessons/:id': 'Get lesson details',
-                'PUT /api/calendar/lessons/:id': 'Update lesson',
-                'DELETE /api/calendar/lessons/:id': 'Cancel lesson',
-                'POST /api/calendar/lessons/:id/mark-not-given':
-                  'Mark lesson as not given by Laury',
-                'GET /api/calendar/schedule/week': 'Get week schedule',
-                'GET /api/calendar/schedule/blocked-periods': 'Get blocked periods',
-                'GET /api/calendar/schedule/not-given': 'Get lessons not given',
-                'GET /api/calendar/slots': 'List all planning slots',
-                'POST /api/calendar/slots': 'Create planning slot',
-                'GET /api/calendar/slots/:id': 'Get planning slot details',
-                'PUT /api/calendar/slots/:id': 'Update planning slot',
-                'DELETE /api/calendar/slots/:id': 'Delete planning slot',
-              },
               riders: {
                 'GET /api/riders': 'List all riders',
                 'GET /api/riders/:id': 'Get single rider',
@@ -163,6 +157,27 @@ export default {
                 'PUT /api/packages/:id': 'Update package',
                 'DELETE /api/packages/:id': 'Delete package',
               },
+              calendar: {
+                'GET /api/calendar/lessons': 'List all lessons',
+                'GET /api/calendar/lessons/:id': 'Get single lesson',
+                'POST /api/calendar/lessons': 'Create lesson',
+                'PUT /api/calendar/lessons/:id': 'Update lesson',
+                'DELETE /api/calendar/lessons/:id': 'Soft delete lesson',
+                'GET /api/calendar/lessons/participants/:lesson_id':
+                  'Get participants for a lesson',
+                'POST /api/calendar/lessons/participants': 'Add participant',
+                'PUT /api/calendar/lessons/participants/:id': 'Update participant',
+                'DELETE /api/calendar/lessons/participants/:id': 'Soft delete participant',
+                'GET /api/calendar/slots': 'List all planning slots',
+                'POST /api/calendar/slots': 'Create planning slot',
+                'PUT /api/calendar/slots/:id': 'Update planning slot',
+                'DELETE /api/calendar/slots/:id': 'Delete planning slot',
+                'GET /api/calendar/recurrences': 'List all recurrences',
+                'GET /api/calendar/recurrences/:id': 'Get single recurrence',
+                'POST /api/calendar/recurrences': 'Create recurrence',
+                'PUT /api/calendar/recurrences/:id': 'Update recurrence',
+                'DELETE /api/calendar/recurrences/:id': 'Delete recurrence',
+              },
               utility: {
                 'GET /api/health': 'Health check',
                 'GET /api/docs': 'API documentation',
@@ -189,6 +204,7 @@ export default {
             '/api/packages',
             '/api/calendar/lessons',
             '/api/calendar/slots',
+            '/api/calendar/recurrences',
           ],
         },
         404
@@ -204,5 +220,8 @@ export default {
         500
       );
     }
+  },
+  async scheduled(event, env, ctx) {
+    await runRecurrenceCron(env);
   },
 };
