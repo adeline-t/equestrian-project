@@ -7,11 +7,13 @@ import {
 } from '../db.js';
 import { handleDatabaseError, handleRateLimitError } from '../utils/errorHandler.js';
 
-const LESSON_STATUSES = ['scheduled', 'confirmed', 'cancelled', 'blocked'];
+const SLOT_STATUSES = ['scheduled', 'confirmed', 'cancelled', 'blocked'];
+const HORSE_ASSIGNMENT_TYPES = ['own', 'loan']; // adjust to your DB enum
+const EVENT_TYPES = ['lesson', 'private', 'group']; // adjust to your DB enum
 
-/**
- * /api/calendar/lessons
- */
+// -----------------------------
+// Calendar / Planning Handler
+// -----------------------------
 export async function handleCalendar(request, env) {
   const db = getDatabase(env);
   const url = new URL(request.url);
@@ -23,110 +25,24 @@ export async function handleCalendar(request, env) {
 
   try {
     // -----------------------------
-    // GET /api/calendar/lessons - list all lessons
+    // PLANNING SLOTS
     // -----------------------------
-    if (request.method === 'GET' && pathParts.length === 3) {
-      const { data, error } = await db
-        .from('lessons')
-        .select('*')
-        .is('deleted_at', null)
-        .order('start_time', { ascending: true });
-
-      if (error) return handleDatabaseError(error, 'lessons.list');
-
-      return jsonResponse(data, 200, getSecurityHeaders());
+    if (pathParts[2] === 'slots') {
+      return handlePlanningSlots(request, env, pathParts);
     }
 
     // -----------------------------
-    // GET /api/calendar/lessons/:id
+    // EVENTS (Lessons)
     // -----------------------------
-    if (request.method === 'GET' && pathParts.length === 4) {
-      const id = parseInt(pathParts[3], 10);
-      if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-
-      const { data, error } = await db
-        .from('lessons')
-        .select('*')
-        .eq('id', id)
-        .is('deleted_at', null)
-        .single();
-
-      if (error) return handleDatabaseError(error, 'lessons.get');
-      return jsonResponse(data, 200, getSecurityHeaders());
+    if (pathParts[2] === 'events') {
+      return handleEvents(request, env, pathParts);
     }
 
     // -----------------------------
-    // POST /api/calendar/lessons - create lesson
-    // -----------------------------
-    if (request.method === 'POST' && pathParts.length === 3) {
-      const body = await request.json().catch(() => null);
-      if (!body)
-        return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
-
-      const missing = validateRequired(['title', 'start_time', 'end_time'], body);
-      if (missing)
-        return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
-
-      if (new Date(body.start_time) > new Date(body.end_time)) {
-        return jsonResponse(
-          { error: 'start_time doit précéder end_time' },
-          400,
-          getSecurityHeaders()
-        );
-      }
-
-      const { data, error } = await db.from('lessons').insert(body).select().single();
-      if (error) return handleDatabaseError(error, 'lessons.create');
-
-      return jsonResponse(data, 201, getSecurityHeaders());
-    }
-
-    // -----------------------------
-    // PUT /api/calendar/lessons/:id - update lesson
-    // -----------------------------
-    if (request.method === 'PUT' && pathParts.length === 4) {
-      const id = parseInt(pathParts[3], 10);
-      const body = await request.json().catch(() => null);
-      if (isNaN(id) || !body)
-        return jsonResponse({ error: 'ID ou corps invalide' }, 400, getSecurityHeaders());
-
-      if (body.start_time && body.end_time && new Date(body.start_time) > new Date(body.end_time)) {
-        return jsonResponse(
-          { error: 'start_time doit précéder end_time' },
-          400,
-          getSecurityHeaders()
-        );
-      }
-
-      const { data, error } = await db.from('lessons').update(body).eq('id', id).select().single();
-      if (error) return handleDatabaseError(error, 'lessons.update');
-
-      return jsonResponse(data, 200, getSecurityHeaders());
-    }
-
-    // -----------------------------
-    // DELETE /api/calendar/lessons/:id - soft delete
-    // -----------------------------
-    if (request.method === 'DELETE' && pathParts.length === 4) {
-      const id = parseInt(pathParts[3], 10);
-      if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-
-      const { data, error } = await db
-        .from('lessons')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) return handleDatabaseError(error, 'lessons.delete');
-      return jsonResponse({ message: 'Lesson supprimée', lesson: data }, 200, getSecurityHeaders());
-    }
-
-    // -----------------------------
-    // LESSON PARTICIPANTS
+    // EVENT PARTICIPANTS
     // -----------------------------
     if (pathParts[2] === 'participants') {
-      return handleLessonParticipants(request, env, pathParts);
+      return handleEventParticipants(request, env, pathParts);
     }
 
     return jsonResponse({ error: 'Route non trouvée' }, 404, getSecurityHeaders());
@@ -140,79 +56,112 @@ export async function handleCalendar(request, env) {
   }
 }
 
-/**
- * /api/calendar/lessons/participants
- */
-export async function handleLessonParticipants(request, env, pathParts) {
+// -----------------------------
+// PLANNING SLOTS HANDLER
+// -----------------------------
+async function handlePlanningSlots(request, env, pathParts) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
-  if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('participants.rateLimit');
+  if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('slots.rateLimit');
+
+  const slotColumns = [
+    'slot_status',
+    'actual_instructor_id',
+    'cancellation_reason',
+    'start_time',
+    'end_time',
+    'is_all_day',
+  ];
 
   try {
-    // GET all participants for a lesson
-    if (request.method === 'GET' && pathParts.length === 4) {
-      const lessonId = parseInt(pathParts[3], 10);
-      if (isNaN(lessonId)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
+    const id = pathParts[3] ? parseInt(pathParts[3], 10) : null;
+    if (id !== null && isNaN(id))
+      return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
-      const { data, error } = await db
-        .from('lesson_participants')
-        .select('*')
-        .eq('lesson_id', lessonId)
-        .is('is_cancelled', false);
-
-      if (error) return handleDatabaseError(error, 'participants.list');
+    // GET all slots
+    if (request.method === 'GET' && !id) {
+      const { data, error } = await db.from('planning_slots').select('*').is('deleted_at', null);
+      if (error) return handleDatabaseError(error, 'slots.list');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // POST add participant
-    if (request.method === 'POST' && pathParts.length === 4) {
+    // POST create slot
+    if (request.method === 'POST' && !id) {
       const body = await request.json().catch(() => null);
-      if (!body)
-        return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
+      if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
-      const missing = validateRequired(['lesson_id', 'rider_id'], body);
+      const missing = validateRequired(
+        ['start_time', 'end_time', 'slot_status', 'is_all_day'],
+        body
+      );
       if (missing)
         return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
 
-      const { data, error } = await db.from('lesson_participants').insert(body).select().single();
-      if (error) return handleDatabaseError(error, 'participants.create');
+      if (!SLOT_STATUSES.includes(body.slot_status)) {
+        return jsonResponse({ error: 'slot_status invalide' }, 400, getSecurityHeaders());
+      }
 
+      if (new Date(body.start_time) > new Date(body.end_time)) {
+        return jsonResponse(
+          { error: 'start_time doit précéder end_time' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
+      const slotData = {};
+      for (const col of slotColumns) {
+        if (body[col] !== undefined) slotData[col] = body[col];
+      }
+
+      const { data, error } = await db.from('planning_slots').insert(slotData).select().single();
+      if (error) return handleDatabaseError(error, 'slots.create');
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
-    // PUT participant (e.g., cancel)
-    if (request.method === 'PUT' && pathParts.length === 5) {
-      const id = parseInt(pathParts[4], 10);
+    // PUT update slot
+    if (request.method === 'PUT' && id) {
       const body = await request.json().catch(() => null);
-      if (isNaN(id) || !body)
-        return jsonResponse({ error: 'ID ou corps invalide' }, 400, getSecurityHeaders());
+      if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
+
+      if (body.start_time && body.end_time && new Date(body.start_time) > new Date(body.end_time)) {
+        return jsonResponse(
+          { error: 'start_time doit précéder end_time' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
+      if (body.slot_status && !SLOT_STATUSES.includes(body.slot_status)) {
+        return jsonResponse({ error: 'slot_status invalide' }, 400, getSecurityHeaders());
+      }
+
+      const updateData = { updated_at: new Date().toISOString() };
+      for (const col of slotColumns) {
+        if (body[col] !== undefined) updateData[col] = body[col];
+      }
 
       const { data, error } = await db
-        .from('lesson_participants')
-        .update(body)
+        .from('planning_slots')
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
-      if (error) return handleDatabaseError(error, 'participants.update');
-
+      if (error) return handleDatabaseError(error, 'slots.update');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // DELETE participant
-    if (request.method === 'DELETE' && pathParts.length === 5) {
-      const id = parseInt(pathParts[4], 10);
-      if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-
+    // DELETE slot (soft delete)
+    if (request.method === 'DELETE' && id) {
       const { data, error } = await db
-        .from('lesson_participants')
-        .update({ is_cancelled: true })
+        .from('planning_slots')
+        .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
         .single();
-
-      if (error) return handleDatabaseError(error, 'participants.delete');
+      if (error) return handleDatabaseError(error, 'slots.delete');
       return jsonResponse(
-        { message: 'Participant supprimé', participant: data },
+        { message: 'Planning slot supprimé', slot: data },
         200,
         getSecurityHeaders()
       );
@@ -229,71 +178,218 @@ export async function handleLessonParticipants(request, env, pathParts) {
   }
 }
 
-/**
- * /api/calendar/slots
- */
-export async function handlePlanningSlots(request, env) {
+// -----------------------------
+// EVENTS HANDLER
+// -----------------------------
+async function handleEvents(request, env, pathParts) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
-  if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('slots.rateLimit');
-  if (request.method === 'OPTIONS') return jsonResponse({}, 204, getSecurityHeaders());
+  if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('events.rateLimit');
 
-  const url = new URL(request.url);
-  const pathParts = url.pathname.split('/').filter(Boolean);
+  const eventColumns = [
+    'planning_slot_id',
+    'event_type',
+    'instructor_id',
+    'min_participants',
+    'max_participants',
+  ];
 
   try {
-    // GET all slots
-    if (request.method === 'GET' && pathParts.length === 3) {
-      const { data, error } = await db.from('planning_slots').select('*');
-      if (error) return handleDatabaseError(error, 'slots.list');
+    const id = pathParts[3] ? parseInt(pathParts[3], 10) : null;
+    if (id !== null && isNaN(id))
+      return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
+
+    // GET all events
+    if (request.method === 'GET' && !id) {
+      const { data, error } = await db.from('events').select('*').is('deleted_at', null);
+      if (error) return handleDatabaseError(error, 'events.list');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // POST create slot
-    if (request.method === 'POST' && pathParts.length === 3) {
+    // POST create event
+    if (request.method === 'POST' && !id) {
       const body = await request.json().catch(() => null);
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
-      const missing = validateRequired(['start_time', 'end_time'], body);
+      const missing = validateRequired(['planning_slot_id', 'event_type', 'instructor_id'], body);
       if (missing)
         return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
 
-      const { data, error } = await db.from('planning_slots').insert(body).select().single();
-      if (error) return handleDatabaseError(error, 'slots.create');
+      if (!EVENT_TYPES.includes(body.event_type)) {
+        return jsonResponse({ error: 'event_type invalide' }, 400, getSecurityHeaders());
+      }
+
+      const updateData = {
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      for (const col of eventColumns) {
+        if (body[col] !== undefined) updateData[col] = body[col];
+      }
+
+      if (body.min_participants != null && body.min_participants < 0)
+        return jsonResponse({ error: 'min_participants >= 0' }, 400, getSecurityHeaders());
+      if (body.max_participants != null && body.max_participants < 0)
+        return jsonResponse({ error: 'max_participants >= 0' }, 400, getSecurityHeaders());
+
+      const { data, error } = await db.from('events').insert(updateData).select().single();
+      if (error) return handleDatabaseError(error, 'events.create');
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
-    // PUT /api/calendar/slots/:id
-    if (request.method === 'PUT' && pathParts.length === 4) {
-      const id = parseInt(pathParts[3], 10);
+    // PUT update event
+    if (request.method === 'PUT' && id) {
       const body = await request.json().catch(() => null);
-      if (isNaN(id) || !body)
-        return jsonResponse({ error: 'ID ou corps invalide' }, 400, getSecurityHeaders());
+      if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
+
+      if (body.event_type && !EVENT_TYPES.includes(body.event_type))
+        return jsonResponse({ error: 'event_type invalide' }, 400, getSecurityHeaders());
+      if (body.min_participants != null && body.min_participants < 0)
+        return jsonResponse({ error: 'min_participants >= 0' }, 400, getSecurityHeaders());
+      if (body.max_participants != null && body.max_participants < 0)
+        return jsonResponse({ error: 'max_participants >= 0' }, 400, getSecurityHeaders());
+
+      const updateData = { updated_at: new Date().toISOString() };
+      for (const col of eventColumns) {
+        if (body[col] !== undefined) updateData[col] = body[col];
+      }
 
       const { data, error } = await db
-        .from('planning_slots')
-        .update(body)
+        .from('events')
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
-      if (error) return handleDatabaseError(error, 'slots.update');
+      if (error) return handleDatabaseError(error, 'events.update');
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // DELETE /api/calendar/slots/:id
-    if (request.method === 'DELETE' && pathParts.length === 4) {
-      const id = parseInt(pathParts[3], 10);
-      if (isNaN(id)) return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
-
+    // DELETE event (soft delete)
+    if (request.method === 'DELETE' && id) {
       const { data, error } = await db
-        .from('planning_slots')
-        .delete()
+        .from('events')
+        .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
         .single();
-      if (error) return handleDatabaseError(error, 'slots.delete');
+      if (error) return handleDatabaseError(error, 'events.delete');
+      return jsonResponse({ message: 'Event supprimé', event: data }, 200, getSecurityHeaders());
+    }
+
+    return jsonResponse({ error: 'Route non trouvée' }, 404, getSecurityHeaders());
+  } catch (err) {
+    console.error(err);
+    return jsonResponse(
+      { error: 'Erreur serveur interne', message: err.message },
+      500,
+      getSecurityHeaders()
+    );
+  }
+}
+
+// -----------------------------
+// EVENT PARTICIPANTS HANDLER
+// -----------------------------
+async function handleEventParticipants(request, env, pathParts) {
+  const db = getDatabase(env);
+  const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+  if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('participants.rateLimit');
+
+  const participantColumns = [
+    'event_id',
+    'planning_slot_id',
+    'rider_id',
+    'horse_id',
+    'horse_assignment_type',
+    'is_cancelled',
+  ];
+
+  try {
+    const id = pathParts[3] ? parseInt(pathParts[3], 10) : null;
+    if (id !== null && isNaN(id))
+      return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
+
+    // GET all participants
+    if (request.method === 'GET' && !id) {
+      const { data, error } = await db
+        .from('event_participants')
+        .select('*')
+        .is('is_cancelled', false);
+      if (error) return handleDatabaseError(error, 'participants.list');
+      return jsonResponse(data, 200, getSecurityHeaders());
+    }
+
+    // POST add participant
+    if (request.method === 'POST' && !id) {
+      const body = await request.json().catch(() => null);
+      if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
+
+      const missing = validateRequired(
+        ['event_id', 'planning_slot_id', 'rider_id', 'horse_assignment_type'],
+        body
+      );
+      if (missing)
+        return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
+
+      if (!HORSE_ASSIGNMENT_TYPES.includes(body.horse_assignment_type)) {
+        return jsonResponse({ error: 'horse_assignment_type invalide' }, 400, getSecurityHeaders());
+      }
+
+      const insertData = {
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      for (const col of participantColumns) {
+        if (body[col] !== undefined) insertData[col] = body[col];
+      }
+
+      const { data, error } = await db
+        .from('event_participants')
+        .insert(insertData)
+        .select()
+        .single();
+      if (error) return handleDatabaseError(error, 'participants.create');
+      return jsonResponse(data, 201, getSecurityHeaders());
+    }
+
+    // PUT update participant
+    if (request.method === 'PUT' && id) {
+      const body = await request.json().catch(() => null);
+      if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
+
+      if (
+        body.horse_assignment_type &&
+        !HORSE_ASSIGNMENT_TYPES.includes(body.horse_assignment_type)
+      ) {
+        return jsonResponse({ error: 'horse_assignment_type invalide' }, 400, getSecurityHeaders());
+      }
+
+      const updateData = { updated_at: new Date().toISOString() };
+      for (const col of participantColumns) {
+        if (body[col] !== undefined) updateData[col] = body[col];
+      }
+
+      const { data, error } = await db
+        .from('event_participants')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) return handleDatabaseError(error, 'participants.update');
+      return jsonResponse(data, 200, getSecurityHeaders());
+    }
+
+    // DELETE participant (soft cancel)
+    if (request.method === 'DELETE' && id) {
+      const { data, error } = await db
+        .from('event_participants')
+        .update({ is_cancelled: true, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) return handleDatabaseError(error, 'participants.delete');
       return jsonResponse(
-        { message: 'Planning slot supprimé', slot: data },
+        { message: 'Participant annulé', participant: data },
         200,
         getSecurityHeaders()
       );
