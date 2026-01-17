@@ -13,21 +13,21 @@
   display: block;
 }
 
-.table thead {
+.riders-list .table thead {
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
-.table thead tr {
+.riders-list .table thead tr {
   display: grid;
-  grid-template-columns: 220px 140px 220px 140px 100px 1fr;
+  grid-template-columns: 300px 200px 240px 160px 100px 1fr;
   gap: 0;
 }
 
-.table tbody tr {
+.riders-list .table tbody tr {
   display: grid;
-  grid-template-columns: 220px 140px 220px 140px 100px 1fr;
+  grid-template-columns: 300px 200px 240px 160px 100px 1fr;
   gap: 0;
 }
 

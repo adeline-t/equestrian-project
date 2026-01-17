@@ -1,0 +1,370 @@
+/* ============================================
+   HORSES COMPONENT - Specific Styles Only
+   ============================================ */
+
+@import '../common/index.css';
+
+/* ============================================
+   HORSES TABLE - GRID LAYOUT
+   ============================================ */
+
+.table thead,
+.table tbody {
+  display: block;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table thead tr {
+  display: grid;
+  grid-template-columns: 200px 120px 140px 140px 420px 100px 1fr;
+  gap: 0;
+}
+
+.table tbody tr {
+  display: grid;
+  grid-template-columns: 200px 120px 140px 140px 420px 100px 1fr;
+  gap: 0;
+}
+
+/* Alignement des colonnes */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* ============================================
+   HORSE ROW INTERACTIONS
+   ============================================ */
+
+.horse-row {
+  position: relative;
+}
+
+.horse-row:hover {
+  background: var(--color-gray-50);
+  cursor: pointer;
+}
+
+.action-buttons-desktop {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.horse-row:hover .action-buttons-desktop {
+  opacity: 1;
+}
+
+.action-buttons-mobile {
+  display: none;
+}
+
+/* ============================================
+   LOAN DAYS BADGES
+   ============================================ */
+
+.loan-days-cell {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  gap: 4px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+  padding: 4px 8px;
+}
+
+.day-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 4px 6px;
+  background: var(--gradient-info);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(66, 153, 225, 0.3);
+  transition: all var(--transition-base);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.day-badge.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--color-white);
+  box-shadow: 0 1px 3px rgba(66, 153, 225, 0.3);
+}
+
+.day-badge.inactive {
+  background: var(--color-gray-100);
+  color: var(--color-gray-600);
+  box-shadow: none;
+  border: 1px solid var(--color-gray-600);
+  opacity: 0.5;
+}
+
+.day-badge:hover {
+  transform: translateY(-1px);
+}
+
+.day-badge.active:hover {
+  box-shadow: 0 2px 6px rgba(66, 153, 225, 0.4);
+}
+
+/* Empty state pour chevaux sans pension */
+.no-loan-days {
+  color: var(--color-gray-400);
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* ============================================
+   RIDERS COUNT BADGE (cliquable)
+   ============================================ */
+
+.riders-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--gradient-info);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-base);
+  cursor: default;
+}
+
+.riders-count-badge.clickable {
+  cursor: pointer;
+}
+
+.riders-count-badge.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+.riders-count-badge svg {
+  font-size: 14px;
+}
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+
+@media (max-width: 768px) {
+  .action-buttons-desktop {
+    display: none;
+  }
+
+  .action-buttons-mobile {
+    display: block;
+    position: relative;
+  }
+
+  .horse-row {
+    cursor: default;
+  }
+
+  .horse-row:hover {
+    background: transparent;
+  }
+
+  .btn-menu {
+    color: var(--color-info-blue);
+    padding: 10px;
+    font-size: 18px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    animation: fadeIn var(--transition-base) ease;
+  }
+
+  .actions-menu-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-white);
+    border-radius: 16px 16px 0 0;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    padding: 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    animation: slideIn var(--transition-slow) ease;
+  }
+
+  .actions-menu-mobile button {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: none;
+    background: var(--color-gray-50);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-gray-800);
+  }
+
+  .actions-menu-mobile button:hover {
+    background: var(--color-gray-150);
+  }
+
+  .actions-menu-mobile .menu-delete {
+    background: var(--color-danger-light);
+    color: var(--color-danger-medium-dark);
+  }
+
+  .actions-menu-mobile .menu-delete:hover {
+    background: var(--color-danger-badge-light);
+  }
+}
+
+/* ============================================
+   RESPONSIVE TABLE LAYOUT
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 100px 140px 120px 140px 90px 1fr;
+  }
+
+  .day-badge {
+    min-width: 32px;
+    padding: 3px 5px;
+    font-size: 9px;
+  }
+
+  .loan-days-cell {
+    gap: 3px;
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 992px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 90px 120px 100px 120px 80px 1fr;
+  }
+
+  .loan-days-cell {
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .day-badge {
+    min-width: 30px;
+    padding: 3px 4px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 80px 110px 90px 110px 70px 60px;
+  }
+
+  .loan-days-cell {
+    gap: 2px;
+    padding: 2px;
+    flex-wrap: wrap;
+  }
+
+  .day-badge {
+    min-width: 28px;
+    padding: 2px 3px;
+    font-size: 7px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 70px 100px 80px 100px 60px 50px;
+  }
+
+  .loan-days-cell {
+    font-size: 11px;
+    gap: 1px;
+    padding: 2px;
+  }
+
+  .day-badge {
+    min-width: 26px;
+    padding: 2px;
+    font-size: 7px;
+  }
+
+  .riders-count-badge {
+    padding: 4px 8px;
+    font-size: 11px;
+    gap: 4px;
+  }
+}
+
+/* ============================================
+   HEADER TITLE (cohérent avec riders)
+   ============================================ */
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+  position: relative;
+}
+
+.header-title h2::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+}

@@ -31,16 +31,12 @@ export function useHorseRiders() {
         return;
       }
 
-      const ridersWithPairing = data.map((pairing) => ({
-        ...pairing.riders,
-        pairingId: pairing.id,
-        pairingStartDate: pairing.pairing_start_date,
-        pairingEndDate: pairing.pairing_end_date,
-      }));
-
+      // ✅ MODIFICATION : Garder la structure complète du pairing
+      // Le RidersModal attend maintenant un tableau de pairings complets
+      // avec link_type, loan_days, et riders nested
       setSelectedHorseRiders({
         horseName: horse.name,
-        riders: ridersWithPairing,
+        riders: data, // Passe les pairings complets (pas aplati)
       });
     } catch (err) {
       console.error('Error loading riders:', err);

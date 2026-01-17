@@ -5,7 +5,6 @@ import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import RiderCard from './RiderCard.jsx';
 import RiderForm from './RiderForm.jsx';
-import '../../styles/common/index.css';
 import '../../styles/components/riders.css';
 
 /**
@@ -53,7 +52,7 @@ function RidersList() {
   }
 
   return (
-    <div className="card-enhanced">
+    <div className="card-enhanced riders-list">
       <div className="flex-between mb-20">
         <h2>Liste des Cavaliers</h2>
 

@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { usePackageActions, usePairingActions, useRiderCard } from '../../hooks/index.js';
-import { getRiderTypeLabel } from '../../lib/domain/index.js';
+import { getRiderTypeLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/index.js';
 import { formatDate, isActive } from '../../lib/helpers/index.js';
 import { Icons } from '../../lib/icons.jsx';
-import '../../styles/components/pairing.css';
-import '../../styles/components/riders.css';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
+import '../../styles/components/pairing.css';
+import '../../styles/components/riders.css';
 
 /**
  * RiderCard - Detailed rider information card
@@ -284,17 +284,6 @@ function RiderCard({ riderId, onClose }) {
                   ) : (
                     <div className="pairings-list-modern">
                       {activePairings.map((pairing) => {
-                        // Mapping des noms de jours vers les abréviations
-                        const dayLabels = {
-                          mon: 'Lun',
-                          tue: 'Mar',
-                          wed: 'Mer',
-                          thu: 'Jeu',
-                          fri: 'Ven',
-                          sat: 'Sam',
-                          sun: 'Dim',
-                        };
-
                         const isLoan = pairing.link_type === 'loan';
                         const loanDays = pairing.loan_days || [];
 
@@ -309,13 +298,20 @@ function RiderCard({ riderId, onClose }) {
                                   {isLoan ? 'Demi-pension' : 'Propriétaire'}
                                 </span>
                               </div>
-                              {isLoan && loanDays.length > 0 && (
+                              {isLoan && (
                                 <div className="pairing-days">
-                                  {loanDays.map((day, idx) => (
-                                    <span key={idx} className="day-badge">
-                                      {dayLabels[day] || day}
-                                    </span>
-                                  ))}
+                                  {WEEK_DAYS_EN.map((dayEn, index) => {
+                                    const isLoanDay = loanDays.includes(dayEn);
+                                    return (
+                                      <span
+                                        key={dayEn}
+                                        className={`day-badge ${isLoanDay ? 'active' : 'inactive'}`}
+                                        title={isLoanDay ? 'Jour de pension' : 'Pas de pension'}
+                                      >
+                                        {WEEK_DAYS[index]}
+                                      </span>
+                                    );
+                                  })}
                                 </div>
                               )}
                             </div>

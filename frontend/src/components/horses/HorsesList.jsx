@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { useHorseActions, useHorseRiders } from '../../hooks';
 import { useHorsesList } from '../../hooks/useHorsesList.js';
 import { Icons } from '../../lib/icons.jsx';
-import { getHorseKindLabel } from '../../lib/domain/domain-constants.js';
+import { getHorseKindLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers/index.js';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import HorseForm from './HorseForm.jsx';
 import RidersModal from './RidersModal.jsx';
-import '../../styles/common/index.css';
-import '../../styles/common/filters.css';
+import '../../styles/components/horses.css';
 
 /**
  * HorsesList - Main horses list component
@@ -85,6 +84,30 @@ function HorsesList() {
       other: 'Autre',
     };
     return labels[ownership] || ownership;
+  };
+
+  /**
+   * Render loan days badges for a horse - shows all days with visual distinction
+   */
+  const renderLoanDays = (horse) => {
+    const loanDays = horse.loan_days || [];
+
+    return (
+      <div className="loan-days-cell">
+        {WEEK_DAYS_EN.map((dayEn, index) => {
+          const isLoanDay = loanDays.includes(dayEn);
+          return (
+            <span
+              key={dayEn}
+              className={`day-badge ${isLoanDay ? 'active' : 'inactive'}`}
+              title={isLoanDay ? 'Jour de pension' : 'Pas de pension'}
+            >
+              {WEEK_DAYS[index]}
+            </span>
+          );
+        })}
+      </div>
+    );
   };
 
   const displayError = errorMessage || error;
@@ -247,13 +270,14 @@ function HorsesList() {
                 <th>Type</th>
                 <th>Propriétaire</th>
                 <th>Cavaliers Actifs</th>
+                <th>Jours de pension</th>
                 <th>Statut</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredHorses.map((horse) => (
-                <tr key={horse.id}>
+                <tr key={horse.id} className="horse-row">
                   <td>
                     <strong>{horse.name}</strong>
                   </td>
@@ -269,21 +293,21 @@ function HorsesList() {
                   </td>
                   <td>
                     <span
-                      className={`badge badge-info ${
+                      className={`riders-count-badge ${
                         horse.active_riders_count > 0 ? 'clickable' : ''
                       }`}
                       onClick={() => horse.active_riders_count > 0 && handleRidersClick(horse)}
-                      style={{
-                        cursor: horse.active_riders_count > 0 ? 'pointer' : 'default',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}
+                      title={
+                        horse.active_riders_count > 0
+                          ? 'Cliquer pour voir les cavaliers'
+                          : 'Aucun cavalier actif'
+                      }
                     >
-                      <Icons.Users style={{ fontSize: '0.875rem' }} />
+                      <Icons.Users />
                       {horse.active_riders_count || 0}
                     </span>
                   </td>
+                  <td>{renderLoanDays(horse)}</td>
                   <td>
                     <span
                       className={`badge ${
@@ -298,20 +322,22 @@ function HorsesList() {
                     </span>
                   </td>
                   <td className="table-actions">
-                    <button
-                      className="btn-icon btn-icon-edit"
-                      onClick={() => horseActions.handleEdit(horse)}
-                      title="Modifier"
-                    >
-                      <Icons.Edit />
-                    </button>
-                    <button
-                      className="btn-icon btn-icon-delete"
-                      onClick={() => horseActions.handleDeleteClick(horse)}
-                      title="Supprimer"
-                    >
-                      <Icons.Delete />
-                    </button>
+                    <div className="action-buttons-desktop">
+                      <button
+                        className="btn-icon btn-icon-edit"
+                        onClick={() => horseActions.handleEdit(horse)}
+                        title="Modifier"
+                      >
+                        <Icons.Edit />
+                      </button>
+                      <button
+                        className="btn-icon btn-icon-delete"
+                        onClick={() => horseActions.handleDeleteClick(horse)}
+                        title="Supprimer"
+                      >
+                        <Icons.Delete />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

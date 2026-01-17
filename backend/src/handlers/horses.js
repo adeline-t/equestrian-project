@@ -8,9 +8,42 @@ import {
 import { handleDatabaseError, handleRateLimitError } from '../utils/errorHandler.js';
 
 const HORSE_TYPES = ['horse', 'pony'];
-const OWNERS = ['laury', 'private_owner', 'club', 'other']; // ✅ Ajout de 'other'
+const OWNERS = ['laury', 'private_owner', 'club', 'other'];
 const isActiveBetween = (start, end, today) =>
   (!start || new Date(start) <= today) && (!end || new Date(end) >= today);
+
+/**
+ * Helper to extract and deduplicate loan days from pairings
+ */
+function extractLoanDays(pairings, horseId, today) {
+  const loanDaysSet = new Set();
+
+  pairings
+    .filter(
+      (p) =>
+        p.horse_id === horseId &&
+        p.link_type === 'loan' &&
+        isActiveBetween(p.pairing_start_date, p.pairing_end_date, today) &&
+        p.riders &&
+        !p.riders.deleted_at &&
+        isActiveBetween(p.riders.activity_start_date, p.riders.activity_end_date, today)
+    )
+    .forEach((p) => {
+      if (p.loan_days && Array.isArray(p.loan_days)) {
+        p.loan_days.forEach((day) => loanDaysSet.add(day));
+      }
+    });
+
+  // Convert to array and sort in week order
+  const weekOrder = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+  const weekOrderEn = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+  return Array.from(loanDaysSet).sort((a, b) => {
+    const indexA = weekOrderEn.indexOf(a.toLowerCase());
+    const indexB = weekOrderEn.indexOf(b.toLowerCase());
+    return indexA - indexB;
+  });
+}
 
 /**
  * /api/horses
@@ -38,13 +71,18 @@ export async function handleHorses(request, env) {
         .order('name');
       if (horsesError) return handleDatabaseError(horsesError, 'horses.list');
 
-      // Count active riders per horse
+      // Fetch pairings with riders info for counting and loan days
       const { data: pairings, error: pairingsError } = await db.from('rider_horse_pairings')
         .select(`
+          id,
           horse_id,
+          rider_id,
+          link_type,
+          loan_days,
           pairing_start_date,
           pairing_end_date,
           riders (
+            id,
             activity_start_date,
             activity_end_date,
             deleted_at
@@ -53,6 +91,7 @@ export async function handleHorses(request, env) {
 
       if (pairingsError) return handleDatabaseError(pairingsError, 'horses.listPairings');
 
+      // Count active riders per horse
       const countsByHorse = pairings.reduce((acc, pairing) => {
         const rider = pairing.riders;
         if (
@@ -66,9 +105,11 @@ export async function handleHorses(request, env) {
         return acc;
       }, {});
 
+      // Build result with active_riders_count AND loan_days
       const result = horses.map((horse) => ({
         ...horse,
         active_riders_count: countsByHorse[horse.id] || 0,
+        loan_days: extractLoanDays(pairings, horse.id, today),
       }));
 
       return jsonResponse(result, 200, getSecurityHeaders());
@@ -82,15 +123,79 @@ export async function handleHorses(request, env) {
       if (!Number.isInteger(horseId))
         return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
-      const { data, error } = await db
+      const { data: horse, error: horseError } = await db
         .from('horses')
         .select('*')
         .is('deleted_at', null)
         .eq('id', horseId)
         .single();
-      if (error) return handleDatabaseError(error, 'horses.get');
+      if (horseError) return handleDatabaseError(horseError, 'horses.get');
 
-      return jsonResponse(data, 200, getSecurityHeaders());
+      // Fetch pairings for this horse
+      const { data: pairings, error: pairingsError } = await db
+        .from('rider_horse_pairings')
+        .select(
+          `
+          id,
+          horse_id,
+          rider_id,
+          link_type,
+          loan_days,
+          pairing_start_date,
+          pairing_end_date,
+          riders (
+            id,
+            name,
+            activity_start_date,
+            activity_end_date,
+            deleted_at
+          )
+        `
+        )
+        .eq('horse_id', horseId);
+
+      if (pairingsError) return handleDatabaseError(pairingsError, 'horses.getPairings');
+
+      // Count active riders
+      const activeRidersCount = pairings.filter((pairing) => {
+        const rider = pairing.riders;
+        return (
+          rider &&
+          !rider.deleted_at &&
+          isActiveBetween(pairing.pairing_start_date, pairing.pairing_end_date, today) &&
+          isActiveBetween(rider.activity_start_date, rider.activity_end_date, today)
+        );
+      }).length;
+
+      // Extract loan days
+      const loanDays = extractLoanDays(pairings, horseId, today);
+
+      // Build detailed loan information (optional)
+      const activeLoans = pairings
+        .filter(
+          (p) =>
+            p.link_type === 'loan' &&
+            p.riders &&
+            !p.riders.deleted_at &&
+            isActiveBetween(p.pairing_start_date, p.pairing_end_date, today) &&
+            isActiveBetween(p.riders.activity_start_date, p.riders.activity_end_date, today)
+        )
+        .map((p) => ({
+          rider_id: p.rider_id,
+          rider_name: p.riders.name,
+          loan_days: p.loan_days || [],
+          pairing_start_date: p.pairing_start_date,
+          pairing_end_date: p.pairing_end_date,
+        }));
+
+      const result = {
+        ...horse,
+        active_riders_count: activeRidersCount,
+        loan_days: loanDays,
+        active_loans: activeLoans, // Détails complets des pensions actives
+      };
+
+      return jsonResponse(result, 200, getSecurityHeaders());
     }
 
     // -----------------------------
@@ -141,7 +246,14 @@ export async function handleHorses(request, env) {
       const { data, error } = await db.from('horses').insert(horseData).select().single();
       if (error) return handleDatabaseError(error, 'horses.create');
 
-      return jsonResponse(data, 201, getSecurityHeaders());
+      // Nouveau cheval = pas de pensions actives
+      const result = {
+        ...data,
+        active_riders_count: 0,
+        loan_days: [],
+      };
+
+      return jsonResponse(result, 201, getSecurityHeaders());
     }
 
     // -----------------------------
@@ -189,15 +301,59 @@ export async function handleHorses(request, env) {
 
       Object.keys(updateData).forEach((k) => updateData[k] === undefined && delete updateData[k]);
 
-      const { data, error } = await db
+      const { data: horse, error: updateError } = await db
         .from('horses')
         .update(updateData)
         .eq('id', horseId)
         .select()
         .single();
-      if (error) return handleDatabaseError(error, 'horses.update');
+      if (updateError) return handleDatabaseError(updateError, 'horses.update');
 
-      return jsonResponse(data, 200, getSecurityHeaders());
+      // Fetch pairings to enrich response
+      const { data: pairings, error: pairingsError } = await db
+        .from('rider_horse_pairings')
+        .select(
+          `
+          id,
+          horse_id,
+          rider_id,
+          link_type,
+          loan_days,
+          pairing_start_date,
+          pairing_end_date,
+          riders (
+            id,
+            activity_start_date,
+            activity_end_date,
+            deleted_at
+          )
+        `
+        )
+        .eq('horse_id', horseId);
+
+      if (pairingsError) return handleDatabaseError(pairingsError, 'horses.updatePairings');
+
+      // Count active riders
+      const activeRidersCount = pairings.filter((pairing) => {
+        const rider = pairing.riders;
+        return (
+          rider &&
+          !rider.deleted_at &&
+          isActiveBetween(pairing.pairing_start_date, pairing.pairing_end_date, today) &&
+          isActiveBetween(rider.activity_start_date, rider.activity_end_date, today)
+        );
+      }).length;
+
+      // Extract loan days
+      const loanDays = extractLoanDays(pairings, horseId, today);
+
+      const result = {
+        ...horse,
+        active_riders_count: activeRidersCount,
+        loan_days: loanDays,
+      };
+
+      return jsonResponse(result, 200, getSecurityHeaders());
     }
 
     // -----------------------------
@@ -255,6 +411,8 @@ export async function handleHorseRiders(request, env, horseId) {
       .select(
         `
         id,
+        link_type,
+        loan_days,
         pairing_start_date,
         pairing_end_date,
         riders (
