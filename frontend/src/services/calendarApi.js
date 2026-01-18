@@ -2,7 +2,7 @@
  * Calendar API - Adjusted for updated DB schema
  */
 import axios from 'axios';
-import { LESSON_STATUSES, LESSON_TYPES, PLANNING_SLOT_TYPES } from '../lib/domain/domain-constants';
+import { EVENT_STATUSES, EVENT_TYPES, PLANNING_SLOT_TYPES } from '../lib/domain/domain-constants';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
 
@@ -22,48 +22,48 @@ calendarApi.interceptors.request.use(
 );
 
 /**
- * Lessons API - /calendar/lessons
+ * Lessons API - /calendar/events
  */
-export const lessonsApi = {
+export const eventsApi = {
   getAll: async (startDate, endDate, filters = {}) => {
     const params = { start_date: startDate, end_date: endDate, ...filters };
-    const response = await calendarApi.get('/lessons', { params });
+    const response = await calendarApi.get('/events', { params });
     return response.data;
   },
 
   getById: async (id) => {
-    const response = await calendarApi.get(`/lessons/${id}`);
+    const response = await calendarApi.get(`/events/${id}`);
     return response.data;
   },
 
   create: async (data) => {
-    const lessonType = LESSON_TYPES.find((t) => t.value === data.lesson_type);
-    if (!lessonType) throw new Error('Type de leçon invalide');
+    const eventType = EVENT_TYPES.find((t) => t.value === data.event_type);
+    if (!eventType) throw new Error('Type de leçon invalide');
 
     const validated = {
       planning_slot_id: Number(data.planning_slot_id),
-      lesson_type: data.lesson_type,
-      status: data.status || LESSON_STATUSES.SCHEDULED,
+      event_type: data.event_type,
+      status: data.status || EVENT_STATUSES.SCHEDULED,
       instructor_id: Number(data.instructor_id),
       actual_instructor_id: data.actual_instructor_id ? Number(data.actual_instructor_id) : null,
       min_participants: data.min_participants ? Number(data.min_participants) : null,
       max_participants: data.max_participants
         ? Number(data.max_participants)
-        : lessonType.defaultMax,
+        : eventType.defaultMax,
       cancellation_reason: data.cancellation_reason || null,
     };
 
-    const response = await calendarApi.post('/lessons', validated);
+    const response = await calendarApi.post('/events', validated);
     return response.data;
   },
 
   update: async (id, data) => {
-    if (data.lesson_type && !LESSON_TYPES.find((t) => t.value === data.lesson_type)) {
+    if (data.event_type && !EVENT_TYPES.find((t) => t.value === data.event_type)) {
       throw new Error('Type de leçon invalide');
     }
 
     const validated = {
-      lesson_type: data.lesson_type,
+      event_type: data.event_type,
       status: data.status,
       instructor_id: data.instructor_id ? Number(data.instructor_id) : undefined,
       actual_instructor_id: data.actual_instructor_id
@@ -76,32 +76,32 @@ export const lessonsApi = {
 
     Object.keys(validated).forEach((k) => validated[k] === undefined && delete validated[k]);
 
-    const response = await calendarApi.put(`/lessons/${id}`, validated);
+    const response = await calendarApi.put(`/events/${id}`, validated);
     return response.data;
   },
 
   getParticipants: async (id) => {
-    const response = await calendarApi.get(`/lessons/${id}/participants`);
+    const response = await calendarApi.get(`/events/${id}/participants`);
     return response.data;
   },
 
-  addParticipant: async (lessonId, participant) => {
+  addParticipant: async (eventId, participant) => {
     const validated = {
       rider_id: Number(participant.rider_id),
       horse_id: participant.horse_id ? Number(participant.horse_id) : null,
       horse_assignment_type: participant.horse_assignment_type,
     };
-    const response = await calendarApi.post(`/lessons/${lessonId}/participants`, validated);
+    const response = await calendarApi.post(`/events/${eventId}/participants`, validated);
     return response.data;
   },
 
-  removeParticipant: async (lessonId, participantId) => {
-    const response = await calendarApi.delete(`/lessons/${lessonId}/participants/${participantId}`);
+  removeParticipant: async (eventId, participantId) => {
+    const response = await calendarApi.delete(`/events/${eventId}/participants/${participantId}`);
     return response.data;
   },
 
-  getLessonTypes: () => LESSON_TYPES,
-  getLessonStatuses: () => LESSON_STATUSES,
+  getLessonTypes: () => EVENT_TYPES,
+  getLessonStatuses: () => EVENT_STATUSES,
 };
 
 /**
@@ -173,4 +173,4 @@ export const recurrencesApi = {
   },
 };
 
-export default { lessonsApi, slotsApi, recurrencesApi };
+export default { eventsApi, slotsApi, recurrencesApi };

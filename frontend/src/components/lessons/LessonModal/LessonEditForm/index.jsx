@@ -1,0 +1,71 @@
+import React from 'react';
+import { Icons } from '../../../../lib/icons';
+import BasicInfoFields from './BasicInfoFields.jsx';
+import StatusFields from './StatusFields.jsx';
+import SpecialFields from './SpecialFields.jsx';
+import AdditionalFields from './AdditionalFields.jsx';
+
+/**
+ * Lesson Edit Form Component - Refactored into modular sections
+ */
+const LessonEditForm = ({
+  editFormData,
+  editError,
+  eventData,
+  handleEditChange,
+  handleTypeChange,
+}) => {
+  const isBlocked = eventData.event_type === 'blocked' || eventData.is_blocked;
+
+  return (
+    <div className="edit-form">
+      {/* Error Display */}
+      {editError && (
+        <div className="alert alert-error" style={{ marginBottom: '15px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          {editError}
+        </div>
+      )}
+
+      {/* Template Warning */}
+      {eventData.template_id && (
+        <div className="alert alert-warning" style={{ marginBottom: '15px' }}>
+          <Icons.Warning style={{ marginRight: '8px' }} />
+          Ce cours provient d'un template. Les modifications ne s'appliqueront qu'à cette instance
+          spécifique et n'affecteront pas le template ni les autres cours.
+        </div>
+      )}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
+        {/* Basic Information Fields */}
+        <BasicInfoFields
+          editFormData={editFormData}
+          eventData={eventData}
+          handleEditChange={handleEditChange}
+          handleTypeChange={handleTypeChange}
+        />
+
+        {/* Status Fields - Hide for blocked events */}
+        {!isBlocked && (
+          <StatusFields
+            editFormData={editFormData}
+            eventData={eventData}
+            handleEditChange={handleEditChange}
+          />
+        )}
+
+        {/* Special Fields (Not Given by Laury) */}
+        <SpecialFields editFormData={editFormData} handleEditChange={handleEditChange} />
+
+        {/* Additional Fields */}
+        <AdditionalFields editFormData={editFormData} handleEditChange={handleEditChange} />
+      </form>
+    </div>
+  );
+};
+
+export default LessonEditForm;

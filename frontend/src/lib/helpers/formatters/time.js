@@ -36,24 +36,24 @@ export function formatTime(timeStr) {
 }
 
 /**
- * Calculate lesson style positioning
- * @param {Object} lesson - Lesson object
+ * Calculate event style positioning
+ * @param {Object} event - Lesson object
  * @param {number} HOUR_HEIGHT - Height of one hour in pixels
  * @param {number} START_HOUR - Calendar start hour
  * @param {number} END_HOUR - Calendar end hour
  * @returns {Object} Style object with top and height
  */
-export function calculateLessonStyle(lesson, HOUR_HEIGHT = 60, START_HOUR = 8, END_HOUR = 22) {
-  if (!lesson?.start_time || !lesson?.end_time) {
+export function calculateLessonStyle(event, HOUR_HEIGHT = 60, START_HOUR = 8, END_HOUR = 22) {
+  if (!event?.start_time || !event?.end_time) {
     return { display: 'none' };
   }
 
-  const startMinutes = timeToMinutes(lesson.start_time);
-  const endMinutes = timeToMinutes(lesson.end_time);
+  const startMinutes = timeToMinutes(event.start_time);
+  const endMinutes = timeToMinutes(event.end_time);
   const dayStartMinutes = START_HOUR * 60;
   const dayEndMinutes = END_HOUR * 60;
 
-  // Check if lesson is outside visible hours
+  // Check if event is outside visible hours
   if (endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes) {
     return { display: 'none' };
   }

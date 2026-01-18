@@ -1,10 +1,10 @@
 /* ============================================
-   LESSONS COMPONENT - Specific Styles Only
+   EVENTS COMPONENT - Specific Styles Only
    ============================================ */
 
 @import '../common/index.css';
 
-.lesson-card-content {
+.event-card-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -12,17 +12,17 @@
   height: 100%;
 }
 
-.lesson-card.compact .lesson-card-content {
+.event-card.compact .event-card-content {
   gap: 2px;
 }
 
-.lesson-card.compact .lesson-card-content > div {
+.event-card.compact .event-card-content > div {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.lesson-card.standard .lesson-card-content {
+.event-card.standard .event-card-content {
   gap: 4px;
 }
 

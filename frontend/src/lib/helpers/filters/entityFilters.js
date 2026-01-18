@@ -41,3 +41,53 @@ export function filterActiveRiders(riders) {
   if (!riders || !Array.isArray(riders)) return [];
   return riders.filter((rider) => isActive(rider.activity_start_date, rider.activity_end_date));
 }
+
+/**
+ * Calendar Filters Configuration
+ * Updated for new schema with event_type and event_status
+ */
+
+export const CALENDAR_EVENT_TYPE_FILTERS = [
+  { value: 'all', label: 'Tous les types' },
+  { value: 'lesson', label: 'Cours' },
+  { value: 'event', label: 'Événements' },
+  { value: 'service', label: 'Services' },
+  { value: 'loaner_free_time', label: 'Temps libre DP' },
+  { value: 'blocked', label: 'Bloqués' },
+];
+
+export const CALENDAR_STATUS_FILTERS = [
+  { value: 'all', label: 'Tous les statuts' },
+  { value: 'scheduled', label: 'Planifiés' },
+  { value: 'confirmed', label: 'Confirmés' },
+  { value: 'completed', label: 'Terminés' },
+  { value: 'cancelled', label: 'Annulés' },
+];
+
+export const CALENDAR_DEFAULT_FILTERS = {
+  eventType: 'all',
+  status: 'all',
+};
+
+/**
+ * Filter events based on filter criteria
+ */
+export function filterLessons(events, filters) {
+  if (!events || !Array.isArray(events)) {
+    return [];
+  }
+
+  return events.filter((event) => {
+    // Filter by event type
+    if (filters.eventType !== 'all' && event.event_type !== filters.eventType) {
+      return false;
+    }
+
+    // Filter by status
+    if (filters.status !== 'all' && event.status !== filters.status) {
+      return false;
+    }
+
+    return true;
+  });
+}

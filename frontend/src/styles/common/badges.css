@@ -113,10 +113,10 @@
 }
 
 /* ============================================
-   LESSON TYPE BADGES
+   EVENT TYPE BADGES
    ============================================ */
 
-.lesson-type-badge {
+.event-type-badge {
   padding: 6px 12px;
   border-radius: var(--radius-md);
   font-size: 13px;
@@ -126,32 +126,32 @@
   gap: 6px;
 }
 
-.lesson-type-badge.private {
+.event-type-badge.private {
   background-color: var(--color-info-light);
   color: var(--color-info-blue-dark);
 }
 
-.lesson-type-badge.group {
+.event-type-badge.group {
   background-color: var(--color-primary-light);
   color: var(--color-primary-purple);
 }
 
-.lesson-type-badge.training {
+.event-type-badge.training {
   background-color: var(--color-warning-light);
   color: var(--color-warning-orange-dark);
 }
 
-.lesson-type-badge.competition {
+.event-type-badge.competition {
   background-color: var(--color-danger-light);
   color: var(--color-danger-medium-dark);
 }
 
-.lesson-type-badge.event {
+.event-type-badge.event {
   background-color: var(--color-success-light);
   color: var(--color-success-dark);
 }
 
-.lesson-type-badge.blocked {
+.event-type-badge.blocked {
   background-color: var(--color-gray-100);
   color: var(--color-gray-600);
 }
@@ -262,7 +262,7 @@
   }
 
   .status-badge,
-  .lesson-type-badge {
+  .event-type-badge {
     font-size: 11px;
     padding: 4px 8px;
   }

@@ -293,57 +293,32 @@ export const getLoanDays = (pairing) =>
   Array.isArray(pairing?.loan_days) ? pairing.loan_days : [];
 
 /* ============================================
-   LESSONS DOMAIN
+   EVENTS DOMAIN
    ============================================ */
 
 export const PLANNING_SLOT_TYPES = {
-  LESSON: 'lesson',
+  LESSON: 'event',
   BLOCKED: 'blocked',
   SERVICE: 'service',
   LOANER_FREE_TIME: 'loaner_free_time',
 };
 
-export const LESSON_STATUSES = {
-  SCHEDULED: 'scheduled',
-  CONFIRMED: 'confirmed',
-  CANCELLED: 'cancelled',
-  COMPLETED: 'completed',
-};
-
-export const LESSON_STATUS_LABELS = {
-  [LESSON_STATUSES.SCHEDULED]: 'Programmé',
-  [LESSON_STATUSES.CONFIRMED]: 'Confirmé',
-  [LESSON_STATUSES.CANCELLED]: 'Annulé',
-  [LESSON_STATUSES.COMPLETED]: 'Terminé',
-};
-
-export const getLessonStatusLabel = (status) => LESSON_STATUS_LABELS[status] || status;
-
-export const LESSON_TYPES = [
-  { value: 'private', label: 'Cours particulier', defaultMax: 1, minP: 1, maxP: 1 },
-  { value: 'group', label: 'Cours collectif', defaultMax: 6, minP: 2, maxP: 8 },
-  { value: 'training', label: 'Stage', defaultMax: 10, minP: 3, maxP: 12 },
-  { value: 'competition', label: 'Concours', defaultMax: 20, minP: 1, maxP: null },
-  { value: 'event', label: 'Événement', defaultMax: 50, minP: 1, maxP: null },
-  { value: 'blocked', label: 'Période bloquée', defaultMax: null, minP: 0, maxP: 0 },
-];
-
 /**
- * Map UI lesson type -> DB event_type
+ * Map UI event type -> DB event_type
  */
-export const lessonTypeToEventType = (lessonTypeValue) => {
-  switch (lessonTypeValue) {
+export const eventTypeToEventType = (eventTypeValue) => {
+  switch (eventTypeValue) {
     case 'private':
     case 'group':
     case 'training':
     case 'competition':
-      return 'lesson';
+      return 'event';
     case 'event':
       return 'event';
     case 'blocked':
       return 'blocked';
     default:
-      return 'lesson';
+      return 'event';
   }
 };
 

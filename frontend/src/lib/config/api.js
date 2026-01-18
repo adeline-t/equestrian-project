@@ -17,15 +17,15 @@ export const SLOTS = {
   GET: '/planning_slots/:id',
 };
 
-export const LESSONS = {
-  LIST: '/lessons',
-  CREATE: '/lessons',
-  UPDATE: '/lessons/:id',
-  DELETE: '/lessons/:id',
-  GET: '/lessons/:id',
-  PARTICIPANTS: '/lessons/:id/participants',
-  ADD_PARTICIPANT: '/lessons/:id/participants',
-  REMOVE_PARTICIPANT: '/lessons/:id/participants/:participantId',
+export const EVENTS = {
+  LIST: '/events',
+  CREATE: '/events',
+  UPDATE: '/events/:id',
+  DELETE: '/events/:id',
+  GET: '/events/:id',
+  PARTICIPANTS: '/events/:id/participants',
+  ADD_PARTICIPANT: '/events/:id/participants',
+  REMOVE_PARTICIPANT: '/events/:id/participants/:participantId',
 };
 
 export const HORSES = {
@@ -66,7 +66,7 @@ export const PAIRINGS = {
 export const API_ENDPOINTS = {
   AUTH,
   SLOTS,
-  LESSONS,
+  EVENTS,
   HORSES,
   RIDERS,
   PACKAGES,

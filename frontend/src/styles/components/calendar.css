@@ -15,7 +15,7 @@
   --hour-line-color: var(--color-gray-200);
   --text-color: var(--color-gray-800);
   --label-color: var(--color-gray-500);
-  --lesson-card-padding: 4px;
+  --event-card-padding: 4px;
 }
 
 .calendar-view {
@@ -332,18 +332,18 @@
   z-index: 10;
 }
 
-.lessons-container {
+.events-container {
   position: relative;
   width: 100%;
   height: 100%;
   z-index: 2;
 }
 
-.lessons-container > div {
+.events-container > div {
   position: absolute;
 }
 
-.lesson-card {
+.event-card {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -362,23 +362,23 @@
   padding: 0;
 }
 
-.lesson-card:hover {
+.event-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   z-index: 10;
 }
 
-.lesson-card.compact {
+.event-card.compact {
   padding: 4px 6px;
   min-height: 40px;
 }
 
-.lesson-card.standard {
+.event-card.standard {
   padding: 8px;
   min-height: 60px;
 }
 
-.lesson-card > div {
+.event-card > div {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -390,9 +390,9 @@
   box-sizing: border-box;
 }
 
-.lesson-card strong,
-.lesson-card span,
-.lesson-card .lesson-name {
+.event-card strong,
+.event-card span,
+.event-card .event-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -406,7 +406,7 @@
   .time-slot {
     font-size: 11px;
   }
-  .lesson-card {
+  .event-card {
     padding: 6px;
   }
   .stat-compact-label {
@@ -450,7 +450,7 @@
   .hour-marker-row {
     height: 50px;
   }
-  .lessons-container > div {
+  .events-container > div {
     left: 4px;
     right: 4px;
     width: calc(100% - 8px);
