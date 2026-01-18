@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { eventsApi } from '../../../services/calendarApi';
-import Modal from '../../common/Modal';
-import { Icons } from '../../../lib/icons';
+import { eventsApi } from '../../../services/calendarApi.js';
+import Modal from '../../common/Modal.jsx';
+import { Icons } from '../../../lib/icons.jsx';
 import { EVENT_TYPES } from '../../../lib/domains/events/types';
 import { validateLessonForm } from '../../../lib/helpers/domains/events/validators';
 import { useParticipants } from '../../../hooks/index.js';
-import ParticipantsList from './ParticipantsList';
-import LessonForm from './LessonForm';
+import ParticipantsList from './ParticipantsList.jsx';
+import LessonForm from './EventForm.jsx';
 import '../../../styles/components/events.css';
 
 /**

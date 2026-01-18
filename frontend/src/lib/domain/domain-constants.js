@@ -296,32 +296,6 @@ export const getLoanDays = (pairing) =>
    EVENTS DOMAIN
    ============================================ */
 
-export const PLANNING_SLOT_TYPES = {
-  LESSON: 'event',
-  BLOCKED: 'blocked',
-  SERVICE: 'service',
-  LOANER_FREE_TIME: 'loaner_free_time',
-};
-
-/**
- * Map UI event type -> DB event_type
- */
-export const eventTypeToEventType = (eventTypeValue) => {
-  switch (eventTypeValue) {
-    case 'private':
-    case 'group':
-    case 'training':
-    case 'competition':
-      return 'event';
-    case 'event':
-      return 'event';
-    case 'blocked':
-      return 'blocked';
-    default:
-      return 'event';
-  }
-};
-
 export const HORSE_ASSIGNMENT_TYPES = {
   MANUAL: 'manual',
   AUTOMATIC: 'automatic',

@@ -5,13 +5,13 @@ import '../../styles/components/calendar.css';
 
 /**
  * WeekView Component
- * Displays a week grid with days and events
- * Updated for new schema: weekData contains events from planning_slots + events
+ * Displays a week grid with days and events from planning_slots + events
  */
 function WeekView({ weekData, onEventClick, onQuickCreate, filters }) {
   // Filter events based on event_type and slot_status
   const filteredWeekData = useMemo(() => {
     if (!weekData?.days) return { days: [] };
+    
     return {
       ...weekData,
       days: weekData.days.map((day) => ({
@@ -21,15 +21,12 @@ function WeekView({ weekData, onEventClick, onQuickCreate, filters }) {
     };
   }, [weekData, filters]);
 
-  const hours = Array.from(
-    { length: 24 - 8 }, // 8h to 22h
-    (_, i) => i + 8
-  );
+  const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8h to 22h
 
   return (
     <div className="week-view" role="main" aria-label="Vue hebdomadaire du calendrier">
       <div className="week-grid" role="grid" aria-label="Grille de la semaine">
-        {/* TIME COLUMN */}
+        {/* Time Column */}
         <div className="time-column" aria-hidden="true">
           <div className="time-header">Heures</div>
           {hours.map((hour) => (
@@ -39,7 +36,7 @@ function WeekView({ weekData, onEventClick, onQuickCreate, filters }) {
           ))}
         </div>
 
-        {/* DAY COLUMNS */}
+        {/* Day Columns */}
         {filteredWeekData.days.map((day) => (
           <DayColumn
             key={day.date}

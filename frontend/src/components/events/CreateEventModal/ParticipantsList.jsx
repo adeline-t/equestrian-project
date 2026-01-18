@@ -1,20 +1,20 @@
-import React from 'react';
-import { Icons } from '../../../lib/icons';
+import React, { useEffect } from 'react';
+import { Icons } from '../../../lib/icons.jsx';
 import { useRiderHorses } from '../../../hooks/index.js';
 
 /**
- * Lesson Participants Tab Component
+ * Participants List Component for SingleLessonModal
  */
-const LessonParticipantsTab = ({
-  eventData,
-  showAddParticipant,
-  setShowAddParticipant,
+const ParticipantsList = ({
+  participants,
   riders,
   horses,
   selectedRiderId,
   setSelectedRiderId,
   selectedHorseId,
   setSelectedHorseId,
+  showAddParticipant,
+  setShowAddParticipant,
   handleAddParticipant,
   handleRemoveParticipant,
   resetParticipantForm,
@@ -29,11 +29,20 @@ const LessonParticipantsTab = ({
     setSelectedHorseId(e.target.value);
   };
 
+  // Auto-select the first paired horse when rider changes
+  useEffect(() => {
+    if (selectedRiderId && riderPairedHorses.length > 0 && !selectedHorseId) {
+      setSelectedHorseId(riderPairedHorses[0].id.toString());
+    } else if (!selectedRiderId) {
+      setSelectedHorseId('');
+    }
+  }, [selectedRiderId, riderPairedHorses, selectedHorseId, setSelectedHorseId]);
+
   return (
     <div className="participants-tab">
-      {eventData.participants && eventData.participants.length > 0 ? (
-        <div className="participants-list">
-          {eventData.participants.map((participant) => (
+      {participants.length > 0 ? (
+        <div className="participants-list" style={{ marginBottom: '20px' }}>
+          {participants.map((participant) => (
             <div key={participant.id} className="participant-card">
               <div className="participant-info">
                 <div className="participant-name">
@@ -41,12 +50,6 @@ const LessonParticipantsTab = ({
                     <Icons.User style={{ marginRight: '4px', fontSize: '14px' }} />
                     {participant.rider_name}
                   </strong>
-                  {participant.rider_email && (
-                    <small className="text-muted">
-                      <Icons.Email style={{ marginRight: '4px', fontSize: '10px' }} />
-                      {participant.rider_email}
-                    </small>
-                  )}
                 </div>
                 {participant.horse_name && (
                   <div className="participant-horse">
@@ -54,19 +57,9 @@ const LessonParticipantsTab = ({
                     {participant.horse_name} ({participant.horse_kind})
                   </div>
                 )}
-                <div className="participant-status">
-                  <span className={`badge badge-${participant.participation_status}`}>
-                    {participant.participation_status}
-                  </span>
-                  {participant.horse_assignment_type === 'auto' && (
-                    <span className="badge badge-info" title="Cheval assigné automatiquement">
-                      <Icons.Info style={{ fontSize: '10px', marginRight: '2px' }} />
-                      Auto
-                    </span>
-                  )}
-                </div>
               </div>
               <button
+                type="button"
                 className="btn btn-sm btn-danger"
                 onClick={() => handleRemoveParticipant(participant.id)}
               >
@@ -76,19 +69,23 @@ const LessonParticipantsTab = ({
           ))}
         </div>
       ) : (
-        <div className="empty-state">
+        <div className="empty-state" style={{ marginBottom: '20px' }}>
           <Icons.Users style={{ fontSize: '48px', color: '#adb5bd', marginBottom: '12px' }} />
-          <p>Aucun participant inscrit</p>
+          <p>Aucun participant ajouté</p>
         </div>
       )}
 
       {!showAddParticipant ? (
-        <button className="btn btn-primary mt-20" onClick={() => setShowAddParticipant(true)}>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => setShowAddParticipant(true)}
+        >
           <Icons.Add style={{ marginRight: '8px' }} />
           Ajouter un participant
         </button>
       ) : (
-        <form onSubmit={handleAddParticipant} className="add-participant-form mt-20">
+        <div className="add-participant-form">
           <h4>
             <Icons.Add style={{ marginRight: '8px' }} />
             Ajouter un participant
@@ -171,7 +168,7 @@ const LessonParticipantsTab = ({
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="btn btn-primary">
+            <button type="button" className="btn btn-primary" onClick={handleAddParticipant}>
               <Icons.Add style={{ marginRight: '8px' }} />
               Ajouter
             </button>
@@ -180,10 +177,10 @@ const LessonParticipantsTab = ({
               Annuler
             </button>
           </div>
-        </form>
+        </div>
       )}
     </div>
   );
 };
 
-export default LessonParticipantsTab;
+export default ParticipantsList;

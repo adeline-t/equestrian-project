@@ -1,14 +1,16 @@
 /* ============================================
-   PAIRINGS COMPONENT - Specific Styles Only
+   PAIRING FORM - Modern Styles
    ============================================ */
-
-@import '../common/index.css';
 
 .pairing-form-modern {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
+
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
 
 .pairing-form-section {
   background: rgba(255, 255, 255, 0.6);
@@ -52,6 +54,10 @@
   margin: 0;
 }
 
+/* ============================================
+   HORSE SELECTION CARD
+   ============================================ */
+
 .horse-selection-card {
   display: flex;
   align-items: center;
@@ -85,10 +91,32 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-800);
   margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: flex; /* ← AJOUTÉ */
+  align-items: center; /* ← AJOUTÉ (pour aligner verticalement) */
+  gap: 12px; /* ← Maintenant fonctionnel ! */
 }
+
+.horse-selection-card .badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+}
+
+.horse-selection-card .badge-horse {
+  background: var(--gradient-primary);
+  color: var(--color-white);
+}
+
+.horse-selection-card .badge-pony {
+  background: var(--gradient-pony);
+  color: var(--color-white);
+}
+
+/* ============================================
+   DATE INPUTS GRID
+   ============================================ */
 
 .dates-grid {
   display: grid;
@@ -108,6 +136,11 @@
   font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-700);
+}
+
+.date-input-wrapper label svg {
+  color: var(--color-primary);
+  font-size: 16px;
 }
 
 .date-input-wrapper input[type='date'] {
@@ -135,6 +168,15 @@
   font-size: 12px;
   color: var(--color-gray-600);
 }
+
+.date-input-helper svg {
+  font-size: 14px;
+  color: var(--color-info);
+}
+
+/* ============================================
+   LINK TYPE SELECTOR
+   ============================================ */
 
 .link-type-selector {
   display: grid;
@@ -203,6 +245,10 @@
   font-weight: var(--font-weight-semibold);
 }
 
+/* ============================================
+   LOAN DAYS SELECTOR
+   ============================================ */
+
 .loan-settings {
   display: flex;
   flex-direction: column;
@@ -215,6 +261,15 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.loan-days-input label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
 }
 
 .loan-days-input input[type='number'] {
@@ -232,6 +287,16 @@
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.days-selector-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  margin-bottom: 12px;
 }
 
 .days-selector-grid {
@@ -276,6 +341,14 @@
   background: var(--color-gray-100);
 }
 
+.day-button.selected:disabled {
+  opacity: 1;
+}
+
+/* ============================================
+   FORM ACTIONS
+   ============================================ */
+
 .pairing-form-actions {
   display: flex;
   gap: 12px;
@@ -284,54 +357,9 @@
   border-top: 2px solid var(--color-gray-150);
 }
 
-.pairing-type-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  font-size: 12px;
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.pairing-type-badge.own {
-  background: var(--gradient-warning);
-  color: var(--color-white);
-}
-
-.pairing-type-badge.loan {
-  background: var(--gradient-success);
-  color: var(--color-white);
-}
-
-.pairing-days {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-}
-
-.day-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 40px;
-  padding: 5px 10px;
-  background: var(--gradient-success);
-  color: var(--color-white);
-  border-radius: var(--radius-md);
-  font-size: 12px;
-  font-weight: var(--font-weight-semibold);
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
-  transition: all var(--transition-base);
-}
-
-.day-badge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-}
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
 
 @media (max-width: 768px) {
   .dates-grid {
@@ -343,6 +371,7 @@
   }
 
   .days-selector-grid {
+    grid-template-columns: repeat(7, 1fr);
     gap: 6px;
   }
 
@@ -364,6 +393,147 @@
   .day-button {
     font-size: 11px;
     padding: 8px 4px;
+  }
+}
+
+/* ============================================
+   PAIRING DISPLAY - Enhanced with visible days
+   ============================================ */
+
+/* Pairing info structure */
+.pairing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pairing-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pairing-horse-name {
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+}
+
+/* Type badge (Propriétaire / Demi-pension) */
+.pairing-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.pairing-type-badge.own {
+  background: var(--gradient-warning);
+  color: var(--color-white);
+}
+
+.pairing-type-badge.loan {
+  background: var(--gradient-success);
+  color: var(--color-white);
+}
+
+/* Days container */
+.pairing-days {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* Individual day badge */
+.day-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  padding: 5px 10px;
+  background: var(--gradient-success);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  transition: all var(--transition-base);
+}
+
+.day-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Alternative style - colorful days */
+.day-badge.colorful {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.day-badge.colorful:nth-child(1) {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.day-badge.colorful:nth-child(2) {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.day-badge.colorful:nth-child(3) {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.day-badge.colorful:nth-child(4) {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.day-badge.colorful:nth-child(5) {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+.day-badge.colorful:nth-child(6) {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.day-badge.colorful:nth-child(7) {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pairing-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .day-badge {
+    min-width: 36px;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .pairing-days {
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pairing-horse-name {
+    font-size: 14px;
+  }
+
+  .pairing-type-badge {
+    font-size: 11px;
+    padding: 2px 8px;
   }
 
   .day-badge {

@@ -3,7 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { eventsApi } from '../../services/calendarApi.js';
 import Modal from '../common/Modal.jsx';
-import { Icons } from '../../lib/icons';
+import { Icons } from '../../lib/icons.jsx';
 import { formatDuration } from '../../lib/helpers/shared/formatters/duration.js';
 import { validateLessonTime } from '../../lib/helpers/domains/events/validators';
 import '../../styles/components/events.css';

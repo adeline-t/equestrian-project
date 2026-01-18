@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../../../lib/icons';
+import { Icons } from '../../../lib/icons.jsx';
 import { EVENT_TYPES } from '../../../lib/domains/events/types';
 import { formatDuration } from '../../../lib/helpers/shared/formatters/duration.js';
 
