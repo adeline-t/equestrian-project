@@ -15,13 +15,13 @@ import {
  */
 export function usePairingForm(pairing, rider, riderId) {
   const [formData, setFormData] = useState({
-    rider_id: riderId ? parseInt(riderId) : null,
-    horse_id: null,
-    pairing_start_date: '',
-    pairing_end_date: '',
-    link_type: RIDER_HORSE_LINK_TYPE.OWN,
-    loan_days_per_week: 1,
-    loan_days: [], // indices des jours sélectionnés 0=Lun ... 6=Dim
+    rider_id: extractedRiderId,
+    horse_id: extractedHorseId,
+    pairing_start_date: pairing.pairing_start_date || '',
+    pairing_end_date: pairing.pairing_end_date || '',
+    link_type: pairing.link_type || RIDER_HORSE_LINK_TYPE.OWN,
+    loan_days_per_week: pairing.loan_days_per_week || 1,
+    loan_days: Array.isArray(pairing.loan_days) ? pairing.loan_days : [],
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);

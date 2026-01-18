@@ -6,6 +6,7 @@ import {
   isLoanPairing,
   isValidLoanDaysPerWeek,
 } from '../../lib/domain/index.js';
+import { getHorseKindLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers';
 import { Icons } from '../../lib/icons';
 import '../../styles/components/pairing.css';
@@ -34,9 +35,6 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
     formData,
     horses: horses?.length,
   });
-
-  // Labels des jours
-  const DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
   // Chevaux actifs uniquement
   const availableHorses =
@@ -261,8 +259,8 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
                 Sélectionnez les jours
               </div>
               <div className="days-selector-grid">
-                {DAYS.map((dayLabel, index) => {
-                  const selected = loanDays.includes(index);
+                {WEEK_DAYS_EN.map((dayEn, index) => {
+                  const selected = loanDays.includes(dayEn);
                   const disabled =
                     !selected && loanDays.length >= Number(formData.loan_days_per_week || 0);
                   return (
@@ -273,7 +271,7 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
                       disabled={disabled || submitting}
                       className={`day-button ${selected ? 'selected' : ''}`}
                     >
-                      {dayLabel}
+                      {weekDayCodeToFr(dayEn)}
                     </button>
                   );
                 })}

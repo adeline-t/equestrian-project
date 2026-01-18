@@ -266,50 +266,31 @@ export const weekDayCodeToNumber = (code) => {
 };
 
 /**
- * Validate array of weekdays
- * Accepts:
- * - integer arrays [1,2,3]
- * - string-number arrays ['1','2']
- * - code arrays ['mon','tue']
+ * Convert weekday code ('mon','tue',...) to French abbreviation ('Lun','Mar',...)
+ * @param {string} code - weekday code
+ * @returns {string|null} French abbreviation or null if invalid
  */
-export const isValidLoanDays = (days) =>
-  Array.isArray(days) &&
-  days.every((d) => {
-    if (typeof d === 'number') return d >= 1 && d <= 7;
-    const s = String(d).trim().toLowerCase();
-    if (/^\d+$/.test(s)) {
-      const n = Number(s);
-      return n >= 1 && n <= 7;
-    }
-    return WEEK_DAYS_EN.includes(s);
-  });
+export const weekDayCodeToFr = (code) => {
+  if (!code) return null;
+  const idx = WEEK_DAYS_EN.indexOf(String(code).toLowerCase());
+  return idx === -1 ? null : WEEK_DAYS[idx];
+};
+
+/**
+ * Convert array of weekday codes to French abbreviations
+ * @param {string[]} codes
+ * @returns {string[]} Array of French abbreviations
+ */
+export const weekDaysCodesToFr = (codes) => {
+  if (!Array.isArray(codes)) return [];
+  return codes.map(weekDayCodeToFr).filter(Boolean);
+};
 
 /**
  * Defensive helper to get loan days safely (returns array or empty array)
  */
 export const getLoanDays = (pairing) =>
   Array.isArray(pairing?.loan_days) ? pairing.loan_days : [];
-
-/**
- * Convert DB integer[] (e.g., [1,3,5]) to codes ['mon','wed','fri']
- */
-export const loanDaysFromDbToCodes = (days) =>
-  Array.isArray(days) ? days.map((d) => weekDayNumberToCode(Number(d))).filter(Boolean) : [];
-
-/**
- * Convert UI codes or numeric strings to DB integer[] (1..7)
- */
-export const loanDaysToDbIntegers = (days) =>
-  Array.isArray(days)
-    ? days
-        .map((d) => {
-          if (typeof d === 'number') return d;
-          const s = String(d).trim().toLowerCase();
-          if (/^\d+$/.test(s)) return Number(s);
-          return weekDayCodeToNumber(s);
-        })
-        .filter((n) => Number.isInteger(n) && n >= 1 && n <= 7)
-    : [];
 
 /* ============================================
    LESSONS DOMAIN

@@ -1,10 +1,6 @@
 import { runRecurrenceCron } from './cron';
 import { getSecurityHeaders, jsonResponse } from './db.js';
-import {
-  handleCalendar,
-  handleLessonParticipants,
-  handlePlanningSlots,
-} from './handlers/calendar.js';
+import { handleCalendar, handlePlanningSlots } from './handlers/calendar.js';
 import { handleHorseRiders, handleHorses } from './handlers/horses.js';
 import { handlePackages, handleRiderPackages } from './handlers/packages.js';
 import { handlePairings } from './handlers/pairings.js';
@@ -79,9 +75,6 @@ export default {
       // -----------------------
       // Calendar routes
       // -----------------------
-      if (path.startsWith('/api/calendar/lessons/participants')) {
-        return handleLessonParticipants(request, env, path.split('/').filter(Boolean));
-      }
       if (path.startsWith('/api/calendar/lessons')) {
         return handleCalendar(request, env);
       }

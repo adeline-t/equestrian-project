@@ -1,4 +1,4 @@
-import { getDatabase } from '../db.js';
+import { getDatabase } from './db.js';
 
 /**
  * Runs the recurrence cron job: generates planning slots, events, and participants

@@ -59,7 +59,7 @@ export async function handleCalendar(request, env) {
 // -----------------------------
 // PLANNING SLOTS HANDLER
 // -----------------------------
-async function handlePlanningSlots(request, env, pathParts) {
+export async function handlePlanningSlots(request, env, pathParts) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
   if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('slots.rateLimit');
@@ -181,7 +181,7 @@ async function handlePlanningSlots(request, env, pathParts) {
 // -----------------------------
 // EVENTS HANDLER
 // -----------------------------
-async function handleEvents(request, env, pathParts) {
+export async function handleEvents(request, env, pathParts) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
   if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('events.rateLimit');
@@ -290,7 +290,7 @@ async function handleEvents(request, env, pathParts) {
 // -----------------------------
 // EVENT PARTICIPANTS HANDLER
 // -----------------------------
-async function handleEventParticipants(request, env, pathParts) {
+export async function handleEventParticipants(request, env, pathParts) {
   const db = getDatabase(env);
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
   if (!checkRateLimit(clientIP, 60, 60000)) return handleRateLimitError('participants.rateLimit');

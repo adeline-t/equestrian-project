@@ -416,13 +416,7 @@ export async function handleHorseRiders(request, env, horseId) {
         pairing_start_date,
         pairing_end_date,
         riders (
-          id,
-          name,
-          phone,
-          email,
-          activity_start_date,
-          activity_end_date,
-          deleted_at
+*
         )
       `
       )
