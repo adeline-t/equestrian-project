@@ -2,7 +2,7 @@
  * Rider-specific filter utilities
  */
 
-import { isActive } from '../index.js';
+import { isActive } from './activityFilters.js';
 import { ACTIVITY_STATUS_FILTERS, COMMON_FILTERS } from './activityFilters.js';
 
 /**
@@ -41,7 +41,7 @@ export function filterRidersByStatus(riders, filter) {
  * @param {Array} riders - array of riders
  * @param {Object} filters - filter criteria
  * @param {string} filters.activityStatus - activity status filter (ACTIVITY_STATUS_FILTERS)
- * @param {string} filters.riderType - rider type filter (owner, club, boarder, or 'all')
+ * @param {string} filters.riderType - rider type filter (owner, club, loaner, or 'all')
  * @returns {Array} filtered riders
  */
 export const filterRiders = (riders, filters = {}) => {

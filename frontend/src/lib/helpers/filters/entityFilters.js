@@ -23,9 +23,11 @@ export function filterActivePairings(pairings) {
   if (!pairings || !Array.isArray(pairings)) return [];
   return pairings.filter((pairing) => {
     const pairingActive = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
+    const horseObj = pairing.horse || pairing.horses || null;
     const horseActive =
-      pairing.horses &&
-      isActive(pairing.horses.activity_start_date, pairing.horses.activity_end_date);
+      horseObj && typeof horseObj === 'object'
+        ? isActive(horseObj.activity_start_date, horseObj.activity_end_date)
+        : true;
     return pairingActive && horseActive;
   });
 }

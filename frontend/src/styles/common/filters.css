@@ -76,7 +76,7 @@
   box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
 }
 
-.pill[data-rider-type='boarder'].pill-active {
+.pill[data-rider-type='loaner'].pill-active {
   background: var(--gradient-success);
   border-color: var(--color-success-medium);
   box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);

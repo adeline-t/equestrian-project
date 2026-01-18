@@ -16,7 +16,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     email: '',
     activity_start_date: '',
     activity_end_date: '',
-    rider_type: RIDER_TYPES.BOARDER,
+    rider_type: RIDER_TYPES.LOANER,
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -29,7 +29,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
         email: rider.email || '',
         activity_start_date: rider.activity_start_date || '',
         activity_end_date: rider.activity_end_date || '',
-        rider_type: rider.rider_type || RIDER_TYPES.BOARDER, // ✅ Renommé
+        rider_type: rider.rider_type || RIDER_TYPES.LOANER, // ✅ Renommé
       });
     } else {
       resetForm();
@@ -81,7 +81,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
       email: '',
       activity_start_date: '',
       activity_end_date: '',
-      rider_type: RIDER_TYPES.BOARDER,
+      rider_type: RIDER_TYPES.LOANER,
     });
     setErrors({});
   };

@@ -8,7 +8,7 @@ import {
 import { handleDatabaseError, handleRateLimitError } from '../utils/errorHandler.js';
 
 const SLOT_STATUSES = ['scheduled', 'confirmed', 'cancelled', 'blocked'];
-const HORSE_ASSIGNMENT_TYPES = ['own', 'loan']; // adjust to your DB enum
+const HORSE_ASSIGNMENT_TYPES = ['manual', 'automatic']; // adjust to your DB enum
 const EVENT_TYPES = ['lesson', 'private', 'group']; // adjust to your DB enum
 
 // -----------------------------

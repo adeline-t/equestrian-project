@@ -1,5 +1,5 @@
 /**
- * Calendar API - Specialized endpoints for calendar operations
+ * Calendar API - Adjusted for updated DB schema
  */
 import axios from 'axios';
 import { LESSON_STATUSES, LESSON_TYPES, PLANNING_SLOT_TYPES } from '../lib/domain/domain-constants';
@@ -25,105 +25,82 @@ calendarApi.interceptors.request.use(
  * Lessons API - /calendar/lessons
  */
 export const lessonsApi = {
-  /**
-   * Get all lessons in date range
-   * @param {string} startDate - Start date
-   * @param {string} endDate - End date
-   * @param {Object} filters - Additional filters
-   * @returns {Promise<Array>} Lessons
-   */
   getAll: async (startDate, endDate, filters = {}) => {
     const params = { start_date: startDate, end_date: endDate, ...filters };
     const response = await calendarApi.get('/lessons', { params });
     return response.data;
   },
 
-  /**
-   * Get lesson by ID
-   * @param {number} id - Lesson ID
-   * @returns {Promise<Object>} Lesson
-   */
   getById: async (id) => {
     const response = await calendarApi.get(`/lessons/${id}`);
     return response.data;
   },
 
-  /**
-   * Create lesson
-   * @param {Object} data - Lesson data
-   * @returns {Promise<Object>} Created lesson
-   */
   create: async (data) => {
     const lessonType = LESSON_TYPES.find((t) => t.value === data.lesson_type);
-    if (!lessonType) {
-      throw new Error('Type de leçon invalide');
-    }
+    if (!lessonType) throw new Error('Type de leçon invalide');
 
     const validated = {
       planning_slot_id: Number(data.planning_slot_id),
       lesson_type: data.lesson_type,
-      status: data.status || 'scheduled',
+      status: data.status || LESSON_STATUSES.SCHEDULED,
       instructor_id: Number(data.instructor_id),
       actual_instructor_id: data.actual_instructor_id ? Number(data.actual_instructor_id) : null,
       min_participants: data.min_participants ? Number(data.min_participants) : null,
-      max_participants: Number(data.max_participants) || lessonType.defaultMax,
+      max_participants: data.max_participants
+        ? Number(data.max_participants)
+        : lessonType.defaultMax,
       cancellation_reason: data.cancellation_reason || null,
-      is_modified: data.is_modified || false,
-      modified_fields: data.modified_fields || null,
     };
 
     const response = await calendarApi.post('/lessons', validated);
     return response.data;
   },
 
-  /**
-   * Update lesson
-   * @param {number} id - Lesson ID
-   * @param {Object} data - Lesson data
-   * @returns {Promise<Object>} Updated lesson
-   */
   update: async (id, data) => {
-    const response = await calendarApi.put(`/lessons/${id}`, data);
+    if (data.lesson_type && !LESSON_TYPES.find((t) => t.value === data.lesson_type)) {
+      throw new Error('Type de leçon invalide');
+    }
+
+    const validated = {
+      lesson_type: data.lesson_type,
+      status: data.status,
+      instructor_id: data.instructor_id ? Number(data.instructor_id) : undefined,
+      actual_instructor_id: data.actual_instructor_id
+        ? Number(data.actual_instructor_id)
+        : undefined,
+      min_participants: data.min_participants ? Number(data.min_participants) : undefined,
+      max_participants: data.max_participants ? Number(data.max_participants) : undefined,
+      cancellation_reason: data.cancellation_reason,
+    };
+
+    Object.keys(validated).forEach((k) => validated[k] === undefined && delete validated[k]);
+
+    const response = await calendarApi.put(`/lessons/${id}`, validated);
     return response.data;
   },
 
-  /**
-   * Add participant to lesson
-   * @param {number} lessonId - Lesson ID
-   * @param {Object} participant - Participant data
-   * @returns {Promise<Object>} Added participant
-   */
+  getParticipants: async (id) => {
+    const response = await calendarApi.get(`/lessons/${id}/participants`);
+    return response.data;
+  },
+
   addParticipant: async (lessonId, participant) => {
     const validated = {
       rider_id: Number(participant.rider_id),
       horse_id: participant.horse_id ? Number(participant.horse_id) : null,
-      horse_assignment_type: participant.horse_assignment_type || 'primary',
+      horse_assignment_type: participant.horse_assignment_type,
     };
     const response = await calendarApi.post(`/lessons/${lessonId}/participants`, validated);
     return response.data;
   },
 
-  /**
-   * Remove participant from lesson
-   * @param {number} lessonId - Lesson ID
-   * @param {number} participantId - Participant ID (rider_id)
-   * @returns {Promise<Object>} Deletion result
-   */
   removeParticipant: async (lessonId, participantId) => {
     const response = await calendarApi.delete(`/lessons/${lessonId}/participants/${participantId}`);
     return response.data;
   },
 
-  /**
-   * Get lesson types
-   * @returns {Array} Lesson types
-   */
   getLessonTypes: () => LESSON_TYPES,
-
-  /**
-   * Get lesson statuses
-   * @returns {Object} Lesson statuses
-   */
   getLessonStatuses: () => LESSON_STATUSES,
 };
 
@@ -131,36 +108,26 @@ export const lessonsApi = {
  * Planning Slots API - /calendar/slots
  */
 export const slotsApi = {
-  /**
-   * Get all slots
-   * @param {Object} params - Query parameters
-   * @returns {Promise<Array>} Slots
-   */
   getAll: async (params = {}) => {
     const response = await calendarApi.get('/slots', { params });
     return response.data;
   },
 
-  /**
-   * Create slot
-   * @param {Object} data - Slot data
-   * @returns {Promise<Object>} Created slot
-   */
   create: async (data) => {
     const validated = {
-      start_at: data.start_at,
-      end_at: data.end_at,
-      all_day: data.all_day || false,
-      type: data.type,
+      start_time: data.start_time,
+      end_time: data.end_time,
+      is_all_day: data.is_all_day || false,
+      slot_status: data.slot_status,
+      actual_instructor_id: data.actual_instructor_id ? Number(data.actual_instructor_id) : null,
+      cancellation_reason: data.cancellation_reason || null,
     };
 
-    // Validate type
-    if (!Object.values(PLANNING_SLOT_TYPES).includes(validated.type)) {
-      throw new Error('Type de slot invalide');
+    if (!Object.values(PLANNING_SLOT_TYPES).includes(validated.slot_status)) {
+      throw new Error('Status de slot invalide');
     }
 
-    // Validate end_at > start_at
-    if (new Date(validated.end_at) <= new Date(validated.start_at)) {
+    if (new Date(validated.end_time) <= new Date(validated.start_time)) {
       throw new Error('La date de fin doit être après la date de début');
     }
 
@@ -168,29 +135,42 @@ export const slotsApi = {
     return response.data;
   },
 
-  /**
-   * Get slot types
-   * @returns {Object} Slot types
-   */
   getSlotTypes: () => PLANNING_SLOT_TYPES,
 };
 
-/**
- * Schedule API (if implemented in backend)
- */
-export const scheduleApi = {
-  /**
-   * Get week schedule
-   * @param {string} date - Date in week
-   * @param {boolean} excludeBlocked - Exclude blocked periods
-   * @returns {Promise<Object>} Week data
-   */
-  getWeek: async (date, excludeBlocked = false) => {
-    const response = await calendarApi.get('/schedule/week', {
-      params: { date, exclude_blocked: excludeBlocked ? 'true' : undefined },
-    });
+export const recurrencesApi = {
+  getAll: async () => {
+    const response = await calendarApi.get('/recurrences');
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await calendarApi.get(`/recurrences/${id}`);
+    return response.data;
+  },
+
+  create: async (data) => {
+    const validated = {
+      frequency: data.frequency,
+      interval: data.interval ?? 1,
+      by_week_days: Array.isArray(data.by_week_days) ? data.by_week_days : null,
+      start_time: data.start_time ?? null,
+      end_time: data.end_time ?? null,
+    };
+    const response = await calendarApi.post('/recurrences', validated);
+    return response.data;
+  },
+
+  update: async (id, data) => {
+    const validated = { ...data };
+    const response = await calendarApi.put(`/recurrences/${id}`, validated);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await calendarApi.delete(`/recurrences/${id}`);
     return response.data;
   },
 };
 
-export default { lessonsApi, slotsApi, scheduleApi };
+export default { lessonsApi, slotsApi, recurrencesApi };

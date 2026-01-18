@@ -24,7 +24,7 @@ const riderService = {
     if (!Object.values(RIDER_TYPES).includes(data.rider_type)) {
       throw new Error(
         JSON.stringify({
-          rider_type: 'Le type doit être "owner", "club" ou "boarder"',
+          rider_type: 'Le type doit être "owner", "club" ou "loaner"',
         })
       );
     }
@@ -58,7 +58,7 @@ const riderService = {
     if (data.rider_type && !Object.values(RIDER_TYPES).includes(data.rider_type)) {
       throw new Error(
         JSON.stringify({
-          rider_type: 'Le type doit être "owner", "club" ou "boarder"',
+          rider_type: 'Le type doit être "owner", "club" ou "loaner"',
         })
       );
     }

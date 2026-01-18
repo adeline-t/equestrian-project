@@ -206,7 +206,7 @@ export const validateRiderForm = (formData) => {
   if (!formData.rider_type) {
     errors.rider_type = 'Le type de cavalier est requis';
   } else if (!ALLOWED_TYPES.includes(formData.rider_type)) {
-    errors.rider_type = 'Le type doit être "owner", "club" ou "boarder"';
+    errors.rider_type = 'Le type doit être "owner", "club" ou "loaner"';
   }
 
   // Email validation

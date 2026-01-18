@@ -77,7 +77,7 @@ export const getOwnerTypeLabel = (type) => OWNER_TYPE_LABELS[type]?.label || typ
 export const RIDER_TYPES = {
   OWNER: 'owner',
   CLUB: 'club',
-  BOARDER: 'boarder',
+  LOANER: 'loaner',
 };
 
 export const RIDER_TYPE_LABELS = {
@@ -93,8 +93,8 @@ export const RIDER_TYPE_LABELS = {
     badgeClass: 'badge-rider-type',
     cssVar: '--color-info-blue',
   },
-  [RIDER_TYPES.BOARDER]: {
-    value: RIDER_TYPES.BOARDER,
+  [RIDER_TYPES.LOANER]: {
+    value: RIDER_TYPES.LOANER,
     label: 'Pensionnaire',
     badgeClass: 'badge-rider-type',
     cssVar: '--color-success-medium',
@@ -241,16 +241,75 @@ export const WEEK_DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 export const WEEK_DAYS_EN = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 /**
- * Validate array of weekdays
+ * Convert weekday number (1=Mon .. 7=Sun) to code ('mon', 'tue', ...)
+ * @param {number} n
+ * @returns {string|null}
  */
-export const isValidLoanDays = (days) =>
-  Array.isArray(days) && days.every((d) => WEEK_DAYS_EN.includes(d));
+export const weekDayNumberToCode = (n) => {
+  if (!Number.isInteger(n) || n < 1 || n > 7) return null;
+  return WEEK_DAYS_EN[n - 1];
+};
 
 /**
- * Defensive helper to get loan days safely
+ * Convert weekday code ('mon','tue',...) to number (1..7)
+ * @param {string|number} code
+ * @returns {number|null}
+ */
+export const weekDayCodeToNumber = (code) => {
+  if (typeof code === 'number') {
+    return code >= 1 && code <= 7 ? code : null;
+  }
+  if (!code) return null;
+  const s = String(code).toLowerCase();
+  const idx = WEEK_DAYS_EN.indexOf(s);
+  return idx === -1 ? null : idx + 1;
+};
+
+/**
+ * Validate array of weekdays
+ * Accepts:
+ * - integer arrays [1,2,3]
+ * - string-number arrays ['1','2']
+ * - code arrays ['mon','tue']
+ */
+export const isValidLoanDays = (days) =>
+  Array.isArray(days) &&
+  days.every((d) => {
+    if (typeof d === 'number') return d >= 1 && d <= 7;
+    const s = String(d).trim().toLowerCase();
+    if (/^\d+$/.test(s)) {
+      const n = Number(s);
+      return n >= 1 && n <= 7;
+    }
+    return WEEK_DAYS_EN.includes(s);
+  });
+
+/**
+ * Defensive helper to get loan days safely (returns array or empty array)
  */
 export const getLoanDays = (pairing) =>
   Array.isArray(pairing?.loan_days) ? pairing.loan_days : [];
+
+/**
+ * Convert DB integer[] (e.g., [1,3,5]) to codes ['mon','wed','fri']
+ */
+export const loanDaysFromDbToCodes = (days) =>
+  Array.isArray(days) ? days.map((d) => weekDayNumberToCode(Number(d))).filter(Boolean) : [];
+
+/**
+ * Convert UI codes or numeric strings to DB integer[] (1..7)
+ */
+export const loanDaysToDbIntegers = (days) =>
+  Array.isArray(days)
+    ? days
+        .map((d) => {
+          if (typeof d === 'number') return d;
+          const s = String(d).trim().toLowerCase();
+          if (/^\d+$/.test(s)) return Number(s);
+          return weekDayCodeToNumber(s);
+        })
+        .filter((n) => Number.isInteger(n) && n >= 1 && n <= 7)
+    : [];
 
 /* ============================================
    LESSONS DOMAIN
@@ -260,7 +319,7 @@ export const PLANNING_SLOT_TYPES = {
   LESSON: 'lesson',
   BLOCKED: 'blocked',
   SERVICE: 'service',
-  BOARDER_FREE_TIME: 'boarder_free_time',
+  LOANER_FREE_TIME: 'loaner_free_time',
 };
 
 export const LESSON_STATUSES = {
@@ -268,7 +327,6 @@ export const LESSON_STATUSES = {
   CONFIRMED: 'confirmed',
   CANCELLED: 'cancelled',
   COMPLETED: 'completed',
-  BLOCKED: 'blocked',
 };
 
 export const LESSON_STATUS_LABELS = {
@@ -276,7 +334,6 @@ export const LESSON_STATUS_LABELS = {
   [LESSON_STATUSES.CONFIRMED]: 'Confirmé',
   [LESSON_STATUSES.CANCELLED]: 'Annulé',
   [LESSON_STATUSES.COMPLETED]: 'Terminé',
-  [LESSON_STATUSES.BLOCKED]: 'Bloqué',
 };
 
 export const getLessonStatusLabel = (status) => LESSON_STATUS_LABELS[status] || status;
@@ -290,10 +347,28 @@ export const LESSON_TYPES = [
   { value: 'blocked', label: 'Période bloquée', defaultMax: null, minP: 0, maxP: 0 },
 ];
 
+/**
+ * Map UI lesson type -> DB event_type
+ */
+export const lessonTypeToEventType = (lessonTypeValue) => {
+  switch (lessonTypeValue) {
+    case 'private':
+    case 'group':
+    case 'training':
+    case 'competition':
+      return 'lesson';
+    case 'event':
+      return 'event';
+    case 'blocked':
+      return 'blocked';
+    default:
+      return 'lesson';
+  }
+};
+
 export const HORSE_ASSIGNMENT_TYPES = {
-  PRIMARY: 'primary',
-  SECONDARY: 'secondary',
-  BACKUP: 'backup',
+  MANUAL: 'manual',
+  AUTOMATIC: 'automatic',
 };
 
 export const PARTICIPATION_STATUSES = {
@@ -310,6 +385,13 @@ export const PARTICIPATION_STATUS_LABELS = {
 
 export const getParticipationStatusLabel = (status) =>
   PARTICIPATION_STATUS_LABELS[status] || status;
+
+/**
+ * Map participation status to DB fields (currently maps to is_cancelled)
+ */
+export const participationStatusToDb = (status) => ({
+  is_cancelled: status === 'cancelled',
+});
 
 /* ============================================
    GENERAL STATUS

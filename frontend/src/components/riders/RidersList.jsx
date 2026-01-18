@@ -102,11 +102,11 @@ function RidersList() {
               {getRiderTypeLabel('club')}
             </button>
             <button
-              className={`pill ${riderTypeFilter === 'boarder' ? 'pill-active' : ''}`}
-              onClick={() => setRiderTypeFilter('boarder')}
-              data-rider-type="boarder"
+              className={`pill ${riderTypeFilter === 'loaner' ? 'pill-active' : ''}`}
+              onClick={() => setRiderTypeFilter('loaner')}
+              data-rider-type="loaner"
             >
-              {getRiderTypeLabel('boarder')}
+              {getRiderTypeLabel('loaner')}
             </button>
           </div>
         </div>

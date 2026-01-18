@@ -176,7 +176,7 @@
   color: var(--color-white);
 }
 
-.badge-rider-type[data-rider-type='boarder'] {
+.badge-rider-type[data-rider-type='loaner'] {
   background: var(--gradient-success);
   color: var(--color-white);
 }
