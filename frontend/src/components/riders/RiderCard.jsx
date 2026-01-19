@@ -8,7 +8,7 @@ import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
-import '../../styles/components/pairing.css';
+import '../../styles/components/pairings.css';
 import '../../styles/components/riders.css';
 
 /**

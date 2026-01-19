@@ -37,24 +37,24 @@ const ErrorStatusCodes = {
  * @param {string} message - Detailed error message
  * @param {string} context - Context where error occurred (e.g., 'riders.create')
  * @param {Object} details - Additional error details (optional)
+ * @param {Object} env - Environment object (Cloudflare Workers)
  * @returns {Response} JSON response with error details
  */
-export function createErrorResponse(errorType, message, context, details = null) {
+export function createErrorResponse(errorType, message, context, details = null, env = {}) {
   const statusCode = ErrorStatusCodes[errorType] || 500;
-  
+
   const errorResponse = {
     error: errorType,
-    message: message,
-    context: context,
+    message,
+    context,
     timestamp: new Date().toISOString(),
   };
 
-  // Add details if provided (but don't expose sensitive info in production)
-  if (details && process.env.ENVIRONMENT !== 'production') {
+  // Include extra details only if not production
+  if (details && env.ENVIRONMENT !== 'production') {
     errorResponse.details = details;
   }
 
-  // Log error for monitoring
   console.error(`[${errorType}] ${context}: ${message}`, details || '');
 
   return jsonResponse(errorResponse, statusCode, getSecurityHeaders());
@@ -64,37 +64,36 @@ export function createErrorResponse(errorType, message, context, details = null)
  * Handle database errors with consistent formatting
  * @param {Error} error - Database error object
  * @param {string} context - Context where error occurred
+ * @param {Object} env - Environment object
  * @returns {Response} JSON error response
  */
-export function handleDatabaseError(error, context) {
+export function handleDatabaseError(error, context, env = {}) {
   // Check for specific database error types
   if (error.code === '23505') {
-    // Unique constraint violation
     return createErrorResponse(
       ErrorTypes.VALIDATION,
       'Cette entrée existe déjà',
       context,
-      { code: error.code }
+      { code: error.code },
+      env
     );
   }
-
   if (error.code === '23503') {
-    // Foreign key violation
     return createErrorResponse(
       ErrorTypes.VALIDATION,
       'Référence invalide',
       context,
-      { code: error.code }
+      { code: error.code },
+      env
     );
   }
-
   if (error.code === '23502') {
-    // Not null violation
     return createErrorResponse(
       ErrorTypes.VALIDATION,
       'Champ requis manquant',
       context,
-      { code: error.code }
+      { code: error.code },
+      env
     );
   }
 
@@ -103,76 +102,76 @@ export function handleDatabaseError(error, context) {
     ErrorTypes.DATABASE,
     'Erreur de base de données',
     context,
-    { message: error.message }
+    { message: error.message },
+    env
   );
 }
 
 /**
  * Handle validation errors
- * @param {string} message - Validation error message
- * @param {string} context - Context where validation failed
- * @param {Object} details - Validation details (optional)
- * @returns {Response} JSON error response
+ * @param {string} message
+ * @param {string} context
+ * @param {Object} env
+ * @param {Object} details
  */
-export function handleValidationError(message, context, details = null) {
-  return createErrorResponse(ErrorTypes.VALIDATION, message, context, details);
+export function handleValidationError(message, context, details = null, env = {}) {
+  return createErrorResponse(ErrorTypes.VALIDATION, message, context, details, env);
 }
 
 /**
  * Handle not found errors
- * @param {string} resource - Resource that was not found
- * @param {string} context - Context where resource was requested
- * @returns {Response} JSON error response
+ * @param {string} resource
+ * @param {string} context
+ * @param {Object} env
  */
-export function handleNotFoundError(resource, context) {
-  return createErrorResponse(
-    ErrorTypes.NOT_FOUND,
-    `${resource} non trouvé`,
-    context
-  );
+export function handleNotFoundError(resource, context, env = {}) {
+  return createErrorResponse(ErrorTypes.NOT_FOUND, `${resource} non trouvé`, context, null, env);
 }
 
 /**
  * Handle rate limit errors
- * @param {string} context - Context where rate limit was exceeded
- * @returns {Response} JSON error response
+ * @param {string} context
+ * @param {Object} env
  */
-export function handleRateLimitError(context) {
+export function handleRateLimitError(context, env = {}) {
   return createErrorResponse(
     ErrorTypes.RATE_LIMIT,
     'Trop de requêtes. Veuillez réessayer plus tard.',
-    context
+    context,
+    null,
+    env
   );
 }
 
 /**
  * Handle unexpected errors
- * @param {Error} error - Unexpected error object
- * @param {string} context - Context where error occurred
- * @returns {Response} JSON error response
+ * @param {Error} error
+ * @param {string} context
+ * @param {Object} env
  */
-export function handleUnexpectedError(error, context) {
+export function handleUnexpectedError(error, context, env = {}) {
   return createErrorResponse(
     ErrorTypes.INTERNAL,
-    'Une erreur inattendue s\'est produite',
+    "Une erreur inattendue s'est produite",
     context,
-    { message: error.message, stack: error.stack }
+    { message: error.message, stack: error.stack },
+    env
   );
 }
 
 /**
  * Wrap async handlers with error handling
- * @param {Function} handler - Async handler function
- * @param {string} context - Context for error reporting
- * @returns {Function} Wrapped handler with error handling
+ * @param {Function} handler
+ * @param {string} context
+ * @param {Object} env
  */
-export function withErrorHandling(handler, context) {
+export function withErrorHandling(handler, context, env = {}) {
   return async (...args) => {
     try {
-      return await handler(...args);
+      return await handler(...args, env);
     } catch (error) {
       console.error(`Unhandled error in ${context}:`, error);
-      return handleUnexpectedError(error, context);
+      return handleUnexpectedError(error, context, env);
     }
   };
 }

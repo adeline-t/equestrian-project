@@ -1,15 +1,11 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { parseISO, isToday, isPast, endOfDay, format } from 'date-fns';
+import { endOfDay, format, isPast, isToday, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { calculateSelectionStyle, timeToMinutes } from '../../lib/helpers/formatters';
+import { getValidSlots } from '../../lib/helpers/validators.js';
 import { Icons } from '../../lib/icons';
-import {
-  timeToMinutes,
-  calculateEventStyle,
-  calculateSelectionStyle,
-} from '../../lib/helpers/shared/formatters/time';
-import { getValidEvents } from '../../lib/helpers/domains/events/validators';
-import EventCard from './EventCard';
 import '../../styles/components/calendar.css';
+import EventCard from './EventCard';
 
 const CALENDAR_CONFIG = {
   HOUR_HEIGHT: 60,
@@ -17,6 +13,69 @@ const CALENDAR_CONFIG = {
   END_HOUR: 22,
   MIN_SELECTION_DURATION: 30,
 };
+
+/**
+ * Calculate event position and height based on time
+ * FIXED: Handles both time strings ("09:00") and numbers (540 minutes)
+ */
+function getEventStyle(slot, HOUR_HEIGHT, START_HOUR) {
+  if (!slot.start_time || !slot.end_time) {
+    console.warn('Missing start_time or end_time:', slot);
+    return { top: 0, height: 0 };
+  }
+
+  let startMinutes, endMinutes;
+
+  // Handle time strings (e.g., "09:00")
+  if (typeof slot.start_time === 'string') {
+    startMinutes = timeToMinutes(slot.start_time);
+  } else {
+    // Handle numeric minutes
+    startMinutes = slot.start_time;
+  }
+
+  if (typeof slot.end_time === 'string') {
+    endMinutes = timeToMinutes(slot.end_time);
+  } else {
+    endMinutes = slot.end_time;
+  }
+
+  // Validate we have valid numbers
+  if (isNaN(startMinutes) || isNaN(endMinutes)) {
+    console.warn('Invalid time values:', {
+      start: slot.start_time,
+      end: slot.end_time,
+      startMinutes,
+      endMinutes,
+    });
+    return { top: 0, height: 0 };
+  }
+
+  const startHour = Math.floor(startMinutes / 60);
+  const startMinute = startMinutes % 60;
+  const endHour = Math.floor(endMinutes / 60);
+  const endMinute = endMinutes % 60;
+
+  const top = (startHour - START_HOUR) * HOUR_HEIGHT + (startMinute / 60) * HOUR_HEIGHT;
+  const height =
+    (endHour - startHour) * HOUR_HEIGHT + ((endMinute - startMinute) / 60) * HOUR_HEIGHT;
+
+  // Safety check: ensure we return valid numbers
+  if (isNaN(top) || isNaN(height)) {
+    console.warn('Calculated NaN position:', {
+      slot,
+      startMinutes,
+      endMinutes,
+      startHour,
+      startMinute,
+      endHour,
+      endMinute,
+    });
+    return { top: 0, height: 0 };
+  }
+
+  return { top, height };
+}
 
 /**
  * DayHeader Component
@@ -72,7 +131,7 @@ function DayHeader({ date, dayName }) {
  * DayGrid Component
  */
 function DayGrid({
-  events,
+  slots,
   onEventClick,
   selectionStyle,
   isSelecting,
@@ -84,7 +143,7 @@ function DayGrid({
   END_HOUR,
 }) {
   const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
-  const validEvents = events || [];
+  const validSlots = slots || [];
 
   return (
     <div className="day-grid">
@@ -127,23 +186,33 @@ function DayGrid({
         />
       )}
 
-      {/* Events */}
-      {validEvents.length > 0 && (
+      {/* Events (from slots) */}
+      {validSlots.length > 0 && (
         <div className="events-container">
-          {validEvents.map((event) => (
-            <div
-              key={event.slot_id || event.event_id}
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 4,
-                width: 'calc(100% - 4px)',
-                ...calculateEventStyleMemo(event),
-              }}
-            >
-              <EventCard event={event} onClick={onEventClick} />
-            </div>
-          ))}
+          {validSlots.map((slot) => {
+            const style = calculateEventStyleMemo(slot);
+
+            // Skip rendering if style is invalid
+            if (!style || isNaN(style.top) || isNaN(style.height)) {
+              console.warn('Skipping slot with invalid style:', slot);
+              return null;
+            }
+
+            return (
+              <div
+                key={slot.slot_id || slot.event_id}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 4,
+                  width: 'calc(100% - 4px)',
+                  ...style,
+                }}
+              >
+                <EventCard slot={slot} onClick={onEventClick} />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -152,9 +221,9 @@ function DayGrid({
 
 /**
  * DayColumn Component - Main
- * Displays a single day with events from planning_slots + events
+ * Displays a single day with slots from planning_slots + events
  */
-function DayColumn({ date, dayName, events, onEventClick, onQuickCreate }) {
+function DayColumn({ date, dayName, slots, onEventClick, onQuickCreate }) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionStart, setSelectionStart] = useState(null);
   const [selectionEnd, setSelectionEnd] = useState(null);
@@ -174,14 +243,14 @@ function DayColumn({ date, dayName, events, onEventClick, onQuickCreate }) {
   const isCurrentDay = isToday(dateObj);
   const isPastDay = isPast(endOfDay(dateObj)) && !isCurrentDay;
 
-  const validEvents = useMemo(
-    () => getValidEvents(events, START_HOUR, END_HOUR),
-    [events, START_HOUR, END_HOUR]
+  const validSlots = useMemo(
+    () => getValidSlots(slots, START_HOUR, END_HOUR),
+    [slots, START_HOUR, END_HOUR]
   );
 
   const calculateEventStyleMemo = useCallback(
-    (event) => calculateEventStyle(event, HOUR_HEIGHT, START_HOUR, END_HOUR),
-    [HOUR_HEIGHT, START_HOUR, END_HOUR]
+    (slot) => getEventStyle(slot, HOUR_HEIGHT, START_HOUR),
+    [HOUR_HEIGHT, START_HOUR]
   );
 
   const calculateSelectionStyleMemo = useCallback(
@@ -243,10 +312,10 @@ function DayColumn({ date, dayName, events, onEventClick, onQuickCreate }) {
   return (
     <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
       <DayHeader date={date} dayName={dayName} />
-      
+
       <div ref={dayGridRef} className="day-grid-container">
         <DayGrid
-          events={validEvents}
+          slots={validSlots}
           onEventClick={onEventClick}
           selectionStyle={calculateSelectionStyleMemo()}
           isSelecting={isSelecting}

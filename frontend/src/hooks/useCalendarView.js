@@ -2,30 +2,35 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { addWeeks, subWeeks, startOfWeek, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
-import { EVENT_TYPES, SLOT_STATUSES } from '../lib/domains/events';
+import { EVENT_TYPES, SLOT_STATUSES } from '../lib/domain/events';
 import { calendarService } from '../services/calendarService';
 
 /**
  * Custom hook for calendar view functionality
- * Focused on planning_slots as primary data structure
+ * Manages week navigation, data loading, and event interactions
  */
 export function useCalendarView() {
   /* -------------------------------------------------------
    * STATE
    * ----------------------------------------------------- */
 
+  // Week navigation
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
 
+  // Data state
   const [weekData, setWeekData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Modal state
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showEventModal, setShowEventModal] = useState(false);
   const [showSingleEventModal, setShowSingleEventModal] = useState(false);
+  const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false);
 
+  // Filter state
   const [filters, setFilters] = useState({
     eventType: '',
     status: '',
@@ -44,7 +49,7 @@ export function useCalendarView() {
       setWeekData(data);
     } catch (err) {
       console.error('Error loading week data:', err);
-      setError(err.message || 'Erreur de chargement');
+      setError(err.response?.data?.message || err.message || 'Erreur de chargement');
     } finally {
       setLoading(false);
     }
@@ -55,7 +60,7 @@ export function useCalendarView() {
   }, [loadWeekData]);
 
   /* -------------------------------------------------------
-   * NAVIGATION
+   * NAVIGATION HANDLERS
    * ----------------------------------------------------- */
 
   const handlePrevWeek = useCallback(() => {
@@ -93,7 +98,7 @@ export function useCalendarView() {
       date: format(new Date(), 'yyyy-MM-dd'),
       event_type: EVENT_TYPES.BLOCKED,
     });
-    setShowSingleEventModal(true);
+    setShowBlockedTimeModal(true);
   }, []);
 
   const closeEventModal = useCallback(() => {
@@ -106,14 +111,20 @@ export function useCalendarView() {
     setSelectedEvent(null);
   }, []);
 
+  const closeBlockedTimeModal = useCallback(() => {
+    setShowBlockedTimeModal(false);
+    setSelectedEvent(null);
+  }, []);
+
   const handleModalSuccess = useCallback(() => {
     loadWeekData();
     closeEventModal();
     closeSingleEventModal();
-  }, [loadWeekData, closeEventModal, closeSingleEventModal]);
+    closeBlockedTimeModal();
+  }, [loadWeekData, closeEventModal, closeSingleEventModal, closeBlockedTimeModal]);
 
   /* -------------------------------------------------------
-   * FILTERS
+   * FILTER HANDLERS
    * ----------------------------------------------------- */
 
   const handleFilterChange = useCallback((filterKey, value) => {
@@ -123,10 +134,18 @@ export function useCalendarView() {
     }));
   }, []);
 
+  const clearFilters = useCallback(() => {
+    setFilters({
+      eventType: '',
+      status: '',
+    });
+  }, []);
+
   /* -------------------------------------------------------
-   * WEEK TITLE
+   * COMPUTED VALUES
    * ----------------------------------------------------- */
 
+  // Week title display
   const weekTitle = useMemo(() => {
     const weekEnd = addWeeks(currentWeekStart, 1);
     const startDay = format(currentWeekStart, 'd MMM', { locale: fr });
@@ -135,10 +154,40 @@ export function useCalendarView() {
     return `Semaine du ${startDay} au ${endDay}`;
   }, [currentWeekStart]);
 
-  /* -------------------------------------------------------
-   * STATS
-   * ----------------------------------------------------- */
+  // Filtered week data
+  const filteredWeekData = useMemo(() => {
+    if (!weekData?.days) return null;
 
+    // If no filters applied, return original data
+    if (!filters.eventType && !filters.status) {
+      return weekData;
+    }
+
+    // Apply filters
+    const filteredDays = weekData.days.map((day) => ({
+      ...day,
+      slots: day.slots.filter((slot) => {
+        let matches = true;
+
+        if (filters.eventType && slot.event_type !== filters.eventType) {
+          matches = false;
+        }
+
+        if (filters.status && slot.status !== filters.status) {
+          matches = false;
+        }
+
+        return matches;
+      }),
+    }));
+
+    return {
+      ...weekData,
+      days: filteredDays,
+    };
+  }, [weekData, filters]);
+
+  // Statistics
   const stats = useMemo(() => {
     if (!weekData?.days) {
       return {
@@ -147,6 +196,8 @@ export function useCalendarView() {
         privateLessons: 0,
         groupedLessons: 0,
         services: 0,
+        blocked: 0,
+        total: 0,
       };
     }
 
@@ -156,14 +207,15 @@ export function useCalendarView() {
       privateLessons: 0,
       groupedLessons: 0,
       services: 0,
+      blocked: 0,
+      total: 0,
     };
 
     weekData.days.forEach((day) => {
       day.slots?.forEach((slot) => {
-        /* ---------------------------
-         * STATUS COUNTS
-         * ------------------------- */
+        result.total++;
 
+        // Status counts
         if (slot.status === SLOT_STATUSES.CONFIRMED) {
           result.confirmed++;
         }
@@ -172,10 +224,7 @@ export function useCalendarView() {
           result.scheduled++;
         }
 
-        /* ---------------------------
-         * EVENT TYPE COUNTS
-         * ------------------------- */
-
+        // Event type counts
         switch (slot.event_type) {
           case EVENT_TYPES.PRIVATE_LESSON:
             result.privateLessons++;
@@ -189,6 +238,10 @@ export function useCalendarView() {
             result.services++;
             break;
 
+          case EVENT_TYPES.BLOCKED:
+            result.blocked++;
+            break;
+
           default:
             break;
         }
@@ -198,37 +251,57 @@ export function useCalendarView() {
     return result;
   }, [weekData]);
 
+  // Check if filters are active
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(filters.eventType || filters.status);
+  }, [filters]);
+
   /* -------------------------------------------------------
-   * API
+   * RETURN API
    * ----------------------------------------------------- */
 
   return {
-    weekData,
+    // Data
+    weekData: filteredWeekData,
     loading,
     error,
 
+    // Modal state
     selectedEvent,
     showEventModal,
     showSingleEventModal,
+    showBlockedTimeModal,
 
+    // Filters
     filters,
+    hasActiveFilters,
+
+    // Computed
     weekTitle,
     stats,
 
+    // Navigation
     handlePrevWeek,
     handleNextWeek,
     handleToday,
 
+    // Event handlers
     handleEventClick,
     handleCreateEvent,
     handleCreateBlockedTime,
 
+    // Filter handlers
     handleFilterChange,
+    clearFilters,
 
+    // Modal handlers
     closeEventModal,
     closeSingleEventModal,
+    closeBlockedTimeModal,
     handleModalSuccess,
 
+    // Utilities
     loadWeekData,
+    currentWeekStart,
   };
 }

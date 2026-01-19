@@ -3,7 +3,7 @@
  */
 import { RIDER_TYPES } from '../lib/domain/domain-constants.js';
 import { validateRiderForm } from '../lib/helpers/index.js';
-import { api, createCrudOperations } from './apiService.js';
+import { api, createCrudOperations } from './api.js';
 
 const riderService = {
   // Basic CRUD operations
@@ -84,7 +84,7 @@ const riderService = {
   /**
    * Get horses for a rider
    * @param {number} id - Rider ID
-   * @returns {Promise<Array>} Rider horses
+   * @returns {Promise<Array>} Rider horses (pairings with nested horse data)
    */
   getHorses: async (id) => {
     const response = await api.get(`/riders/${id}/horses`);

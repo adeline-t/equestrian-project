@@ -1,13 +1,8 @@
-/**
- * Services - Main Export
- */
+export { api, calendarApi } from './api';
 
-// Core API service
-export { api, createCrudOperations } from './apiService.js';
+export { calendarService } from './calendarService';
 
-// Domain-specific services
-export { default as horseService } from './horseService.js';
-export { default as riderService } from './riderService.js';
-export { default as eventService } from './eventService.js';
-export { default as packageService } from './packageService.js';
-export { default as pairingService } from './pairingService.js';
+export { default as horseService } from './horseService';
+export { default as riderService } from './riderService';
+export { default as packageService } from './packageService';
+export { default as pairingService } from './pairingService';

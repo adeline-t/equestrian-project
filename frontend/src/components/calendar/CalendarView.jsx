@@ -6,7 +6,7 @@ import WeekView from './WeekView';
 import ErrorBoundary from '../common/ErrorBoundary';
 import { Icons } from '../../lib/icons';
 
-import { getEventTypeOptions, getStatusOptions } from '../../lib/domains/events';
+import { getEventTypeOptions, getStatusOptions } from '../../lib/domain/events';
 
 import '../../styles/common/index.css';
 import '../../styles/components/calendar.css';
@@ -63,7 +63,7 @@ function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday, stats }) {
           </button>
 
           <button className="btn btn-primary" onClick={onToday}>
-            <Icons.Calendar /> Aujourd’hui
+            <Icons.Calendar /> Aujourd'hui
           </button>
 
           <button className="btn btn-secondary btn-sm" onClick={onNextWeek}>
@@ -178,32 +178,57 @@ CalendarFilters.propTypes = {
 
 function CalendarModals({
   showEventModal,
-  showCreateEventModal,
+  showSingleEventModal,
+  showBlockedTimeModal,
   selectedEvent,
   onCloseEventModal,
-  onCloseCreateEventModal,
+  onCloseSingleEventModal,
+  onCloseBlockedTimeModal,
   onModalSuccess,
 }) {
   const EventModal = React.lazy(() => import('../events/EventModal'));
   const CreateEventModal = React.lazy(() => import('../events/CreateEventModal'));
+  const CreateBlockedTimeModal = React.lazy(() => import('../events/CreateBlockedTimeModal'));
 
   return (
     <React.Suspense fallback={null}>
       {showEventModal && selectedEvent && (
-        <EventModal event={selectedEvent} onClose={onCloseEventModal} onUpdate={onModalSuccess} />
+        <EventModal
+          slotId={selectedEvent.id}
+          onClose={onCloseEventModal}
+          onUpdate={onModalSuccess}
+        />
       )}
 
-      {showCreateEventModal && (
+      {showSingleEventModal && (
         <CreateEventModal
-          event={null}
           initialDate={selectedEvent?.date}
-          onClose={onCloseCreateEventModal}
+          onClose={onCloseSingleEventModal}
+          onSuccess={onModalSuccess}
+        />
+      )}
+
+      {showBlockedTimeModal && (
+        <CreateBlockedTimeModal
+          initialDate={selectedEvent?.date}
+          onClose={onCloseBlockedTimeModal}
           onSuccess={onModalSuccess}
         />
       )}
     </React.Suspense>
   );
 }
+
+CalendarModals.propTypes = {
+  showEventModal: PropTypes.bool.isRequired,
+  showSingleEventModal: PropTypes.bool.isRequired,
+  showBlockedTimeModal: PropTypes.bool.isRequired,
+  selectedEvent: PropTypes.object,
+  onCloseEventModal: PropTypes.func.isRequired,
+  onCloseSingleEventModal: PropTypes.func.isRequired,
+  onCloseBlockedTimeModal: PropTypes.func.isRequired,
+  onModalSuccess: PropTypes.func.isRequired,
+};
 
 /* -------------------------------------------------------
  * MAIN VIEW
@@ -216,7 +241,8 @@ function CalendarView() {
     error,
     selectedEvent,
     showEventModal,
-    showCreateEventModal,
+    showSingleEventModal,
+    showBlockedTimeModal,
     filters,
     weekTitle,
     stats,
@@ -231,7 +257,8 @@ function CalendarView() {
     handleFilterChange,
 
     closeEventModal,
-    closeCreateEventModal,
+    closeSingleEventModal,
+    closeBlockedTimeModal,
     handleModalSuccess,
 
     loadWeekData,
@@ -266,10 +293,12 @@ function CalendarView() {
 
       <CalendarModals
         showEventModal={showEventModal}
-        showCreateEventModal={showCreateEventModal}
+        showSingleEventModal={showSingleEventModal}
+        showBlockedTimeModal={showBlockedTimeModal}
         selectedEvent={selectedEvent}
         onCloseEventModal={closeEventModal}
-        onCloseCreateEventModal={closeCreateEventModal}
+        onCloseSingleEventModal={closeSingleEventModal}
+        onCloseBlockedTimeModal={closeBlockedTimeModal}
         onModalSuccess={handleModalSuccess}
       />
     </div>

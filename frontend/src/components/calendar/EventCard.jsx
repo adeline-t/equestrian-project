@@ -1,26 +1,17 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Icons } from '../../../lib/icons';
-import { getStatusBadge } from '../../../lib/domains/events/statuses';
-import { getEventTypeColor } from '../../../lib/domains/events/types';
-import { formatTime } from '../../../lib/helpers/shared/formatters/time';
-import { formatDuration } from '../../../lib/helpers/shared/formatters/duration';
-import { CARD_STYLES, TEXT_STYLES, LAYOUT_STYLES } from '../../../lib/config/ui/cardStyles';
-import '../../../styles/components/calendar.css';
+import { useSlotEvent } from '../../hooks/useSlotEvent';
+import { CARD_STYLES, LAYOUT_STYLES, TEXT_STYLES } from '../../lib/config/ui';
+import { EVENT_TYPES, getEventTypeColor, getStatusBadge } from '../../lib/domain/events.js';
+import { formatDuration, formatTime } from '../../lib/helpers/formatters';
+import { Icons } from '../../lib/icons';
+import '../../styles/components/calendar.css';
 
-/**
- * EventCard Component - Consolidated
- * Displays an event card with all sections in one file
- */
+// helpers unchanged, just rename param from event -> slot where relevant
+const shouldUseCompactLayout = (slot) => slot.duration_minutes < 60;
+const isBlockedEvent = (slot) => slot.event_type === 'blocked';
 
-// Helper to determine layout
-const shouldUseCompactLayout = (event) => event.duration_minutes < 60;
-const isBlockedEvent = (event) => event.event_type === 'blocked';
-
-// Status Badge
 function StatusBadge({ status }) {
   const { icon: Icon, bgColor, color, label } = getStatusBadge(status);
-  
   return (
     <div
       style={{
@@ -43,31 +34,33 @@ function StatusBadge({ status }) {
   );
 }
 
-// Participants Display
 function Participants({ count = 0, max = 0, isCompact = false }) {
   if (max === 0) return null;
-
   return (
     <div
       style={{ ...LAYOUT_STYLES.row, fontSize: isCompact ? '9px' : '11px' }}
       role="img"
       aria-label={`${count}/${max} participants`}
     >
-      <Icons.Users style={{ fontSize: isCompact ? '9px' : '11px', flexShrink: 0 }} aria-hidden="true" />
-      <span>{count}/{max}</span>
+      <Icons.Users
+        style={{ fontSize: isCompact ? '9px' : '11px', flexShrink: 0 }}
+        aria-hidden="true"
+      />
+      <span>
+        {count}/{max}
+      </span>
     </div>
   );
 }
 
-// Blocked Event Content
-function BlockedEventContent({ event }) {
+function BlockedEventContent({ slot, display }) {
   return (
     <div style={{ ...LAYOUT_STYLES.column, height: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         <Icons.Blocked style={{ fontSize: '14px', color: '#e2e3e5' }} aria-hidden="true" />
         <span style={{ fontSize: '10px', color: 'white' }}>Période bloquée</span>
       </div>
-      
+
       <span
         style={{
           ...TEXT_STYLES.standard.name,
@@ -81,25 +74,23 @@ function BlockedEventContent({ event }) {
           lineHeight: '1.2',
         }}
       >
-        {event.name || event.cancellation_reason || 'Bloqué'}
+        {display.name || display.cancellation_reason || 'Bloqué'}
       </span>
-      
+
       <div style={{ ...TEXT_STYLES.standard.time, color: 'white', marginTop: 'auto' }}>
-        {formatTime(event.start_time)} - {formatTime(event.end_time)}
+        {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
       </div>
     </div>
   );
 }
 
-// Regular Event Content
-function RegularEventContent({ event, isCompact }) {
+function RegularEventContent({ slot, display, isCompact }) {
   const styles = TEXT_STYLES[isCompact ? 'compact' : 'standard'];
-  
+
   return (
     <div style={{ ...LAYOUT_STYLES.column, height: '100%', justifyContent: 'space-between' }}>
-      {/* Header: Status + Name */}
       <div style={{ display: 'flex', alignItems: 'flex-start', minHeight: 0 }}>
-        <StatusBadge status={event.status} />
+        <StatusBadge status={slot.status} />
         <span
           style={{
             ...styles.name,
@@ -112,49 +103,51 @@ function RegularEventContent({ event, isCompact }) {
             lineHeight: '1.2',
           }}
         >
-          {event.name || 'Événement'}
+          {display.name || 'Événement'}
         </span>
       </div>
 
-      {/* Time + Participants */}
       <div style={{ ...LAYOUT_STYLES.spaceBetween }}>
         <div style={{ ...styles.time, color: 'white' }}>
-          {formatTime(event.start_time)} - {formatTime(event.end_time)}
+          {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
         </div>
-        <Participants 
-          count={event.participant_count} 
-          max={event.max_participants} 
+        <Participants
+          count={display.participant_count}
+          max={display.max_participants}
           isCompact={isCompact}
         />
       </div>
 
-      {/* Duration (standard only) */}
-      {!isCompact && event.duration_minutes && (
+      {!isCompact && slot.duration_minutes && (
         <div style={{ ...styles.duration, color: 'rgba(255,255,255,0.8)' }}>
-          {formatDuration(event.duration_minutes)}
+          {formatDuration(slot.duration_minutes)}
         </div>
       )}
     </div>
   );
 }
 
-// Main EventCard Component
-function EventCard({ event, onClick }) {
-  if (!event) return null;
+function EventCard({ slot, onClick }) {
+  if (!slot) return null;
 
-  const isCompact = shouldUseCompactLayout(event);
-  const isBlocked = isBlockedEvent(event);
-  const backgroundColor = getEventTypeColor(event.event_type);
+  const { event, loading } = useSlotEvent(slot);
+  const display = event || slot; // use slot fields until event is loaded
+
+  const isCompact = shouldUseCompactLayout(slot);
+  const isBlocked = isBlockedEvent(slot);
+  const backgroundColor = getEventTypeColor(slot.event_type);
 
   const cardStyle = {
     ...CARD_STYLES.base,
     ...(isCompact ? CARD_STYLES.compact : CARD_STYLES.standard),
     backgroundColor,
+    opacity: loading ? 0.7 : 1,
   };
 
   const handleClick = (e) => {
     e.stopPropagation();
-    onClick?.(event);
+    // pass slot + event to the click handler so the modal has everything
+    onClick?.({ slot, event });
   };
 
   const handleKeyDown = (e) => {
@@ -172,23 +165,25 @@ function EventCard({ event, onClick }) {
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`${event.name || 'Événement'}, ${formatTime(event.start_time)} - ${formatTime(event.end_time)}`}
+      aria-label={`${display.name || 'Événement'}, ${formatTime(slot.start_time)} - ${formatTime(
+        slot.end_time
+      )}`}
     >
       {isBlocked ? (
-        <BlockedEventContent event={event} />
+        <BlockedEventContent slot={slot} display={display} />
       ) : (
-        <RegularEventContent event={event} isCompact={isCompact} />
+        <RegularEventContent slot={slot} display={display} isCompact={isCompact} />
       )}
     </div>
   );
 }
 
 EventCard.propTypes = {
-  event: PropTypes.shape({
+  slot: PropTypes.shape({
     slot_id: PropTypes.number.isRequired,
     event_id: PropTypes.number,
     name: PropTypes.string,
-    event_type: PropTypes.oneOf(['lesson', 'event', 'blocked', 'service', 'loaner_free_time']).isRequired,
+    event_type: PropTypes.oneOf(Object.values(EVENT_TYPES)).isRequired,
     status: PropTypes.oneOf(['scheduled', 'confirmed', 'completed', 'cancelled']).isRequired,
     start_time: PropTypes.string.isRequired,
     end_time: PropTypes.string.isRequired,

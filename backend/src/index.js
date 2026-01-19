@@ -1,11 +1,18 @@
-import { runRecurrenceCron } from './cron';
+import { runRecurrenceCron } from './cron.js';
 import { getSecurityHeaders, jsonResponse } from './db.js';
-import { handleCalendar, handlePlanningSlots } from './handlers/calendar.js';
+
+// Riders & Horses
+import { handleRiderHorses, handleRiders } from './handlers/riders.js';
 import { handleHorseRiders, handleHorses } from './handlers/horses.js';
 import { handlePackages, handleRiderPackages } from './handlers/packages.js';
 import { handlePairings } from './handlers/pairings.js';
-import { handleRecurrences } from './handlers/recurrences.js';
-import { handleRiderHorses, handleRiders } from './handlers/riders.js';
+
+// Calendar modular
+import { handleCalendarWeek } from './handlers/calendar/week.js';
+import { handlePlanningSlots } from './handlers/calendar/slots.js';
+import { handleEvents } from './handlers/calendar/events.js';
+import { handleEventParticipants } from './handlers/calendar/participants.js';
+import { handleRecurrences } from './handlers/calendar/recurrences.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -73,17 +80,17 @@ export default {
       }
 
       // -----------------------
-      // Calendar routes
+      // Calendar routes (modulaire)
       // -----------------------
-      if (path.startsWith('/api/calendar/lessons')) {
-        return handleCalendar(request, env);
-      }
-      if (path.startsWith('/api/calendar/slots')) {
-        return handlePlanningSlots(request, env);
-      }
-      if (path.startsWith('/api/calendar/recurrences')) {
-        return handleRecurrences(request, env);
-      }
+      if (path.startsWith('/api/calendar/week')) return handleCalendarWeek(request, env);
+      if (path.startsWith('/api/calendar/slots'))
+        return handlePlanningSlots(request, env, path.split('/')[4]);
+      if (path.startsWith('/api/calendar/events'))
+        return handleEvents(request, env, path.split('/')[4]);
+      if (path.startsWith('/api/calendar/participants'))
+        return handleEventParticipants(request, env, path.split('/')[4]);
+      if (path.startsWith('/api/calendar/recurrences'))
+        return handleRecurrences(request, env, path.split('/')[4]);
 
       // -----------------------
       // Health check
@@ -96,86 +103,6 @@ export default {
             timestamp: new Date().toISOString(),
             version: '1.2.0',
             environment: env.ENVIRONMENT || 'unknown',
-            features: [
-              'riders',
-              'horses',
-              'pairings',
-              'packages',
-              'calendar',
-              'slots',
-              'recurrences',
-            ],
-          },
-          200
-        );
-      }
-
-      // -----------------------
-      // API documentation
-      // -----------------------
-      if (path === '/api/docs') {
-        return jsonResponse(
-          {
-            title: 'Equestrian Management API',
-            version: '1.2.0',
-            endpoints: {
-              riders: {
-                'GET /api/riders': 'List all riders',
-                'GET /api/riders/:id': 'Get single rider',
-                'POST /api/riders': 'Create rider',
-                'PUT /api/riders/:id': 'Update rider',
-                'DELETE /api/riders/:id': 'Delete rider',
-                'GET /api/riders/:id/horses': 'Get horses for rider',
-                'GET /api/riders/:id/packages': 'Get packages for rider',
-              },
-              horses: {
-                'GET /api/horses': 'List all horses',
-                'GET /api/horses/:id': 'Get single horse',
-                'POST /api/horses': 'Create horse',
-                'PUT /api/horses/:id': 'Update horse',
-                'DELETE /api/horses/:id': 'Delete horse',
-                'GET /api/horses/:id/riders': 'Get riders for horse',
-              },
-              pairings: {
-                'GET /api/pairings': 'List all pairings',
-                'GET /api/pairings/:id': 'Get single pairing',
-                'POST /api/pairings': 'Create pairing',
-                'PUT /api/pairings/:id': 'Update pairing',
-                'DELETE /api/pairings/:id': 'Delete pairing',
-              },
-              packages: {
-                'GET /api/packages': 'List all packages (with rider info)',
-                'GET /api/packages/:id': 'Get single package (with rider info)',
-                'POST /api/packages': 'Create package (requires rider_id)',
-                'PUT /api/packages/:id': 'Update package',
-                'DELETE /api/packages/:id': 'Delete package',
-              },
-              calendar: {
-                'GET /api/calendar/lessons': 'List all lessons',
-                'GET /api/calendar/lessons/:id': 'Get single lesson',
-                'POST /api/calendar/lessons': 'Create lesson',
-                'PUT /api/calendar/lessons/:id': 'Update lesson',
-                'DELETE /api/calendar/lessons/:id': 'Soft delete lesson',
-                'GET /api/calendar/lessons/participants/:lesson_id':
-                  'Get participants for a lesson',
-                'POST /api/calendar/lessons/participants': 'Add participant',
-                'PUT /api/calendar/lessons/participants/:id': 'Update participant',
-                'DELETE /api/calendar/lessons/participants/:id': 'Soft delete participant',
-                'GET /api/calendar/slots': 'List all planning slots',
-                'POST /api/calendar/slots': 'Create planning slot',
-                'PUT /api/calendar/slots/:id': 'Update planning slot',
-                'DELETE /api/calendar/slots/:id': 'Delete planning slot',
-                'GET /api/calendar/recurrences': 'List all recurrences',
-                'GET /api/calendar/recurrences/:id': 'Get single recurrence',
-                'POST /api/calendar/recurrences': 'Create recurrence',
-                'PUT /api/calendar/recurrences/:id': 'Update recurrence',
-                'DELETE /api/calendar/recurrences/:id': 'Delete recurrence',
-              },
-              utility: {
-                'GET /api/health': 'Health check',
-                'GET /api/docs': 'API documentation',
-              },
-            },
           },
           200
         );
@@ -188,17 +115,6 @@ export default {
         {
           error: 'Route non trouvée',
           message: 'Utilisez /api/docs pour voir la documentation disponible',
-          available_endpoints: [
-            '/api/health',
-            '/api/docs',
-            '/api/riders',
-            '/api/horses',
-            '/api/pairings',
-            '/api/packages',
-            '/api/calendar/lessons',
-            '/api/calendar/slots',
-            '/api/calendar/recurrences',
-          ],
         },
         404
       );
@@ -214,6 +130,10 @@ export default {
       );
     }
   },
+
+  // -----------------------
+  // Cron tasks
+  // -----------------------
   async scheduled(event, env, ctx) {
     await runRecurrenceCron(env);
   },

@@ -3,7 +3,7 @@
  */
 import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/domain-constants.js';
 import { validateHorseForm } from '../lib/helpers/index.js';
-import { api, createCrudOperations } from './apiService.js';
+import { api, createCrudOperations } from './api.js';
 
 const horseService = {
   // Basic CRUD operations

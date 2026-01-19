@@ -1,56 +1,56 @@
 import { useState, useEffect } from 'react';
-import { riderService } from '../services/index.js';
+import axios from 'axios';
 
 /**
- * Custom hook for managing rider-horse pairings
- * @param {string} riderId - Selected rider ID
- * @returns {Object} Paired horses and loading state
+ * Hook to fetch horses associated with a specific rider
+ * @param {string|number} riderId - The selected rider ID
  */
-export const useRiderHorses = (riderId) => {
+export function useRiderHorses(riderId) {
   const [riderPairedHorses, setRiderPairedHorses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (riderId) {
-      loadHorsesForRider(riderId);
-    } else {
+    if (!riderId) {
       setRiderPairedHorses([]);
+      return;
     }
+
+    const fetchRiderHorses = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch rider-horse pairings
+        const response = await axios.get(`/api/riders/${riderId}/horses`);
+        
+        // The backend returns an array of pairings with nested horses
+        // Each pairing has: { id, rider_id, horse_id, link_type, horses: { id, name, ... } }
+        let horsesData = [];
+        
+        if (Array.isArray(response.data)) {
+          // Extract horses from pairings and filter out null/deleted horses
+          horsesData = response.data
+            .map(pairing => pairing.horses)
+            .filter(horse => horse && horse.id); // Filter out null or invalid horses
+        }
+        
+        setRiderPairedHorses(horsesData);
+      } catch (err) {
+        console.error('Error fetching rider horses:', err);
+        setError('Erreur lors du chargement des chevaux du cavalier');
+        setRiderPairedHorses([]); // Ensure it's always an array
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRiderHorses();
   }, [riderId]);
-
-  const loadHorsesForRider = async (riderId) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const pairedHorsesRaw = await riderService.getHorses(riderId);
-
-      const pairedHorses = pairedHorsesRaw.map((pairing) => ({
-        id: pairing.horses.id,
-        name: pairing.horses.name,
-        kind: pairing.horses.kind,
-        ownership_type: pairing.horses.ownership_type, // ✅ Corrigé
-        pairing_id: pairing.id,
-        pairing_start_date: pairing.pairing_start_date,
-        pairing_end_date: pairing.pairing_end_date,
-      }));
-
-      setRiderPairedHorses(pairedHorses);
-      console.log('🐴 Paired horses for rider:', pairedHorses);
-    } catch (err) {
-      console.error('Error loading rider horses:', err);
-      setError(err);
-      setRiderPairedHorses([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return {
     riderPairedHorses,
     loading,
     error,
-    refresh: () => riderId && loadHorsesForRider(riderId),
   };
-};
+}

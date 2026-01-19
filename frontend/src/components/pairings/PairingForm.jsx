@@ -9,7 +9,7 @@ import {
 import { getHorseKindLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers';
 import { Icons } from '../../lib/icons';
-import '../../styles/components/pairing.css';
+import '../../styles/components/pairings.css';
 
 /**
  * PairingForm - Formulaire modernisé pour attribuer un cheval à un cavalier

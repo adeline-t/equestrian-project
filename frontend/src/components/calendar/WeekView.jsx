@@ -1,25 +1,25 @@
 import React, { useMemo } from 'react';
 import DayColumn from './DayColumn';
-import { filterEvents } from '../../lib/helpers/domains/events/filters';
 import '../../styles/components/calendar.css';
 
 /**
  * WeekView Component
- * Displays a week grid with days and events from planning_slots + events
+ * Displays a week grid with days and slots from planning_slots + events
  */
 function WeekView({ weekData, onEventClick, onQuickCreate, filters }) {
-  // Filter events based on event_type and slot_status
-  const filteredWeekData = useMemo(() => {
+  // If weekData is already filtered by the hook, just normalize the shape
+  const normalizedWeekData = useMemo(() => {
     if (!weekData?.days) return { days: [] };
-    
+
     return {
       ...weekData,
       days: weekData.days.map((day) => ({
         ...day,
-        events: filterEvents(day.events, filters),
+        // Ensure we always pass an array to DayColumn
+        slots: day.slots || [],
       })),
     };
-  }, [weekData, filters]);
+  }, [weekData]);
 
   const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8h to 22h
 
@@ -37,14 +37,16 @@ function WeekView({ weekData, onEventClick, onQuickCreate, filters }) {
         </div>
 
         {/* Day Columns */}
-        {filteredWeekData.days.map((day) => (
+        {normalizedWeekData.days.map((day) => (
           <DayColumn
             key={day.date}
             date={day.date}
             dayName={day.day_name}
-            events={day.events}
+            // Use slots, since your hook exposes day.slots
+            slots={day.slots}
             onEventClick={onEventClick}
             onQuickCreate={onQuickCreate}
+            filters={filters}
           />
         ))}
       </div>

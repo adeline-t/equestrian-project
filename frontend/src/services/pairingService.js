@@ -1,9 +1,5 @@
-import {
-  RIDER_HORSE_LINK_TYPE,
-  isValidLoanDays,
-  isValidLoanDaysPerWeek,
-} from '../lib/domain/domain-constants.js';
-import { api, createCrudOperations } from './apiService.js';
+import { RIDER_HORSE_LINK_TYPE, isValidLoanDaysPerWeek } from '../lib/domain/domain-constants.js';
+import { api, createCrudOperations } from './api.js';
 
 const pairingService = {
   ...createCrudOperations('pairings'),
@@ -30,7 +26,16 @@ const pairingService = {
       if (!isValidLoanDaysPerWeek(payload.loan_days_per_week)) {
         delete payload.loan_days_per_week;
       }
-      if (!isValidLoanDays(payload.loan_days)) {
+
+      // ✅ Fixed: Direct validation for loan_days (1-7 weekdays)
+      if (Array.isArray(payload.loan_days)) {
+        const validLoanDays = payload.loan_days.every(
+          (day) => Number.isInteger(day) && day >= 1 && day <= 7
+        );
+        if (!validLoanDays || payload.loan_days.length === 0) {
+          delete payload.loan_days;
+        }
+      } else {
         delete payload.loan_days;
       }
     } else {

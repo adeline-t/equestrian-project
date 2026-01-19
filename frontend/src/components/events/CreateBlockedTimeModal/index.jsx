@@ -1,26 +1,15 @@
-import { useCreateEvent } from '../../../hooks/useCreateEvent';
+import { useCreateBlockedTime } from '../../../hooks/useCreateBlockedTime';
 import { Icons } from '../../../lib/icons.jsx';
 import '../../../styles/components/events.css';
 import Modal from '../../common/Modal.jsx';
-import EventForm from './EventForm.jsx';
-import ParticipantsForm from './ParticipantsForm.jsx';
+import BlockedTimeForm from './BlockedTimeForm.jsx';
 
-function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
-  const eventForm = useCreateEvent();
-  const {
-    formData,
-    loading,
-    error,
-    createEvent,
-    participants,
-    addParticipant,
-    removeParticipant,
-    updateParticipant,
-  } = eventForm;
+function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
+  const { loading, error, createBlockedTime } = useCreateBlockedTime();
 
   const handleSubmit = async () => {
-    const result = await createEvent();
-    if (result?.success) {
+    const result = await createBlockedTime();
+    if (result.success) {
       onSuccess?.();
       onClose();
     }
@@ -32,11 +21,11 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
       onClose={onClose}
       title={
         <span className="create-event-modal-title">
-          <Icons.Add className="create-event-modal-icon" />
-          Créer un événement
+          <Icons.Blocked className="create-event-modal-icon" />
+          Bloquer une période
         </span>
       }
-      size="large"
+      size="medium"
       footer={
         <div className="create-event-modal-footer">
           <button
@@ -48,10 +37,9 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
             <Icons.Cancel className="create-event-btn-icon" />
             Annuler
           </button>
-
           <button
             type="button"
-            className="create-event-btn create-event-btn-primary"
+            className="create-event-btn create-event-btn-danger"
             onClick={handleSubmit}
             disabled={loading}
           >
@@ -62,8 +50,8 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
               </>
             ) : (
               <>
-                <Icons.Check className="create-event-btn-icon" />
-                Créer
+                <Icons.Add className="create-event-btn-icon" />
+                Bloquer
               </>
             )}
           </button>
@@ -77,18 +65,14 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
         </div>
       )}
 
-      <EventForm {...eventForm} initialDate={initialDate} initialEndDate={initialEndDate} />
-      <div className="event-form-section participants-section">
-        <h2 className="create-event-section-title">Participants</h2>
-        <ParticipantsForm
-          participants={participants}
-          addParticipant={addParticipant}
-          removeParticipant={removeParticipant}
-          updateParticipant={updateParticipant}
-        />
+      <div className="create-event-alert create-event-alert-warning">
+        <Icons.Info className="create-event-alert-icon" />
+        Cette période sera bloquée et aucun cours ne pourra être créé pendant ce créneau.
       </div>
+
+      <BlockedTimeForm initialDate={initialDate} />
     </Modal>
   );
 }
 
-export default CreateEventModal;
+export default CreateBlockedTimeModal;

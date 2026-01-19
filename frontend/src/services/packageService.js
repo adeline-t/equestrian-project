@@ -1,4 +1,4 @@
-import { api, createCrudOperations } from './apiService.js';
+import { api, createCrudOperations } from './api.js';
 
 const packageService = {
   ...createCrudOperations('packages'),
