@@ -203,6 +203,8 @@ function CalendarModals({
       {showSingleEventModal && (
         <CreateEventModal
           initialDate={selectedEvent?.date}
+          initialStartTime={selectedEvent?.start_time}
+          initialEndTime={selectedEvent?.end_time}
           onClose={onCloseSingleEventModal}
           onSuccess={onModalSuccess}
         />

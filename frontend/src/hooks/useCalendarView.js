@@ -84,14 +84,27 @@ export function useCalendarView() {
     setShowEventModal(true);
   }, []);
 
-  const handleCreateEvent = useCallback((eventData) => {
-    setSelectedEvent(
-      eventData || {
-        date: format(new Date(), 'yyyy-MM-dd'),
+  const handleCreateEvent = useCallback(
+    (selectionData) => {
+      if (selectionData?.date) {
+        // L'utilisateur a sélectionné un créneau
+        setSelectedEvent({
+          date: selectionData.date,
+          start_time: selectionData.start_time,
+          end_time: selectionData.end_time,
+        });
+      } else {
+        // Création manuelle depuis le bouton
+        setSelectedEvent({
+          date: format(currentWeekStart, 'yyyy-MM-dd'),
+          start_time: '09:00',
+          end_time: '10:00',
+        });
       }
-    );
-    setShowSingleEventModal(true);
-  }, []);
+      setShowSingleEventModal(true);
+    },
+    [currentWeekStart]
+  );
 
   const handleCreateBlockedTime = useCallback(() => {
     setSelectedEvent({

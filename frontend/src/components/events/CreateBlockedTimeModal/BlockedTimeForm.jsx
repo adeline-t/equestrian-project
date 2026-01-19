@@ -3,6 +3,14 @@ import { useCreateBlockedTime } from '../../../hooks/useCreateBlockedTime';
 import { Icons } from '../../../lib/icons.jsx';
 import '../../../styles/components/events.css';
 
+const INSTRUCTORS = [
+  { id: 1, label: 'Laury' },
+  { id: 2, label: 'Kévin' },
+  { id: 3, label: 'Julie' },
+  { id: 4, label: 'Capucine' },
+  { id: 0, label: 'Autre' },
+];
+
 function BlockedTimeForm({ initialDate }) {
   const { formData, formatDuration, handleChange, setFormData } = useCreateBlockedTime();
 
@@ -34,16 +42,21 @@ function BlockedTimeForm({ initialDate }) {
           </div>
 
           <div>
-            <label className="event-form-label">Raison du blocage</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="event-edit-textarea"
-              rows="3"
-              placeholder="Ex: Vacances, maintenance, événement spécial..."
-              style={{ width: '100%' }}
-            />
+            <label className="event-form-label">Instructeur *</label>
+            <div className="button-group">
+              {INSTRUCTORS.map((inst) => (
+                <button
+                  key={inst.id}
+                  type="button"
+                  className={`event-form-button ${
+                    formData.instructor_id === inst.id ? 'active' : ''
+                  }`}
+                  onClick={() => setFormData((prev) => ({ ...prev, instructor_id: inst.id }))}
+                >
+                  {inst.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

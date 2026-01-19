@@ -18,7 +18,8 @@ function EventForm({
   handleTypeChange,
   setFormData,
   initialDate,
-  initialEndDate,
+  initialStartTime,
+  initialEndTime,
 }) {
   useEffect(() => {
     if (initialDate) {
@@ -27,14 +28,14 @@ function EventForm({
   }, [initialDate, setFormData]);
 
   useEffect(() => {
-    if (initialEndDate && initialEndDate !== initialDate) {
+    if (initialStartTime && initialEndTime) {
       setFormData((prev) => ({
         ...prev,
-        event_end_date: initialEndDate,
-        is_all_day: true,
+        start_time: initialStartTime,
+        end_time: initialEndTime,
       }));
     }
-  }, [initialEndDate, initialDate, setFormData]);
+  }, [initialStartTime, initialEndTime, setFormData]);
 
   const hideParticipantCount =
     formData.event_type === EVENT_TYPES.BLOCKED ||

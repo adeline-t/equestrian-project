@@ -5,7 +5,7 @@ import Modal from '../../common/Modal.jsx';
 import EventForm from './EventForm.jsx';
 import ParticipantsForm from './ParticipantsForm.jsx';
 
-function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
+function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, initialEndTime }) {
   const eventForm = useCreateEvent();
   const {
     formData,
@@ -48,7 +48,6 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
             <Icons.Cancel className="create-event-btn-icon" />
             Annuler
           </button>
-
           <button
             type="button"
             className="create-event-btn create-event-btn-primary"
@@ -77,8 +76,14 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialEndDate }) {
         </div>
       )}
 
-      <EventForm {...eventForm} initialDate={initialDate} initialEndDate={initialEndDate} />
-      <div className="event-form-section participants-section">
+      <EventForm
+        {...eventForm}
+        initialDate={initialDate}
+        initialStartTime={initialStartTime}
+        initialEndTime={initialEndTime}
+      />
+
+      <div className="create-event-section">
         <h2 className="create-event-section-title">Participants</h2>
         <ParticipantsForm
           participants={participants}
