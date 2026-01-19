@@ -192,9 +192,9 @@ function CalendarModals({
 
   return (
     <React.Suspense fallback={null}>
-      {showEventModal && selectedEvent && (
+      {showEventModal && selectedEvent?.slot && (
         <EventModal
-          slotId={selectedEvent.id}
+          slotId={selectedEvent.slot.slot_id}
           onClose={onCloseEventModal}
           onUpdate={onModalSuccess}
         />

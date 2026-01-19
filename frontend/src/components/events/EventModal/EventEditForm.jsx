@@ -1,5 +1,14 @@
 import { Icons } from '../../../lib/icons';
+import { getEventTypeOptions, getStatusOptions } from '../../../lib/domain/events';
 import '../../../styles/components/events.css';
+
+const INSTRUCTORS = [
+  { id: 1, label: 'Laury' },
+  { id: 2, label: 'Kévin' },
+  { id: 3, label: 'Julie' },
+  { id: 4, label: 'Capucine' },
+  { id: 0, label: 'Autre' },
+];
 
 const EventEditForm = ({ editData, handleChange }) => {
   return (
@@ -11,9 +20,10 @@ const EventEditForm = ({ editData, handleChange }) => {
         </label>
         <input
           name="name"
-          value={editData.name}
+          value={editData.name || ''}
           onChange={handleChange}
           className="event-edit-input"
+          placeholder="Nom de l'événement"
         />
       </div>
 
@@ -25,13 +35,13 @@ const EventEditForm = ({ editData, handleChange }) => {
           </label>
           <select
             name="event_type"
-            value={editData.event_type}
+            value={editData.event_type || ''}
             onChange={handleChange}
             className="event-edit-select"
           >
-            {Object.values(EVENT_TYPES).map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
+            {getEventTypeOptions().map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
@@ -43,16 +53,74 @@ const EventEditForm = ({ editData, handleChange }) => {
           </label>
           <select
             name="slot_status"
-            value={editData.slot_status}
+            value={editData.slot_status || 'scheduled'}
             onChange={handleChange}
             className="event-edit-select"
           >
-            <option value="scheduled">Planifié</option>
-            <option value="confirmed">Confirmé</option>
-            <option value="cancelled">Annulé</option>
+            {getStatusOptions().map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
+
+      {/* Instructor */}
+      <div className="event-edit-form-group">
+        <label className="event-edit-label">
+          <Icons.User className="event-edit-icon" /> Instructeur
+        </label>
+        <div className="button-group">
+          {INSTRUCTORS.map((inst) => (
+            <button
+              key={inst.id}
+              type="button"
+              className={`event-form-button ${editData.instructor_id === inst.id ? 'active' : ''}`}
+              onClick={() =>
+                handleChange({
+                  target: { name: 'instructor_id', value: inst.id },
+                })
+              }
+            >
+              {inst.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Participants Min/Max */}
+      {editData.event_type !== 'blocked' && (
+        <div className="event-edit-form-row">
+          <div className="event-edit-form-group">
+            <label className="event-edit-label">
+              <Icons.Users className="event-edit-icon" /> Min participants
+            </label>
+            <input
+              type="number"
+              name="min_participants"
+              value={editData.min_participants || 0}
+              onChange={handleChange}
+              min="0"
+              className="event-edit-input"
+            />
+          </div>
+
+          <div className="event-edit-form-group">
+            <label className="event-edit-label">
+              <Icons.Users className="event-edit-icon" /> Max participants
+            </label>
+            <input
+              type="number"
+              name="max_participants"
+              value={editData.max_participants || 1}
+              onChange={handleChange}
+              min="1"
+              className="event-edit-input"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Description */}
       <div className="event-edit-form-group">
@@ -61,10 +129,11 @@ const EventEditForm = ({ editData, handleChange }) => {
         </label>
         <textarea
           name="description"
-          value={editData.description}
+          value={editData.description || ''}
           onChange={handleChange}
           className="event-edit-textarea"
           rows="3"
+          placeholder="Description de l'événement..."
         />
       </div>
     </form>

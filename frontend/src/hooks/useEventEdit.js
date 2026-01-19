@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { EVENT_TYPES } from '../lib/domain/events';
+import { calendarService } from '../services/calendarService';
 
 export function useEventEdit(slot, event) {
   const [isEditing, setIsEditing] = useState(false);
@@ -9,9 +9,13 @@ export function useEventEdit(slot, event) {
 
   const startEdit = useCallback(() => {
     setEditData({
+      // Slot fields
       slot_status: slot?.slot_status || 'scheduled',
-      event_type: event?.event_type || EVENT_TYPES.PRIVATE_LESSON.value,
-      instructor_id: slot?.actual_instructor_id || 1,
+      // Event fields
+      event_type: event?.event_type || 'private_lesson',
+      instructor_id: event?.instructor_id || slot?.actual_instructor_id || 1,
+      min_participants: event?.min_participants || 0,
+      max_participants: event?.max_participants || 1,
       name: event?.name || '',
       description: event?.description || '',
     });
@@ -39,19 +43,26 @@ export function useEventEdit(slot, event) {
           actual_instructor_id: editData.instructor_id,
         });
 
-        // Update/create event
+        // Update event if exists
         if (eventId) {
-          await calendarService.updateEvent(eventId, editData);
-        } else {
-          await calendarService.createEvent({
-            planning_slot_id: slotId,
-            ...editData,
+          await calendarService.updateEvent(eventId, {
+            event_type: editData.event_type,
+            instructor_id: editData.instructor_id,
+            min_participants: parseInt(editData.min_participants) || 0,
+            max_participants: parseInt(editData.max_participants) || 1,
+            name: editData.name,
+            description: editData.description,
           });
         }
 
-        onSuccess();
+        await onSuccess(slotId);
+        setIsEditing(false);
+        return true;
       } catch (err) {
-        setError(err.response?.data?.message || err.message);
+        const errorMsg =
+          err.response?.data?.message || err.message || 'Erreur lors de la sauvegarde';
+        setError(errorMsg);
+        return false;
       } finally {
         setSaving(false);
       }
@@ -61,6 +72,7 @@ export function useEventEdit(slot, event) {
 
   const cancelEdit = useCallback(() => {
     setIsEditing(false);
+    setEditData({});
     setError(null);
   }, []);
 

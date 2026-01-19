@@ -13,24 +13,47 @@ export function useEventDetails(slotId) {
       setLoading(true);
       setError(null);
 
+      // Fetch slot data
       const slotData = await calendarService.getSlot(id);
       setSlot(slotData);
 
-      if (slotData.event?.id) {
-        const eventData = await calendarService.getEvent(slotData.event.id);
+      // If slot has an event, fetch event details
+      if (slotData.event_id) {
+        const eventData = await calendarService.getEvent(slotData.event_id);
         setEvent(eventData);
-        setParticipants(eventData.participants || []);
+
+        // Fetch participants if event exists
+        if (eventData.id) {
+          const participantsData = await calendarService.getParticipants(eventData.id);
+          setParticipants(participantsData || []);
+        }
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      console.error('Error loading event details:', err);
+      setError(err.response?.data?.message || err.message || 'Erreur de chargement');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (slotId) loadData(slotId);
+    if (slotId) {
+      loadData(slotId);
+    }
   }, [slotId, loadData]);
 
-  return { slot, event, participants, loading, error, refresh: loadData };
+  const refresh = useCallback(() => {
+    if (slotId) {
+      loadData(slotId);
+    }
+  }, [slotId, loadData]);
+
+  return {
+    slot,
+    event,
+    participants,
+    loading,
+    error,
+    refresh,
+  };
 }
