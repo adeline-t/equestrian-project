@@ -15,25 +15,21 @@ import {
  */
 export function usePairingForm(pairing, rider, riderId) {
   const [formData, setFormData] = useState({
-    rider_id: extractedRiderId,
-    horse_id: extractedHorseId,
-    pairing_start_date: pairing.pairing_start_date || '',
-    pairing_end_date: pairing.pairing_end_date || '',
-    link_type: pairing.link_type || RIDER_HORSE_LINK_TYPE.OWN,
-    loan_days_per_week: pairing.loan_days_per_week || 1,
-    loan_days: Array.isArray(pairing.loan_days) ? pairing.loan_days : [],
+    rider_id: null,
+    horse_id: null,
+    pairing_start_date: '',
+    pairing_end_date: '',
+    link_type: RIDER_HORSE_LINK_TYPE.OWN,
+    loan_days_per_week: 1,
+    loan_days: [],
   });
+
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Initialize formData for edit or creation
   useEffect(() => {
+    // --- EDIT MODE ---
     if (pairing) {
-      // Editing mode
-      console.log('📝 Initializing form for editing:', pairing);
-
-      // Extract IDs from available data
-      // Priority: direct field > joined data > prop
       const extractedRiderId = pairing.rider_id
         ? parseInt(pairing.rider_id)
         : pairing.riders?.id
@@ -48,18 +44,6 @@ export function usePairingForm(pairing, rider, riderId) {
         ? parseInt(pairing.horses.id)
         : null;
 
-      console.log('🔑 Extracted IDs:', {
-        riderId: extractedRiderId,
-        horseId: extractedHorseId,
-        from: {
-          'pairing.rider_id': pairing.rider_id,
-          'pairing.riders?.id': pairing.riders?.id,
-          'riderId prop': riderId,
-          'pairing.horse_id': pairing.horse_id,
-          'pairing.horses?.id': pairing.horses?.id,
-        },
-      });
-
       setFormData({
         rider_id: extractedRiderId,
         horse_id: extractedHorseId,
@@ -69,15 +53,12 @@ export function usePairingForm(pairing, rider, riderId) {
         loan_days_per_week: pairing.loan_days_per_week || 1,
         loan_days: Array.isArray(pairing.loan_days) ? pairing.loan_days : [],
       });
-      console.log(
-        '✅ Form initialized with horse_id:',
-        extractedHorseId,
-        'rider_id:',
-        extractedRiderId
-      );
-    } else if (riderId) {
-      // Creating mode with pre-filled riderId
-      console.log('🆕 Initializing form for creation with riderId:', riderId);
+
+      return;
+    }
+
+    // --- CREATION MODE WITH PRE-FILLED RIDER ---
+    if (riderId) {
       setFormData((prev) => ({
         ...prev,
         rider_id: parseInt(riderId),
@@ -117,15 +98,17 @@ export function usePairingForm(pairing, rider, riderId) {
   };
 
   // Toggle selection of a day in loan_days
-  const toggleLoanDay = (dayIndex) => {
+  const toggleLoanDay = (dayCode) => {
+    // ← dayCode au lieu de dayIndex
     if (!isLoanPairing(formData)) return;
 
     setFormData((prev) => {
       const daysSet = new Set(prev.loan_days || []);
-      if (daysSet.has(dayIndex)) {
-        daysSet.delete(dayIndex);
+      if (daysSet.has(dayCode)) {
+        // ← dayCode
+        daysSet.delete(dayCode);
       } else if (daysSet.size < (prev.loan_days_per_week || 1)) {
-        daysSet.add(dayIndex);
+        daysSet.add(dayCode); // ← dayCode
       }
       return { ...prev, loan_days: Array.from(daysSet).sort() };
     });

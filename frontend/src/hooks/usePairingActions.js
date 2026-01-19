@@ -29,6 +29,8 @@ export function usePairingActions(onSuccess) {
 
   const handleSubmit = async (riderId, pairingData) => {
     try {
+      console.log('📤 Submitting pairing data:', pairingData); // ← Ajoutez ce log
+
       // Défaut link_type selon le rider
       const payload = {
         ...pairingData,
@@ -36,12 +38,7 @@ export function usePairingActions(onSuccess) {
         link_type: pairingData.link_type ?? RIDER_HORSE_LINK_TYPE.OWN,
       };
 
-      if (payload.link_type === RIDER_HORSE_LINK_TYPE.LOAN) {
-        payload.loan_days = convertIndicesToDbLoanDays(payload.loan_days || []);
-      } else {
-        delete payload.loan_days_per_week;
-        delete payload.loan_days;
-      }
+      console.log('📦 Final payload:', payload); // ← Et celui-ci
 
       if (editingPairing) {
         await pairingService.update(editingPairing.id, payload);

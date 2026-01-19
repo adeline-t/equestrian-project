@@ -25,38 +25,49 @@ function EventModal({ slotId, onClose, onUpdate }) {
   if (loading) return <EventModalLoading onClose={onClose} />;
   if (error || !slot) return <EventModalError error={error} onClose={onClose} />;
 
+  const participantCount = participants?.length || 0;
+  const isBlocked = event?.event_type === 'blocked';
+
   return (
     <Portal>
       <div className="event-modal-overlay" onClick={onClose}>
         <div className="event-modal-content" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="event-modal-header">
-            <h2 className="event-modal-title">
-              {event?.name || 'Créneau'} - {slot.start_time.slice(11, 16)}
-            </h2>
+            <div className="event-modal-header-content">
+              <h2 className="event-modal-title">{event?.name || 'Créneau'}</h2>
+              <div className="event-modal-subtitle">
+                {slot.start_time.slice(11, 16)} - {slot.end_time.slice(11, 16)}
+                {slot.is_all_day && <span className="event-all-day-badge">Journée entière</span>}
+              </div>
+            </div>
             <button className="event-modal-close" onClick={onClose} aria-label="Fermer">
               <Icons.Close />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="event-modal-tabs">
-            <button
-              className={`event-modal-tab ${activeTab === 'details' ? 'active' : ''}`}
-              onClick={() => setActiveTab('details')}
-              disabled={isEditing}
-            >
-              <Icons.Info /> {isEditing ? 'Modifier' : 'Détails'}
-            </button>
-            {event && !isEditing && (
+          {!isEditing && (
+            <div className="event-modal-tabs">
               <button
-                className={`event-modal-tab ${activeTab === 'participants' ? 'active' : ''}`}
-                onClick={() => setActiveTab('participants')}
+                className={`event-modal-tab ${activeTab === 'details' ? 'active' : ''}`}
+                onClick={() => setActiveTab('details')}
               >
-                <Icons.Users /> Participants ({participants?.length || 0})
+                <Icons.Info /> Détails
               </button>
-            )}
-          </div>
+              {event && !isBlocked && (
+                <button
+                  className={`event-modal-tab ${activeTab === 'participants' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('participants')}
+                >
+                  <Icons.Users /> Participants
+                  {participantCount > 0 && (
+                    <span className="event-tab-badge">{participantCount}</span>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Body */}
           <div className="event-modal-body">
@@ -67,15 +78,15 @@ function EventModal({ slotId, onClose, onUpdate }) {
               </div>
             )}
 
-            {activeTab === 'details' &&
-              (isEditing ? (
-                <EventEditForm editData={editData} handleChange={handleChange} />
-              ) : (
-                <EventDetailsTab slot={slot} event={event} />
-              ))}
-
-            {activeTab === 'participants' && !isEditing && (
-              <ParticipantsTab participants={participants} event={event} onUpdate={refresh} />
+            {isEditing ? (
+              <EventEditForm editData={editData} handleChange={handleChange} />
+            ) : (
+              <>
+                {activeTab === 'details' && <EventDetailsTab slot={slot} event={event} />}
+                {activeTab === 'participants' && !isBlocked && (
+                  <ParticipantsTab participants={participants} event={event} onUpdate={refresh} />
+                )}
+              </>
             )}
           </div>
 
@@ -108,9 +119,14 @@ function EventModal({ slotId, onClose, onUpdate }) {
                 </button>
               </>
             ) : (
-              <button className="event-modal-btn event-modal-btn-primary" onClick={startEdit}>
-                <Icons.Edit /> Modifier
-              </button>
+              <div className="event-modal-footer-actions">
+                <button className="event-modal-btn event-modal-btn-secondary" onClick={onClose}>
+                  <Icons.Close /> Fermer
+                </button>
+                <button className="event-modal-btn event-modal-btn-primary" onClick={startEdit}>
+                  <Icons.Edit /> Modifier
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -126,7 +142,7 @@ const EventModalLoading = ({ onClose }) => (
       <div className="event-modal-content event-modal-loading">
         <div className="event-modal-loading-content">
           <Icons.Loading className="event-modal-spin" />
-          <p>Chargement...</p>
+          <p>Chargement des détails...</p>
         </div>
       </div>
     </div>
@@ -140,10 +156,10 @@ const EventModalError = ({ error, onClose }) => (
       <div className="event-modal-content event-modal-error">
         <div className="event-modal-error-content">
           <Icons.Warning />
-          <p>{error || 'Erreur inconnue'}</p>
+          <p>{error || 'Erreur lors du chargement'}</p>
         </div>
         <button className="event-modal-btn event-modal-btn-secondary" onClick={onClose}>
-          Fermer
+          <Icons.Close /> Fermer
         </button>
       </div>
     </div>

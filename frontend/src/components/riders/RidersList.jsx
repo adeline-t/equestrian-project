@@ -168,17 +168,21 @@ function RidersList() {
             <tbody>
               {filteredRiders.map((rider) => (
                 <tr key={rider.id} className="rider-row">
-                  <td>
+                  <td data-label="Nom">
                     <strong>{rider.name}</strong>
                   </td>
-                  <td>
+
+                  <td data-label="Type">
                     <span className="badge badge-rider-type" data-rider-type={rider.rider_type}>
                       {getRiderTypeLabel(rider.rider_type)}
                     </span>
                   </td>
-                  <td>{rider.email || '-'}</td>
-                  <td>{rider.phone || '-'}</td>
-                  <td>
+
+                  <td data-label="Email">{rider.email || '-'}</td>
+
+                  <td data-label="Téléphone">{rider.phone || '-'}</td>
+
+                  <td data-label="Statut">
                     <span
                       className={`badge ${
                         getStatusBadge(rider) === 'Actif' ? 'badge-success' : 'badge-secondary'
@@ -187,8 +191,9 @@ function RidersList() {
                       {getStatusBadge(rider)}
                     </span>
                   </td>
-                  <td className="table-actions">
-                    <div className="action-buttons-desktop">
+
+                  <td data-label="Actions" className="table-actions">
+                    <div className="action-buttons">
                       <button
                         className="btn-icon btn-icon-view"
                         onClick={() => handleViewDetails(rider.id)}

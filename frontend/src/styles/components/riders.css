@@ -56,21 +56,11 @@
   cursor: pointer;
 }
 
-.action-buttons-desktop {
+.action-buttons {
   display: flex;
   gap: var(--spacing-xs);
   align-items: center;
   justify-content: flex-end;
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-
-.rider-row:hover .action-buttons-desktop {
-  opacity: 1;
-}
-
-.action-buttons-mobile {
-  display: none;
 }
 
 /* ============================================
@@ -280,15 +270,6 @@
    ============================================ */
 
 @media (max-width: 768px) {
-  .action-buttons-desktop {
-    display: none;
-  }
-
-  .action-buttons-mobile {
-    display: block;
-    position: relative;
-  }
-
   .rider-row {
     cursor: default;
   }
@@ -436,5 +417,81 @@
   .table thead tr,
   .table tbody tr {
     grid-template-columns: 120px 70px 120px 90px 70px 50px;
+  }
+}
+/* ============================================
+   MOBILE CARD VIEW FOR RIDERS LIST
+   ============================================ */
+
+@media (max-width: 640px) {
+  /* Hide table header */
+  .riders-list .table thead {
+    display: none;
+  }
+
+  /* Turn each row into a card */
+  .riders-list .table tbody tr {
+    display: block;
+    background: var(--color-white);
+    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-150);
+  }
+
+  /* Each cell becomes a row inside the card */
+  .riders-list .table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+
+  .riders-list .table tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  /* Add labels using data-label */
+  .riders-list .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-600);
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Action buttons row */
+  .riders-list .table-actions .action-buttons {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .riders-list .btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
+@media (max-width: 640px) {
+  .riders-list .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .riders-list .flex-between h2 {
+    margin-bottom: 4px;
+  }
+
+  .riders-list .flex-between > div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .riders-list .flex-between button {
+    flex: 1;
+    min-width: 140px;
   }
 }

@@ -1,5 +1,102 @@
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { calendarApi } from './api';
+import { timeToMinutes, minutesToTime } from '../lib/helpers/formatters';
+
+/**
+ * Extrait l'heure au format "HH:MM" depuis un timestamp ISO ou une chaîne d'heure
+ * @param {string|number} timeValue - Peut être "09:00", "2026-01-19T09:00:00", ou un nombre de minutes
+ * @returns {string} Format "HH:MM"
+ */
+function normalizeTimeToHHMM(timeValue) {
+  if (!timeValue) return '00:00';
+
+  // Si c'est un nombre (minutes), convertir en "HH:MM"
+  if (typeof timeValue === 'number') {
+    return minutesToTime(timeValue);
+  }
+
+  // Si c'est une chaîne
+  if (typeof timeValue === 'string') {
+    // Si c'est un timestamp ISO (contient 'T')
+    if (timeValue.includes('T')) {
+      try {
+        const date = parseISO(timeValue);
+        return format(date, 'HH:mm');
+      } catch (error) {
+        console.warn('Could not parse ISO timestamp:', timeValue);
+        return '00:00';
+      }
+    }
+
+    // Si c'est déjà au format "HH:MM" (ou "HH:MM:SS")
+    const timePart = timeValue.split(':');
+    if (timePart.length >= 2) {
+      const hours = timePart[0].padStart(2, '0');
+      const minutes = timePart[1].padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+  }
+
+  console.warn('Unexpected time format:', timeValue);
+  return '00:00';
+}
+
+/**
+ * Enrichit un slot avec les données calculées nécessaires
+ */
+function enrichSlot(slot) {
+  if (!slot) return slot;
+
+  console.log('🔍 Enriching slot:', {
+    slot_id: slot.slot_id,
+    original_start: slot.start_time,
+    original_end: slot.end_time,
+    is_all_day: slot.is_all_day,
+  });
+
+  // Gérer les événements en journée entière
+  if (slot.is_all_day === true) {
+    console.log('📅 All-day event detected:', slot.slot_id);
+    return {
+      ...slot,
+      start_time: '00:00',
+      end_time: '23:59',
+      duration_minutes: 1439,
+    };
+  }
+
+  // S'assurer que nous avons start_time et end_time pour les événements horaires
+  if (!slot.start_time || !slot.end_time) {
+    console.warn('⚠️ Slot sans start_time ou end_time:', slot);
+    return slot;
+  }
+
+  // Normaliser les formats de temps en strings "HH:MM"
+  const normalizedStartTime = normalizeTimeToHHMM(slot.start_time);
+  const normalizedEndTime = normalizeTimeToHHMM(slot.end_time);
+
+  console.log('✅ Normalized times:', {
+    slot_id: slot.slot_id,
+    start: normalizedStartTime,
+    end: normalizedEndTime,
+  });
+
+  // Calculer duration_minutes si manquant
+  let durationMinutes = slot.duration_minutes;
+
+  if (!durationMinutes || durationMinutes === 0) {
+    const startMinutes = timeToMinutes(normalizedStartTime);
+    const endMinutes = timeToMinutes(normalizedEndTime);
+    durationMinutes = endMinutes - startMinutes;
+  }
+
+  return {
+    ...slot,
+    start_time: normalizedStartTime,
+    end_time: normalizedEndTime,
+    duration_minutes: durationMinutes,
+  };
+}
 
 /**
  * Calendar Service
@@ -20,7 +117,17 @@ export const calendarService = {
     const response = await calendarApi.get('/week', {
       params: { start },
     });
-    return response.data;
+
+    // Enrichir les données avant de les retourner
+    const enrichedData = {
+      ...response.data,
+      days: (response.data.days || []).map((day) => ({
+        ...day,
+        slots: (day.slots || []).map(enrichSlot),
+      })),
+    };
+
+    return enrichedData;
   },
 
   /* -------------------------------------------------------
@@ -33,7 +140,7 @@ export const calendarService = {
    */
   getAllSlots: async () => {
     const response = await calendarApi.get('/slots');
-    return response.data;
+    return (response.data || []).map(enrichSlot);
   },
 
   /**
@@ -43,7 +150,7 @@ export const calendarService = {
    */
   getSlot: async (id) => {
     const response = await calendarApi.get(`/slots/${id}`);
-    return response.data;
+    return enrichSlot(response.data);
   },
 
   /**
@@ -53,7 +160,7 @@ export const calendarService = {
    */
   createSlot: async (payload) => {
     const response = await calendarApi.post('/slots', payload);
-    return response.data;
+    return enrichSlot(response.data);
   },
 
   /**
@@ -64,7 +171,7 @@ export const calendarService = {
    */
   updateSlot: async (id, payload) => {
     const response = await calendarApi.put(`/slots/${id}`, payload);
-    return response.data;
+    return enrichSlot(response.data);
   },
 
   /**

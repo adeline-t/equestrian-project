@@ -278,20 +278,20 @@ function HorsesList() {
             <tbody>
               {filteredHorses.map((horse) => (
                 <tr key={horse.id} className="horse-row">
-                  <td>
+                  <td data-label="Nom">
                     <strong>{horse.name}</strong>
                   </td>
-                  <td>
+                  <td data-label="Type">
                     <span className="badge badge-kind" data-kind={horse.kind}>
                       {getHorseKindLabel(horse.kind)}
                     </span>
                   </td>
-                  <td>
+                  <td data-label="Propriétaire">
                     <span className="badge badge-info">
                       {getOwnershipLabel(horse.ownership_type)}
                     </span>
                   </td>
-                  <td>
+                  <td data-label="Cavaliers Actifs">
                     <span
                       className={`riders-count-badge ${
                         horse.active_riders_count > 0 ? 'clickable' : ''
@@ -307,8 +307,8 @@ function HorsesList() {
                       {horse.active_riders_count || 0}
                     </span>
                   </td>
-                  <td>{renderLoanDays(horse)}</td>
-                  <td>
+                  <td data-label="Jours de pension">{renderLoanDays(horse)}</td>
+                  <td data-label="Statut">
                     <span
                       className={`badge ${
                         isActive(horse.activity_start_date, horse.activity_end_date)
@@ -321,8 +321,8 @@ function HorsesList() {
                         : 'Inactif'}
                     </span>
                   </td>
-                  <td className="table-actions">
-                    <div className="action-buttons-desktop">
+                  <td data-label="Actions" className="table-actions">
+                    <div className="action-buttons">
                       <button
                         className="btn-icon btn-icon-edit"
                         onClick={() => horseActions.handleEdit(horse)}

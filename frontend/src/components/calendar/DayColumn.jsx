@@ -4,6 +4,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { calculateSelectionStyle, timeToMinutes } from '../../lib/helpers/formatters';
 import { getValidSlots } from '../../lib/helpers/validators.js';
 import { Icons } from '../../lib/icons';
+import { getEventTypeColor } from '../../lib/domain/events';
 import '../../styles/components/calendar.css';
 import EventCard from './EventCard';
 
@@ -16,7 +17,6 @@ const CALENDAR_CONFIG = {
 
 /**
  * Calculate event position and height based on time
- * FIXED: Handles both time strings ("09:00") and numbers (540 minutes)
  */
 function getEventStyle(slot, HOUR_HEIGHT, START_HOUR) {
   if (!slot.start_time || !slot.end_time) {
@@ -24,52 +24,34 @@ function getEventStyle(slot, HOUR_HEIGHT, START_HOUR) {
     return { top: 0, height: 0 };
   }
 
-  let startMinutes, endMinutes;
+  // Les temps sont maintenant toujours des strings grâce à enrichSlot
+  const startMinutes = timeToMinutes(slot.start_time);
+  const endMinutes = timeToMinutes(slot.end_time);
 
-  // Handle time strings (e.g., "09:00")
-  if (typeof slot.start_time === 'string') {
-    startMinutes = timeToMinutes(slot.start_time);
-  } else {
-    // Handle numeric minutes
-    startMinutes = slot.start_time;
-  }
-
-  if (typeof slot.end_time === 'string') {
-    endMinutes = timeToMinutes(slot.end_time);
-  } else {
-    endMinutes = slot.end_time;
-  }
-
-  // Validate we have valid numbers
   if (isNaN(startMinutes) || isNaN(endMinutes)) {
     console.warn('Invalid time values:', {
+      slot_id: slot.slot_id,
       start: slot.start_time,
       end: slot.end_time,
-      startMinutes,
-      endMinutes,
     });
     return { top: 0, height: 0 };
   }
 
-  const startHour = Math.floor(startMinutes / 60);
-  const startMinute = startMinutes % 60;
-  const endHour = Math.floor(endMinutes / 60);
-  const endMinute = endMinutes % 60;
+  // Calculer la position en pixels par rapport à START_HOUR
+  const startOffsetMinutes = startMinutes - START_HOUR * 60;
+  const durationMinutes = endMinutes - startMinutes;
 
-  const top = (startHour - START_HOUR) * HOUR_HEIGHT + (startMinute / 60) * HOUR_HEIGHT;
-  const height =
-    (endHour - startHour) * HOUR_HEIGHT + ((endMinute - startMinute) / 60) * HOUR_HEIGHT;
+  const top = (startOffsetMinutes / 60) * HOUR_HEIGHT;
+  const height = (durationMinutes / 60) * HOUR_HEIGHT;
 
-  // Safety check: ensure we return valid numbers
-  if (isNaN(top) || isNaN(height)) {
-    console.warn('Calculated NaN position:', {
-      slot,
+  // Vérification finale
+  if (isNaN(top) || isNaN(height) || top < 0 || height <= 0) {
+    console.warn('Invalid calculated position:', {
+      slot_id: slot.slot_id,
       startMinutes,
       endMinutes,
-      startHour,
-      startMinute,
-      endHour,
-      endMinute,
+      top,
+      height,
     });
     return { top: 0, height: 0 };
   }
@@ -128,6 +110,50 @@ function DayHeader({ date, dayName }) {
 }
 
 /**
+ * AllDayEvents Component - Affiche les événements en journée entière
+ */
+function AllDayEvents({ slots, onEventClick }) {
+  if (!slots || slots.length === 0) return null;
+
+  return (
+    <div className="all-day-events">
+      {slots.map((slot) => (
+        <div
+          key={slot.slot_id || slot.event_id}
+          className="all-day-event-card"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEventClick?.({ slot });
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onEventClick?.({ slot });
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label={`Événement journée entière: ${slot.name || 'Sans titre'}`}
+          style={{
+            backgroundColor: getEventTypeColor(slot.event_type),
+            cursor: 'pointer',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {slot.event_type === 'blocked' && (
+              <Icons.Blocked style={{ fontSize: '12px', color: 'white' }} aria-hidden="true" />
+            )}
+            <span style={{ fontSize: '11px', color: 'white', fontWeight: 500 }}>
+              {slot.name || 'Journée entière'}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
  * DayGrid Component
  */
 function DayGrid({
@@ -153,6 +179,7 @@ function DayGrid({
           <div
             key={hour}
             className="hour-marker-row"
+            data-hour={`${hour.toString().padStart(2, '0')}:00`}
             style={{
               position: 'absolute',
               top: `${(hour - START_HOUR) * HOUR_HEIGHT}px`,
@@ -243,9 +270,19 @@ function DayColumn({ date, dayName, slots, onEventClick, onQuickCreate }) {
   const isCurrentDay = isToday(dateObj);
   const isPastDay = isPast(endOfDay(dateObj)) && !isCurrentDay;
 
-  const validSlots = useMemo(
-    () => getValidSlots(slots, START_HOUR, END_HOUR),
-    [slots, START_HOUR, END_HOUR]
+  // Séparer les événements en journée entière et les événements horaires
+  const { allDaySlots, timedSlots } = useMemo(() => {
+    const allSlots = slots || [];
+
+    return {
+      allDaySlots: allSlots.filter((slot) => slot.is_all_day === true),
+      timedSlots: allSlots.filter((slot) => slot.is_all_day !== true),
+    };
+  }, [slots]);
+
+  const validTimedSlots = useMemo(
+    () => getValidSlots(timedSlots, START_HOUR, END_HOUR),
+    [timedSlots, START_HOUR, END_HOUR]
   );
 
   const calculateEventStyleMemo = useCallback(
@@ -313,9 +350,12 @@ function DayColumn({ date, dayName, slots, onEventClick, onQuickCreate }) {
     <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
       <DayHeader date={date} dayName={dayName} />
 
+      {/* Zone des événements journée entière */}
+      <AllDayEvents slots={allDaySlots} onEventClick={onEventClick} />
+
       <div ref={dayGridRef} className="day-grid-container">
         <DayGrid
-          slots={validSlots}
+          slots={validTimedSlots}
           onEventClick={onEventClick}
           selectionStyle={calculateSelectionStyleMemo()}
           isSelecting={isSelecting}

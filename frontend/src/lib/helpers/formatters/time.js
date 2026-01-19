@@ -2,23 +2,36 @@
  * Time formatting and calculation utilities
  */
 
+// Dans lib/helpers/formatters.js
+
 /**
- * Convert time string to minutes
- * @param {string} timeStr - Time in HH:MM format
- * @returns {number} Total minutes
+ * Convertit une chaîne "HH:MM" en minutes depuis minuit
  */
 export function timeToMinutes(timeStr) {
-  if (!timeStr) return 0;
+  if (typeof timeStr !== 'string') {
+    console.warn('timeToMinutes received non-string:', timeStr);
+    return 0;
+  }
+
   const [hours, minutes] = timeStr.split(':').map(Number);
-  return hours * 60 + (minutes || 0);
+
+  if (isNaN(hours) || isNaN(minutes)) {
+    console.warn('timeToMinutes could not parse:', timeStr);
+    return 0;
+  }
+
+  return hours * 60 + minutes;
 }
 
 /**
- * Convert minutes to time string
- * @param {number} minutes - Total minutes
- * @returns {string} Time in HH:MM format
+ * Convertit des minutes depuis minuit en format "HH:MM"
  */
 export function minutesToTime(minutes) {
+  if (typeof minutes !== 'number' || isNaN(minutes)) {
+    console.warn('minutesToTime received invalid input:', minutes);
+    return '00:00';
+  }
+
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;

@@ -5,6 +5,7 @@ import {
   getRiderHorseLinkLabel,
   isLoanPairing,
   isValidLoanDaysPerWeek,
+  weekDayCodeToFr,
 } from '../../lib/domain/index.js';
 import { getHorseKindLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers';
@@ -71,6 +72,7 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
 
     try {
       setSubmitting(true);
+      // ✅ Passer formData directement - loan_days est déjà dedans
       await onSubmit(riderId, formData);
     } catch (err) {
       console.error('❌ Error submitting pairing form:', err);
@@ -266,8 +268,8 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
                   return (
                     <button
                       type="button"
-                      key={index}
-                      onClick={() => toggleLoanDay(index)}
+                      key={dayEn}
+                      onClick={() => toggleLoanDay(dayEn)}
                       disabled={disabled || submitting}
                       className={`day-button ${selected ? 'selected' : ''}`}
                     >
@@ -318,7 +320,7 @@ PairingForm.propTypes = {
     pairing_end_date: PropTypes.string,
     link_type: PropTypes.string,
     loan_days_per_week: PropTypes.number,
-    loan_days: PropTypes.arrayOf(PropTypes.number),
+    loan_days: PropTypes.arrayOf(PropTypes.string),
   }),
   horses: PropTypes.arrayOf(
     PropTypes.shape({

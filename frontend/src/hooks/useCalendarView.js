@@ -59,6 +59,26 @@ export function useCalendarView() {
     loadWeekData();
   }, [loadWeekData]);
 
+  useEffect(() => {
+    if (weekData?.days?.[0]?.slots?.[0]) {
+      console.log('📅 Sample enriched slot:', {
+        original_start: 'from backend',
+        enriched_start: weekData.days[0].slots[0].start_time,
+        enriched_end: weekData.days[0].slots[0].end_time,
+        duration: weekData.days[0].slots[0].duration_minutes,
+      });
+    }
+  }, [weekData]);
+  useEffect(() => {
+    if (weekData?.days) {
+      console.log('📊 Week data loaded:', {
+        totalDays: weekData.days.length,
+        firstDay: weekData.days[0],
+        sampleSlot: weekData.days[0]?.slots?.[0],
+      });
+    }
+  }, [weekData]);
+
   /* -------------------------------------------------------
    * NAVIGATION HANDLERS
    * ----------------------------------------------------- */

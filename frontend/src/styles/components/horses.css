@@ -57,21 +57,11 @@
   cursor: pointer;
 }
 
-.action-buttons-desktop {
+.action-buttons {
   display: flex;
   gap: var(--spacing-xs);
   align-items: center;
   justify-content: flex-end;
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-
-.horse-row:hover .action-buttons-desktop {
-  opacity: 1;
-}
-
-.action-buttons-mobile {
-  display: none;
 }
 
 /* ============================================
@@ -174,15 +164,6 @@
    ============================================ */
 
 @media (max-width: 768px) {
-  .action-buttons-desktop {
-    display: none;
-  }
-
-  .action-buttons-mobile {
-    display: block;
-    position: relative;
-  }
-
   .horse-row {
     cursor: default;
   }
@@ -367,4 +348,88 @@
   left: -16px;
   top: 50%;
   transform: translateY(-50%);
+}
+/* ============================================
+   MOBILE CARD VIEW FOR HORSES LIST
+   (aligned with riders mobile behavior)
+   ============================================ */
+
+@media (max-width: 640px) {
+  /* Hide table header */
+  .table thead,
+  .table thead tr {
+    display: none !important;
+  }
+
+  /* Turn each row into a card */
+  .table tbody tr {
+    display: block;
+    background: var(--color-white);
+    margin-bottom: 16px;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-150);
+  }
+
+  /* Each cell becomes a row inside the card */
+  .table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+
+  .table tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  /* Labels via data-label */
+  .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-600);
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Loan days: keep readable */
+  .loan-days-cell {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  /* Action buttons row */
+  .action-buttons {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .flex-between h2 {
+    margin-bottom: 4px;
+  }
+
+  .flex-between > div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .flex-between button {
+    flex: 1;
+    min-width: 140px;
+  }
 }

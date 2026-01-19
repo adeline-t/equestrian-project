@@ -71,28 +71,6 @@ function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday, stats }) {
           </button>
         </div>
       </div>
-
-      <div className="calendar-header-bottom">
-        <div className="calendar-stats-compact">
-          <div className="stat-compact-item">
-            <Icons.List />
-            <span>{stats.total}</span>
-            <span>Total</span>
-          </div>
-
-          <div className="stat-compact-item">
-            <Icons.Check />
-            <span>{stats.confirmed}</span>
-            <span>Confirmés</span>
-          </div>
-
-          <div className="stat-compact-item">
-            <Icons.Blocked />
-            <span>{stats.blocked}</span>
-            <span>Bloqués</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,4 +1,8 @@
-import { RIDER_HORSE_LINK_TYPE, isValidLoanDaysPerWeek } from '../lib/domain/domain-constants.js';
+import {
+  RIDER_HORSE_LINK_TYPE,
+  isValidLoanDaysPerWeek,
+  WEEK_DAYS_EN,
+} from '../lib/domain/domain-constants.js';
 import { api, createCrudOperations } from './api.js';
 
 const pairingService = {
@@ -27,11 +31,12 @@ const pairingService = {
         delete payload.loan_days_per_week;
       }
 
-      // ✅ Fixed: Direct validation for loan_days (1-7 weekdays)
+      // ✅ FIXED: Validation pour loan_days avec codes de jours (strings)
       if (Array.isArray(payload.loan_days)) {
         const validLoanDays = payload.loan_days.every(
-          (day) => Number.isInteger(day) && day >= 1 && day <= 7
+          (day) => typeof day === 'string' && WEEK_DAYS_EN.includes(day)
         );
+
         if (!validLoanDays || payload.loan_days.length === 0) {
           delete payload.loan_days;
         }
@@ -43,22 +48,28 @@ const pairingService = {
       delete payload.loan_days;
     }
 
+    // Remove undefined values
     Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
+
     return payload;
   },
 
   create: async (data) => {
     const payload = pairingService._normalizePayload(data);
+
     if (!payload.rider_id || !payload.horse_id) {
       throw new Error('rider_id et horse_id sont requis');
     }
+
     const response = await api.post('/pairings', payload);
     return response.data;
   },
 
   update: async (id, data) => {
     const payload = pairingService._normalizePayload(data);
+
     if (!id || isNaN(Number(id))) throw new Error('ID de pairing invalide');
+
     const response = await api.put(`/pairings/${id}`, payload);
     return response.data;
   },
