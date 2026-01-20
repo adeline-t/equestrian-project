@@ -8,11 +8,8 @@ export async function runRecurrenceCron(env) {
   const db = getDatabase(env);
 
   try {
-    // 1️⃣ Fetch all active recurrences
-    const { data: recurrences, error } = await db
-      .from('recurrences')
-      .select('*')
-      .eq('is_active', true); // make sure you have an is_active column
+    // 1️⃣ Fetch all recurrences (assume all are active)
+    const { data: recurrences, error } = await db.from('recurrences').select('*');
 
     if (error) throw new Error(`Error fetching recurrences: ${error.message}`);
 
@@ -37,7 +34,7 @@ export async function runRecurrenceCron(env) {
           .from('planning_slots')
           .select('*')
           .eq('recurrence_id', rec.id)
-          .eq('start_time', slot.start_time)
+          .eq('slot_date', slot.slot_date)
           .single();
 
         let slotId;
@@ -47,9 +44,10 @@ export async function runRecurrenceCron(env) {
           const { data: insertedSlot, error: insertError } = await db
             .from('planning_slots')
             .insert({
-              slot_status: 'confirmed', // default status
+              slot_status: 'confirmed',
               actual_instructor_id: null,
               cancellation_reason: null,
+              slot_date: slot.slot_date,
               start_time: slot.start_time,
               end_time: slot.end_time,
               is_all_day: slot.is_all_day,
@@ -74,7 +72,7 @@ export async function runRecurrenceCron(env) {
           .from('events')
           .select('*')
           .eq('planning_slot_id', slotId)
-          .eq('event_type', rec.event_type || 'lesson') // allow rec.event_type
+          .eq('event_type', rec.event_type || 'lesson')
           .eq('instructor_id', rec.instructor_id || null)
           .single();
 
@@ -90,6 +88,7 @@ export async function runRecurrenceCron(env) {
               min_participants: rec.min_participants || 0,
               max_participants: rec.max_participants || null,
               deleted_at: null,
+              name: null,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             })
@@ -132,7 +131,7 @@ export async function runRecurrenceCron(env) {
 
 /**
  * Generate planning slots from a recurrence for the next X weeks
- * If start_time or end_time is missing, the slot will be all-day
+ * Returns { slot_date: YYYY-MM-DD, start_time: HH:mm:ss, end_time: HH:mm:ss, is_all_day }
  */
 function generateNextSlots(rec, weeksAhead = 3) {
   const slots = [];
@@ -143,33 +142,28 @@ function generateNextSlots(rec, weeksAhead = 3) {
     const currentDay = new Date(today);
     currentDay.setDate(today.getDate() + i);
 
-    // Map JS getDay() (0=Sun) -> DB by_week_days (1=Mon ... 7=Sun)
+    // Map JS getDay() (0=Sun) -> DB week_days (1=Mon ... 7=Sun)
     const dayOfWeek = currentDay.getDay() === 0 ? 7 : currentDay.getDay();
-    if (!rec.by_week_days?.includes(dayOfWeek)) continue;
+    if (!rec.week_days?.includes(dayOfWeek)) continue;
 
-    let start, end, isAllDay;
+    const slotDate = currentDay.toISOString().split('T')[0]; // YYYY-MM-DD
+
+    let startTime, endTime, isAllDay;
 
     if (rec.start_time && rec.end_time) {
-      start = new Date(currentDay);
-      start.setHours(rec.start_time.getHours(), rec.start_time.getMinutes(), 0, 0);
-
-      end = new Date(currentDay);
-      end.setHours(rec.end_time.getHours(), rec.end_time.getMinutes(), 0, 0);
-
-      isAllDay = rec.all_day || false;
+      startTime = rec.start_time; // time string from DB: HH:mm:ss
+      endTime = rec.end_time;
+      isAllDay = false;
     } else {
-      start = new Date(currentDay);
-      start.setHours(0, 0, 0, 0);
-
-      end = new Date(currentDay);
-      end.setHours(23, 59, 59, 999);
-
+      startTime = '00:00:00';
+      endTime = '23:59:59';
       isAllDay = true;
     }
 
     slots.push({
-      start_time: start.toISOString(),
-      end_time: end.toISOString(),
+      slot_date: slotDate,
+      start_time: startTime,
+      end_time: endTime,
       is_all_day: isAllDay,
     });
   }

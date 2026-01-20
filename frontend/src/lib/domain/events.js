@@ -203,6 +203,19 @@ export function isBlockedEvent(event) {
   return event?.event_type === EVENT_TYPES.BLOCKED;
 }
 
+// helpers/eventsHelpers.js
+export function isBlockedEventFull(selectedEvent) {
+  if (!selectedEvent) return false;
+
+  // Vérifie d'abord le slot
+  if (selectedEvent.slot?.event_type === 'blocked') return true;
+
+  // Vérifie l'event complet si disponible
+  if (selectedEvent.event?.event_type === 'blocked') return true;
+
+  return false;
+}
+
 export function isCancelledEvent(event) {
   return event?.status === SLOT_STATUSES.CANCELLED;
 }

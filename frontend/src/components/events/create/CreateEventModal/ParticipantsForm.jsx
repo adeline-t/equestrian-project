@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParticipants } from '../../../hooks/useParticipants';
-import { useRiderHorsesWithPairings } from '../../../hooks/useRiderHorsesWithPairings';
-import { Icons } from '../../../lib/icons.jsx';
-import '../../../styles/components/events.css';
+import { useParticipants } from '../../../../hooks/useParticipants.js';
+import { useRiderHorsesWithPairings } from '../../../../hooks/useRiderHorsesWithPairings.js';
+import { Icons } from '../../../../lib/icons.jsx';
+import '../../../../styles/components/events.css';
 
 function ParticipantsForm({ participants, addParticipant, removeParticipant, updateParticipant }) {
   const {

@@ -1,7 +1,7 @@
-import { useCreateBlockedTime } from '../../../hooks/useCreateBlockedTime';
-import { Icons } from '../../../lib/icons.jsx';
-import '../../../styles/components/events.css';
-import Modal from '../../common/Modal.jsx';
+import { useCreateBlockedTime } from '../../../../hooks/useCreateBlockedTime.js';
+import { Icons } from '../../../../lib/icons.jsx';
+import '../../../../styles/components/events.css';
+import Modal from '../../../common/Modal.jsx';
 import BlockedTimeForm from './BlockedTimeForm.jsx';
 
 function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {

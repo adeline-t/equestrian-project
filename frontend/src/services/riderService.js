@@ -82,6 +82,15 @@ const riderService = {
   },
 
   /**
+   * Get all riders with their active pairings (optimized for list view)
+   * @returns {Promise<Array>} Riders with pairings and stats
+   */
+  getAllWithPairings: async () => {
+    const response = await api.get('/riders/list');
+    return response.data;
+  },
+
+  /**
    * Get horses for a rider
    * @param {number} id - Rider ID
    * @returns {Promise<Array>} Rider horses (pairings with nested horse data)

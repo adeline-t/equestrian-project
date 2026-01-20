@@ -5,7 +5,7 @@
 @import '../common/index.css';
 
 /* ============================================
-   RIDERS TABLE - GRID LAYOUT
+   TABLE LAYOUT & STRUCTURE
    ============================================ */
 
 .table thead,
@@ -19,28 +19,18 @@
   z-index: 10;
 }
 
-.riders-list .table thead tr {
-  display: grid;
-  grid-template-columns: 300px 200px 240px 160px 100px 1fr;
-  gap: 0;
-}
-
+.riders-list .table thead tr,
 .riders-list .table tbody tr {
   display: grid;
-  grid-template-columns: 300px 200px 240px 160px 100px 1fr;
-  gap: 0;
-}
-
-.table th:nth-child(1),
-.table td:nth-child(1) {
-  justify-content: flex-start;
-  text-align: left;
-}
-
-.table th:nth-child(6),
-.table td:nth-child(6) {
-  justify-content: flex-end;
-  text-align: right;
+  align-items: center;
+  grid-template-columns:
+    2fr
+    minmax(100px, 150px)
+    minmax(120px, 180px)
+    minmax(80px, 110px)
+    minmax(130px, 180px)
+    3fr
+    1fr;
 }
 
 /* ============================================
@@ -56,6 +46,24 @@
   cursor: pointer;
 }
 
+.rider-row-clickable {
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.rider-row-clickable:hover {
+  background-color: var(--color-gray-50);
+  transform: translateX(2px);
+}
+
+.rider-row-clickable:active {
+  background-color: var(--color-gray-100);
+}
+
+.rider-row-clickable:hover td:first-child {
+  color: var(--color-primary);
+}
+
 .action-buttons {
   display: flex;
   gap: var(--spacing-xs);
@@ -63,50 +71,71 @@
   justify-content: flex-end;
 }
 
-/* ============================================
-   RIDER CARD
-   ============================================ */
+.table-actions {
+  pointer-events: all;
+}
 
-.rider-card-title {
+.table-actions button {
+  pointer-events: all;
+}
+
+.loan-days-cell {
   display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.rider-card-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 24px;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.rider-card-title-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.rider-card-title-text h2 {
-  margin: 0 0 6px 0;
-  font-size: 1.5rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rider-card-meta {
-  display: flex;
-  gap: 8px;
+  gap: 4px;
   flex-wrap: wrap;
 }
+
+.day-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.day-badge.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.day-badge.inactive {
+  background: var(--color-gray-200);
+  color: var(--color-gray-500);
+}
+
+/* ============================================
+   HORSES BADGES
+   ============================================ */
+/* Dans riders.css */
+.riders-list td[data-label='Chevaux'] {
+  text-align: center;
+}
+
+.horses-badges {
+  display: inline-flex; /* Changé de flex à inline-flex */
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: center; /* Ajouté pour centrer les badges */
+}
+
+.badge-horse {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) 10px;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  transition: all var(--transition-base);
+}
+
+.badge-horse:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   RIDER CARD MODAL
+   ============================================ */
 
 .rider-card-modal {
   max-width: 1200px;
@@ -116,26 +145,76 @@
 }
 
 .rider-card-content {
-  padding: 20px;
+  padding: var(--spacing-lg);
 }
 
+/* Card Header */
+.rider-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.rider-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.rider-card-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.rider-card-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rider-card-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.rider-card-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* Card Layout */
 .rider-card-grid {
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: 20px;
-  margin-top: 16px;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
 }
 
 .rider-card-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .rider-card-main {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .count-badge {
@@ -144,30 +223,29 @@
   justify-content: center;
   min-width: 24px;
   height: 24px;
-  padding: 0 8px;
+  padding: 0 var(--spacing-sm);
   background: var(--color-primary-purple);
-  color: white;
+  color: var(--color-white);
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
 }
 
 /* ============================================
-   PACKAGES & PAIRINGS
+   PACKAGES
    ============================================ */
 
-.packages-list-modern,
-.pairings-list-modern {
+.packages-list-modern {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .package-item-modern {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: var(--spacing-md) var(--spacing-lg);
   background: var(--gradient-light);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-lg);
@@ -176,7 +254,7 @@
 
 .package-item-modern:hover {
   border-color: var(--color-primary-light);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  box-shadow: var(--shadow-md);
   transform: translateX(4px);
 }
 
@@ -190,11 +268,11 @@
 .package-detail {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .package-label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   color: var(--color-gray-600);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
@@ -202,16 +280,26 @@
 }
 
 .package-value {
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
+}
+
+/* ============================================
+   PAIRINGS
+   ============================================ */
+
+.pairings-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .pairing-item-modern {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   background: var(--gradient-light);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-lg);
@@ -220,7 +308,7 @@
 
 .pairing-item-modern:hover {
   border-color: var(--color-success-medium);
-  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.1);
+  box-shadow: var(--shadow-md);
   transform: translateX(4px);
 }
 
@@ -228,12 +316,12 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(56, 161, 105, 0.1));
+  background: var(--color-success-light);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-success-medium);
-  font-size: 20px;
+  font-size: var(--font-size-lg);
   flex-shrink: 0;
 }
 
@@ -241,12 +329,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
   min-width: 0;
 }
 
 .pairing-horse-name {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-900);
   white-space: nowrap;
@@ -255,20 +343,50 @@
 }
 
 .pairing-meta {
-  font-size: 0.8rem;
+  font-size: var(--font-size-sm);
   color: var(--color-gray-600);
 }
 
 .pairing-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
   flex-shrink: 0;
 }
 
 /* ============================================
-   MOBILE MENU
+   RESPONSIVE BREAKPOINTS
    ============================================ */
 
+/* Large screens: 1200px */
+@media (max-width: 1200px) {
+  .rider-card-grid {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .riders-list .table thead tr,
+  .riders-list .table tbody tr {
+    grid-template-columns: 180px 100px 180px 120px 90px 1fr;
+  }
+}
+
+/* Medium screens: 992px */
+@media (max-width: 992px) {
+  .rider-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rider-card-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .stats-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Tablet: 768px */
 @media (max-width: 768px) {
   .rider-row {
     cursor: default;
@@ -278,6 +396,42 @@
     background: transparent;
   }
 
+  .rider-card-content {
+    padding: var(--spacing-md);
+  }
+
+  .rider-card-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .riders-list .table thead tr,
+  .riders-list .table tbody tr {
+    grid-template-columns: 150px 90px 150px 100px 80px 60px;
+  }
+
+  .package-item-modern,
+  .pairing-item-modern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .horses-badges {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .badge-horse {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  /* Mobile Menu */
   .btn-menu {
     color: var(--color-info-blue);
     padding: 10px;
@@ -303,11 +457,11 @@
     left: 0;
     right: 0;
     background: var(--color-white);
-    border-radius: 16px 16px 0 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     box-shadow: var(--shadow-xl);
     z-index: 1000;
-    padding: 20px;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    padding: var(--spacing-lg);
+    padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
     animation: slideIn var(--transition-slow) ease;
   }
 
@@ -322,7 +476,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--spacing-md);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-medium);
     color: var(--color-gray-800);
@@ -343,108 +497,50 @@
   }
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 1200px) {
-  .rider-card-grid {
-    grid-template-columns: 280px 1fr;
-  }
-
-  .table thead tr,
-  .table tbody tr {
-    grid-template-columns: 180px 100px 180px 120px 90px 1fr;
-  }
-}
-
-@media (max-width: 992px) {
-  .rider-card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .rider-card-sidebar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .stats-card {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 768px) {
-  .rider-card-content {
-    padding: 16px;
-  }
-
-  .rider-card-sidebar {
-    grid-template-columns: 1fr;
-  }
-
-  .table thead tr,
-  .table tbody tr {
-    grid-template-columns: 150px 90px 150px 100px 80px 60px;
-  }
-
-  .package-item-modern,
-  .pairing-item-modern {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .pairing-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 480px) {
-  .rider-card-title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .package-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .table thead tr,
-  .table tbody tr {
-    grid-template-columns: 120px 70px 120px 90px 70px 50px;
-  }
-}
-/* ============================================
-   MOBILE CARD VIEW FOR RIDERS LIST
-   ============================================ */
-
+/* Mobile Card View: 640px */
 @media (max-width: 640px) {
-  /* Hide table header */
+  /* Header Layout */
+  .riders-list .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .riders-list .flex-between h2 {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .riders-list .flex-between > div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+
+  .riders-list .flex-between button {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  /* Table to Cards */
   .riders-list .table thead {
     display: none;
   }
 
-  /* Turn each row into a card */
   .riders-list .table tbody tr {
     display: block;
     background: var(--color-white);
-    margin-bottom: 16px;
-    padding: 16px;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--color-gray-150);
   }
 
-  /* Each cell becomes a row inside the card */
   .riders-list .table tbody tr td {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: var(--spacing-sm) 0;
     border-bottom: 1px solid var(--color-gray-100);
   }
 
@@ -452,46 +548,21 @@
     border-bottom: none;
   }
 
-  /* Add labels using data-label */
   .riders-list .table tbody tr td::before {
     content: attr(data-label);
     font-weight: var(--font-weight-semibold);
     color: var(--color-gray-600);
-    margin-right: 12px;
+    margin-right: var(--spacing-md);
     flex-shrink: 0;
   }
 
-  /* Action buttons row */
   .riders-list .table-actions .action-buttons {
     justify-content: flex-end;
-    gap: 12px;
+    gap: var(--spacing-md);
   }
 
   .riders-list .btn-icon {
     width: 40px;
     height: 40px;
-  }
-}
-@media (max-width: 640px) {
-  .riders-list .flex-between {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .riders-list .flex-between h2 {
-    margin-bottom: 4px;
-  }
-
-  .riders-list .flex-between > div {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .riders-list .flex-between button {
-    flex: 1;
-    min-width: 140px;
   }
 }

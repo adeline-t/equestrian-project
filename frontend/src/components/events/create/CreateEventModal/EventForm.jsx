@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
-import { EVENT_TYPES, getEventTypeOptions, getStatusOptions } from '../../../lib/domain/events';
-import { Icons } from '../../../lib/icons.jsx';
-import '../../../styles/components/events.css';
+import {
+  EVENT_TYPES,
+  getEventTypeOptions,
+  getStatusOptions,
+} from '../../../../lib/domain/events.js';
+import { Icons } from '../../../../lib/icons.jsx';
+import '../../../../styles/components/events.css';
 
 const INSTRUCTORS = [
   { id: 1, label: 'Laury' },

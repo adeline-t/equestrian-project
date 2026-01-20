@@ -181,13 +181,13 @@ export const RIDER_HORSE_LINK_TYPE_CONFIG = {
   [RIDER_HORSE_LINK_TYPE.OWN]: {
     value: 'own',
     label: 'Propriétaire',
-    cssClass: 'own',
+    badgeClass: 'badge-pairing', // Classe de base commune
     cssVar: '--color-warning-orange',
   },
   [RIDER_HORSE_LINK_TYPE.LOAN]: {
     value: 'loan',
     label: 'Pension',
-    cssClass: 'loan',
+    badgeClass: 'badge-pairing', // Classe de base commune
     cssVar: '--color-success-medium',
   },
 };
@@ -364,3 +364,11 @@ export const STATUS_LABELS = {
 };
 
 export const getStatusLabel = (status) => STATUS_LABELS[status]?.label || status;
+
+export const INSTRUCTORS = {
+  1: 'Laury',
+  2: 'Kévin',
+  3: 'Julie',
+  4: 'Capucine',
+  0: 'Autre',
+};

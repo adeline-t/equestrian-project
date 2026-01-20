@@ -10,7 +10,6 @@ export async function handleEventParticipants(request, env, idParam) {
 
   const db = getDatabase(env);
   const participantColumns = [
-    'event_id',
     'planning_slot_id',
     'rider_id',
     'horse_id',
@@ -19,31 +18,31 @@ export async function handleEventParticipants(request, env, idParam) {
   ];
 
   try {
-    // GET list
+    // GET list of participants
     if (request.method === 'GET' && !id) {
       const { data, error } = await db
         .from('event_participants')
         .select('*')
-        .is('is_cancelled', false)
+        .eq('is_cancelled', false)
         .order('created_at', { ascending: false });
       if (error) return handleDatabaseError(error, 'participants.list', env);
       return jsonResponse(data || [], 200, getSecurityHeaders());
     }
 
-    // GET single
+    // GET single participant
     if (request.method === 'GET' && id) {
       const { data, error } = await db.from('event_participants').select('*').eq('id', id).single();
       if (error) return handleDatabaseError(error, 'participants.get', env);
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // POST create
+    // POST create participant
     if (request.method === 'POST') {
       const body = await request.json().catch(() => null);
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
       const missing = validateRequired(
-        ['event_id', 'planning_slot_id', 'rider_id', 'horse_assignment_type'],
+        ['planning_slot_id', 'rider_id', 'horse_assignment_type'],
         body
       );
       if (missing)
@@ -75,7 +74,7 @@ export async function handleEventParticipants(request, env, idParam) {
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
-    // PUT update
+    // PUT update participant
     if (request.method === 'PUT' && id) {
       const body = await request.json().catch(() => null);
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
@@ -106,7 +105,7 @@ export async function handleEventParticipants(request, env, idParam) {
       return jsonResponse(data, 200, getSecurityHeaders());
     }
 
-    // DELETE cancel
+    // DELETE cancel (soft delete)
     if (request.method === 'DELETE' && id) {
       const { data, error } = await db
         .from('event_participants')

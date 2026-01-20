@@ -1,4 +1,3 @@
-// src/hooks/useSlotEvent.js (or .ts)
 import { useState, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
 
@@ -29,14 +28,11 @@ export function useSlotEvent(slot) {
           setError(err);
         }
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     }
 
     fetchEvent();
-
     return () => {
       cancelled = true;
     };

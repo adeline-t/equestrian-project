@@ -9,9 +9,7 @@ export function useEventEdit(slot, event) {
 
   const startEdit = useCallback(() => {
     setEditData({
-      // Slot fields
       slot_status: slot?.slot_status || 'scheduled',
-      // Event fields
       event_type: event?.event_type || 'private_lesson',
       instructor_id: event?.instructor_id || slot?.actual_instructor_id || 1,
       min_participants: event?.min_participants || 0,
@@ -33,6 +31,7 @@ export function useEventEdit(slot, event) {
 
   const saveEdit = useCallback(
     async (slotId, eventId, onSuccess) => {
+      if (!slotId) return false;
       try {
         setSaving(true);
         setError(null);
@@ -55,13 +54,11 @@ export function useEventEdit(slot, event) {
           });
         }
 
-        await onSuccess(slotId);
+        if (onSuccess) await onSuccess();
         setIsEditing(false);
         return true;
       } catch (err) {
-        const errorMsg =
-          err.response?.data?.message || err.message || 'Erreur lors de la sauvegarde';
-        setError(errorMsg);
+        setError(err.response?.data?.message || err.message || 'Erreur lors de la sauvegarde');
         return false;
       } finally {
         setSaving(false);

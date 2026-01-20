@@ -14,31 +14,39 @@ export function useParticipants() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch riders and horses on mount (combined to avoid loading state conflicts)
+  // Fetch riders and horses on mount
   useEffect(() => {
+    let cancelled = false;
+
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch riders using riderService
+        // Fetch riders
         const ridersData = await riderService.getAll();
-        setRiders(Array.isArray(ridersData) ? ridersData : []);
+        if (!cancelled) setRiders(Array.isArray(ridersData) ? ridersData : []);
 
-        // Fetch horses using horseService
+        // Fetch horses
         const horsesData = await horseService.getAll();
-        setHorses(Array.isArray(horsesData) ? horsesData : []);
+        if (!cancelled) setHorses(Array.isArray(horsesData) ? horsesData : []);
       } catch (err) {
-        console.error('Error fetching participants data:', err);
-        setError('Erreur lors du chargement des données');
-        setRiders([]);
-        setHorses([]);
+        if (!cancelled) {
+          console.error('Error fetching participants data:', err);
+          setError('Erreur lors du chargement des données');
+          setRiders([]);
+          setHorses([]);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const resetParticipantForm = () => {

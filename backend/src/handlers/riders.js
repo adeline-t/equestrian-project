@@ -311,3 +311,109 @@ export async function handleRiderHorses(request, env, riderId) {
     return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());
   }
 }
+
+/**
+ * GET /api/riders/list
+ * Route optimisée qui retourne tous les cavaliers avec leurs pairings actifs
+ */
+export async function handleRidersList(request, env) {
+  const db = getDatabase(env);
+  const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
+
+  if (!checkRateLimit(clientIP, 60, 60000)) {
+    return jsonResponse({ error: 'Trop de requêtes' }, 429, getSecurityHeaders());
+  }
+
+  if (request.method === 'OPTIONS') {
+    return jsonResponse({}, 204, getSecurityHeaders());
+  }
+
+  try {
+    const today = new Date();
+
+    // Récupérer tous les cavaliers
+    const { data: riders, error: ridersError } = await db
+      .from('riders')
+      .select('*')
+      .is('deleted_at', null)
+      .order('name');
+
+    if (ridersError) return handleDbError(ridersError);
+
+    // Pour chaque cavalier, récupérer ses pairings actifs avec les infos des chevaux
+    const ridersWithPairings = await Promise.all(
+      riders.map(async (rider) => {
+        // Récupérer tous les pairings du cavalier avec les données des chevaux
+        const { data: pairings } = await db
+          .from('rider_horse_pairings')
+          .select(
+            `
+            id,
+            rider_id,
+            horse_id,
+            link_type,
+            loan_days_per_week,
+            loan_days,
+            pairing_start_date,
+            pairing_end_date,
+            horses (
+              id,
+              name,
+              kind,
+              activity_start_date,
+              activity_end_date,
+              ownership_type
+            )
+          `
+          )
+          .eq('rider_id', rider.id)
+          .order('pairing_start_date', { ascending: false });
+
+        // Filtrer les pairings actifs côté serveur
+        const activePairings =
+          pairings?.filter((pairing) => {
+            // Vérifier si le pairing est actif
+            const pairingActive =
+              (!pairing.pairing_start_date || new Date(pairing.pairing_start_date) <= today) &&
+              (!pairing.pairing_end_date || new Date(pairing.pairing_end_date) >= today);
+
+            // Vérifier si le cheval est actif
+            const horse = pairing.horses;
+            const horseActive =
+              horse &&
+              (!horse.activity_start_date || new Date(horse.activity_start_date) <= today) &&
+              (!horse.activity_end_date || new Date(horse.activity_end_date) >= today);
+
+            return pairingActive && horseActive;
+          }) || [];
+
+        // Calculer les statistiques des packages
+        const { data: packages } = await db
+          .from('packages')
+          .select('*')
+          .eq('rider_id', rider.id)
+          .eq('is_active', true);
+
+        const activePackagesCount = packages?.length || 0;
+        const servicesPerWeek =
+          packages?.reduce((sum, pkg) => sum + (pkg.services_per_week || 0), 0) || 0;
+        const groupLessonsPerWeek =
+          packages?.reduce((sum, pkg) => sum + (pkg.group_lessons_per_week || 0), 0) || 0;
+
+        return {
+          ...rider,
+          pairings: activePairings,
+          active_horses_count: activePairings.length,
+          active_packages_count: activePackagesCount,
+          services_per_week: servicesPerWeek,
+          group_lessons_per_week: groupLessonsPerWeek,
+        };
+      })
+    );
+
+    return jsonResponse(ridersWithPairings, 200, getSecurityHeaders());
+  } catch (error) {
+    console.error('Unexpected error in handleRidersList:', error);
+    return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());
+  }
+}

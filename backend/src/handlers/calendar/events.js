@@ -15,6 +15,7 @@ export async function handleEvents(request, env, idParam) {
     'instructor_id',
     'min_participants',
     'max_participants',
+    'name',
   ];
 
   try {
@@ -62,9 +63,26 @@ export async function handleEvents(request, env, idParam) {
       if (body.max_participants != null && body.max_participants < 0)
         return jsonResponse({ error: 'max_participants >= 0' }, 400, getSecurityHeaders());
 
+      // Ensure the slot does not already have an event
+      const { data: existingEvent } = await db
+        .from('events')
+        .select('id')
+        .eq('planning_slot_id', body.planning_slot_id)
+        .is('deleted_at', null)
+        .maybeSingle();
+
+      if (existingEvent)
+        return jsonResponse(
+          { error: 'Un événement existe déjà pour ce créneau' },
+          400,
+          getSecurityHeaders()
+        );
+
       const insertData = {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        min_participants: body.min_participants ?? 0,
+        max_participants: body.max_participants ?? 0,
       };
       for (const col of eventColumns) if (body[col] !== undefined) insertData[col] = body[col];
 

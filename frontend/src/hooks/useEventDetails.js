@@ -2,32 +2,30 @@ import { useState, useCallback, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
 
 export function useEventDetails(slotId) {
-  const [slot, setSlot] = useState(null);
-  const [event, setEvent] = useState(null);
-  const [participants, setParticipants] = useState([]);
+  const [data, setData] = useState({
+    slot: null,
+    event: null,
+    participants: [],
+    recurrence: null,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const loadData = useCallback(async (id) => {
+    if (!id) return;
     try {
       setLoading(true);
       setError(null);
 
-      // Fetch slot data
-      const slotData = await calendarService.getSlot(id);
-      setSlot(slotData);
+      const fullDetails = await calendarService.getSlotFullDetails(id);
 
-      // If slot has an event, fetch event details
-      if (slotData.event_id) {
-        const eventData = await calendarService.getEvent(slotData.event_id);
-        setEvent(eventData);
-
-        // Fetch participants if event exists
-        if (eventData.id) {
-          const participantsData = await calendarService.getParticipants(eventData.id);
-          setParticipants(participantsData || []);
-        }
+      // Normalize slot times for UI
+      if (fullDetails.slot) {
+        fullDetails.slot.start_time = fullDetails.slot.start_time?.slice(11, 16);
+        fullDetails.slot.end_time = fullDetails.slot.end_time?.slice(11, 16);
       }
+
+      setData(fullDetails);
     } catch (err) {
       console.error('Error loading event details:', err);
       setError(err.response?.data?.message || err.message || 'Erreur de chargement');
@@ -37,21 +35,15 @@ export function useEventDetails(slotId) {
   }, []);
 
   useEffect(() => {
-    if (slotId) {
-      loadData(slotId);
-    }
+    loadData(slotId);
   }, [slotId, loadData]);
 
   const refresh = useCallback(() => {
-    if (slotId) {
-      loadData(slotId);
-    }
+    loadData(slotId);
   }, [slotId, loadData]);
 
   return {
-    slot,
-    event,
-    participants,
+    ...data,
     loading,
     error,
     refresh,

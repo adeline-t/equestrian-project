@@ -1,6 +1,6 @@
-import { Icons } from '../../../lib/icons';
-import { getEventTypeOptions, getStatusOptions } from '../../../lib/domain/events';
-import '../../../styles/components/events.css';
+import { Icons } from '../../../../lib/icons';
+import { getEventTypeOptions, getStatusOptions } from '../../../../lib/domain/events';
+import '../../../../styles/components/events.css';
 
 const INSTRUCTORS = [
   { id: 1, label: 'Laury' },

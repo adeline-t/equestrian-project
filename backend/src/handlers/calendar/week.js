@@ -19,32 +19,68 @@ export async function handleCalendarWeek(request, env) {
   const db = getDatabase(env);
   const weekStart = new Date(startParam);
   const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 7);
+  weekEnd.setDate(weekEnd.getDate() + 6); // 7-day week
 
   try {
-    const { data: slots, error } = await db
+    // 1️⃣ Fetch slots in the week with their single event
+    const { data: slots, error: slotsError } = await db
       .from('planning_slots')
       .select(
         `
-        id, start_time, end_time, slot_status, is_all_day, actual_instructor_id,
+        id, slot_date, start_time, end_time, slot_status, is_all_day, actual_instructor_id,
         cancellation_reason, created_at, updated_at,
         events!inner (
-          id, event_type, instructor_id, min_participants, max_participants,
-          event_participants (
-            id, rider_id, horse_id, horse_assignment_type, is_cancelled,
-            riders(id, name), horses(id, name)
-          )
+          id, event_type, instructor_id, min_participants, max_participants
         )
       `
       )
-      .gte('start_time', weekStart.toISOString())
-      .lt('start_time', weekEnd.toISOString())
+      .gte('slot_date', weekStart.toISOString().slice(0, 10))
+      .lte('slot_date', weekEnd.toISOString().slice(0, 10))
       .is('deleted_at', null)
+      .order('slot_date', { ascending: true })
       .order('start_time', { ascending: true });
 
-    if (error) return handleDatabaseError(error, 'calendar.week.fetch', env);
+    if (slotsError) return handleDatabaseError(slotsError, 'calendar.week.fetch', env);
 
-    const weekData = buildWeekReadModel(weekStart, slots || []);
+    const slotIds = slots.map((s) => s.id);
+
+    // 2️⃣ Fetch participants linked to these slots
+    const { data: participantsData, error: participantsError } = await db
+      .from('event_participants')
+      .select(
+        `
+        id, planning_slot_id, rider_id, horse_id, horse_assignment_type, is_cancelled,
+        riders(id, name),
+        horses(id, name)
+      `
+      )
+      .in('planning_slot_id', slotIds);
+
+    if (participantsError)
+      return handleDatabaseError(participantsError, 'calendar.week.participants', env);
+
+    // 3️⃣ Merge participants into their slots
+    const slotsWithParticipants = slots.map((slot) => {
+      const event = slot.events ?? null; // single event
+      const slotParticipants = participantsData
+        .filter((p) => p.planning_slot_id === slot.id && !p.is_cancelled)
+        .map((p) => ({
+          participant_id: p.id,
+          rider_id: p.rider_id,
+          rider_name: p.riders?.name ?? null,
+          horse_id: p.horse_id,
+          horse_name: p.horses?.name ?? null,
+          horse_assignment_type: p.horse_assignment_type,
+        }));
+
+      return {
+        ...slot,
+        event,
+        participants: slotParticipants,
+      };
+    });
+
+    const weekData = buildWeekReadModel(weekStart, slotsWithParticipants);
     return jsonResponse(weekData, 200, getSecurityHeaders());
   } catch (err) {
     return handleUnexpectedError(err, 'calendar.week', env);
@@ -59,22 +95,12 @@ function buildWeekReadModel(weekStart, slots) {
   });
 
   for (const slot of slots) {
-    const dateStr = slot.start_time.slice(0, 10);
+    const dateStr = slot.slot_date;
     const day = days.find((d) => d.date === dateStr);
     if (!day) continue;
 
-    const event = slot.events?.[0] ?? null;
-    const participants =
-      event?.event_participants
-        ?.filter((p) => !p.is_cancelled)
-        ?.map((p) => ({
-          participant_id: p.id,
-          rider_id: p.rider_id,
-          rider_name: p.riders?.name ?? null,
-          horse_id: p.horse_id,
-          horse_name: p.horses?.name ?? null,
-          horse_assignment_type: p.horse_assignment_type,
-        })) ?? [];
+    const event = slot.event; // single event
+    const participants = slot.participants ?? [];
 
     day.slots.push({
       id: slot.id,

@@ -31,8 +31,13 @@ export function useRidersList() {
     try {
       setLoading(true);
       setError(null);
-      const data = await riderService.getAll();
-      setRiders(data || []);
+
+      // Une seule requête qui retourne tout !
+      const data = await riderService.getAllWithPairings();
+
+      // Les données sont déjà normalisées côté backend
+      // Plus besoin de Promise.all ou de transformations
+      setRiders(data);
     } catch (err) {
       setError(err.message || 'Erreur lors du chargement des cavaliers');
     } finally {
@@ -152,6 +157,24 @@ export function useRidersList() {
   const clearSuccessMessage = () => setSuccessMessage('');
   const clearError = () => setError(null);
 
+  /**
+   * Retourne la liste unique des jours de tous les pairings d’un cavalier
+   */
+  const getRiderPairingDays = (rider) => {
+    if (!rider.pairings || rider.pairings.length === 0) {
+      return [];
+    }
+
+    const daysSet = new Set();
+
+    rider.pairings.forEach((pairing) => {
+      const days = pairing.days || pairing.loan_days || [];
+      days.forEach((day) => daysSet.add(day));
+    });
+
+    return Array.from(daysSet);
+  };
+
   return {
     riders,
     filteredRiders,
@@ -181,6 +204,7 @@ export function useRidersList() {
     closeRiderCard,
     getStatusBadge,
     getRiderStatus,
+    getRiderPairingDays,
     clearSuccessMessage,
     clearError,
   };

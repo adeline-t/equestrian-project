@@ -212,6 +212,32 @@
 }
 
 /* ============================================
+   PAIRING TYPE BADGES (Rider-Horse Links)
+   ============================================ */
+
+.badge-pairing {
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.badge-pairing[data-link-type='own'] {
+  background: var(--gradient-warning);
+  color: var(--color-white);
+}
+
+.badge-pairing[data-link-type='loan'] {
+  background: var(--gradient-success);
+  color: var(--color-white);
+}
+
+.badge-pairing:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: all var(--transition-base);
+}
+
+/* ============================================
    PACKAGE STATUS BADGES
    ============================================ */
 

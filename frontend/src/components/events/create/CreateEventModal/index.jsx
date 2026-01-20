@@ -1,7 +1,7 @@
-import { useCreateEvent } from '../../../hooks/useCreateEvent';
-import { Icons } from '../../../lib/icons.jsx';
-import '../../../styles/components/events.css';
-import Modal from '../../common/Modal.jsx';
+import { useCreateEvent } from '../../../../hooks/useCreateEvent.js';
+import { Icons } from '../../../../lib/icons.jsx';
+import '../../../../styles/components/events.css';
+import Modal from '../../../common/Modal.jsx';
 import EventForm from './EventForm.jsx';
 import ParticipantsForm from './ParticipantsForm.jsx';
 

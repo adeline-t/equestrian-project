@@ -6,7 +6,7 @@ import WeekView from './WeekView';
 import ErrorBoundary from '../common/ErrorBoundary';
 import { Icons } from '../../lib/icons';
 
-import { getEventTypeOptions, getStatusOptions } from '../../lib/domain/events';
+import { getEventTypeOptions, getStatusOptions, isBlockedEventFull } from '../../lib/domain/events';
 
 import '../../styles/common/index.css';
 import '../../styles/components/calendar.css';
@@ -164,19 +164,30 @@ function CalendarModals({
   onCloseBlockedTimeModal,
   onModalSuccess,
 }) {
-  const EventModal = React.lazy(() => import('../events/EventModal'));
-  const CreateEventModal = React.lazy(() => import('../events/CreateEventModal'));
-  const CreateBlockedTimeModal = React.lazy(() => import('../events/CreateBlockedTimeModal'));
+  const BlockedEventModal = React.lazy(() => import('../events/edit/BlockedEventModal'));
+  const EventModal = React.lazy(() => import('../events/edit/EventModal'));
+  const CreateEventModal = React.lazy(() => import('../events/create/CreateEventModal'));
+  const CreateBlockedTimeModal = React.lazy(() =>
+    import('../events/create/CreateBlockedTimeModal')
+  );
 
   return (
     <React.Suspense fallback={null}>
-      {showEventModal && selectedEvent?.slot && (
-        <EventModal
-          slotId={selectedEvent.slot.slot_id}
-          onClose={onCloseEventModal}
-          onUpdate={onModalSuccess}
-        />
-      )}
+      {showEventModal &&
+        selectedEvent?.slot &&
+        (isBlockedEventFull(selectedEvent) ? (
+          <BlockedEventModal
+            slotId={selectedEvent.slot.slot_id}
+            onClose={onCloseEventModal}
+            onUpdate={onModalSuccess}
+          />
+        ) : (
+          <EventModal
+            slotId={selectedEvent.slot.slot_id}
+            onClose={onCloseEventModal}
+            onUpdate={onModalSuccess}
+          />
+        ))}
 
       {showSingleEventModal && (
         <CreateEventModal

@@ -2,7 +2,7 @@ import { runRecurrenceCron } from './cron.js';
 import { getSecurityHeaders, jsonResponse } from './db.js';
 
 // Riders & Horses
-import { handleRiderHorses, handleRiders } from './handlers/riders.js';
+import { handleRiderHorses, handleRiders, handleRidersList } from './handlers/riders.js';
 import { handleHorseRiders, handleHorses } from './handlers/horses.js';
 import { handlePackages, handleRiderPackages } from './handlers/packages.js';
 import { handlePairings } from './handlers/pairings.js';
@@ -42,6 +42,10 @@ export default {
       // -----------------------
       // Riders routes
       // -----------------------
+      // Dans votre fichier worker principal (ex: index.js ou routes.js)
+      if (url.pathname === '/api/riders/list' && request.method === 'GET') {
+        return handleRidersList(request, env);
+      }
       if (path.match(/^\/api\/riders\/\d+\/horses$/)) {
         const riderId = path.split('/')[3];
         return handleRiderHorses(request, env, riderId);
@@ -83,8 +87,16 @@ export default {
       // Calendar routes (modulaire)
       // -----------------------
       if (path.startsWith('/api/calendar/week')) return handleCalendarWeek(request, env);
+
+      // Full details route must be checked before the general slots route
+      if (path.match(/^\/api\/calendar\/slots\/\d+\/full-details$/)) {
+        const slotId = path.split('/')[4];
+        return handlePlanningSlots(request, env, slotId);
+      }
+
       if (path.startsWith('/api/calendar/slots'))
         return handlePlanningSlots(request, env, path.split('/')[4]);
+
       if (path.startsWith('/api/calendar/events'))
         return handleEvents(request, env, path.split('/')[4]);
       if (path.startsWith('/api/calendar/participants'))
@@ -101,7 +113,7 @@ export default {
             status: 'ok',
             message: 'API opérationnelle',
             timestamp: new Date().toISOString(),
-            version: '1.2.0',
+            version: '1.3.0',
             environment: env.ENVIRONMENT || 'unknown',
           },
           200

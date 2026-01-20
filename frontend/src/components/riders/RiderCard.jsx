@@ -15,7 +15,7 @@ import '../../styles/components/riders.css';
  * RiderCard - Detailed rider information card
  * Affiche UN SEUL forfait actif (le plus récent)
  */
-function RiderCard({ riderId, onClose }) {
+function RiderCard({ riderId, onClose, onEdit, onDelete }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState(null);
 
@@ -105,6 +105,7 @@ function RiderCard({ riderId, onClose }) {
             <div className="rider-card-avatar">
               <Icons.User />
             </div>
+
             <div className="rider-card-title-text">
               <h2>{rider.name}</h2>
               <div className="rider-card-meta">
@@ -115,6 +116,25 @@ function RiderCard({ riderId, onClose }) {
                   {isRiderActive ? 'Actif' : 'Inactif'}
                 </span>
               </div>
+            </div>
+
+            {/* ACTIONS */}
+            <div className="rider-card-actions">
+              <button
+                className="btn-icon-modern"
+                onClick={() => onEdit(rider)}
+                title="Modifier le cavalier"
+              >
+                <Icons.Edit />
+              </button>
+
+              <button
+                className="btn-icon-modern danger"
+                onClick={() => onDelete(rider)}
+                title="Supprimer le cavalier"
+              >
+                <Icons.Delete />
+              </button>
             </div>
           </div>
         }
@@ -438,6 +458,8 @@ function RiderCard({ riderId, onClose }) {
 RiderCard.propTypes = {
   riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onClose: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default RiderCard;

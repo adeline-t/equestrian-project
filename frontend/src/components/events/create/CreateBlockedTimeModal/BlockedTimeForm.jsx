@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useCreateBlockedTime } from '../../../hooks/useCreateBlockedTime';
-import { Icons } from '../../../lib/icons.jsx';
-import '../../../styles/components/events.css';
+import { useCreateBlockedTime } from '../../../../hooks/useCreateBlockedTime.js';
+import { formatDuration, calculateDurationMinutes } from '../../../../lib/utils.js';
+import { Icons } from '../../../../lib/icons.jsx';
+import '../../../../styles/components/events.css';
 
 const INSTRUCTORS = [
   { id: 1, label: 'Laury' },
@@ -12,7 +12,7 @@ const INSTRUCTORS = [
 ];
 
 function BlockedTimeForm({ initialDate }) {
-  const { formData, formatDuration, handleChange, setFormData } = useCreateBlockedTime();
+  const { formData, handleChange, setFormData } = useCreateBlockedTime();
 
   useEffect(() => {
     if (initialDate) {
@@ -134,7 +134,8 @@ function BlockedTimeForm({ initialDate }) {
 
               <div className="event-form-duration-display">
                 <Icons.Clock className="event-form-duration-icon" />
-                Durée: {formatDuration(formData.start_time, formData.end_time)}
+                Durée:{' '}
+                {formatDuration(calculateDurationMinutes(formData.start_time, formData.end_time))}
               </div>
             </div>
           )}

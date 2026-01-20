@@ -40,10 +40,10 @@ export async function handleRecurrences(request, env, idParam) {
       const insertData = {
         frequency: body.frequency,
         interval: body.interval ?? 1,
-        by_week_days: Array.isArray(body.by_week_days)
-          ? body.by_week_days.filter((d) => Number.isInteger(d) && d >= 1 && d <= 7)
+        week_days: Array.isArray(body.week_days)
+          ? body.week_days.filter((d) => Number.isInteger(d) && d >= 1 && d <= 7)
           : null,
-        start_time: body.start_time ?? null,
+        start_time: body.start_time ?? null, // store as HH:mm:ss
         end_time: body.end_time ?? null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -74,9 +74,9 @@ export async function handleRecurrences(request, env, idParam) {
           );
         updateData.interval = body.interval;
       }
-      if (body.by_week_days !== undefined)
-        updateData.by_week_days = Array.isArray(body.by_week_days)
-          ? body.by_week_days.filter((d) => Number.isInteger(d) && d >= 1 && d <= 7)
+      if (body.week_days !== undefined)
+        updateData.week_days = Array.isArray(body.week_days)
+          ? body.week_days.filter((d) => Number.isInteger(d) && d >= 1 && d <= 7)
           : null;
       if (body.start_time !== undefined) updateData.start_time = body.start_time;
       if (body.end_time !== undefined) updateData.end_time = body.end_time;

@@ -1,8 +1,12 @@
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { getEventTypeLabel, getStatusLabel, getEventTypeColor } from '../../../lib/domain/events';
-import { Icons } from '../../../lib/icons';
-import '../../../styles/components/events.css';
+import {
+  getEventTypeLabel,
+  getStatusLabel,
+  getEventTypeColor,
+} from '../../../../lib/domain/events';
+import { Icons } from '../../../../lib/icons';
+import '../../../../styles/components/events.css';
 
 const INSTRUCTORS = {
   1: 'Laury',
@@ -19,15 +23,42 @@ const EventDetailsTab = ({ slot, event }) => {
   const isBlocked = eventType === 'blocked';
   const eventColor = getEventTypeColor(eventType);
 
-  // Calculate duration
-  const startTime = new Date(slot.start_time);
-  const endTime = new Date(slot.end_time);
-  const durationMs = endTime - startTime;
-  const durationMinutes = Math.floor(durationMs / 1000 / 60);
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
-  const durationDisplay =
-    hours > 0 ? `${hours}h${minutes.toString().padStart(2, '0')}` : `${minutes} min`;
+  // Safe date parsing helper
+  const formatDate = (dateStr, formatStr, options = {}) => {
+    if (!dateStr) return 'N/A';
+    try {
+      const parsed = parseISO(dateStr);
+      if (!isValid(parsed)) return 'Date invalide';
+      return format(parsed, formatStr, options);
+    } catch (err) {
+      console.error('Date formatting error:', err, dateStr);
+      return 'Date invalide';
+    }
+  };
+
+  // Calculate duration with safe date parsing
+  const getDuration = () => {
+    try {
+      const startTime = new Date(slot.start_time);
+      const endTime = new Date(slot.end_time);
+
+      if (!isValid(startTime) || !isValid(endTime)) {
+        return 'N/A';
+      }
+
+      const durationMs = endTime - startTime;
+      const durationMinutes = Math.floor(durationMs / 1000 / 60);
+      const hours = Math.floor(durationMinutes / 60);
+      const minutes = durationMinutes % 60;
+
+      return hours > 0 ? `${hours}h${minutes.toString().padStart(2, '0')}` : `${minutes} min`;
+    } catch (err) {
+      console.error('Duration calculation error:', err);
+      return 'N/A';
+    }
+  };
+
+  const durationDisplay = getDuration();
 
   return (
     <div className="event-details-tab">
@@ -58,7 +89,7 @@ const EventDetailsTab = ({ slot, event }) => {
         <div className="event-details-row">
           <label className="event-details-label">Date</label>
           <span className="event-details-value">
-            {format(parseISO(slot.start_time), 'EEEE dd MMMM yyyy', { locale: fr })}
+            {formatDate(slot.start_time, 'EEEE dd MMMM yyyy', { locale: fr })}
           </span>
         </div>
 
@@ -182,13 +213,13 @@ const EventDetailsTab = ({ slot, event }) => {
           <div className="event-details-metadata-item">
             <span className="event-details-metadata-label">Créé le</span>
             <span className="event-details-metadata-value">
-              {format(parseISO(slot.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}
+              {formatDate(slot.created_at, 'dd/MM/yyyy HH:mm', { locale: fr })}
             </span>
           </div>
           <div className="event-details-metadata-item">
             <span className="event-details-metadata-label">Modifié le</span>
             <span className="event-details-metadata-value">
-              {format(parseISO(slot.updated_at), 'dd/MM/yyyy HH:mm', { locale: fr })}
+              {formatDate(slot.updated_at, 'dd/MM/yyyy HH:mm', { locale: fr })}
             </span>
           </div>
         </div>

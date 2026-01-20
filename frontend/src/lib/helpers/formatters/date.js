@@ -49,3 +49,15 @@ export function formatDateTime(date, formatStr = 'dd/MM/yyyy HH:mm') {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   return format(dateObj, formatStr, { locale: fr });
 }
+
+/**
+ * Format date for date input (YYYY-MM-DD)
+ * Already in correct format from database, this is a passthrough with validation
+ * @param {string} dateStr - Date string in YYYY-MM-DD format
+ * @returns {string} Date in YYYY-MM-DD format
+ */
+export function formatDateForInput(dateStr) {
+  if (!dateStr) return '';
+  // Date is already in YYYY-MM-DD format from database
+  return String(dateStr);
+}

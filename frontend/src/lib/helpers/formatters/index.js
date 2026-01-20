@@ -11,8 +11,13 @@ export {
   timeToMinutes,
   minutesToTime,
   formatTime,
+  formatTimeFlexible,
+  formatTimeForInput,
+  formatTimeForDatabase,
   calculateLessonStyle,
   calculateSelectionStyle,
 } from './time.js';
-export { formatWeekTitle, formatDate, formatDateTime } from './date.js';
-export { formatDuration } from './duration.js';
+
+export { formatWeekTitle, formatDate, formatDateTime, formatDateForInput } from './date.js';
+
+export { formatDuration, calculateDurationMinutes, addMinutesToTime } from './duration.js';

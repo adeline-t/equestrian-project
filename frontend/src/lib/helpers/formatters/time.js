@@ -2,10 +2,17 @@
  * Time formatting and calculation utilities
  */
 
-// Dans lib/helpers/formatters.js
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+
+/* ============================================
+   CORE TIME CONVERSION
+   ============================================ */
 
 /**
- * Convertit une chaîne "HH:MM" en minutes depuis minuit
+ * Convert "HH:MM" string to minutes since midnight
+ * @param {string} timeStr - Time in HH:MM format
+ * @returns {number} Minutes since midnight
  */
 export function timeToMinutes(timeStr) {
   if (typeof timeStr !== 'string') {
@@ -24,7 +31,9 @@ export function timeToMinutes(timeStr) {
 }
 
 /**
- * Convertit des minutes depuis minuit en format "HH:MM"
+ * Convert minutes since midnight to "HH:MM" format
+ * @param {number} minutes - Minutes since midnight
+ * @returns {string} Time in HH:MM format
  */
 export function minutesToTime(minutes) {
   if (typeof minutes !== 'number' || isNaN(minutes)) {
@@ -36,6 +45,10 @@ export function minutesToTime(minutes) {
   const mins = minutes % 60;
   return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 }
+
+/* ============================================
+   TIME FORMATTING
+   ============================================ */
 
 /**
  * Format time string for display
@@ -49,12 +62,62 @@ export function formatTime(timeStr) {
 }
 
 /**
- * Calculate event style positioning
- * @param {Object} event - Lesson object
- * @param {number} HOUR_HEIGHT - Height of one hour in pixels
- * @param {number} START_HOUR - Calendar start hour
- * @param {number} END_HOUR - Calendar end hour
- * @returns {Object} Style object with top and height
+ * Format time from either ISO datetime string or HH:MM string
+ * @param {string} value - ISO datetime or HH:MM time string
+ * @returns {string} Formatted time in HH:MM format
+ */
+export function formatTimeFlexible(value) {
+  if (!value) return '';
+  try {
+    // If it's a full datetime, extract time
+    if (value.includes('T')) {
+      const date = new Date(value);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    // If it's already just time (HH:MM:SS or HH:MM)
+    return value.slice(0, 5);
+  } catch {
+    return value;
+  }
+}
+
+/**
+ * Format time string to HH:MM for time input
+ * Handles HH:MM:SS from database
+ * @param {string} timeStr - Time in HH:MM:SS or HH:MM format
+ * @returns {string} Time in HH:MM format
+ */
+export function formatTimeForInput(timeStr) {
+  if (!timeStr) return '';
+  return String(timeStr).slice(0, 5);
+}
+
+/**
+ * Format time from input to HH:MM:SS for database
+ * @param {string} timeStr - Time in HH:MM format from input
+ * @returns {string} Time in HH:MM:SS format
+ */
+export function formatTimeForDatabase(timeStr) {
+  if (!timeStr) return '';
+  // If already has seconds, return as is
+  if (timeStr.length === 8) return timeStr;
+  // Otherwise append :00
+  return `${timeStr}:00`;
+}
+
+/* ============================================
+   CALENDAR POSITIONING
+   ============================================ */
+
+/**
+ * Calculate event style positioning for calendar
+ * @param {Object} event - Event object with start_time and end_time
+ * @param {number} HOUR_HEIGHT - Height of one hour in pixels (default: 60)
+ * @param {number} START_HOUR - Calendar start hour (default: 8)
+ * @param {number} END_HOUR - Calendar end hour (default: 22)
+ * @returns {Object} Style object with top and height, or {display: 'none'}
  */
 export function calculateLessonStyle(event, HOUR_HEIGHT = 60, START_HOUR = 8, END_HOUR = 22) {
   if (!event?.start_time || !event?.end_time) {
@@ -85,13 +148,13 @@ export function calculateLessonStyle(event, HOUR_HEIGHT = 60, START_HOUR = 8, EN
 }
 
 /**
- * Calculate selection style positioning
+ * Calculate selection style positioning for calendar
  * @param {string} selectionStart - Start time in HH:MM format
  * @param {string} selectionEnd - End time in HH:MM format
- * @param {number} HOUR_HEIGHT - Height of one hour in pixels
- * @param {number} START_HOUR - Calendar start hour
- * @param {number} END_HOUR - Calendar end hour
- * @returns {Object|null} Style object or null if invalid
+ * @param {number} HOUR_HEIGHT - Height of one hour in pixels (default: 60)
+ * @param {number} START_HOUR - Calendar start hour (default: 8)
+ * @param {number} END_HOUR - Calendar end hour (default: 22)
+ * @returns {Object|null} Style object with top and height, or null if invalid
  */
 export function calculateSelectionStyle(
   selectionStart,
