@@ -21,6 +21,48 @@ export async function handlePlanningSlots(request, env, idParam) {
   ];
 
   try {
+    // GET scheduled events only
+    if (request.method === 'GET' && url.pathname.endsWith('/scheduled')) {
+      const { data: slots, error: slotsError } = await db
+        .from('planning_slots')
+        .select('*')
+        .eq('slot_status', 'scheduled')
+        .gte('slot_date', new Date().toISOString().split('T')[0])
+        .is('deleted_at', null)
+        .order('slot_date', { ascending: true })
+        .order('start_time', { ascending: true });
+
+      if (slotsError) return handleDatabaseError(slotsError, 'slots.scheduled', env);
+
+      // Enrichir chaque slot avec les données de l'événement, instructeur et participants
+      const enrichedSlots = await Promise.all(
+        (slots || []).map(async (slot) => {
+          // Get event data
+          const { data: event } = await db
+            .from('events')
+            .select('*')
+            .eq('planning_slot_id', slot.id)
+            .is('deleted_at', null)
+            .maybeSingle();
+
+          // Get participant count
+          const { count: participant_count } = await db
+            .from('event_participants')
+            .select('*', { count: 'exact', head: true })
+            .eq('planning_slot_id', slot.id);
+
+          // Merge slot with event data and additional info
+          return {
+            ...slot,
+            // Keep full event object
+            event: event || null,
+            participant_count: participant_count || 0,
+          };
+        })
+      );
+      return jsonResponse(enrichedSlots, 200, getSecurityHeaders());
+    }
+
     // GET single slot with full details
     if (request.method === 'GET' && id && url.pathname.endsWith('/full-details')) {
       const { data: slot, error: slotError } = await db

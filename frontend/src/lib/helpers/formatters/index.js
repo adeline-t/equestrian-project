@@ -16,6 +16,7 @@ export {
   formatTimeForDatabase,
   calculateLessonStyle,
   calculateSelectionStyle,
+  formatTimeForDisplay,
 } from './time.js';
 
 export { formatWeekTitle, formatDate, formatDateTime, formatDateForInput } from './date.js';

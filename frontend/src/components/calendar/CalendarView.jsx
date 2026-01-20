@@ -88,10 +88,16 @@ CalendarHeader.propTypes = {
 };
 
 /* -------------------------------------------------------
- * FILTERS
+ * FILTERS - MODIFIÉ
  * ----------------------------------------------------- */
 
-function CalendarFilters({ filters, onFilterChange, onCreateEvent, onCreateBlockedTime }) {
+function CalendarFilters({
+  filters,
+  onFilterChange,
+  onCreateEvent,
+  onCreateBlockedTime,
+  onShowScheduled,
+}) {
   return (
     <div className="calendar-filters">
       <div className="filters-row">
@@ -130,6 +136,10 @@ function CalendarFilters({ filters, onFilterChange, onCreateEvent, onCreateBlock
         </div>
 
         <div className="filters-actions">
+          <button className="btn btn-info" onClick={onShowScheduled}>
+            <Icons.Calendar /> Événements programmés
+          </button>
+
           <button className="btn btn-success" onClick={onCreateEvent}>
             <Icons.Add /> Nouvel événement
           </button>
@@ -148,21 +158,25 @@ CalendarFilters.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
   onCreateEvent: PropTypes.func.isRequired,
   onCreateBlockedTime: PropTypes.func.isRequired,
+  onShowScheduled: PropTypes.func.isRequired,
 };
 
 /* -------------------------------------------------------
- * MODALS
+ * MODALS - MODIFIÉ
  * ----------------------------------------------------- */
 
 function CalendarModals({
   showEventModal,
   showSingleEventModal,
   showBlockedTimeModal,
+  showScheduledModal,
   selectedEvent,
   onCloseEventModal,
   onCloseSingleEventModal,
   onCloseBlockedTimeModal,
+  onCloseScheduledModal,
   onModalSuccess,
+  onSlotClick,
 }) {
   const BlockedEventModal = React.lazy(() => import('../events/edit/BlockedEventModal'));
   const EventModal = React.lazy(() => import('../events/edit/EventModal'));
@@ -170,6 +184,7 @@ function CalendarModals({
   const CreateBlockedTimeModal = React.lazy(() =>
     import('../events/create/CreateBlockedTimeModal')
   );
+  const ScheduledEventsModal = React.lazy(() => import('../events/edit/ScheduledEventsModal'));
 
   return (
     <React.Suspense fallback={null}>
@@ -206,6 +221,10 @@ function CalendarModals({
           onSuccess={onModalSuccess}
         />
       )}
+
+      {showScheduledModal && (
+        <ScheduledEventsModal onClose={onCloseScheduledModal} onSlotClick={onSlotClick} />
+      )}
     </React.Suspense>
   );
 }
@@ -214,15 +233,18 @@ CalendarModals.propTypes = {
   showEventModal: PropTypes.bool.isRequired,
   showSingleEventModal: PropTypes.bool.isRequired,
   showBlockedTimeModal: PropTypes.bool.isRequired,
+  showScheduledModal: PropTypes.bool.isRequired,
   selectedEvent: PropTypes.object,
   onCloseEventModal: PropTypes.func.isRequired,
   onCloseSingleEventModal: PropTypes.func.isRequired,
   onCloseBlockedTimeModal: PropTypes.func.isRequired,
+  onCloseScheduledModal: PropTypes.func.isRequired,
   onModalSuccess: PropTypes.func.isRequired,
+  onSlotClick: PropTypes.func.isRequired,
 };
 
 /* -------------------------------------------------------
- * MAIN VIEW
+ * MAIN VIEW - MODIFIÉ
  * ----------------------------------------------------- */
 
 function CalendarView() {
@@ -234,6 +256,7 @@ function CalendarView() {
     showEventModal,
     showSingleEventModal,
     showBlockedTimeModal,
+    showScheduledModal,
     filters,
     weekTitle,
     stats,
@@ -242,14 +265,17 @@ function CalendarView() {
     handleNextWeek,
     handleToday,
 
+    handleSlotClick,
     handleEventClick,
     handleCreateEvent,
     handleCreateBlockedTime,
+    handleShowScheduled,
     handleFilterChange,
 
     closeEventModal,
     closeSingleEventModal,
     closeBlockedTimeModal,
+    closeScheduledModal,
     handleModalSuccess,
 
     loadWeekData,
@@ -273,6 +299,7 @@ function CalendarView() {
         onFilterChange={handleFilterChange}
         onCreateEvent={handleCreateEvent}
         onCreateBlockedTime={handleCreateBlockedTime}
+        onShowScheduled={handleShowScheduled}
       />
 
       <WeekView
@@ -286,20 +313,20 @@ function CalendarView() {
         showEventModal={showEventModal}
         showSingleEventModal={showSingleEventModal}
         showBlockedTimeModal={showBlockedTimeModal}
+        showScheduledModal={showScheduledModal}
         selectedEvent={selectedEvent}
         onCloseEventModal={closeEventModal}
         onCloseSingleEventModal={closeSingleEventModal}
         onCloseBlockedTimeModal={closeBlockedTimeModal}
+        onCloseScheduledModal={closeScheduledModal}
         onModalSuccess={handleModalSuccess}
+        onSlotClick={handleSlotClick}
       />
     </div>
   );
 }
 
-/* -------------------------------------------------------
- * EXPORT WITH ERROR BOUNDARY
- * ----------------------------------------------------- */
-
+/* Export reste identique */
 export default function CalendarViewWithErrorBoundary() {
   return (
     <ErrorBoundary>

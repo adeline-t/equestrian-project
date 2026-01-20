@@ -42,7 +42,6 @@ export default {
       // -----------------------
       // Riders routes
       // -----------------------
-      // Dans votre fichier worker principal (ex: index.js ou routes.js)
       if (url.pathname === '/api/riders/list' && request.method === 'GET') {
         return handleRidersList(request, env);
       }
@@ -87,6 +86,11 @@ export default {
       // Calendar routes (modulaire)
       // -----------------------
       if (path.startsWith('/api/calendar/week')) return handleCalendarWeek(request, env);
+
+      // Scheduled events route - MUST come before full-details
+      if (path === '/api/calendar/slots/scheduled') {
+        return handlePlanningSlots(request, env, null);
+      }
 
       // Full details route must be checked before the general slots route
       if (path.match(/^\/api\/calendar\/slots\/\d+\/full-details$/)) {

@@ -36,6 +36,7 @@ export function useCalendarView() {
   const [showEventModal, setShowEventModal] = useState(false);
   const [showSingleEventModal, setShowSingleEventModal] = useState(false);
   const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false);
+  const [showScheduledModal, setShowScheduledModal] = useState(false);
 
   const [filters, setFilters] = useState({ eventType: '', status: '' });
 
@@ -85,6 +86,8 @@ export function useCalendarView() {
     setShowEventModal(true);
   }, []);
 
+  const handleSlotClick = useCallback((slot) => {}, []);
+
   const handleCreateEvent = useCallback(
     (selectionData) => {
       setSelectedEvent({
@@ -107,17 +110,27 @@ export function useCalendarView() {
     setShowBlockedTimeModal(true);
   }, []);
 
+  const handleShowScheduled = useCallback(() => {
+    setShowScheduledModal(true);
+  }, []);
+
   const closeEventModal = useCallback(() => {
     setShowEventModal(false);
     setSelectedEvent(null);
   }, []);
+
   const closeSingleEventModal = useCallback(() => {
     setShowSingleEventModal(false);
     setSelectedEvent(null);
   }, []);
+
   const closeBlockedTimeModal = useCallback(() => {
     setShowBlockedTimeModal(false);
     setSelectedEvent(null);
+  }, []);
+
+  const closeScheduledModal = useCallback(() => {
+    setShowScheduledModal(false);
   }, []);
 
   const handleModalSuccess = useCallback(() => {
@@ -125,7 +138,14 @@ export function useCalendarView() {
     closeEventModal();
     closeSingleEventModal();
     closeBlockedTimeModal();
-  }, [loadWeekData, closeEventModal, closeSingleEventModal, closeBlockedTimeModal]);
+    closeScheduledModal();
+  }, [
+    loadWeekData,
+    closeEventModal,
+    closeSingleEventModal,
+    closeBlockedTimeModal,
+    closeScheduledModal,
+  ]);
 
   /* -------------------------------------------------------
    * FILTER HANDLERS
@@ -221,6 +241,7 @@ export function useCalendarView() {
     showEventModal,
     showSingleEventModal,
     showBlockedTimeModal,
+    showScheduledModal,
     filters,
     hasActiveFilters,
     weekTitle,
@@ -228,14 +249,17 @@ export function useCalendarView() {
     handlePrevWeek,
     handleNextWeek,
     handleToday,
+    handleSlotClick,
     handleEventClick,
     handleCreateEvent,
     handleCreateBlockedTime,
+    handleShowScheduled,
     handleFilterChange,
     clearFilters,
     closeEventModal,
     closeSingleEventModal,
     closeBlockedTimeModal,
+    closeScheduledModal,
     handleModalSuccess,
     loadWeekData,
     currentWeekStart,

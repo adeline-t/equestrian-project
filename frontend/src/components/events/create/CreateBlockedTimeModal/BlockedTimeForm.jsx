@@ -1,5 +1,8 @@
 import { useCreateBlockedTime } from '../../../../hooks/useCreateBlockedTime.js';
-import { formatDuration, calculateDurationMinutes } from '../../../../lib/utils.js';
+import {
+  formatDuration,
+  calculateDurationMinutes,
+} from '../../../../lib/helpers/formatters/index.js';
 import { Icons } from '../../../../lib/icons.jsx';
 import '../../../../styles/components/events.css';
 

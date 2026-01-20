@@ -189,3 +189,24 @@ export function calculateSelectionStyle(
     height: `${height}px`,
   };
 }
+
+/**
+ * Format time string for display (HH:MM)
+ * Works with HH:MM:SS, HH:MM, or ISO datetime strings
+ * @param {string} timeStr - Time string
+ * @returns {string} Time in HH:MM format
+ */
+export function formatTimeForDisplay(timeStr) {
+  if (!timeStr) return '';
+
+  // If it's an ISO datetime, extract time part
+  if (timeStr.includes('T')) {
+    const date = new Date(timeStr);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  // If it's already time format (HH:MM:SS or HH:MM), take first 5 chars
+  return String(timeStr).slice(0, 5);
+}

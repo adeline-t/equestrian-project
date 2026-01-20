@@ -61,6 +61,11 @@ export const calendarService = {
     return response.data;
   },
 
+  getScheduledSlots: async () => {
+    const response = await calendarApi.get('/slots/scheduled');
+    return (response.data || []).map(enrichSlot);
+  },
+
   // -----------------------------
   // POST / PUT now send DB-ready formats directly
   // -----------------------------
