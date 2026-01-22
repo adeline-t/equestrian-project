@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { addWeeks, subWeeks, startOfWeek, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { EVENT_TYPES, SLOT_STATUSES } from '../lib/domain/events';
+import { EVENT_TYPES, SLOT_STATUSES, isBlockedEvent } from '../lib/domain/events';
 import { calendarService } from '../services/calendarService';
-import { timeToMinutes, minutesToTime } from '../lib/helpers/formatters';
+import { timeToMinutes, formatTimeForInput } from '../lib/helpers/formatters';
 
 /**
- * Normalize slot times for UI display (HH:mm)
+ * Normalize slot times for UI display (HH:mm from HH:mm:ss)
  */
 const normalizeSlotTimes = (slot) => {
   if (!slot) return slot;
 
-  const start_time = slot.start_time?.slice(11, 16) || '09:00';
-  const end_time = slot.end_time?.slice(11, 16) || '10:00';
+  const start_time = formatTimeForInput(slot.start_time) || '09:00';
+  const end_time = formatTimeForInput(slot.end_time) || '10:00';
   const duration_minutes =
     slot.duration_minutes ?? timeToMinutes(end_time) - timeToMinutes(start_time);
 
@@ -21,7 +21,7 @@ const normalizeSlotTimes = (slot) => {
 
 /**
  * Custom hook for calendar view functionality
- * Manages week navigation, data loading, and event interactions
+ * Manages week navigation, data loading, and slot interactions
  */
 export function useCalendarView() {
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
@@ -32,11 +32,13 @@ export function useCalendarView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showEventModal, setShowEventModal] = useState(false);
-  const [showSingleEventModal, setShowSingleEventModal] = useState(false);
-  const [showBlockedTimeModal, setShowBlockedTimeModal] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [showSlotModal, setShowSlotModal] = useState(false);
+  const [showCreateEventModal, setShowCreateEventModal] = useState(false);
+  const [showCreateBlockedModal, setShowCreateBlockedModal] = useState(false);
   const [showScheduledModal, setShowScheduledModal] = useState(false);
+
+  const [createEventData, setCreateEventData] = useState(null);
 
   const [filters, setFilters] = useState({ eventType: '', status: '' });
 
@@ -48,7 +50,7 @@ export function useCalendarView() {
     setError(null);
     try {
       const data = await calendarService.getWeekData(currentWeekStart);
-      // Normalize slot times for UI display and filter out cancelled events
+      // Normalize slot times for UI display and filter out cancelled slots
       const enrichedDays = (data.days || []).map((day) => ({
         ...day,
         slots: (day.slots || [])
@@ -79,54 +81,51 @@ export function useCalendarView() {
   );
 
   /* -------------------------------------------------------
-   * EVENT / MODAL HANDLERS
+   * SLOT / EVENT MODAL HANDLERS
    * ----------------------------------------------------- */
-  const handleEventClick = useCallback((event) => {
-    setSelectedEvent(event);
-    setShowEventModal(true);
+  const handleSlotClick = useCallback((slot) => {
+    setSelectedSlot(slot);
+    setShowSlotModal(true);
   }, []);
-
-  const handleSlotClick = useCallback((slot) => {}, []);
 
   const handleCreateEvent = useCallback(
     (selectionData) => {
-      setSelectedEvent({
+      setCreateEventData({
         date: selectionData?.date || format(currentWeekStart, 'yyyy-MM-dd'),
         start_time: selectionData?.start_time || '09:00',
         end_time: selectionData?.end_time || '10:00',
       });
-      setShowSingleEventModal(true);
+      setShowCreateEventModal(true);
     },
     [currentWeekStart]
   );
 
   const handleCreateBlockedTime = useCallback(() => {
-    setSelectedEvent({
+    setCreateEventData({
       date: format(new Date(), 'yyyy-MM-dd'),
-      event_type: EVENT_TYPES.BLOCKED,
       start_time: '09:00',
       end_time: '10:00',
     });
-    setShowBlockedTimeModal(true);
+    setShowCreateBlockedModal(true);
   }, []);
 
   const handleShowScheduled = useCallback(() => {
     setShowScheduledModal(true);
   }, []);
 
-  const closeEventModal = useCallback(() => {
-    setShowEventModal(false);
-    setSelectedEvent(null);
+  const closeSlotModal = useCallback(() => {
+    setShowSlotModal(false);
+    setSelectedSlot(null);
   }, []);
 
-  const closeSingleEventModal = useCallback(() => {
-    setShowSingleEventModal(false);
-    setSelectedEvent(null);
+  const closeCreateEventModal = useCallback(() => {
+    setShowCreateEventModal(false);
+    setCreateEventData(null);
   }, []);
 
-  const closeBlockedTimeModal = useCallback(() => {
-    setShowBlockedTimeModal(false);
-    setSelectedEvent(null);
+  const closeCreateBlockedModal = useCallback(() => {
+    setShowCreateBlockedModal(false);
+    setCreateEventData(null);
   }, []);
 
   const closeScheduledModal = useCallback(() => {
@@ -135,15 +134,15 @@ export function useCalendarView() {
 
   const handleModalSuccess = useCallback(() => {
     loadWeekData();
-    closeEventModal();
-    closeSingleEventModal();
-    closeBlockedTimeModal();
+    closeSlotModal();
+    closeCreateEventModal();
+    closeCreateBlockedModal();
     closeScheduledModal();
   }, [
     loadWeekData,
-    closeEventModal,
-    closeSingleEventModal,
-    closeBlockedTimeModal,
+    closeSlotModal,
+    closeCreateEventModal,
+    closeCreateBlockedModal,
     closeScheduledModal,
   ]);
 
@@ -173,7 +172,9 @@ export function useCalendarView() {
       ...day,
       slots: day.slots.filter((slot) => {
         let matches = true;
-        if (filters.eventType && slot.event_type !== filters.eventType) matches = false;
+        const eventType = isBlockedEvent(slot.events);
+
+        if (filters.eventType && eventType !== filters.eventType) matches = false;
         if (filters.status && slot.slot_status !== filters.status) matches = false;
         return matches;
       }),
@@ -208,7 +209,10 @@ export function useCalendarView() {
         result.total++;
         if (slot.slot_status === SLOT_STATUSES.CONFIRMED) result.confirmed++;
         if (slot.slot_status === SLOT_STATUSES.SCHEDULED) result.scheduled++;
-        switch (slot.event_type) {
+
+        const eventType = slot.events?.event_type ?? EVENT_TYPES.BLOCKED;
+
+        switch (eventType) {
           case EVENT_TYPES.PRIVATE_LESSON:
             result.privateLessons++;
             break;
@@ -237,10 +241,11 @@ export function useCalendarView() {
     weekData: filteredWeekData,
     loading,
     error,
-    selectedEvent,
-    showEventModal,
-    showSingleEventModal,
-    showBlockedTimeModal,
+    selectedSlot,
+    createEventData,
+    showSlotModal,
+    showCreateEventModal,
+    showCreateBlockedModal,
     showScheduledModal,
     filters,
     hasActiveFilters,
@@ -250,15 +255,14 @@ export function useCalendarView() {
     handleNextWeek,
     handleToday,
     handleSlotClick,
-    handleEventClick,
     handleCreateEvent,
     handleCreateBlockedTime,
     handleShowScheduled,
     handleFilterChange,
     clearFilters,
-    closeEventModal,
-    closeSingleEventModal,
-    closeBlockedTimeModal,
+    closeSlotModal,
+    closeCreateEventModal,
+    closeCreateBlockedModal,
     closeScheduledModal,
     handleModalSuccess,
     loadWeekData,

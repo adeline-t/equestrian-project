@@ -1,14 +1,12 @@
 import { Icons } from '../../../../lib/icons';
 import { getEventTypeOptions, getStatusOptions } from '../../../../lib/domain/events';
-import '../../../../styles/components/events.css';
+import { INSTRUCTORS, getInstructorLabel } from '../../../../lib/domain/domain-constants';
+import '../../../../styles/features/events.css';
 
-const INSTRUCTORS = [
-  { id: 1, label: 'Laury' },
-  { id: 2, label: 'Kévin' },
-  { id: 3, label: 'Julie' },
-  { id: 4, label: 'Capucine' },
-  { id: 0, label: 'Autre' },
-];
+const INSTRUCTOR_OPTIONS = Object.keys(INSTRUCTORS).map((id) => ({
+  id: Number(id),
+  label: getInstructorLabel(id),
+}));
 
 const EventEditForm = ({ editData, handleChange }) => {
   return (
@@ -72,11 +70,12 @@ const EventEditForm = ({ editData, handleChange }) => {
           <Icons.User className="event-edit-icon" /> Instructeur
         </label>
         <div className="button-group">
-          {INSTRUCTORS.map((inst) => (
+          {INSTRUCTOR_OPTIONS.map((inst) => (
             <button
               key={inst.id}
               type="button"
-              className={`event-form-button ${editData.instructor_id === inst.id ? 'active' : ''}`}
+              className={`badge clickable ${editData.instructor_id === inst.id ? 'active' : ''}`}
+              data-type={inst.id}
               onClick={() =>
                 handleChange({
                   target: { name: 'instructor_id', value: inst.id },

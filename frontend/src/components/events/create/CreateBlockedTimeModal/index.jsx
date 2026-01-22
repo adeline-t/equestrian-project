@@ -1,11 +1,20 @@
+import React, { useEffect } from 'react';
 import { useCreateBlockedTime } from '../../../../hooks/useCreateBlockedTime.js';
-import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/components/events.css';
-import Modal from '../../../common/Modal.jsx';
-import BlockedTimeForm from './BlockedTimeForm.jsx';
+import { Icons } from '../../../../lib/icons';
+import '../../../../styles/features/events.css';
+import Modal from '../../../common/Modal';
+import BlockedTimeForm from './BlockedTimeForm';
 
 function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
-  const { loading, error, createBlockedTime } = useCreateBlockedTime();
+  const { formData, handleChange, setFormData, loading, error, createBlockedTime } =
+    useCreateBlockedTime();
+
+  // Initialize date when modal opens
+  useEffect(() => {
+    if (initialDate) {
+      setFormData((prev) => ({ ...prev, slot_date: initialDate }));
+    }
+  }, [initialDate, setFormData]);
 
   const handleSubmit = async () => {
     const result = await createBlockedTime();
@@ -19,38 +28,28 @@ function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
     <Modal
       isOpen={true}
       onClose={onClose}
-      title={
-        <span className="create-event-modal-title">
-          <Icons.Blocked className="create-event-modal-icon" />
-          Bloquer une période
-        </span>
-      }
+      title="Bloquer une période"
       size="medium"
       footer={
-        <div className="create-event-modal-footer">
-          <button
-            type="button"
-            className="create-event-btn create-event-btn-secondary"
-            onClick={onClose}
-            disabled={loading}
-          >
-            <Icons.Cancel className="create-event-btn-icon" />
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
+            <Icons.Cancel />
             Annuler
           </button>
           <button
             type="button"
-            className="create-event-btn create-event-btn-danger"
+            className="btn btn-danger"
             onClick={handleSubmit}
             disabled={loading}
           >
             {loading ? (
               <>
-                <Icons.Loading className="create-event-spin create-event-btn-icon" />
+                <Icons.Loading className="spin" />
                 Création...
               </>
             ) : (
               <>
-                <Icons.Add className="create-event-btn-icon" />
+                <Icons.Blocked />
                 Bloquer
               </>
             )}
@@ -59,18 +58,18 @@ function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
       }
     >
       {error && (
-        <div className="create-event-alert create-event-alert-error">
-          <Icons.Warning className="create-event-alert-icon" />
+        <div className="alert alert-error mb-20">
+          <Icons.Warning />
           {error}
         </div>
       )}
 
-      <div className="create-event-alert create-event-alert-warning">
-        <Icons.Info className="create-event-alert-icon" />
+      <div className="alert alert-warning mb-20">
+        <Icons.Info />
         Cette période sera bloquée et aucun cours ne pourra être créé pendant ce créneau.
       </div>
 
-      <BlockedTimeForm initialDate={initialDate} />
+      <BlockedTimeForm formData={formData} handleChange={handleChange} setFormData={setFormData} />
     </Modal>
   );
 }

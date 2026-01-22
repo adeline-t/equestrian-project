@@ -83,6 +83,7 @@ export async function handleHorses(request, env) {
           pairing_end_date,
           riders (
             id,
+            name,
             activity_start_date,
             activity_end_date,
             deleted_at
@@ -125,36 +126,24 @@ export async function handleHorses(request, env) {
 
       const { data: horse, error: horseError } = await db
         .from('horses')
-        .select('*')
+        .select(
+          `
+          *,
+          rider_horse_pairings(
+            *,
+            riders (
+              *
+            )
+          )
+          `
+        )
         .is('deleted_at', null)
         .eq('id', horseId)
         .single();
       if (horseError) return handleDatabaseError(horseError, 'horses.get');
 
-      // Fetch pairings for this horse
-      const { data: pairings, error: pairingsError } = await db
-        .from('rider_horse_pairings')
-        .select(
-          `
-          id,
-          horse_id,
-          rider_id,
-          link_type,
-          loan_days,
-          pairing_start_date,
-          pairing_end_date,
-          riders (
-            id,
-            name,
-            activity_start_date,
-            activity_end_date,
-            deleted_at
-          )
-        `
-        )
-        .eq('horse_id', horseId);
-
-      if (pairingsError) return handleDatabaseError(pairingsError, 'horses.getPairings');
+      // Get pairings from the horse object
+      const pairings = horse.rider_horse_pairings || [];
 
       // Count active riders
       const activeRidersCount = pairings.filter((pairing) => {
@@ -167,32 +156,9 @@ export async function handleHorses(request, env) {
         );
       }).length;
 
-      // Extract loan days
-      const loanDays = extractLoanDays(pairings, horseId, today);
-
-      // Build detailed loan information (optional)
-      const activeLoans = pairings
-        .filter(
-          (p) =>
-            p.link_type === 'loan' &&
-            p.riders &&
-            !p.riders.deleted_at &&
-            isActiveBetween(p.pairing_start_date, p.pairing_end_date, today) &&
-            isActiveBetween(p.riders.activity_start_date, p.riders.activity_end_date, today)
-        )
-        .map((p) => ({
-          rider_id: p.rider_id,
-          rider_name: p.riders.name,
-          loan_days: p.loan_days || [],
-          pairing_start_date: p.pairing_start_date,
-          pairing_end_date: p.pairing_end_date,
-        }));
-
       const result = {
         ...horse,
         active_riders_count: activeRidersCount,
-        loan_days: loanDays,
-        active_loans: activeLoans, // Détails complets des pensions actives
       };
 
       return jsonResponse(result, 200, getSecurityHeaders());
@@ -393,6 +359,7 @@ export async function handleHorses(request, env) {
 
 /**
  * GET /api/horses/:id/riders
+ * Retourne le cheval avec ses pairings pour la HorseCard
  */
 export async function handleHorseRiders(request, env, horseId) {
   const db = getDatabase(env);
@@ -406,26 +373,63 @@ export async function handleHorseRiders(request, env, horseId) {
     if (!Number.isInteger(horseIdNum))
       return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
-    const { data, error } = await db
+    // Fetch horse with all its data
+    const { data: horse, error: horseError } = await db
+      .from('horses')
+      .select('*')
+      .eq('id', horseIdNum)
+      .is('deleted_at', null)
+      .single();
+
+    if (horseError) return handleDatabaseError(horseError, 'horses.getRiders.horse');
+    if (!horse) return jsonResponse({ error: 'Cheval non trouvé' }, 404, getSecurityHeaders());
+
+    // Fetch pairings with rider details
+    const { data: pairings, error: pairingsError } = await db
       .from('rider_horse_pairings')
       .select(
         `
         id,
+        rider_id,
         link_type,
         loan_days,
+        loan_days_per_week,
         pairing_start_date,
         pairing_end_date,
         riders (
-*
+          id,
+          name,
+          rider_type,
+          activity_start_date,
+          activity_end_date,
+          deleted_at
         )
       `
       )
       .eq('horse_id', horseIdNum)
       .order('pairing_start_date', { ascending: false });
 
-    if (error) return handleDatabaseError(error, 'horses.getRiders');
+    if (pairingsError) return handleDatabaseError(pairingsError, 'horses.getRiders.pairings');
 
-    return jsonResponse(data, 200, getSecurityHeaders());
+    // Transform pairings to flatten rider data
+    const formattedPairings = (pairings || []).map((pairing) => ({
+      id: pairing.id,
+      rider_id: pairing.rider_id,
+      rider_name: pairing.riders?.name || 'N/A',
+      link_type: pairing.link_type,
+      loan_days: pairing.loan_days || [],
+      loan_days_per_week: pairing.loan_days_per_week || 0,
+      pairing_start_date: pairing.pairing_start_date,
+      pairing_end_date: pairing.pairing_end_date,
+    }));
+
+    // Return horse with pairings array
+    const result = {
+      ...horse,
+      pairings: formattedPairings,
+    };
+
+    return jsonResponse(result, 200, getSecurityHeaders());
   } catch (error) {
     console.error('Unexpected error:', error);
     return jsonResponse({ error: 'Erreur serveur interne' }, 500, getSecurityHeaders());

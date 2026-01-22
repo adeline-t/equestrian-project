@@ -1,248 +1,218 @@
-import { useEffect } from 'react';
-import {
-  EVENT_TYPES,
-  getEventTypeOptions,
-  getStatusOptions,
-} from '../../../../lib/domain/events.js';
+import { EVENT_TYPES, getEventTypeOptions } from '../../../../lib/domain/events.js';
+import { INSTRUCTORS } from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/components/events.css';
+import { formatTimeForInput } from '../../../../lib/helpers/formatters/index.js';
+import '../../../../styles/features/events.css';
 
-const INSTRUCTORS = [
-  { id: 1, label: 'Laury' },
-  { id: 2, label: 'Kévin' },
-  { id: 3, label: 'Julie' },
-  { id: 4, label: 'Capucine' },
-  { id: 0, label: 'Autre' },
-];
+const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
+  id: Number(id),
+  label,
+}));
 
-function EventForm({
-  formData,
-  formatDuration,
-  handleFormChange,
-  handleTypeChange,
-  setFormData,
-  initialDate,
-  initialStartTime,
-  initialEndTime,
-}) {
-  useEffect(() => {
-    if (initialDate) {
-      setFormData((prev) => ({ ...prev, event_date: initialDate }));
-    }
-  }, [initialDate, setFormData]);
-
-  useEffect(() => {
-    if (initialStartTime && initialEndTime) {
-      setFormData((prev) => ({
-        ...prev,
-        start_time: initialStartTime,
-        end_time: initialEndTime,
-      }));
-    }
-  }, [initialStartTime, initialEndTime, setFormData]);
+/**
+ * Pure presentation component for event form
+ * Receives all state and handlers as props from parent (CreateEventModal)
+ */
+function EventForm({ formData, handleFormChange, setFormData }) {
+  const availableEventTypes = getEventTypeOptions().filter(
+    (option) => option.value !== EVENT_TYPES.BLOCKED
+  );
 
   const hideParticipantCount =
-    formData.event_type === EVENT_TYPES.BLOCKED ||
     formData.event_type === EVENT_TYPES.LOANER_FREE_TIME ||
     formData.event_type === EVENT_TYPES.SERVICE;
-  const isMultiDay = formData.event_end_date && formData.event_end_date !== formData.event_date;
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="event-form-modern">
-      {/* GENERAL INFORMATION SECTION */}
-      <div className="event-form-section">
-        <h2>Informations générales</h2>
-        <div className="event-form-row">
+      {/* GENERAL INFORMATION */}
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Informations générales</h3>
+
+        <div className="form-row">
           <div className="form-group">
-            <div className="inline-form-group">
-              <label className="event-form-label">Nom</label>
+            <label>Nom</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleFormChange}
+              className="form-input"
+              placeholder="Un nom sera généré automatiquement si laissé vide"
+            />
+          </div>
+        </div>
+
+        {/* Event Type Selector */}
+        <div className="form-group mb-15">
+          <label>
+            Type <span className="required">*</span>
+          </label>
+
+          <div className="segmented-control">
+            {availableEventTypes.map((option) => {
+              const isActive = formData.event_type === option.value;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`segment-btn ${isActive ? 'active' : ''}`}
+                  onClick={() =>
+                    handleFormChange({
+                      target: { name: 'event_type', value: option.value },
+                    })
+                  }
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Participant Count (conditional) */}
+        {!hideParticipantCount && (
+          <div className="form-row">
+            <div className="form-group">
+              <label>
+                Min participants <span className="required">*</span>
+              </label>
               <input
-                type="text"
-                name="name"
-                value={formData.name}
+                type="number"
+                name="min_participants"
+                value={formData.min_participants}
                 onChange={handleFormChange}
-                className="form-input event-form-input"
-                placeholder="un nom sera généré automatiquement si laissé vide"
+                min="0"
+                required
+                className="form-input"
               />
             </div>
 
-            <div style={{ marginTop: '12px' }}>
-              <label className="event-form-label">Type *</label>
-              <div className="button-group">
-                {getEventTypeOptions().map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`event-form-button ${
-                      formData.event_type === option.value ? 'active' : ''
-                    }`}
-                    onClick={() => handleTypeChange({ target: { value: option.value } })}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
+            <div className="form-group">
+              <label>
+                Max participants <span className="required">*</span>
+              </label>
+              <input
+                type="number"
+                name="max_participants"
+                value={formData.max_participants}
+                onChange={handleFormChange}
+                min="1"
+                required
+                className="form-input"
+              />
             </div>
-
-            {!hideParticipantCount && (
-              <div style={{ marginTop: '12px' }}>
-                <div className="event-form-times-group">
-                  <div className="inline-form-group">
-                    <label>Min participants *</label>
-                    <input
-                      type="number"
-                      name="min_participants"
-                      value={formData.min_participants}
-                      onChange={handleFormChange}
-                      min="0"
-                      required
-                      className="compact-number-input"
-                    />
-                  </div>
-
-                  <div className="inline-form-group">
-                    <label>Max participants *</label>
-                    <input
-                      type="number"
-                      name="max_participants"
-                      value={formData.max_participants}
-                      onChange={handleFormChange}
-                      min="1"
-                      required
-                      className="compact-number-input"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
+        )}
 
-          <div className="form-group">
-            <div>
-              <label className="event-form-label">Instructeur *</label>
-              <div className="button-group">
-                {INSTRUCTORS.map((inst) => (
-                  <button
-                    key={inst.id}
-                    type="button"
-                    className={`event-form-button ${
-                      formData.instructor_id === inst.id ? 'active' : ''
-                    }`}
-                    onClick={() =>
-                      handleFormChange({
-                        target: { name: 'instructor_id', value: inst.id },
-                      })
-                    }
-                  >
-                    {inst.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+        {/* Instructor Selector */}
+        <div className="form-group">
+          <label>
+            Instructeur <span className="required">*</span>
+          </label>
 
-            <div style={{ marginTop: '12px' }}>
-              <label className="event-form-label">Statut *</label>
-              <div className="button-group">
-                {getStatusOptions().map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`event-form-button ${
-                      formData.slot_status === option.value ? 'active' : ''
-                    }`}
-                    onClick={() =>
-                      handleFormChange({
-                        target: { name: 'slot_status', value: option.value },
-                      })
-                    }
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+          <div className="segmented-control">
+            {instructorOptions.map((inst) => {
+              const isActive = formData.instructor_id === inst.id;
+
+              return (
+                <button
+                  key={inst.id}
+                  type="button"
+                  className={`segment-btn ${isActive ? 'active' : ''}`}
+                  onClick={() =>
+                    handleFormChange({
+                      target: { name: 'instructor_id', value: inst.id },
+                    })
+                  }
+                >
+                  {inst.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* DATE SECTION */}
-      <div className="event-form-section">
-        <h2>Date</h2>
-        <div className="event-form-row">
+      {/* DATE & TIME */}
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Date et horaires</h3>
+
+        <div className="form-row">
           <div className="form-group">
-            <div className="inline-form-group">
-              <label>Date *</label>
+            <label>
+              Date <span className="required">*</span>
+            </label>
+            <input
+              type="date"
+              name="event_date"
+              value={formData.event_date}
+              onChange={handleFormChange}
+              className="form-input"
+              required
+            />
+          </div>
+        </div>
+
+        {/* All-day vs Time slots */}
+        <div className="form-group mb-15">
+          <label>Format</label>
+
+          <div className="segmented-control">
+            <button
+              type="button"
+              className={`segment-btn ${formData.is_all_day ? 'active' : ''}`}
+              onClick={() => setFormData((prev) => ({ ...prev, is_all_day: true }))}
+            >
+              <Icons.Calendar />
+              Journée entière
+            </button>
+
+            <button
+              type="button"
+              className={`segment-btn ${!formData.is_all_day ? 'active' : ''}`}
+              onClick={() => setFormData((prev) => ({ ...prev, is_all_day: false }))}
+            >
+              <Icons.Clock />
+              Horaires
+            </button>
+          </div>
+        </div>
+
+        {/* Time inputs (conditional) */}
+        {!formData.is_all_day && (
+          <div className="form-row">
+            <div className="form-group">
+              <label>
+                Heure début <span className="required">*</span>
+              </label>
               <input
-                type="date"
-                name="event_date"
-                value={formData.event_date}
+                type="time"
+                name="start_time"
+                value={formatTimeForInput(formData.start_time)}
                 onChange={handleFormChange}
-                className="form-input event-form-input"
+                className="form-input"
+                step="900"
                 required
               />
             </div>
 
-            <div className="inline-form-group" style={{ marginTop: '12px' }}>
-              <label>Format</label>
-              <div className="segmented-control">
-                <button
-                  type="button"
-                  className={`segment-btn ${formData.is_all_day ? 'active' : ''}`}
-                  onClick={() => setFormData((prev) => ({ ...prev, is_all_day: true }))}
-                  disabled={isMultiDay}
-                >
-                  <Icons.Calendar className="segment-icon" />
-                  Journée entière
-                </button>
-                <button
-                  type="button"
-                  className={`segment-btn ${!formData.is_all_day ? 'active' : ''}`}
-                  onClick={() => setFormData((prev) => ({ ...prev, is_all_day: false }))}
-                  disabled={isMultiDay}
-                >
-                  <Icons.Clock className="segment-icon" />
-                  Horaires
-                </button>
-              </div>
+            <div className="form-group">
+              <label>
+                Heure fin <span className="required">*</span>
+              </label>
+              <input
+                type="time"
+                name="end_time"
+                value={formatTimeForInput(formData.end_time)}
+                onChange={handleFormChange}
+                className="form-input"
+                step="900"
+                required
+              />
             </div>
           </div>
-
-          <div className="form-group">
-            {!formData.is_all_day && (
-              <div className="event-form-times-group">
-                <div className="inline-form-group">
-                  <label className="event-form-label">Heure début</label>
-                  <input
-                    type="time"
-                    name="start_time"
-                    value={formData.start_time}
-                    onChange={handleFormChange}
-                    className="form-input event-form-input"
-                    step="900"
-                    required
-                  />
-                </div>
-
-                <div className="inline-form-group">
-                  <label className="event-form-label">Heure fin</label>
-                  <input
-                    type="time"
-                    name="end_time"
-                    value={formData.end_time}
-                    onChange={handleFormChange}
-                    step="900"
-                    required
-                  />
-                </div>
-
-                <div className="event-form-duration-display">
-                  <Icons.Clock className="event-form-duration-icon" />
-                  {formatDuration(formData.start_time, formData.end_time)}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </form>
   );

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
-import { formatTimeForInput } from '../lib/helpers/formatters';
+import { formatTimeForInput, formatTimeForDatabase } from '../lib/helpers/formatters';
 
 /**
  * Hook pour gérer l'édition d'un événement bloqué
@@ -24,14 +24,13 @@ export function useBlockedEventEdit(slotId) {
       setSlot(fullSlot.slot);
       setEvent(fullSlot.event);
 
-      // Initialize editData with proper format
       setEditData({
         name: fullSlot.event?.name || '',
         description: fullSlot.event?.description || '',
         actual_instructor_id: fullSlot.slot?.actual_instructor_id || 1,
         slot_date: fullSlot.slot?.slot_date || '',
-        start_time: fullSlot.slot?.start_time || '09:00:00',
-        end_time: fullSlot.slot?.end_time || '10:00:00',
+        start_time: formatTimeForInput(fullSlot.slot?.start_time) || '09:00',
+        end_time: formatTimeForInput(fullSlot.slot?.end_time) || '10:00',
         is_all_day: fullSlot.slot?.is_all_day || false,
         slot_status: fullSlot.slot?.slot_status || 'scheduled',
         cancellation_reason: fullSlot.slot?.cancellation_reason || '',
@@ -59,8 +58,8 @@ export function useBlockedEventEdit(slotId) {
         description: event.description || '',
         actual_instructor_id: slot.actual_instructor_id || 1,
         slot_date: slot.slot_date || '',
-        start_time: slot.start_time || '09:00:00',
-        end_time: slot.end_time || '10:00:00',
+        start_time: formatTimeForInput(slot.start_time) || '09:00',
+        end_time: formatTimeForInput(slot.end_time) || '10:00',
         is_all_day: slot.is_all_day || false,
         slot_status: slot.slot_status || 'scheduled',
         cancellation_reason: slot.cancellation_reason || '',
@@ -93,7 +92,6 @@ export function useBlockedEventEdit(slotId) {
     try {
       setSaving(true);
 
-      // Prepare slot data with proper time format
       const slotPayload = {
         slot_date: editData.slot_date,
         actual_instructor_id: editData.actual_instructor_id,
@@ -102,11 +100,9 @@ export function useBlockedEventEdit(slotId) {
         cancellation_reason: editData.cancellation_reason || null,
       };
 
-      // Only add time fields if not all-day
-      // The times are already in HH:MM:SS format from formatTimeForDatabase
       if (!editData.is_all_day) {
-        slotPayload.start_time = editData.start_time;
-        slotPayload.end_time = editData.end_time;
+        slotPayload.start_time = formatTimeForDatabase(editData.start_time);
+        slotPayload.end_time = formatTimeForDatabase(editData.end_time);
       } else {
         slotPayload.start_time = null;
         slotPayload.end_time = null;

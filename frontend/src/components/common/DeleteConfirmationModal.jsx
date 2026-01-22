@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from './Modal.jsx';
 import { Icons } from '../../lib/icons';
-import '../../styles/common/buttons.css';
-import '../../styles/common/alerts.css';
+import '../../styles/app.css';
 
 /**
  * Unified Delete Confirmation Modal Component

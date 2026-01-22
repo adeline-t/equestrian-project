@@ -1,0 +1,236 @@
+/* ============================================
+   CSS VARIABLES - Design System
+   ============================================ */
+
+:root {
+  /* ============================================
+     COLORS - Primary
+     ============================================ */
+  --color-primary: #007bff;
+  --color-primary-dark: #0056b3;
+  --color-primary-light: #667eea;
+  --color-primary-purple: #764ba2;
+
+  /* ============================================
+     COLORS - Secondary
+     ============================================ */
+  --color-secondary: #6c757d;
+  --color-secondary-dark: #545b62;
+
+  /* ============================================
+     COLORS - Success
+     ============================================ */
+  --color-success: #28a745;
+  --color-success-dark: #1e7e34;
+  --color-success-light: #d4edda;
+  --color-success-medium: #48bb78;
+  --color-success-medium-dark: #38a169;
+
+  /* ============================================
+     COLORS - Danger
+     ============================================ */
+  --color-danger: #dc3545;
+  --color-danger-dark: #bd2130;
+  --color-danger-light: #f8d7da;
+  --color-danger-medium: #f56565;
+  --color-danger-medium-dark: #e53e3e;
+
+  /* ============================================
+     COLORS - Warning
+     ============================================ */
+  --color-warning: #ffc107;
+  --color-warning-dark: #e0a800;
+  --color-warning-light: #fff3cd;
+  --color-warning-orange: #ed8936;
+  --color-warning-orange-dark: #dd6b20;
+
+  /* ============================================
+     COLORS - Info
+     ============================================ */
+  --color-info: #17a2b8;
+  --color-info-dark: #117a8b;
+  --color-info-light: #d1ecf1;
+  --color-info-blue: #4299e1;
+  --color-info-blue-dark: #3182ce;
+
+  /* ============================================
+     COLORS - Neutral
+     ============================================ */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray-50: #f7fafc;
+  --color-gray-100: #f8f9fa;
+  --color-gray-150: #edf2f7;
+  --color-gray-200: #e9ecef;
+  --color-gray-300: #dee2e6;
+  --color-gray-400: #ced4da;
+  --color-gray-450: #adb5bd;
+  --color-gray-500: #718096;
+  --color-gray-600: #6c757d;
+  --color-gray-650: #4a5568;
+  --color-gray-700: #495057;
+  --color-gray-800: #2d3748;
+  --color-gray-900: #212529;
+
+  /* ============================================
+     COLORS - Badge Specific
+     ============================================ */
+  --color-success-badge-light: #c6f6d5;
+  --color-success-badge-medium: #9ae6b4;
+  --color-danger-badge-light: #fed7d7;
+  --color-danger-badge-medium: #fc8181;
+
+  /* ============================================
+   DOMAIN COLORS - CSS VARIABLES
+   ============================================ */
+
+  /* HORSES */
+  --color-pony-light: #ed64a6;
+  --color-pony-dark: #d53f8c;
+  --color-horse-light: #63b3ed;
+  --color-horse-dark: #4299e1;
+
+  /* OWNERS */
+  --color-laury-light: #fddce3;
+  --color-laury-dark: #f5576c;
+  --color-owner-light: #fee3c5;
+  --color-owner-dark: #ed8936;
+  --color-club-light: #dbeafe;
+  --color-club-dark: #4299e1;
+  --color-other-light: #fcdada;
+  --color-other-dark: #f56565;
+
+  /* RIDERS */
+  --color-rider-owner-light: #ed8936;
+  --color-rider-owner-dark: #dd6b20;
+  --color-rider-club-light: #4299e1;
+  --color-rider-club-dark: #3182ce;
+  --color-rider-loaner-light: #28a745;
+  --color-rider-loaner-dark: #1e7e34;
+
+  /* PAIRINGS */
+  --color-pairing-own-light: #fef3c7;
+  --color-pairing-own-dark: #ed8936;
+  --color-pairing-loan-light: #d1fae5;
+  --color-pairing-loan-dark: #48bb78;
+
+  /* ASSIGNMENTS */
+  --color-assignment-manual-light: #90cdf4;
+  --color-assignment-manual-dark: #4299e1;
+  --color-assignment-automatic-light: #9ae6b4;
+  --color-assignment-automatic-dark: #38a169;
+
+  /* STATUS */
+  --color-status-active-light: #c6f6d5;
+  --color-status-active-dark: #48bb78;
+  --color-status-inactive-light: #e2e8f0;
+  --color-status-inactive-dark: #718096;
+  --color-status-pending-light: #fff5db;
+  --color-status-pending-dark: #ed8936;
+  --color-status-completed-light: #d6bcfa;
+  --color-status-completed-dark: #764ba2;
+  --color-status-cancelled-light: #fed7d7;
+  --color-status-cancelled-dark: #f56565;
+
+  /* INSTRUCTORS */
+  --color-instructor-light: #bee3f8;
+  --color-instructor-dark: #4299e1;
+
+  /* ============================================
+     SPACING
+     ============================================ */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* ============================================
+     BORDER RADIUS
+     ============================================ */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* ============================================
+     SHADOWS
+     ============================================ */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.2);
+
+  /* ============================================
+     TRANSITIONS
+     ============================================ */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* ============================================
+     TYPOGRAPHY - Font Sizes
+     ============================================ */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.75rem;
+
+  /* ============================================
+     TYPOGRAPHY - Font Weights
+     ============================================ */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ============================================
+     GRADIENTS
+     ============================================ */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-primary-purple) 100%
+  );
+  --gradient-pony: linear-gradient(135deg, var(--color-pony-light) 0%, var(--color-pony-dark) 100%);
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--color-success-medium) 0%,
+    var(--color-success-medium-dark) 100%
+  );
+  --gradient-danger: linear-gradient(
+    135deg,
+    var(--color-danger-medium) 0%,
+    var(--color-danger-medium-dark) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--color-gray-500) 0%,
+    var(--color-gray-650) 100%
+  );
+  --gradient-warning: linear-gradient(
+    135deg,
+    var(--color-warning-orange) 0%,
+    var(--color-warning-orange-dark) 100%
+  );
+  --gradient-info: linear-gradient(
+    135deg,
+    var(--color-info-blue) 0%,
+    var(--color-info-blue-dark) 100%
+  );
+  --gradient-light: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-150) 100%);
+  --gradient-alert-success: linear-gradient(
+    135deg,
+    var(--color-success-badge-light) 0%,
+    var(--color-success-badge-medium) 100%
+  );
+  --gradient-alert-error: linear-gradient(
+    135deg,
+    var(--color-danger-badge-light) 0%,
+    var(--color-danger-badge-medium) 100%
+  );
+}

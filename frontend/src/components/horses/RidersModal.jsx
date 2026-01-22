@@ -1,18 +1,23 @@
 import PropTypes from 'prop-types';
 import { Icons } from '../../lib/icons.jsx';
-import { WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
+import {
+  WEEK_DAYS,
+  WEEK_DAYS_EN,
+  getRiderHorseLinkConfig,
+} from '../../lib/domain/domain-constants.js';
+import DomainBadge from '../common/DomainBadge.jsx';
 import Modal from '../common/Modal.jsx';
-import '../../styles/components/horses.css';
+import '../../styles/features/horses.css';
 
 /**
  * RidersModal - Shows riders for a horse with their loan days
  */
-function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
+function RidersModal({ isOpen, onClose, horseName, riders, loading, error }) {
   const getContent = () => {
     if (loading) {
       return (
-        <div style={{ textAlign: 'center', padding: '40px' }}>
-          <Icons.Loading className="spin" style={{ fontSize: '32px', marginBottom: '12px' }} />
+        <div className="modal-loading">
+          <Icons.Loading className="spin" />
           <p>Chargement des cavaliers...</p>
         </div>
       );
@@ -21,91 +26,49 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
     if (error) {
       return (
         <div className="alert alert-error">
-          <Icons.Warning style={{ marginRight: '8px' }} />
+          <Icons.Warning />
           {error}
         </div>
       );
     }
 
-    if (!horseRiders?.riders || horseRiders.riders.length === 0) {
+    // ✅ Convertir en tableau si nécessaire
+    const ridersArray = Array.isArray(riders) ? riders : [];
+
+    if (ridersArray.length === 0) {
       return (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-gray-500)' }}>
-          <Icons.Users style={{ fontSize: '48px', marginBottom: '12px' }} />
+        <div className="empty-state">
+          <Icons.Users />
           <p>Aucun cavalier actif pour ce cheval</p>
         </div>
       );
     }
 
     return (
-      <div>
-        <p
-          style={{
-            margin: '16px',
-            color: 'var(--color-gray-600)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
+      <div className="riders-modal-content">
+        <p className="riders-modal-info">
           <Icons.Info />
-          {horseRiders.riders.length} cavalier(s) actif(s)
+          {ridersArray.length} cavalier(s) actif(s)
         </p>
-        <ul
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: 0,
-            maxHeight: '400px',
-            overflowY: 'auto',
-          }}
-        >
-          {horseRiders.riders.map((pairing) => {
+
+        <ul className="riders-modal-list">
+          {ridersArray.map((pairing) => {
+            const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
             const isLoan = pairing.link_type === 'loan';
             const loanDays = pairing.loan_days || [];
 
             return (
-              <li
-                key={pairing.id}
-                style={{
-                  padding: '16px',
-                  borderBottom: '1px solid var(--color-gray-200)',
-                  backgroundColor: 'var(--color-white)',
-                }}
-              >
+              <li key={pairing.id} className="riders-modal-item">
                 {/* Rider header */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: isLoan ? '12px' : '0',
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', fontSize: '15px', marginBottom: '4px' }}>
-                      {pairing.riders?.name || 'N/A'}
-                    </div>
-                    <span
-                      className={`pairing-type-badge ${isLoan ? 'loan' : 'own'}`}
-                      style={{ fontSize: '11px' }}
-                    >
-                      {isLoan ? 'Demi-pension' : 'Propriétaire'}
-                    </span>
+                <div className="riders-modal-header">
+                  <div className="riders-modal-rider-info">
+                    <div className="riders-modal-rider-name">{pairing.rider_name || 'N/A'}</div>
+                    {linkConfig && <DomainBadge config={linkConfig} />}
                   </div>
 
                   {/* Loan days - All days with visual distinction */}
                   {isLoan && (
-                    <div
-                      className="pairing-days"
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: '4px',
-                        flexWrap: 'wrap',
-                        marginTop: '12px',
-                        paddingTop: '12px',
-                      }}
-                    >
+                    <div className="pairing-days">
                       {WEEK_DAYS_EN.map((dayEn, index) => {
                         const isLoanDay = loanDays.includes(dayEn);
                         return (
@@ -113,11 +76,6 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
                             key={dayEn}
                             className={`day-badge ${isLoanDay ? 'active' : 'inactive'}`}
                             title={isLoanDay ? 'Jour de pension' : 'Pas de pension'}
-                            style={{
-                              minWidth: '38px',
-                              padding: '5px 8px',
-                              fontSize: '11px',
-                            }}
                           >
                             {WEEK_DAYS[index]}
                           </span>
@@ -139,9 +97,9 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
       isOpen={isOpen}
       onClose={onClose}
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="modal-title-with-icon">
           <Icons.Users />
-          Cavaliers de {horseRiders?.horseName}
+          Cavaliers de {horseName || 'ce cheval'}
         </div>
       }
       size="medium"
@@ -154,22 +112,19 @@ function RidersModal({ isOpen, onClose, horseRiders, loading, error }) {
 RidersModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  horseRiders: PropTypes.shape({
-    horseName: PropTypes.string,
-    riders: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        link_type: PropTypes.string,
-        loan_days: PropTypes.arrayOf(PropTypes.string),
-        pairing_start_date: PropTypes.string,
-        pairing_end_date: PropTypes.string,
-        riders: PropTypes.shape({
-          id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-          name: PropTypes.string,
-        }),
-      })
-    ),
-  }),
+  horseName: PropTypes.string,
+  riders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      rider_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      rider_name: PropTypes.string,
+      link_type: PropTypes.string,
+      loan_days: PropTypes.arrayOf(PropTypes.string),
+      loan_days_per_week: PropTypes.number,
+      pairing_start_date: PropTypes.string,
+      pairing_end_date: PropTypes.string,
+    })
+  ),
   loading: PropTypes.bool,
   error: PropTypes.string,
 };

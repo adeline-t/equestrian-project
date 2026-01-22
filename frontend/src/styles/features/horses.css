@@ -1,0 +1,572 @@
+/* ============================================
+   HORSES FEATURE
+   Styles spécifiques aux chevaux uniquement
+   Les styles communs sont dans common.css
+   ============================================ */
+
+@import '../common.css';
+
+/* ============================================
+   HORSES TABLE LAYOUT
+   ============================================ */
+
+.table thead,
+.table tbody {
+  display: block;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table thead tr {
+  display: grid;
+  grid-template-columns: 200px 120px 140px 140px 420px 100px 1fr;
+  gap: 0;
+}
+
+.table tbody tr {
+  display: grid;
+  grid-template-columns: 200px 120px 140px 140px 420px 100px 1fr;
+  gap: 0;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.table th:nth-child(7),
+.table td:nth-child(7) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* ============================================
+   HORSE ROW
+   ============================================ */
+.horse-row-clickable {
+  cursor: pointer;
+}
+
+.horse-row-clickable:hover {
+  background-color: var(--color-gray-50);
+}
+
+.horse-row {
+  position: relative;
+}
+
+.horse-row:hover {
+  background: var(--color-gray-50);
+  cursor: pointer;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ============================================
+   LOAN DAYS BADGES
+   ============================================ */
+
+.loan-days-cell {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  gap: var(--spacing-xs);
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.no-loan-days {
+  color: var(--color-gray-400);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+
+@media (max-width: 768px) {
+  .horse-row {
+    cursor: default;
+  }
+
+  .horse-row:hover {
+    background: transparent;
+  }
+
+  .btn-menu {
+    color: var(--color-info-blue);
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    animation: fadeIn var(--transition-base) ease;
+  }
+
+  .actions-menu-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-white);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    padding: var(--spacing-lg);
+    padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+    animation: slideIn var(--transition-slow) ease;
+  }
+
+  .actions-menu-mobile button {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: none;
+    background: var(--color-gray-50);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-gray-800);
+  }
+
+  .actions-menu-mobile button:hover {
+    background: var(--color-gray-150);
+  }
+
+  .actions-menu-mobile .menu-delete {
+    background: var(--color-danger-light);
+    color: var(--color-danger-medium-dark);
+  }
+
+  .actions-menu-mobile .menu-delete:hover {
+    background: var(--color-danger-badge-light);
+  }
+}
+
+/* ============================================
+   RESPONSIVE TABLE LAYOUT
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 100px 140px 120px 140px 90px 1fr;
+  }
+
+  .loan-days-cell {
+    gap: 3px;
+    padding: var(--spacing-xs) 6px;
+  }
+}
+
+@media (max-width: 992px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 90px 120px 100px 120px 80px 1fr;
+  }
+
+  .loan-days-cell {
+    gap: 2px;
+    padding: var(--spacing-xs);
+  }
+}
+
+@media (max-width: 768px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 80px 110px 90px 110px 70px 60px;
+  }
+
+  .loan-days-cell {
+    gap: 2px;
+    padding: 2px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .table thead,
+  .table thead tr {
+    display: none !important;
+  }
+
+  .table tbody tr {
+    display: block;
+    background: var(--color-white);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-150);
+  }
+
+  .table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+
+  .table tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-600);
+    margin-right: var(--spacing-sm);
+    flex-shrink: 0;
+  }
+
+  .loan-days-cell {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .action-buttons {
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* ============================================
+   HORSE CARD MODAL
+   ============================================ */
+
+.horse-card-modal {
+  max-width: 1200px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.horse-card-content {
+  padding: var(--spacing-lg);
+}
+
+.horse-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.horse-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.horse-card-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.horse-card-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.horse-card-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.horse-card-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.horse-card-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.horse-card-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.horse-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ============================================
+   PAIRINGS LIST (reuse from riders)
+   ============================================ */
+
+.pairings-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.pairing-item-modern {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--gradient-light);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.pairing-item-modern:hover {
+  border-color: var(--color-success-medium);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.pairing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.pairing-header {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.pairing-horse-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pairing-type-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pairing-type-badge.loan {
+  background: var(--color-success-light);
+  color: var(--color-success-medium);
+}
+
+.pairing-type-badge.own {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.pairing-days {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.day-badge {
+  min-width: 38px;
+  padding: 4px 8px;
+  font-size: 11px;
+  text-align: center;
+  border-radius: var(--radius-sm);
+}
+
+.day-badge.active {
+  background: var(--color-success-medium);
+  color: white;
+}
+
+.day-badge.inactive {
+  background: var(--color-gray-200);
+  color: var(--color-gray-600);
+}
+
+.pairing-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE HORSE CARD
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .horse-card-grid {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .horse-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .horse-card-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .horse-card-content {
+    padding: var(--spacing-md);
+  }
+
+  .horse-card-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .pairing-item-modern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+/* ============================================
+   RIDERS MODAL
+   ============================================ */
+
+.modal-loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.modal-loading > svg {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--color-gray-500);
+}
+
+.empty-state > svg {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.modal-title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.riders-modal-content {
+  /* Container for the modal content */
+}
+
+.riders-modal-info {
+  margin: 16px;
+  color: var(--color-gray-600);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.riders-modal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.riders-modal-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-gray-200);
+  background-color: var(--color-white);
+}
+
+.riders-modal-item:last-child {
+  border-bottom: none;
+}
+
+.riders-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.riders-modal-rider-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.riders-modal-rider-name {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.pairing-days {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding-top: 12px;
+}

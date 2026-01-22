@@ -1,5 +1,7 @@
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles/components/events.css';
+import { getHorseAssignmentConfig } from '../../../../lib/domain/domain-constants';
+import DomainBadge from '../../../common/DomainBadge';
+import '../../../../styles/features/events.css';
 
 const FREQUENCY_LABELS = {
   daily: 'Quotidien',
@@ -17,18 +19,11 @@ const WEEKDAY_LABELS = {
   7: 'Dimanche',
 };
 
-const ASSIGNMENT_TYPE_LABELS = {
-  manual: 'Manuel',
-  owned: 'Propriétaire',
-  loaned: 'Prêt',
-  automatic: 'Automatique',
-};
-
 const RecurrenceTab = ({ recurrence, slot }) => {
   if (!recurrence) {
     return (
-      <div className="recurrence-empty-state">
-        <Icons.Repeat style={{ fontSize: '48px', color: 'var(--color-gray-400)' }} />
+      <div className="empty-state">
+        <Icons.Repeat />
         <p>Aucune récurrence associée</p>
       </div>
     );
@@ -55,7 +50,7 @@ const RecurrenceTab = ({ recurrence, slot }) => {
             <label className="event-details-label">Jours de la semaine</label>
             <div className="recurrence-weekdays">
               {recurrence.by_week_days.map((day) => (
-                <span key={day} className="recurrence-weekday-badge">
+                <span key={day} className="badge badge-day">
                   {WEEKDAY_LABELS[day]}
                 </span>
               ))}
@@ -80,27 +75,29 @@ const RecurrenceTab = ({ recurrence, slot }) => {
             <Icons.Users /> Participants réguliers ({recurrence.participants.length})
           </h3>
           <div className="recurrence-participants-list">
-            {recurrence.participants.map((p) => (
-              <div key={p.id} className="recurrence-participant-card">
-                <div className="recurrence-participant-main">
-                  <div className="recurrence-participant-info">
-                    <Icons.User className="recurrence-participant-icon" />
-                    <span className="recurrence-participant-name">
-                      {p.rider?.name || 'Cavalier inconnu'}
-                    </span>
-                  </div>
-                  {p.horse && (
-                    <div className="recurrence-participant-horse">
-                      <Icons.Horse className="recurrence-participant-icon" />
-                      <span className="recurrence-participant-horse-name">{p.horse.name}</span>
-                      <span className="recurrence-assignment-badge">
-                        {ASSIGNMENT_TYPE_LABELS[p.horse_assignment_type] || p.horse_assignment_type}
+            {recurrence.participants.map((p) => {
+              const assignmentConfig = getHorseAssignmentConfig(p.horse_assignment_type);
+
+              return (
+                <div key={p.id} className="recurrence-participant-card">
+                  <div className="recurrence-participant-main">
+                    <div className="recurrence-participant-info">
+                      <Icons.User className="recurrence-participant-icon" />
+                      <span className="recurrence-participant-name">
+                        {p.rider?.name || 'Cavalier inconnu'}
                       </span>
                     </div>
-                  )}
+                    {p.horse && (
+                      <div className="recurrence-participant-horse">
+                        <Icons.Horse className="recurrence-participant-icon" />
+                        <span className="recurrence-participant-horse-name">{p.horse.name}</span>
+                        {assignmentConfig && <DomainBadge config={assignmentConfig} />}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

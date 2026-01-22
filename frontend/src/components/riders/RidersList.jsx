@@ -1,21 +1,21 @@
 import { useRidersList } from '../../hooks/useRidersList.js';
 import {
   getRiderHorseLinkConfig,
-  getRiderTypeLabel,
+  getRiderTypeConfig,
   RIDER_TYPES,
   WEEK_DAYS,
   WEEK_DAYS_EN,
+  getRiderTypeLabel,
 } from '../../lib/domain/domain-constants.js';
+import { COMMON_FILTERS } from '../../lib/helpers/filters/activityFilters.js';
 import { Icons } from '../../lib/icons.jsx';
-import '../../styles/components/riders.css';
+import DomainBadge from '../common/DomainBadge.jsx';
+import '../../styles/features/riders.css';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import RiderCard from './RiderCard.jsx';
 import RiderForm from './RiderForm.jsx';
 
-/**
- * RidersList - Main riders list component
- */
 function RidersList() {
   const {
     riders,
@@ -30,7 +30,6 @@ function RidersList() {
     riderToDelete,
     successMessage,
     riderTypeFilter,
-    COMMON_FILTERS,
     includeInactive,
     toggleIncludeInactive,
     setRiderTypeFilter,
@@ -44,27 +43,31 @@ function RidersList() {
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
-    getStatusBadge,
     getRiderPairingDays,
     clearSuccessMessage,
     clearError,
   } = useRidersList();
 
-  // Handler pour le clic sur une ligne
   const handleRowClick = (e, riderId) => {
-    // Ne pas ouvrir la card si on a cliqué sur un bouton d'action
-    if (e.target.closest('.table-actions') || e.target.closest('button')) {
-      return;
-    }
+    if (e.target.closest('.table-actions') || e.target.closest('button')) return;
     handleViewDetails(riderId);
   };
 
-  // Obtenir les chevaux d'un cavalier avec leur type de pairing
-  const getRiderHorses = (rider) => {
-    if (!rider.pairings || rider.pairings.length === 0) {
-      return null;
-    }
-    return rider.pairings;
+  const getRiderHorses = (rider) => (rider.pairings?.length ? rider.pairings : null);
+
+  const renderRiderDays = (rider) => {
+    const days = getRiderPairingDays(rider);
+    if (!days.length) return <span className="text-muted">-</span>;
+
+    return (
+      <div className="loan-days-cell">
+        {WEEK_DAYS_EN.map((dayEn, index) => (
+          <span key={dayEn} className={`day-badge ${days.includes(dayEn) ? 'active' : 'inactive'}`}>
+            {WEEK_DAYS[index]}
+          </span>
+        ))}
+      </div>
+    );
   };
 
   if (loading) {
@@ -75,51 +78,24 @@ function RidersList() {
     );
   }
 
-  const renderRiderDays = (rider) => {
-    const days = getRiderPairingDays(rider);
-
-    if (days.length === 0) {
-      return <span className="text-muted">-</span>;
-    }
-
-    return (
-      <div className="loan-days-cell">
-        {WEEK_DAYS_EN.map((dayEn, index) => {
-          const isActive = days.includes(dayEn);
-          return (
-            <span
-              key={dayEn}
-              className={`day-badge ${isActive ? 'active' : 'inactive'}`}
-              title={isActive ? 'Jour de pairing' : 'Pas de pairing'}
-            >
-              {WEEK_DAYS[index]}
-            </span>
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
     <div className="card-enhanced riders-list">
       <div className="flex-between mb-20">
         <h2>Liste des Cavaliers</h2>
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div className="flex gap-12">
           <button
             className={`btn ${includeInactive ? 'btn-secondary' : 'btn-outline-secondary'}`}
             onClick={toggleIncludeInactive}
-            title={includeInactive ? 'Masquer les inactifs' : 'Afficher les inactifs'}
           >
-            <Icons.Filter style={{ marginRight: '8px' }} />
+            <Icons.Filter />
             {includeInactive
               ? `Inactifs inclus (${stats.inactive})`
               : `Afficher inactifs (${stats.inactive})`}
           </button>
 
           <button className="btn btn-primary" onClick={handleCreate}>
-            <Icons.Add style={{ marginRight: '8px' }} />
-            Nouveau Cavalier
+            <Icons.Add /> Nouveau Cavalier
           </button>
         </div>
       </div>
@@ -127,7 +103,6 @@ function RidersList() {
       {/* Filters */}
       {riders.length > 0 && (
         <div className="filter-section mb-20">
-          {/* Rider Type Filter */}
           <div className="filter-pills">
             <button
               className={`pill ${riderTypeFilter === COMMON_FILTERS.ALL ? 'pill-active' : ''}`}
@@ -164,8 +139,7 @@ function RidersList() {
       {/* Messages */}
       {error && (
         <div className="alert alert-error mb-20">
-          <Icons.Warning style={{ marginRight: '8px' }} />
-          {error}
+          <Icons.Warning /> {error}
           <button className="btn btn-sm btn-secondary ml-10" onClick={clearError}>
             Effacer
           </button>
@@ -174,8 +148,7 @@ function RidersList() {
 
       {successMessage && (
         <div className="alert alert-success mb-20">
-          <Icons.Check style={{ marginRight: '8px' }} />
-          {successMessage}
+          <Icons.Check /> {successMessage}
           <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
             OK
           </button>
@@ -183,133 +156,84 @@ function RidersList() {
       )}
 
       {/* Table */}
-      {riders.length === 0 ? (
-        <div className="empty-state">
-          <Icons.Users
-            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
-          />
-          <p>Aucun cavalier trouvé</p>
-          <button className="btn btn-primary mt-20" onClick={handleCreate}>
-            <Icons.Add style={{ marginRight: '8px' }} />
-            Ajouter un cavalier
-          </button>
-        </div>
-      ) : filteredRiders.length === 0 ? (
-        <div className="empty-state">
-          <Icons.Filter
-            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
-          />
-          <p>Aucun cavalier ne correspond au filtre</p>
-        </div>
-      ) : (
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Chevaux</th>
-                <th>Jours</th>
-                <th> </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRiders.map((rider) => {
-                const horses = getRiderHorses(rider);
+      <div className="table-responsive">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Chevaux</th>
+              <th>Jours</th>
+              <th />
+            </tr>
+          </thead>
 
-                return (
-                  <tr
-                    key={rider.id}
-                    className="rider-row rider-row-clickable"
-                    onClick={(e) => handleRowClick(e, rider.id)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <td data-label="Nom">
-                      <strong>{rider.name}</strong>
-                    </td>
+          <tbody>
+            {filteredRiders.map((rider) => {
+              const horses = getRiderHorses(rider);
+              const riderTypeConfig = getRiderTypeConfig(rider.rider_type);
 
-                    <td data-label="Type">
-                      <span className="badge badge-rider-type" data-rider-type={rider.rider_type}>
-                        {getRiderTypeLabel(rider.rider_type)}
-                      </span>
-                    </td>
+              return (
+                <tr
+                  key={rider.id}
+                  className="rider-row rider-row-clickable"
+                  onClick={(e) => handleRowClick(e, rider.id)}
+                >
+                  <td>
+                    <strong>{rider.name}</strong>
+                  </td>
 
-                    <td data-label="Email">{rider.email || '-'}</td>
+                  <td>{riderTypeConfig && <DomainBadge config={riderTypeConfig} />}</td>
 
-                    <td data-label="Téléphone">{rider.phone || '-'}</td>
+                  <td>{rider.email || '-'}</td>
+                  <td>{rider.phone || '-'}</td>
 
-                    <td data-label="Chevaux">
-                      {horses ? (
-                        <div className="horses-badges">
-                          {horses.map((pairing) => {
-                            const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
-                            const horseName = pairing.horses?.name || pairing.horse?.name;
+                  <td>
+                    {horses ? (
+                      <div className="horses-badges">
+                        {horses.map((pairing) => {
+                          const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
+                          if (!linkConfig) return null;
 
-                            return (
-                              <span
-                                key={pairing.id}
-                                className={`badge ${linkConfig.badgeClass}`}
-                                data-link-type={pairing.link_type}
-                                title={`${horseName} - ${linkConfig.label}`}
-                              >
-                                <Icons.Horse style={{ fontSize: '12px', marginRight: '4px' }} />
-                                {horseName}
-                              </span>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <span className="text-muted">-</span>
-                      )}
-                    </td>
+                          const horseName = pairing.horses?.name || pairing.horse?.name;
 
-                    <td data-label="Jours">{renderRiderDays(rider)}</td>
-
-                    <td data-label="Actions" className="table-actions">
-                      <div className="action-buttons">
-                        <button
-                          className="btn-icon btn-icon-view"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(rider.id);
-                          }}
-                          title="Voir les détails"
-                        >
-                          <Icons.View />
-                        </button>
+                          return (
+                            <DomainBadge
+                              key={pairing.id}
+                              config={{ ...linkConfig, label: horseName }}
+                            />
+                          );
+                        })}
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+                    ) : (
+                      <span className="text-muted">-</span>
+                    )}
+                  </td>
+
+                  <td>{renderRiderDays(rider)}</td>
+
+                  <td className="table-actions">
+                    <button
+                      className="btn-icon btn-icon-view"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDetails(rider.id);
+                      }}
+                    >
+                      <Icons.View />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
       {/* Modals */}
-      <Modal
-        isOpen={showModal}
-        onClose={closeRiderModal}
-        title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {editingRider ? (
-              <>
-                <Icons.Edit />
-                Modifier le cavalier
-              </>
-            ) : (
-              <>
-                <Icons.Add />
-                Nouveau cavalier
-              </>
-            )}
-          </div>
-        }
-        size="medium"
-      >
+      <Modal isOpen={showModal} onClose={closeRiderModal} size="medium">
         <RiderForm rider={editingRider} onSubmit={handleFormSubmit} onCancel={closeRiderModal} />
       </Modal>
 

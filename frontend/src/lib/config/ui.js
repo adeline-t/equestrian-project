@@ -14,54 +14,6 @@ export const MODAL_SIZES = {
   XLARGE: 'xlarge',
 };
 
-export const MODAL_CONFIG = {
-  defaultSize: MODAL_SIZES.MEDIUM,
-  closeOnOverlay: true,
-  animationDuration: 300,
-};
-
-export const getModalSizeClass = (size) => {
-  const sizeMap = {
-    [MODAL_SIZES.SMALL]: 'small',
-    [MODAL_SIZES.MEDIUM]: 'medium',
-    [MODAL_SIZES.LARGE]: 'large',
-    [MODAL_SIZES.XLARGE]: 'xlarge',
-  };
-  return sizeMap[size] || sizeMap[MODAL_SIZES.MEDIUM];
-};
-
-/* ============================================
-   DATE FORMATS
-   ============================================ */
-
-export const DATE_FORMATS = {
-  DISPLAY: 'DD/MM/YYYY',
-  INPUT: 'YYYY-MM-DD',
-  TIME: 'HH:mm',
-  DATETIME: 'DD/MM/YYYY HH:mm',
-};
-
-/* ============================================
-   TABLE
-   ============================================ */
-
-export const TABLE_CONFIG = {
-  DEFAULT_PAGE_SIZE: 10,
-  PAGE_SIZE_OPTIONS: [10, 25, 50, 100],
-  MIN_SEARCH_LENGTH: 2,
-};
-
-/* ============================================
-   LOADING STATES
-   ============================================ */
-
-export const LOADING_STATES = {
-  IDLE: 'idle',
-  LOADING: 'loading',
-  SUCCESS: 'success',
-  ERROR: 'error',
-};
-
 /* ============================================
    CARD STYLES
    ============================================ */
@@ -85,11 +37,6 @@ export const CARD_STYLES = {
   },
 };
 
-export const getCardStyle = (layout) => ({
-  ...CARD_STYLES.base,
-  ...(CARD_STYLES[layout] || CARD_STYLES.standard),
-});
-
 /* ============================================
    TEXT STYLES
    ============================================ */
@@ -105,32 +52,5 @@ export const TEXT_STYLES = {
     time: { fontSize: '11px', fontWeight: '500' },
     label: { fontSize: '11px' },
     duration: { fontSize: '10px' },
-  },
-};
-
-export const getTextStyle = (layout, element) => {
-  const layoutStyles = TEXT_STYLES[layout] || TEXT_STYLES.standard;
-  return layoutStyles[element] || {};
-};
-
-/* ============================================
-   LAYOUT STYLES
-   ============================================ */
-
-export const LAYOUT_STYLES = {
-  row: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-  },
-  spaceBetween: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  column: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
   },
 };

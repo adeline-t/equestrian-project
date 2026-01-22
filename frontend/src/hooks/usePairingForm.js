@@ -5,19 +5,21 @@ import {
   isLoanPairing,
   isValidLoanDaysPerWeek,
 } from '../lib/domain/index.js';
+import { getTodayISO } from '../lib/helpers/index.js';
 
 /**
  * Custom hook for managing pairing form data and operations
  * @param {Object} pairing - The pairing object for editing
  * @param {Object} rider - Rider object (needed for default link_type)
  * @param {string|number} riderId - Pre-selected rider ID (optional)
+ * @param {string|number} horseId - Pre-selected horse ID (optional)
  * @returns {Object} Form data, handlers, and state
  */
-export function usePairingForm(pairing, rider, riderId) {
+export function usePairingForm(pairing, rider, riderId, horseId) {
   const [formData, setFormData] = useState({
     rider_id: null,
     horse_id: null,
-    pairing_start_date: '',
+    pairing_start_date: getTodayISO(),
     pairing_end_date: '',
     link_type: RIDER_HORSE_LINK_TYPE.OWN,
     loan_days_per_week: 1,
@@ -25,7 +27,6 @@ export function usePairingForm(pairing, rider, riderId) {
   });
 
   const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     // --- EDIT MODE ---
@@ -42,12 +43,14 @@ export function usePairingForm(pairing, rider, riderId) {
         ? parseInt(pairing.horse_id)
         : pairing.horses?.id
         ? parseInt(pairing.horses.id)
+        : horseId
+        ? parseInt(horseId)
         : null;
 
       setFormData({
         rider_id: extractedRiderId,
         horse_id: extractedHorseId,
-        pairing_start_date: pairing.pairing_start_date || '',
+        pairing_start_date: pairing.pairing_start_date || getTodayISO(),
         pairing_end_date: pairing.pairing_end_date || '',
         link_type: pairing.link_type || RIDER_HORSE_LINK_TYPE.OWN,
         loan_days_per_week: pairing.loan_days_per_week || 1,
@@ -57,20 +60,23 @@ export function usePairingForm(pairing, rider, riderId) {
       return;
     }
 
-    // --- CREATION MODE WITH PRE-FILLED RIDER ---
-    if (riderId) {
-      setFormData((prev) => ({
-        ...prev,
-        rider_id: parseInt(riderId),
-        link_type:
-          rider?.rider_type === RIDER_TYPES.OWNER
-            ? RIDER_HORSE_LINK_TYPE.OWN
-            : RIDER_HORSE_LINK_TYPE.LOAN,
-        loan_days_per_week: rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1,
-        loan_days: [],
-      }));
-    }
-  }, [pairing, rider, riderId]);
+    // --- CREATION MODE ---
+    const defaultLinkType =
+      rider?.rider_type === RIDER_TYPES.OWNER
+        ? RIDER_HORSE_LINK_TYPE.OWN
+        : RIDER_HORSE_LINK_TYPE.LOAN;
+
+    const defaultLoanDaysPerWeek = rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1;
+
+    setFormData((prev) => ({
+      ...prev,
+      rider_id: riderId ? parseInt(riderId) : null,
+      horse_id: horseId ? parseInt(horseId) : null,
+      link_type: defaultLinkType,
+      loan_days_per_week: defaultLoanDaysPerWeek,
+      loan_days: [],
+    }));
+  }, [pairing, rider, riderId, horseId]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -99,16 +105,14 @@ export function usePairingForm(pairing, rider, riderId) {
 
   // Toggle selection of a day in loan_days
   const toggleLoanDay = (dayCode) => {
-    // ← dayCode au lieu de dayIndex
     if (!isLoanPairing(formData)) return;
 
     setFormData((prev) => {
       const daysSet = new Set(prev.loan_days || []);
       if (daysSet.has(dayCode)) {
-        // ← dayCode
         daysSet.delete(dayCode);
       } else if (daysSet.size < (prev.loan_days_per_week || 1)) {
-        daysSet.add(dayCode); // ← dayCode
+        daysSet.add(dayCode);
       }
       return { ...prev, loan_days: Array.from(daysSet).sort() };
     });
@@ -120,7 +124,7 @@ export function usePairingForm(pairing, rider, riderId) {
 
     if (!formData.rider_id || !formData.horse_id || !formData.pairing_start_date) {
       const missingFields = [];
-      if (!formData.rider_id) missingFields.push('Rider');
+      if (!formData.rider_id) missingFields.push('Cavalier');
       if (!formData.horse_id) missingFields.push('Cheval');
       if (!formData.pairing_start_date) missingFields.push('Date de début');
 
@@ -146,16 +150,20 @@ export function usePairingForm(pairing, rider, riderId) {
   };
 
   const resetForm = () => {
+    const defaultLinkType =
+      rider?.rider_type === RIDER_TYPES.OWNER
+        ? RIDER_HORSE_LINK_TYPE.OWN
+        : RIDER_HORSE_LINK_TYPE.LOAN;
+
+    const defaultLoanDaysPerWeek = rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1;
+
     setFormData({
       rider_id: riderId ? parseInt(riderId) : null,
-      horse_id: null,
-      pairing_start_date: '',
+      horse_id: horseId ? parseInt(horseId) : null,
+      pairing_start_date: getTodayISO(),
       pairing_end_date: '',
-      link_type:
-        rider?.rider_type === RIDER_TYPES.OWNER
-          ? RIDER_HORSE_LINK_TYPE.OWN
-          : RIDER_HORSE_LINK_TYPE.LOAN,
-      loan_days_per_week: rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1,
+      link_type: defaultLinkType,
+      loan_days_per_week: defaultLoanDaysPerWeek,
       loan_days: [],
     });
     setError('');
@@ -164,10 +172,8 @@ export function usePairingForm(pairing, rider, riderId) {
   return {
     formData,
     error,
-    submitting,
     setFormData,
     setError,
-    setSubmitting,
     handleChange,
     toggleLoanDay,
     validateForm,

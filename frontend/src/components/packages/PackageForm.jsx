@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../lib/icons';
 import { usePackageForm } from '../../hooks/usePackageForm.js';
@@ -23,31 +22,15 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="form-group" noValidate>
       {error && (
-        <div
-          className="alert alert-error"
-          style={{ marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}
-        >
+        <div className="alert alert-error mb-16">
           <Icons.Warning />
           <span>{error}</span>
         </div>
       )}
 
-      <div
-        className="form-row"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '16px',
-          marginBottom: '20px',
-        }}
-      >
-        <div>
-          <label
-            htmlFor="services_per_week"
-            style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}
-          >
-            Services / semaine
-          </label>
+      <div className="form-row mb-20">
+        <div className="form-group">
+          <label htmlFor="services_per_week">Services / semaine</label>
           <input
             type="number"
             id="services_per_week"
@@ -57,19 +40,14 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
             min="0"
             step="1"
             disabled={submitting}
-            style={{ width: '100%', padding: '8px', fontSize: '16px', textAlign: 'center' }}
+            className="form-input text-center"
             required
             autoFocus
           />
         </div>
 
-        <div>
-          <label
-            htmlFor="group_lessons_per_week"
-            style={{ display: 'block', marginBottom: '6px', fontWeight: 500 }}
-          >
-            Cours collectifs / semaine
-          </label>
+        <div className="form-group">
+          <label htmlFor="group_lessons_per_week">Cours collectifs / semaine</label>
           <input
             type="number"
             id="group_lessons_per_week"
@@ -79,13 +57,13 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
             min="0"
             step="1"
             disabled={submitting}
-            style={{ width: '100%', padding: '8px', fontSize: '16px', textAlign: 'center' }}
+            className="form-input text-center"
             required
           />
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+      <div className="modal-footer">
         <button
           type="button"
           className="btn btn-secondary"
@@ -94,11 +72,12 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
         >
           Annuler
         </button>
+
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? (
             <>
               <Icons.Loading className="spin" />
-              <span style={{ marginLeft: 8 }}>Enregistrement...</span>
+              Enregistrement...
             </>
           ) : (
             <>{isEdit ? 'Modifier' : 'Créer'}</>

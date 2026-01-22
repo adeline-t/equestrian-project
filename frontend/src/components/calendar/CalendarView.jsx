@@ -1,15 +1,21 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import { useCalendarView } from '../../hooks/useCalendarView';
-import WeekView from './WeekView';
 import ErrorBoundary from '../common/ErrorBoundary';
+import WeekView from './WeekView';
+
+import { getEventTypeOptions, getStatusOptions, isBlockedEvent } from '../../lib/domain';
 import { Icons } from '../../lib/icons';
 
-import { getEventTypeOptions, getStatusOptions, isBlockedEventFull } from '../../lib/domain/events';
+import '../../styles/features/calendar.css';
 
-import '../../styles/common/index.css';
-import '../../styles/components/calendar.css';
+/* -------------------------------------------------------
+ * HELPER: Check if slot is blocked (no event)
+ * ----------------------------------------------------- */
+function isBlockedSlot(slot) {
+  return isBlockedEvent(slot.events);
+}
 
 /* -------------------------------------------------------
  * ERROR STATE
@@ -53,23 +59,25 @@ function CalendarLoading() {
 
 function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday, stats }) {
   return (
-    <div className="calendar-header" role="banner">
-      <div className="calendar-header-title">
-        <h2 className="calendar-title">{weekTitle}</h2>
+    <div className="calendar-header flex-between mb-20">
+      {/* Titre à gauche */}
+      <div className="header-title">
+        <h2>{weekTitle}</h2>
+      </div>
 
-        <div className="calendar-nav-buttons">
-          <button className="btn btn-secondary btn-sm" onClick={onPrevWeek}>
-            <Icons.ChevronLeft /> Précédente
-          </button>
+      {/* Boutons à droite */}
+      <div className="calendar-nav-buttons">
+        <button className="btn btn-secondary btn-sm" onClick={onPrevWeek}>
+          <Icons.ChevronLeft /> Précédente
+        </button>
 
-          <button className="btn btn-primary" onClick={onToday}>
-            <Icons.Calendar /> Aujourd'hui
-          </button>
+        <button className="btn btn-primary" onClick={onToday}>
+          <Icons.Calendar /> Aujourd'hui
+        </button>
 
-          <button className="btn btn-secondary btn-sm" onClick={onNextWeek}>
-            Suivante <Icons.ChevronRight />
-          </button>
-        </div>
+        <button className="btn btn-secondary btn-sm" onClick={onNextWeek}>
+          Suivante <Icons.ChevronRight />
+        </button>
       </div>
     </div>
   );
@@ -88,7 +96,7 @@ CalendarHeader.propTypes = {
 };
 
 /* -------------------------------------------------------
- * FILTERS - MODIFIÉ
+ * FILTERS
  * ----------------------------------------------------- */
 
 function CalendarFilters({
@@ -100,54 +108,54 @@ function CalendarFilters({
 }) {
   return (
     <div className="calendar-filters">
-      <div className="filters-row">
-        <div className="filters-controls">
-          <div className="filter-group">
-            <label>Type</label>
-            <select
-              className="form-select"
-              value={filters.eventType}
-              onChange={(e) => onFilterChange('eventType', e.target.value)}
-            >
-              <option value="">Tous les types</option>
-              {getEventTypeOptions().map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label>Statut</label>
-            <select
-              className="form-select"
-              value={filters.status}
-              onChange={(e) => onFilterChange('status', e.target.value)}
-            >
-              <option value="">Tous les statuts</option>
-              {getStatusOptions().map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Ligne des filtres */}
+      <div className="filter-line">
+        <div className="filter-group">
+          <label>Type</label>
+          <select
+            className="form-select"
+            value={filters.eventType}
+            onChange={(e) => onFilterChange('eventType', e.target.value)}
+          >
+            <option value="">Tous les types</option>
+            {getEventTypeOptions().map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="filters-actions">
-          <button className="btn btn-info" onClick={onShowScheduled}>
-            <Icons.Calendar /> Événements programmés
-          </button>
-
-          <button className="btn btn-success" onClick={onCreateEvent}>
-            <Icons.Add /> Nouvel événement
-          </button>
-
-          <button className="btn btn-warning" onClick={onCreateBlockedTime}>
-            <Icons.Blocked /> Bloquer un créneau
-          </button>
+        <div className="filter-group">
+          <label>Statut</label>
+          <select
+            className="form-select"
+            value={filters.status}
+            onChange={(e) => onFilterChange('status', e.target.value)}
+          >
+            <option value="">Tous les statuts</option>
+            {getStatusOptions().map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
+      </div>
+
+      {/* Ligne des boutons */}
+      <div className="filters-group">
+        <button className="btn btn-info" onClick={onShowScheduled}>
+          <Icons.Calendar /> Événements programmés
+        </button>
+
+        <button className="btn btn-success" onClick={onCreateEvent}>
+          <Icons.Add /> Nouvel événement
+        </button>
+
+        <button className="btn btn-warning" onClick={onCreateBlockedTime}>
+          <Icons.Blocked /> Bloquer un créneau
+        </button>
       </div>
     </div>
   );
@@ -162,21 +170,21 @@ CalendarFilters.propTypes = {
 };
 
 /* -------------------------------------------------------
- * MODALS - MODIFIÉ
+ * MODALS
  * ----------------------------------------------------- */
 
 function CalendarModals({
-  showEventModal,
-  showSingleEventModal,
-  showBlockedTimeModal,
+  showSlotModal,
+  showCreateEventModal,
+  showCreateBlockedModal,
   showScheduledModal,
-  selectedEvent,
-  onCloseEventModal,
-  onCloseSingleEventModal,
-  onCloseBlockedTimeModal,
+  selectedSlot,
+  createEventData,
+  onCloseSlotModal,
+  onCloseCreateEventModal,
+  onCloseCreateBlockedModal,
   onCloseScheduledModal,
   onModalSuccess,
-  onSlotClick,
 }) {
   const BlockedEventModal = React.lazy(() => import('../events/edit/BlockedEventModal'));
   const EventModal = React.lazy(() => import('../events/edit/EventModal'));
@@ -188,63 +196,64 @@ function CalendarModals({
 
   return (
     <React.Suspense fallback={null}>
-      {showEventModal &&
-        selectedEvent?.slot &&
-        (isBlockedEventFull(selectedEvent) ? (
+      {showSlotModal &&
+        selectedSlot &&
+        (isBlockedSlot(selectedSlot) ? (
           <BlockedEventModal
-            slotId={selectedEvent.slot.slot_id}
-            onClose={onCloseEventModal}
+            slotId={selectedSlot.id}
+            onClose={onCloseSlotModal}
             onUpdate={onModalSuccess}
           />
         ) : (
           <EventModal
-            slotId={selectedEvent.slot.slot_id}
-            onClose={onCloseEventModal}
+            slotId={selectedSlot.id}
+            eventId={selectedSlot.events?.id}
+            onClose={onCloseSlotModal}
             onUpdate={onModalSuccess}
           />
         ))}
 
-      {showSingleEventModal && (
+      {showCreateEventModal && createEventData && (
         <CreateEventModal
-          initialDate={selectedEvent?.date}
-          initialStartTime={selectedEvent?.start_time}
-          initialEndTime={selectedEvent?.end_time}
-          onClose={onCloseSingleEventModal}
+          initialDate={createEventData.date}
+          initialStartTime={createEventData.start_time}
+          initialEndTime={createEventData.end_time}
+          onClose={onCloseCreateEventModal}
           onSuccess={onModalSuccess}
         />
       )}
 
-      {showBlockedTimeModal && (
+      {showCreateBlockedModal && createEventData && (
         <CreateBlockedTimeModal
-          initialDate={selectedEvent?.date}
-          onClose={onCloseBlockedTimeModal}
+          initialDate={createEventData.date}
+          onClose={onCloseCreateBlockedModal}
           onSuccess={onModalSuccess}
         />
       )}
 
       {showScheduledModal && (
-        <ScheduledEventsModal onClose={onCloseScheduledModal} onSlotClick={onSlotClick} />
+        <ScheduledEventsModal onClose={onCloseScheduledModal} onUpdate={onModalSuccess} />
       )}
     </React.Suspense>
   );
 }
 
 CalendarModals.propTypes = {
-  showEventModal: PropTypes.bool.isRequired,
-  showSingleEventModal: PropTypes.bool.isRequired,
-  showBlockedTimeModal: PropTypes.bool.isRequired,
+  showSlotModal: PropTypes.bool.isRequired,
+  showCreateEventModal: PropTypes.bool.isRequired,
+  showCreateBlockedModal: PropTypes.bool.isRequired,
   showScheduledModal: PropTypes.bool.isRequired,
-  selectedEvent: PropTypes.object,
-  onCloseEventModal: PropTypes.func.isRequired,
-  onCloseSingleEventModal: PropTypes.func.isRequired,
-  onCloseBlockedTimeModal: PropTypes.func.isRequired,
+  selectedSlot: PropTypes.object,
+  createEventData: PropTypes.object,
+  onCloseSlotModal: PropTypes.func.isRequired,
+  onCloseCreateEventModal: PropTypes.func.isRequired,
+  onCloseCreateBlockedModal: PropTypes.func.isRequired,
   onCloseScheduledModal: PropTypes.func.isRequired,
   onModalSuccess: PropTypes.func.isRequired,
-  onSlotClick: PropTypes.func.isRequired,
 };
 
 /* -------------------------------------------------------
- * MAIN VIEW - MODIFIÉ
+ * MAIN VIEW
  * ----------------------------------------------------- */
 
 function CalendarView() {
@@ -252,10 +261,11 @@ function CalendarView() {
     weekData,
     loading,
     error,
-    selectedEvent,
-    showEventModal,
-    showSingleEventModal,
-    showBlockedTimeModal,
+    selectedSlot,
+    createEventData,
+    showSlotModal,
+    showCreateEventModal,
+    showCreateBlockedModal,
     showScheduledModal,
     filters,
     weekTitle,
@@ -266,15 +276,14 @@ function CalendarView() {
     handleToday,
 
     handleSlotClick,
-    handleEventClick,
     handleCreateEvent,
     handleCreateBlockedTime,
     handleShowScheduled,
     handleFilterChange,
 
-    closeEventModal,
-    closeSingleEventModal,
-    closeBlockedTimeModal,
+    closeSlotModal,
+    closeCreateEventModal,
+    closeCreateBlockedModal,
     closeScheduledModal,
     handleModalSuccess,
 
@@ -285,7 +294,7 @@ function CalendarView() {
   if (error) return <CalendarError error={error} onRetry={loadWeekData} />;
 
   return (
-    <div className="calendar-view">
+    <div className="calendar-view card-enhanced">
       <CalendarHeader
         weekTitle={weekTitle}
         onPrevWeek={handlePrevWeek}
@@ -304,29 +313,28 @@ function CalendarView() {
 
       <WeekView
         weekData={weekData || { days: [] }}
-        onEventClick={handleEventClick}
+        onSlotClick={handleSlotClick}
         onQuickCreate={handleCreateEvent}
-        filters={filters}
       />
 
       <CalendarModals
-        showEventModal={showEventModal}
-        showSingleEventModal={showSingleEventModal}
-        showBlockedTimeModal={showBlockedTimeModal}
+        showSlotModal={showSlotModal}
+        showCreateEventModal={showCreateEventModal}
+        showCreateBlockedModal={showCreateBlockedModal}
         showScheduledModal={showScheduledModal}
-        selectedEvent={selectedEvent}
-        onCloseEventModal={closeEventModal}
-        onCloseSingleEventModal={closeSingleEventModal}
-        onCloseBlockedTimeModal={closeBlockedTimeModal}
+        selectedSlot={selectedSlot}
+        createEventData={createEventData}
+        onCloseSlotModal={closeSlotModal}
+        onCloseCreateEventModal={closeCreateEventModal}
+        onCloseCreateBlockedModal={closeCreateBlockedModal}
         onCloseScheduledModal={closeScheduledModal}
         onModalSuccess={handleModalSuccess}
-        onSlotClick={handleSlotClick}
       />
     </div>
   );
 }
 
-/* Export reste identique */
+/* Export */
 export default function CalendarViewWithErrorBoundary() {
   return (
     <ErrorBoundary>

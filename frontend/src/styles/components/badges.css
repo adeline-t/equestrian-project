@@ -1,0 +1,376 @@
+/* ============================================
+   BADGES – CONSOLIDATED & UNIFIED
+   Design System compliant
+   ============================================ */
+
+/* ============================================
+   BADGE BASE
+   ============================================ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  padding: 4px 12px;
+  border-radius: var(--radius-xl);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  color: var(--color-white);
+
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.badge.clickable {
+  cursor: pointer;
+}
+
+.badge.clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  opacity: 0.9;
+}
+
+/* ============================================
+   COLOR VARIANT BADGES
+   ============================================ */
+
+.badge-primary {
+  background-image: var(--gradient-primary);
+  color: var(--color-white);
+}
+
+.badge-success {
+  background-image: var(--gradient-success);
+  color: var(--color-white);
+}
+
+.badge-danger {
+  background-image: var(--gradient-danger);
+  color: var(--color-white);
+}
+
+.badge-secondary {
+  background-image: var(--gradient-secondary);
+  color: var(--color-white);
+}
+
+.badge-warning {
+  background-image: var(--gradient-warning);
+  color: var(--color-white);
+}
+
+.badge-info {
+  background-image: var(--gradient-info);
+  color: var(--color-white);
+}
+
+/* ============================================
+   HORSES
+   ============================================ */
+
+.badge[data-type='pony'] {
+  background: var(--gradient-pony);
+}
+
+.badge[data-type='horse'] {
+  background: var(--gradient-info);
+}
+
+/* ============================================
+   OWNERS
+   ============================================ */
+
+.badge[data-type='laury'] {
+  background: var(--gradient-primary);
+}
+
+.badge[data-type='private_owner'] {
+  background: var(--gradient-warning);
+}
+
+.badge[data-type='club'] {
+  background: var(--gradient-info);
+}
+
+.badge[data-type='other'] {
+  background: var(--gradient-danger);
+}
+
+/* ============================================
+   RIDERS
+   ============================================ */
+
+.badge[data-type='owner'] {
+  background: var(--gradient-warning);
+}
+
+.badge[data-type='loaner'] {
+  background: var(--gradient-success);
+}
+
+/* Note: 'club' déjà défini dans OWNERS */
+
+/* ============================================
+   PAIRINGS
+   ============================================ */
+
+.badge[data-type='own'] {
+  background: var(--gradient-warning);
+}
+
+.badge[data-type='loan'] {
+  background: var(--gradient-success);
+}
+
+/* ============================================
+   ASSIGNMENTS
+   ============================================ */
+
+.badge[data-type='manual'] {
+  background: linear-gradient(
+    135deg,
+    var(--color-assignment-manual-light),
+    var(--color-assignment-manual-dark)
+  );
+}
+
+.badge[data-type='automatic'] {
+  background: linear-gradient(
+    135deg,
+    var(--color-assignment-automatic-light),
+    var(--color-assignment-automatic-dark)
+  );
+}
+
+/* ============================================
+   STATUS
+   ============================================ */
+
+.badge[data-type='active'] {
+  background: var(--gradient-success);
+}
+
+.badge[data-type='inactive'] {
+  background: var(--gradient-secondary);
+}
+
+.badge[data-type='pending'] {
+  background: var(--gradient-warning);
+}
+
+.badge[data-type='completed'] {
+  background: var(--gradient-info);
+}
+
+.badge[data-type='cancelled'] {
+  background: var(--gradient-danger);
+}
+
+/* ============================================
+   INSTRUCTORS
+   ============================================ */
+
+/* Laury */
+.badge[data-type='1'] {
+  background: var(--gradient-primary);
+}
+
+/* Kévin */
+.badge[data-type='2'] {
+  background: var(--gradient-info);
+}
+
+/* Julie */
+.badge[data-type='3'] {
+  background: var(--gradient-pony);
+}
+
+/* Capucine */
+.badge[data-type='4'] {
+  background: var(--gradient-warning);
+}
+
+/* Autre */
+.badge[data-type='0'] {
+  background: var(--gradient-secondary);
+}
+
+/* ============================================
+   EVENT TYPES
+   ============================================ */
+
+.badge[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.badge[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.badge[data-type='special'] {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.badge[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.badge[data-type='blocked'] {
+  background: var(--gradient-secondary);
+}
+
+.badge[data-type='service'] {
+  background: var(--gradient-info);
+}
+
+.badge[data-type='loaner_free_time'] {
+  background: var(--gradient-success);
+}
+
+/* ============================================
+   SLOT STATUSES
+   ============================================ */
+
+.badge[data-type='scheduled'] {
+  background: var(--gradient-secondary);
+}
+
+.badge[data-type='confirmed'] {
+  background: var(--gradient-success);
+}
+
+/* Note: 'completed' et 'cancelled' déjà définis dans STATUS */
+
+/* ============================================
+   DAY BADGES (Loan days)
+   ============================================ */
+
+.day-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 32px;
+  padding: 4px 6px;
+
+  border-radius: var(--radius-md);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+
+  background: var(--gradient-info);
+  color: var(--color-white);
+
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.day-badge.active {
+  background: var(--gradient-primary);
+}
+
+.day-badge.inactive {
+  background: var(--gradient-light);
+  color: var(--color-gray-600);
+  border: 1px solid var(--color-gray-400);
+  opacity: 0.6;
+}
+
+.day-badge:hover {
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   COUNT BADGES
+   ============================================ */
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--spacing-sm);
+
+  background: var(--color-primary-purple);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.riders-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--gradient-info);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-base);
+  cursor: default;
+}
+
+.riders-count-badge.clickable {
+  cursor: pointer;
+}
+
+.riders-count-badge.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+.riders-count-badge svg {
+  font-size: 14px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+/* ============================================
+   TODAY BADGE
+   ============================================ */
+
+.today-badge {
+  display: inline-block;
+  padding: 2px 8px;
+
+  background: var(--gradient-success);
+  color: var(--color-white);
+
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .day-badge {
+    min-width: 32px;
+    padding: 3px 5px;
+    min-width: 28px;
+    font-size: 9px;
+  }
+
+  .riders-count-badge {
+    padding: 4px 8px;
+    font-size: 11px;
+    gap: 4px;
+  }
+}

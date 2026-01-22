@@ -1,10 +1,10 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../../lib/icons';
-import { getStatusConfig, SLOT_STATUSES } from '../../../../lib/domain/events';
-import { INSTRUCTORS } from '../../../../lib/domain/domain-constants';
+import { getStatusConfig } from '../../../../lib/domain/events';
+import { getInstructorConfig } from '../../../../lib/domain/domain-constants';
+import DomainBadge from '../../../common/DomainBadge';
 import { formatDate, formatDateTime, formatTimeFlexible } from '../../../../lib/helpers/formatters';
-import '../../../../styles/components/events.css';
+import '../../../../styles/features/events.css';
 
 export default function BlockedEventDisplay({ slot, event, recurrence }) {
   console.log('[Display] render', { slot, event, recurrence });
@@ -13,7 +13,7 @@ export default function BlockedEventDisplay({ slot, event, recurrence }) {
     return <div className="blocked-event-loading">Chargement du créneau...</div>;
   }
 
-  const getInstructorName = (id) => INSTRUCTORS[id] || `ID ${id}`;
+  const instructorConfig = getInstructorConfig(event.instructor_id);
   const statusConfig = getStatusConfig(slot.slot_status);
   const StatusIcon = statusConfig?.icon || Icons.Info;
 
@@ -23,15 +23,9 @@ export default function BlockedEventDisplay({ slot, event, recurrence }) {
       <div className="blocked-event-display-header">
         <h3 className="blocked-event-display-title">{event.name || 'Période bloquée'}</h3>
 
-        <div
-          className="blocked-event-status-badge"
-          style={{
-            backgroundColor: statusConfig?.bgColor || 'var(--color-gray-100)',
-            color: statusConfig?.color || 'var(--color-gray-700)',
-          }}
-        >
+        <div className="blocked-event-status-badge">
           <StatusIcon className="blocked-event-status-icon" />
-          {statusConfig?.label || slot.slot_status}
+          {statusConfig && <DomainBadge config={statusConfig} />}
         </div>
       </div>
 
@@ -78,16 +72,18 @@ export default function BlockedEventDisplay({ slot, event, recurrence }) {
       <div className="blocked-event-details">
         <div className="blocked-event-detail-item">
           <div className="blocked-event-detail-label">
-            <Icons.User style={{ fontSize: '12px', marginRight: '4px' }} />
+            <Icons.User className="detail-label-icon" />
             Instructeur
           </div>
-          <div className="blocked-event-detail-value">{getInstructorName(event.instructor_id)}</div>
+          <div className="blocked-event-detail-value">
+            {instructorConfig && <DomainBadge config={instructorConfig} />}
+          </div>
         </div>
 
         {event.description && (
           <div className="blocked-event-detail-item">
             <div className="blocked-event-detail-label">
-              <Icons.Info style={{ fontSize: '12px', marginRight: '4px' }} />
+              <Icons.Info className="detail-label-icon" />
               Description
             </div>
             <div className="blocked-event-description">{event.description}</div>
@@ -97,7 +93,7 @@ export default function BlockedEventDisplay({ slot, event, recurrence }) {
         {recurrence && (
           <div className="blocked-event-detail-item">
             <div className="blocked-event-detail-label">
-              <Icons.Repeat style={{ fontSize: '12px', marginRight: '4px' }} />
+              <Icons.Repeat className="detail-label-icon" />
               Récurrence
             </div>
             <div className="blocked-event-recurrence">{recurrence}</div>
@@ -107,7 +103,7 @@ export default function BlockedEventDisplay({ slot, event, recurrence }) {
 
       {/* Metadata Footer */}
       <div className="blocked-event-metadata">
-        <Icons.Calendar style={{ fontSize: '11px', marginRight: '4px' }} />
+        <Icons.Calendar className="metadata-icon" />
         Créé le {formatDateTime(event.created_at) || '—'}
       </div>
     </div>

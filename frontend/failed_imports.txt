@@ -23,7 +23,7 @@
 ./src/components/horses/HorseForm/FormActions.jsx|2|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/horses/HorseForm/index.jsx|6|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/horses/HorsesList/EmptyState.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
-./src/components/horses/HorsesList/HorsesTable.jsx|2|import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';|../../../lib/domains/horses/kinds
+./src/components/horses/HorsesList/HorsesTable.jsx|2|import { getHorseTypeLabel } from '../../../lib/domains/horses/kinds';|../../../lib/domains/horses/kinds
 ./src/components/horses/HorsesList/HorsesTable.jsx|3|import { getOwnerTypeLabel } from '../../../lib/domains/horses/owners';|../../../lib/domains/horses/owners
 ./src/components/horses/HorsesList/HorsesTable.jsx|4|import { isActive } from '../../../lib/helpers/shared/filters';|../../../lib/helpers/shared/filters
 ./src/components/horses/HorsesList/HorsesTable.jsx|5|import { Icons } from '../../../lib/icons';|../../../lib/icons
@@ -61,13 +61,13 @@
 ./src/components/pairings/PairingsList/index.jsx|7|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/pairings/PairingsList/PairingsEmptyState.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/pairings/PairingsList/PairingsFilterButtons.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
-./src/components/pairings/PairingsList/PairingsTable.jsx|2|import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';|../../../lib/domains/horses/kinds
+./src/components/pairings/PairingsList/PairingsTable.jsx|2|import { getHorseTypeLabel } from '../../../lib/domains/horses/kinds';|../../../lib/domains/horses/kinds
 ./src/components/pairings/PairingsList/PairingsTable.jsx|3|import { isActive } from '../../../lib/helpers/shared/filters';|../../../lib/helpers/shared/filters
 ./src/components/pairings/PairingsList/PairingsTable.jsx|4|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/riders/RiderCard/index.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/riders/RiderCard/index.jsx|15|import { isActive } from '../../../lib/helpers/shared/filters/activityFilters.js';|../../../lib/helpers/shared/filters/activityFilters.js
 ./src/components/riders/RiderCard/OwnedHorsesList.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
-./src/components/riders/RiderCard/OwnedHorsesList.jsx|4|import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';|../../../lib/domains/horses/kinds
+./src/components/riders/RiderCard/OwnedHorsesList.jsx|4|import { getHorseTypeLabel } from '../../../lib/domains/horses/kinds';|../../../lib/domains/horses/kinds
 ./src/components/riders/RiderCard/PackagesList.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/riders/RiderCard/PairingsList.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons
 ./src/components/riders/RiderCard/RiderInfo.jsx|3|import { Icons } from '../../../lib/icons';|../../../lib/icons

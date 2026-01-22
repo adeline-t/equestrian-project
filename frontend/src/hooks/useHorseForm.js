@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/index.js';
-import { validateHorseForm } from '../lib/helpers/index.js';
+import { validateHorseForm, getTodayISO } from '../lib/helpers/index.js';
 import { riderService } from '../services';
 
 /**
@@ -12,9 +12,9 @@ export function useHorseForm(horse) {
   const [formData, setFormData] = useState({
     name: '',
     kind: HORSE_TYPES.HORSE,
-    activity_start_date: '',
+    activity_start_date: getTodayISO(),
     activity_end_date: '',
-    ownership_type: OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
+    ownership_type: OWNER_TYPES.PRIVATE_OWNER,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -43,17 +43,17 @@ export function useHorseForm(horse) {
       setFormData({
         name: horse.name || '',
         kind: horse.kind || HORSE_TYPES.HORSE,
-        activity_start_date: horse.activity_start_date || '',
+        activity_start_date: horse.activity_start_date || getTodayISO(),
         activity_end_date: horse.activity_end_date || '',
-        ownership_type: horse.ownership_type || OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
+        ownership_type: horse.ownership_type || OWNER_TYPES.PRIVATE_OWNER,
       });
     } else {
       setFormData({
         name: '',
         kind: HORSE_TYPES.HORSE,
-        activity_start_date: '',
+        activity_start_date: getTodayISO(),
         activity_end_date: '',
-        ownership_type: OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
+        ownership_type: OWNER_TYPES.PRIVATE_OWNER,
       });
     }
   }, [horse]);
@@ -84,7 +84,7 @@ export function useHorseForm(horse) {
     setFormData({
       name: '',
       kind: HORSE_TYPES.HORSE,
-      activity_start_date: '',
+      activity_start_date: getTodayISO(),
       activity_end_date: '',
       ownership_type: OWNER_TYPES.PRIVATE_OWNER,
     });

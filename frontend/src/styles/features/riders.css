@@ -1,0 +1,371 @@
+/* ============================================
+   RIDERS FEATURE
+   Styles spécifiques aux cavaliers uniquement
+   Les styles communs sont dans common.css
+   ============================================ */
+
+@import '../common.css';
+
+/* ============================================
+   RIDERS TABLE LAYOUT
+   ============================================ */
+
+.riders-list .table thead,
+.riders-list .table tbody {
+  display: block;
+}
+
+.riders-list .table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.riders-list .table thead tr,
+.riders-list .table tbody tr {
+  display: grid;
+  align-items: center;
+  grid-template-columns:
+    2fr
+    minmax(100px, 150px)
+    minmax(120px, 180px)
+    minmax(80px, 110px)
+    minmax(130px, 180px)
+    3fr
+    1fr;
+}
+
+/* ============================================
+   RIDER ROW
+   ============================================ */
+
+.rider-row {
+  position: relative;
+}
+
+.rider-row:hover {
+  background: var(--color-gray-50);
+  cursor: pointer;
+}
+
+.rider-row-clickable {
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.rider-row-clickable:hover {
+  background-color: var(--color-gray-50);
+  transform: translateX(2px);
+}
+
+.rider-row-clickable:active {
+  background-color: var(--color-gray-100);
+}
+
+.rider-row-clickable:hover td:first-child {
+  color: var(--color-primary);
+}
+
+/* ============================================
+   HORSES BADGES
+   ============================================ */
+
+.riders-list td[data-label='Chevaux'] {
+  text-align: center;
+}
+
+.horses-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   RIDER CARD MODAL
+   ============================================ */
+
+.rider-card-modal {
+  max-width: 1200px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.rider-card-content {
+  padding: var(--spacing-lg);
+}
+
+.rider-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.rider-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.rider-card-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.rider-card-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rider-card-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.rider-card-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.rider-card-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.rider-card-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.rider-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ============================================
+   PACKAGES LIST
+   ============================================ */
+
+.packages-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.package-item-modern {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--gradient-light);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.package-item-modern:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.package-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.package-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.package-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.package-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+/* ============================================
+   PAIRINGS LIST
+   ============================================ */
+
+.pairings-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.pairing-item-modern {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--gradient-light);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.pairing-item-modern:hover {
+  border-color: var(--color-success-medium);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.pairing-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--color-success-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-success-medium);
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+}
+
+.pairing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.pairing-horse-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pairing-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+}
+
+.pairing-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .rider-card-grid {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .riders-list .table thead tr,
+  .riders-list .table tbody tr {
+    grid-template-columns: 180px 100px 180px 120px 90px 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .rider-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rider-card-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .rider-card-content {
+    padding: var(--spacing-md);
+  }
+
+  .rider-card-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .package-item-modern,
+  .pairing-item-modern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .riders-list .table thead {
+    display: none;
+  }
+
+  .riders-list .table tbody tr {
+    display: block;
+    background: var(--color-white);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-150);
+  }
+
+  .riders-list .table tbody tr td {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-gray-100);
+  }
+
+  .riders-list .table tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  .riders-list .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-600);
+    margin-right: var(--spacing-md);
+    flex-shrink: 0;
+  }
+}

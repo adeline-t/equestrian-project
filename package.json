@@ -1,5 +1,13 @@
 {
   "dependencies": {
     "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "knip": "^5.82.1",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "knip": "knip"
   }
 }

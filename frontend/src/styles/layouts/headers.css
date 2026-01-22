@@ -1,0 +1,207 @@
+/* ============================================
+   HEADERS
+   ============================================ */
+
+/* ============================================
+   MAIN HEADER
+   ============================================ */
+
+header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: var(--color-gray-800);
+  padding: 20px 0;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow-sm);
+  border-bottom: 3px solid var(--color-primary);
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: var(--color-gray-600);
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-slow);
+  font-weight: var(--font-weight-medium);
+  border: 2px solid transparent;
+}
+
+nav a:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+nav a.active {
+  background: var(--gradient-primary);
+  color: var(--color-white);
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+
+.page-header {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.page-header-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 5vw, 1.75rem);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-800);
+  position: relative;
+}
+
+.page-header h2::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ============================================
+   SECTION HEADER
+   ============================================ */
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+  margin: 0;
+}
+
+.section-icon {
+  color: var(--color-primary);
+  font-size: 16px;
+}
+
+/* ============================================
+   CARD HEADER
+   ============================================ */
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  header .container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  header h1 {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  nav {
+    justify-content: center;
+  }
+
+  .page-header-title {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.3rem;
+  }
+
+  .page-header {
+    padding: 10px;
+  }
+}

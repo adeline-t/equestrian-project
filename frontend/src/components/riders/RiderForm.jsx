@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useRiderForm } from '../../hooks';
-import { RIDER_TYPES } from '../../lib/domain/index.js';
+import { RIDER_TYPES, getRiderTypeLabel } from '../../lib/domain/domain-constants.js';
 import { Icons } from '../../lib/icons.jsx';
 
 /**
@@ -22,7 +22,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
       {/* Error Alert */}
       {errors.submit && (
         <div className="alert alert-error mb-20">
-          <Icons.Warning style={{ marginRight: '8px' }} />
+          <Icons.Warning />
           <strong>Erreur:</strong> {errors.submit}
         </div>
       )}
@@ -47,7 +47,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
           />
           {errors.name && (
             <span className="error-message">
-              <Icons.Warning style={{ marginRight: '4px' }} />
+              <Icons.Warning />
               {errors.name}
             </span>
           )}
@@ -60,13 +60,6 @@ function RiderForm({ rider, onSubmit, onCancel }) {
 
           <div className="segmented-control">
             {riderTypeOptions.map((type) => {
-              const label =
-                type === RIDER_TYPES.OWNER
-                  ? 'Propriétaire'
-                  : type === RIDER_TYPES.CLUB
-                  ? 'Club'
-                  : 'Pensionnaire';
-
               const isActive = formData.rider_type === type;
 
               return (
@@ -80,7 +73,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
                     })
                   }
                 >
-                  {label}
+                  {getRiderTypeLabel(type)}
                 </button>
               );
             })}
@@ -88,7 +81,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
 
           {errors.rider_type && (
             <span className="error-message">
-              <Icons.Warning style={{ marginRight: '4px' }} />
+              <Icons.Warning />
               {errors.rider_type}
             </span>
           )}
@@ -108,7 +101,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             />
             {errors.email && (
               <span className="error-message">
-                <Icons.Warning style={{ marginRight: '4px' }} />
+                <Icons.Warning />
                 {errors.email}
               </span>
             )}
@@ -127,7 +120,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             />
             {errors.phone && (
               <span className="error-message">
-                <Icons.Warning style={{ marginRight: '4px' }} />
+                <Icons.Warning />
                 {errors.phone}
               </span>
             )}
@@ -152,7 +145,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             />
             {errors.activity_start_date && (
               <span className="error-message">
-                <Icons.Warning style={{ marginRight: '4px' }} />
+                <Icons.Warning />
                 {errors.activity_start_date}
               </span>
             )}
@@ -171,7 +164,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             <small className="form-help">Laissez vide si toujours actif</small>
             {errors.activity_end_date && (
               <span className="error-message">
-                <Icons.Warning style={{ marginRight: '4px' }} />
+                <Icons.Warning />
                 {errors.activity_end_date}
               </span>
             )}
@@ -187,18 +180,18 @@ function RiderForm({ rider, onSubmit, onCancel }) {
           onClick={handleCancel}
           disabled={submitting}
         >
-          <Icons.Cancel style={{ marginRight: '8px' }} />
+          <Icons.Cancel />
           Annuler
         </button>
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? (
             <>
-              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
+              <Icons.Loading className="spin" />
               Enregistrement...
             </>
           ) : (
             <>
-              <Icons.Save style={{ marginRight: '8px' }} />
+              <Icons.Save />
               {rider ? 'Mettre à jour' : 'Créer'}
             </>
           )}

@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
-import {
-  calculateRiderStats,
-  COMMON_FILTERS,
-  filterRiders,
-  isActive,
-} from '../lib/helpers/index.js';
-import { riderService } from '../services/index.js';
+import { calculateRiderStats, filterRiders } from '../lib/helpers';
+import { COMMON_FILTERS } from '../lib/helpers/filters/activityFilters';
+import { riderService } from '../services';
 
 /**
  * Custom hook for managing riders list data and operations
@@ -14,15 +10,18 @@ export function useRidersList() {
   const [riders, setRiders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingRider, setEditingRider] = useState(null);
   const [selectedRiderId, setSelectedRiderId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [riderToDelete, setRiderToDelete] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+
+  // Separate state for each filter
   const [riderTypeFilter, setRiderTypeFilter] = useState(COMMON_FILTERS.ALL);
   const [includeInactive, setIncludeInactive] = useState(false);
 
+  // Load riders from service
   useEffect(() => {
     loadRiders();
   }, []);
@@ -31,12 +30,7 @@ export function useRidersList() {
     try {
       setLoading(true);
       setError(null);
-
-      // Une seule requête qui retourne tout !
       const data = await riderService.getAllWithPairings();
-
-      // Les données sont déjà normalisées côté backend
-      // Plus besoin de Promise.all ou de transformations
       setRiders(data);
     } catch (err) {
       setError(err.message || 'Erreur lors du chargement des cavaliers');
@@ -45,6 +39,19 @@ export function useRidersList() {
     }
   };
 
+  // Filtered list using current filter values
+  const filteredRiders = filterRiders(riders, {
+    riderType: riderTypeFilter,
+    includeInactive,
+  });
+
+  // Stats
+  const stats = calculateRiderStats(riders);
+
+  // Filter handlers
+  const toggleIncludeInactive = () => setIncludeInactive((prev) => !prev);
+
+  // CRUD Handlers
   const handleCreate = () => {
     setEditingRider(null);
     setShowModal(true);
@@ -55,13 +62,38 @@ export function useRidersList() {
     setShowModal(true);
   };
 
-  const handleViewDetails = (riderId) => {
-    setSelectedRiderId(riderId);
-  };
+  const handleViewDetails = (riderId) => setSelectedRiderId(riderId);
 
   const handleDeleteClick = (rider) => {
     setRiderToDelete(rider);
     setShowDeleteModal(true);
+  };
+
+  const handleRemoveFromInventory = async () => {
+    if (!riderToDelete) return;
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      await riderService.update(riderToDelete.id, { activity_end_date: today });
+      setSuccessMessage("Cavalier retiré de l'inventaire");
+      setShowDeleteModal(false);
+      await loadRiders();
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!riderToDelete) return;
+    try {
+      await riderService.delete(riderToDelete.id);
+      setSuccessMessage('Cavalier supprimé définitivement');
+      setShowDeleteModal(false);
+      await loadRiders();
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteModal(false);
+    }
   };
 
   const handleFormSubmit = async (riderData) => {
@@ -73,73 +105,15 @@ export function useRidersList() {
         await riderService.create(riderData);
         setSuccessMessage('Cavalier créé avec succès');
       }
-
-      setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
       setEditingRider(null);
       await loadRiders();
     } catch (err) {
-      throw err;
-    }
-  };
-
-  const handleRemoveFromInventory = async () => {
-    if (!riderToDelete) return;
-
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      await riderService.update(riderToDelete.id, {
-        activity_end_date: today,
-      });
-      setSuccessMessage("Cavalier retiré de l'inventaire");
-      setTimeout(() => setSuccessMessage(''), 3000);
-      closeDeleteModal();
-      await loadRiders();
-    } catch (err) {
       setError(err.message);
-      closeDeleteModal();
     }
   };
 
-  const handlePermanentDelete = async () => {
-    if (!riderToDelete) return;
-
-    try {
-      await riderService.delete(riderToDelete.id);
-      setSuccessMessage('Cavalier supprimé définitivement');
-      setTimeout(() => setSuccessMessage(''), 3000);
-      closeDeleteModal();
-      await loadRiders();
-    } catch (err) {
-      setError(err.message);
-      closeDeleteModal();
-    }
-  };
-
-  const toggleIncludeInactive = () => {
-    setIncludeInactive((prev) => !prev);
-  };
-
-  const stats = calculateRiderStats(riders);
-
-  const filteredRiders = riders.filter((rider) => {
-    const active = isActive(rider.activity_start_date, rider.activity_end_date);
-
-    if (!includeInactive && !active) {
-      return false;
-    }
-
-    if (riderTypeFilter !== COMMON_FILTERS.ALL && rider.rider_type !== riderTypeFilter) {
-      return false;
-    }
-
-    return true;
-  });
-
-  const getRiderStatus = (rider) => isActive(rider.activity_start_date, rider.activity_end_date);
-
-  const getStatusBadge = (rider) => (getRiderStatus(rider) ? 'Actif' : 'Inactif');
-
+  // Modal handlers
   const closeRiderModal = () => {
     setShowModal(false);
     setEditingRider(null);
@@ -150,28 +124,22 @@ export function useRidersList() {
     setRiderToDelete(null);
   };
 
-  const closeRiderCard = () => {
-    setSelectedRiderId(null);
-  };
+  const closeRiderCard = () => setSelectedRiderId(null);
 
+  // Message handlers
   const clearSuccessMessage = () => setSuccessMessage('');
   const clearError = () => setError(null);
 
   /**
-   * Retourne la liste unique des jours de tous les pairings d’un cavalier
+   * Retourne la liste unique des jours de tous les pairings d'un cavalier
    */
   const getRiderPairingDays = (rider) => {
-    if (!rider.pairings || rider.pairings.length === 0) {
-      return [];
-    }
-
+    if (!rider.pairings || rider.pairings.length === 0) return [];
     const daysSet = new Set();
-
     rider.pairings.forEach((pairing) => {
       const days = pairing.days || pairing.loan_days || [];
       days.forEach((day) => daysSet.add(day));
     });
-
     return Array.from(daysSet);
   };
 
@@ -188,7 +156,6 @@ export function useRidersList() {
     riderToDelete,
     successMessage,
     riderTypeFilter,
-    COMMON_FILTERS,
     includeInactive,
     toggleIncludeInactive,
     setRiderTypeFilter,
@@ -202,8 +169,6 @@ export function useRidersList() {
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
-    getStatusBadge,
-    getRiderStatus,
     getRiderPairingDays,
     clearSuccessMessage,
     clearError,

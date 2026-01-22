@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { horseService } from '../services/index.js';
+import { getTodayISO } from '../lib/helpers/index.js';
 
 /**
  * Custom hook for managing horse CRUD operations
@@ -11,6 +12,10 @@ export function useHorseActions(onSuccess) {
   const [editingHorse, setEditingHorse] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [horseToDelete, setHorseToDelete] = useState(null);
+
+  // HorseCard modal state
+  const [showHorseCard, setShowHorseCard] = useState(false);
+  const [selectedHorse, setSelectedHorse] = useState(null);
 
   const handleCreate = () => {
     setEditingHorse(null);
@@ -44,11 +49,9 @@ export function useHorseActions(onSuccess) {
 
   const handleRemoveFromInventory = async () => {
     if (!horseToDelete) return;
-
     try {
-      const today = new Date().toISOString().split('T')[0];
       await horseService.update(horseToDelete.id, {
-        activity_end_date: today,
+        activity_end_date: getTodayISO(),
       });
       onSuccess(`${horseToDelete.name} a été retiré de l'inventaire`);
       closeDeleteModal();
@@ -59,7 +62,6 @@ export function useHorseActions(onSuccess) {
 
   const handlePermanentDelete = async () => {
     if (!horseToDelete) return;
-
     try {
       await horseService.delete(horseToDelete.id);
       onSuccess(`${horseToDelete.name} a été supprimé définitivement`);
@@ -79,18 +81,38 @@ export function useHorseActions(onSuccess) {
     setHorseToDelete(null);
   };
 
+  // HorseCard modal handlers
+  const openHorseCard = (horse) => {
+    setSelectedHorse(horse);
+    setShowHorseCard(true);
+  };
+
+  const closeHorseCard = () => {
+    setShowHorseCard(false);
+    setSelectedHorse(null);
+  };
+
   return {
+    // Form modal
     showModal,
     editingHorse,
-    showDeleteModal,
-    horseToDelete,
     handleCreate,
     handleEdit,
-    handleDeleteClick,
     handleSubmit,
+    closeModal,
+
+    // Delete modal
+    showDeleteModal,
+    horseToDelete,
+    handleDeleteClick,
     handleRemoveFromInventory,
     handlePermanentDelete,
-    closeModal,
     closeDeleteModal,
+
+    // HorseCard modal
+    showHorseCard,
+    selectedHorse,
+    openHorseCard,
+    closeHorseCard,
   };
 }

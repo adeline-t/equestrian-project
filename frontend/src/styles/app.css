@@ -1,0 +1,18 @@
+/* ============================================
+   APPLICATION STYLES
+   Main entry point - imports only common styles
+   Features are imported separately as needed
+   ============================================ */
+
+@import './common.css';
+
+/* ============================================
+   NOTE: Feature-specific styles should be imported
+   separately in their respective components:
+   
+   - calendar.css for calendar features
+   - events.css for event features
+   - riders.css for rider features
+   - horses.css for horse features
+   - pairings.css for pairing features
+   ============================================ */

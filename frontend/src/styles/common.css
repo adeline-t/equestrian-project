@@ -1,0 +1,28 @@
+/* ============================================
+   COMMON STYLES
+   Import all foundations, layouts, and components
+   ============================================ */
+
+/* Foundations */
+@import './foundations/variables.css';
+@import './foundations/reset.css';
+@import './foundations/animations.css';
+
+/* Layouts */
+@import './layouts/container.css';
+@import './layouts/grid.css';
+@import './layouts/flex.css';
+@import './layouts/headers.css';
+@import './layouts/sections.css';
+@import './layouts/empty-states.css';
+
+/* Components */
+@import './components/buttons.css';
+@import './components/forms.css';
+@import './components/badges.css';
+@import './components/cards.css';
+@import './components/tables.css';
+@import './components/modals.css';
+@import './components/alerts.css';
+@import './components/filters.css';
+@import './components/utilities.css';

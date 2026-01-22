@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { RIDER_HORSE_LINK_TYPE } from '../lib/domain/index.js';
+import { getTodayISO } from '../lib/helpers/index.js';
 import pairingService from '../services/pairingService.js';
 
+/**
+ * Custom hook for managing pairing CRUD operations
+ * @param {Function} onSuccess - Callback function to execute on successful operation
+ * @returns {Object} Pairing action handlers and state
+ */
 export function usePairingActions(onSuccess) {
   const [showPairingModal, setShowPairingModal] = useState(false);
   const [editingPairing, setEditingPairing] = useState(null);
@@ -29,16 +35,16 @@ export function usePairingActions(onSuccess) {
 
   const handleSubmit = async (riderId, pairingData) => {
     try {
-      console.log('📤 Submitting pairing data:', pairingData); // ← Ajoutez ce log
+      console.log('📤 Submitting pairing data:', pairingData);
 
-      // Défaut link_type selon le rider
+      // Default link_type based on rider
       const payload = {
         ...pairingData,
         rider_id: riderId,
         link_type: pairingData.link_type ?? RIDER_HORSE_LINK_TYPE.OWN,
       };
 
-      console.log('📦 Final payload:', payload); // ← Et celui-ci
+      console.log('📦 Final payload:', payload);
 
       if (editingPairing) {
         await pairingService.update(editingPairing.id, payload);
@@ -58,8 +64,7 @@ export function usePairingActions(onSuccess) {
   const handleRemoveFromInventory = async () => {
     if (!pairingToDelete) return;
     try {
-      const today = new Date().toISOString().split('T')[0];
-      await pairingService.update(pairingToDelete.id, { pairing_end_date: today });
+      await pairingService.update(pairingToDelete.id, { pairing_end_date: getTodayISO() });
       onSuccess("Pension retirée de l'inventaire");
       setShowDeleteModal(false);
       setPairingToDelete(null);

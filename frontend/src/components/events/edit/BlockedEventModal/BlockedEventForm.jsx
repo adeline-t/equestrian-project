@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../../lib/icons';
 import { INSTRUCTORS } from '../../../../lib/domain/domain-constants';
@@ -9,7 +8,13 @@ import {
   formatTimeForInput,
   formatTimeForDatabase,
 } from '../../../../lib/helpers/formatters';
-import '../../../../styles/components/events.css';
+import '../../../../styles/features/events.css';
+
+// Convert domain map → array for UI
+const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
+  id: Number(id),
+  label,
+}));
 
 function BlockedEventForm({ editData, handleChange }) {
   /**
@@ -26,172 +31,153 @@ function BlockedEventForm({ editData, handleChange }) {
   console.log('[Form] render', { editData, duration });
 
   return (
-    <div className="event-form-modern">
-      {/* GENERAL INFORMATION SECTION */}
-      <div className="event-form-section">
-        <h2>Informations générales</h2>
+    <form onSubmit={(e) => e.preventDefault()} className="blocked-time-form">
+      {/* GENERAL INFORMATION */}
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Informations générales</h3>
 
-        <div className="form-group">
-          <div>
-            <div className="inline-form-group">
-              <label className="event-form-label">Nom de l'événement</label>
-              <input
-                type="text"
-                value={editData.name || ''}
-                onChange={(e) => handleChange('name', e.target.value)}
-                className="form-input event-form-input"
-                placeholder="Période bloquée"
-              />
-            </div>
-          </div>
+        <div className="form-group mb-15">
+          <label htmlFor="name">Nom de l'événement</label>
+          <input
+            type="text"
+            id="name"
+            value={editData.name || ''}
+            onChange={(e) => handleChange('name', e.target.value)}
+            className="form-input"
+            placeholder="Période bloquée"
+          />
+        </div>
 
-          <div>
-            <div className="inline-form-group">
-              <label className="event-form-label">
-                <Icons.User />
-                Instructeur
-              </label>
-            </div>
-            <div className="button-group">
-              {Object.entries(INSTRUCTORS).map(([id, name]) => (
-                <button
-                  key={id}
-                  type="button"
-                  className={`event-form-button ${
-                    editData.actual_instructor_id === Number(id) ? 'active' : ''
-                  }`}
-                  onClick={() => handleChange('actual_instructor_id', Number(id))}
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
+        <div className="form-group mb-15">
+          <label>
+            Instructeur <span className="required">*</span>
+          </label>
+          <div className="segmented-control">
+            {instructorOptions.map((inst) => (
+              <button
+                key={inst.id}
+                type="button"
+                className={`segment-btn ${editData.instructor_id === inst.id ? 'active' : ''}`}
+                onClick={() => handleChange('instructor_id', inst.id)}
+              >
+                {inst.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* DATE AND TIME SECTION */}
-      <div className="event-form-section">
-        <h2>Date et horaires</h2>
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Date et horaires</h3>
 
-        <div className="form-group">
-          <div>
-            <div className="inline-form-group">
-              <label className="event-form-label">
-                <Icons.Calendar />
-                Date
-              </label>
-              <input
-                type="date"
-                value={editData.slot_date || ''}
-                onChange={(e) => handleChange('slot_date', e.target.value)}
-                className="form-input event-form-input"
-                required
-              />
-            </div>
-
-            <div className="inline-form-group" style={{ marginTop: '12px' }}>
-              <label>Format</label>
-              <div className="segmented-control">
-                <button
-                  type="button"
-                  className={`segment-btn ${editData.is_all_day ? 'active' : ''}`}
-                  onClick={() => handleChange('is_all_day', true)}
-                >
-                  <Icons.Calendar className="segment-icon" />
-                  Journée entière
-                </button>
-                <button
-                  type="button"
-                  className={`segment-btn ${!editData.is_all_day ? 'active' : ''}`}
-                  onClick={() => handleChange('is_all_day', false)}
-                >
-                  <Icons.Clock className="segment-icon" />
-                  Horaires
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {!editData.is_all_day && (
-            <div>
-              <div className="event-form-times-group">
-                <div className="inline-form-group">
-                  <label className="event-form-label">Heure début</label>
-                  <input
-                    type="time"
-                    value={formatTimeForInput(editData.start_time)}
-                    onChange={(e) =>
-                      handleChange('start_time', formatTimeForDatabase(e.target.value))
-                    }
-                    className="form-input event-form-input"
-                    step="900"
-                    required
-                  />
-                </div>
-
-                <div className="inline-form-group">
-                  <label className="event-form-label">Heure fin</label>
-                  <input
-                    type="time"
-                    value={formatTimeForInput(editData.end_time)}
-                    onChange={(e) =>
-                      handleChange('end_time', formatTimeForDatabase(e.target.value))
-                    }
-                    className="form-input event-form-input"
-                    step="900"
-                    required
-                  />
-                </div>
-              </div>
-
-              {duration > 0 && (
-                <div className="event-form-duration-display">
-                  <Icons.Clock className="event-form-duration-icon" />
-                  Durée: {formatDuration(duration)}
-                </div>
-              )}
-            </div>
-          )}
+        <div className="form-group mb-15">
+          <label htmlFor="slot_date">
+            Date <span className="required">*</span>
+          </label>
+          <input
+            type="date"
+            id="slot_date"
+            value={editData.slot_date || ''}
+            onChange={(e) => handleChange('slot_date', e.target.value)}
+            className="form-input"
+            required
+          />
         </div>
+
+        <div className="form-group mb-15">
+          <label>Format</label>
+          <div className="segmented-control">
+            <button
+              type="button"
+              className={`segment-btn ${editData.is_all_day ? 'active' : ''}`}
+              onClick={() => handleChange('is_all_day', true)}
+            >
+              <Icons.Calendar className="segment-icon" />
+              Journée entière
+            </button>
+            <button
+              type="button"
+              className={`segment-btn ${!editData.is_all_day ? 'active' : ''}`}
+              onClick={() => handleChange('is_all_day', false)}
+            >
+              <Icons.Clock className="segment-icon" />
+              Horaires
+            </button>
+          </div>
+        </div>
+
+        {!editData.is_all_day && (
+          <>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="start_time">Heure début</label>
+                <input
+                  type="time"
+                  id="start_time"
+                  value={formatTimeForInput(editData.start_time)}
+                  onChange={(e) =>
+                    handleChange('start_time', formatTimeForDatabase(e.target.value))
+                  }
+                  className="form-input"
+                  step="900"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="end_time">Heure fin</label>
+                <input
+                  type="time"
+                  id="end_time"
+                  value={formatTimeForInput(editData.end_time)}
+                  onChange={(e) => handleChange('end_time', formatTimeForDatabase(e.target.value))}
+                  className="form-input"
+                  step="900"
+                  required
+                />
+              </div>
+            </div>
+
+            {duration > 0 && (
+              <div className="blocked-time-duration-display">
+                <Icons.Clock />
+                Durée: {formatDuration(duration)}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* STATUS SECTION */}
-      <div className="event-form-section">
-        <h2>Statut</h2>
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Statut</h3>
 
-        <div className="form-group">
-          <div>
-            <div className="inline-form-group">
-              <label className="event-form-label">
-                <Icons.Info />
-                Statut du créneau
-              </label>
-            </div>
-            <div className="button-group">
-              {Object.values(SLOT_STATUSES).map((status) => {
-                const config = getStatusConfig(status);
-                const StatusIcon = config.icon;
+        <div className="form-group mb-15">
+          <label>
+            Statut du créneau <span className="required">*</span>
+          </label>
+          <div className="segmented-control">
+            {Object.values(SLOT_STATUSES).map((status) => {
+              const config = getStatusConfig(status);
+              const StatusIcon = config?.icon || Icons.Info;
 
-                return (
-                  <button
-                    key={status}
-                    type="button"
-                    className={`event-form-button ${
-                      editData.slot_status === status ? 'active' : ''
-                    }`}
-                    onClick={() => handleChange('slot_status', status)}
-                  >
-                    <StatusIcon style={{ fontSize: '14px', marginRight: '4px' }} />
-                    {config.label}
-                  </button>
-                );
-              })}
-            </div>
+              return (
+                <button
+                  key={status}
+                  type="button"
+                  className={`segment-btn ${editData.slot_status === status ? 'active' : ''}`}
+                  onClick={() => handleChange('slot_status', status)}
+                >
+                  <StatusIcon className="segment-icon" />
+                  {config?.label || status}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 

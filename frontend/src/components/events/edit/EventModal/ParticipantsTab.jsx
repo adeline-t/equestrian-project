@@ -1,33 +1,16 @@
 import { useState } from 'react';
 import { calendarService } from '../../../../services/calendarService';
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles/components/events.css';
-
-const ASSIGNMENT_TYPE_LABELS = {
-  manual: 'Manuel',
-  owned: 'Propriétaire',
-  loaned: 'Prêt',
-  automatic: 'Automatique',
-};
-
-const RIDER_TYPE_LABELS = {
-  owner: 'Propriétaire',
-  club: 'Club',
-  boarder: 'Pensionnaire',
-};
-
-const OWNERSHIP_TYPE_LABELS = {
-  owned: 'Propriété du club',
-  boarded: 'En pension',
-  lease: 'En location',
-};
-
-const LINK_TYPE_LABELS = {
-  ownership: 'Propriété',
-  loan: 'Prêt',
-};
-
-const WEEKDAY_LABELS = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+import {
+  getRiderTypeConfig,
+  getHorseAssignmentConfig,
+  getRiderHorseLinkConfig,
+  getOwnerTypeConfig,
+  getHorseTypeConfig,
+  WEEK_DAYS,
+} from '../../../../lib/domain/domain-constants';
+import DomainBadge from '../../../common/DomainBadge';
+import '../../../../styles/features/events.css';
 
 const ParticipantsTab = ({ participants, event, onUpdate }) => {
   const [loading, setLoading] = useState(false);
@@ -55,8 +38,8 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
 
   if (!participants || participants.length === 0) {
     return (
-      <div className="participants-empty-state">
-        <Icons.Users style={{ fontSize: '48px', color: 'var(--color-gray-400)' }} />
+      <div className="empty-state">
+        <Icons.Users />
         <p>Aucun participant inscrit</p>
         {event && (
           <div className="participants-empty-meta">
@@ -102,8 +85,8 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
       </div>
 
       {error && (
-        <div className="create-event-alert create-event-alert-error">
-          <Icons.Warning className="create-event-alert-icon" />
+        <div className="alert alert-error">
+          <Icons.Warning />
           {error}
         </div>
       )}
@@ -120,6 +103,9 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
             p.rider?.rider_type ||
             p.horse?.ownership_type;
 
+          const riderTypeConfig = getRiderTypeConfig(p.rider?.rider_type);
+          const assignmentConfig = getHorseAssignmentConfig(p.horse_assignment_type);
+
           return (
             <div key={p.id} className="participant-card">
               {/* Main Info */}
@@ -133,11 +119,7 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
                         {p.rider ? (
                           <>
                             <span className="participant-name">{p.rider.name}</span>
-                            {p.rider.rider_type && (
-                              <span className="participant-badge participant-badge-rider">
-                                {RIDER_TYPE_LABELS[p.rider.rider_type] || p.rider.rider_type}
-                              </span>
-                            )}
+                            {riderTypeConfig && <DomainBadge config={riderTypeConfig} />}
                           </>
                         ) : (
                           <span className="participant-missing">Aucun cavalier</span>
@@ -154,10 +136,7 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
                         {p.horse ? (
                           <>
                             <span className="participant-name">{p.horse.name}</span>
-                            <span className="participant-badge participant-badge-assignment">
-                              {ASSIGNMENT_TYPE_LABELS[p.horse_assignment_type] ||
-                                p.horse_assignment_type}
-                            </span>
+                            {assignmentConfig && <DomainBadge config={assignmentConfig} />}
                           </>
                         ) : (
                           <span className="participant-missing">Aucun cheval</span>
@@ -172,7 +151,7 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
                   {hasDetails && (
                     <button
                       type="button"
-                      className="participants-btn-icon"
+                      className="btn-icon-modern"
                       onClick={() => toggleExpand(p.id)}
                       title={isExpanded ? 'Réduire' : 'Voir plus'}
                     >
@@ -181,7 +160,7 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
                   )}
                   <button
                     type="button"
-                    className="participants-btn-icon btn-danger-ghost"
+                    className="btn-icon-modern danger"
                     onClick={() => handleRemoveParticipant(p.id)}
                     disabled={loading}
                     title="Retirer le participant"
@@ -247,17 +226,17 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
                       <div className="participant-detail-grid">
                         <div className="participant-detail-item">
                           <Icons.Settings className="participant-detail-icon" />
-                          <span>
-                            {LINK_TYPE_LABELS[p.pairing.link_type] || p.pairing.link_type}
-                          </span>
+                          {getRiderHorseLinkConfig(p.pairing.link_type) && (
+                            <DomainBadge config={getRiderHorseLinkConfig(p.pairing.link_type)} />
+                          )}
                         </div>
                         {p.pairing.link_type === 'loan' && p.pairing.loan_days && (
                           <div className="participant-detail-item">
                             <Icons.Calendar className="participant-detail-icon" />
                             <div className="loan-days-badges">
-                              {p.pairing.loan_days.map((day) => (
-                                <span key={day} className="loan-day-badge">
-                                  {WEEKDAY_LABELS[day]}
+                              {p.pairing.loan_days.map((dayIndex) => (
+                                <span key={dayIndex} className="day-badge active">
+                                  {WEEK_DAYS[dayIndex]}
                                 </span>
                               ))}
                             </div>
@@ -285,15 +264,16 @@ const ParticipantsTab = ({ participants, event, onUpdate }) => {
                       <div className="participant-detail-grid">
                         <div className="participant-detail-item">
                           <Icons.Info className="participant-detail-icon" />
-                          <span>
-                            {OWNERSHIP_TYPE_LABELS[p.horse.ownership_type] ||
-                              p.horse.ownership_type}
-                          </span>
+                          {getOwnerTypeConfig(p.horse.ownership_type) && (
+                            <DomainBadge config={getOwnerTypeConfig(p.horse.ownership_type)} />
+                          )}
                         </div>
                         {p.horse.kind && (
                           <div className="participant-detail-item">
                             <Icons.Horse className="participant-detail-icon" />
-                            <span>{p.horse.kind}</span>
+                            {getHorseTypeConfig(p.horse.kind) && (
+                              <DomainBadge config={getHorseTypeConfig(p.horse.kind)} />
+                            )}
                           </div>
                         )}
                       </div>

@@ -43,24 +43,3 @@ export function calculateDurationMinutes(startTime, endTime) {
 
   return Math.max(0, endMinutes - startMinutes);
 }
-
-/**
- * Add minutes to a time string
- * @param {string} timeStr - Time in HH:MM format
- * @param {number} minutesToAdd - Minutes to add
- * @returns {string} New time in HH:MM format
- */
-export function addMinutesToTime(timeStr, minutesToAdd) {
-  if (!timeStr) return '';
-
-  const [hours, minutes] = timeStr.split(':').map(Number);
-  let totalMinutes = hours * 60 + minutes + minutesToAdd;
-
-  // Handle day overflow (24 hours = 1440 minutes)
-  totalMinutes = totalMinutes % 1440;
-
-  const newHours = Math.floor(totalMinutes / 60);
-  const newMinutes = totalMinutes % 60;
-
-  return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
-}

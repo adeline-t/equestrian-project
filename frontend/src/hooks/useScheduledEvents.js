@@ -1,19 +1,22 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
 
 /**
- * Hook pour gérer les événements programmés
+ * Hook to manage scheduled events
  */
 export function useScheduledEvents() {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null); // ID of slot being processed
+  const [actionError, setActionError] = useState(null);
 
   const loadScheduledSlots = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const data = await calendarService.getScheduledSlots();
+      console.log('Loaded scheduled slots:', data);
       setSlots(data || []);
     } catch (err) {
       console.error('Error loading scheduled events:', err);
@@ -23,9 +26,48 @@ export function useScheduledEvents() {
     }
   }, []);
 
+  // Load on mount
   useEffect(() => {
     loadScheduledSlots();
   }, [loadScheduledSlots]);
+
+  const validateSlot = useCallback(
+    async (slotId) => {
+      try {
+        setActionLoading(slotId);
+        setActionError(null);
+        await calendarService.updateSlot(slotId, { slot_status: 'confirmed' });
+        await loadScheduledSlots(); // Reload the list
+        return true;
+      } catch (err) {
+        console.error('Error validating slot:', err);
+        setActionError(err.message || 'Erreur lors de la validation');
+        return false;
+      } finally {
+        setActionLoading(null);
+      }
+    },
+    [loadScheduledSlots]
+  );
+
+  const deleteSlot = useCallback(
+    async (slotId) => {
+      try {
+        setActionLoading(slotId);
+        setActionError(null);
+        await calendarService.deleteSlot(slotId);
+        await loadScheduledSlots(); // Reload the list
+        return true;
+      } catch (err) {
+        console.error('Error deleting slot:', err);
+        setActionError(err.message || 'Erreur lors de la suppression');
+        return false;
+      } finally {
+        setActionLoading(null);
+      }
+    },
+    [loadScheduledSlots]
+  );
 
   const refresh = useCallback(() => {
     loadScheduledSlots();
@@ -35,6 +77,10 @@ export function useScheduledEvents() {
     slots,
     loading,
     error,
+    actionLoading,
+    actionError,
+    validateSlot,
+    deleteSlot,
     refresh,
   };
 }

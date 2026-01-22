@@ -21,22 +21,23 @@ export function useHorseRiders() {
       setShowRidersModal(true);
       setError(null);
 
-      const data = await horseService.getRiders(horse.id);
+      const response = await horseService.getRiders(horse.id);
 
-      if (!data || data.length === 0) {
-        setSelectedHorseRiders({
-          horseName: horse.name,
-          riders: [],
-        });
-        return;
-      }
+      // ✅ L'API retourne { data: { horse_data, pairings: [...] } }
+      // On veut récupérer les pairings qui sont dans data.pairings
+      const horseData = response.data || response;
+      const ridersArray = Array.isArray(horseData.pairings) ? horseData.pairings : [];
 
-      // ✅ MODIFICATION : Garder la structure complète du pairing
-      // Le RidersModal attend maintenant un tableau de pairings complets
-      // avec link_type, loan_days, et riders nested
+      console.log('🐴 Horse riders data:', {
+        horse: horse.name,
+        horseData,
+        ridersArray,
+        count: ridersArray.length,
+      });
+
       setSelectedHorseRiders({
         horseName: horse.name,
-        riders: data, // Passe les pairings complets (pas aplati)
+        riders: ridersArray, // Maintenant c'est un tableau de pairings
       });
     } catch (err) {
       console.error('Error loading riders:', err);

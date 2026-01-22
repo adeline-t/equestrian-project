@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { RIDER_TYPES } from '../lib/domain/index.js';
-import { validateRiderForm } from '../lib/helpers/index.js';
+import { validateRiderForm, getTodayISO } from '../lib/helpers/index.js';
 
-const today = new Date().toISOString().split('T')[0];
 /**
  * Custom hook for managing rider form data and operations
  * @param {Object} rider - The rider object for editing
@@ -15,7 +14,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     name: '',
     phone: '',
     email: '',
-    activity_start_date: today,
+    activity_start_date: getTodayISO(),
     activity_end_date: '',
     rider_type: RIDER_TYPES.LOANER,
   });
@@ -28,9 +27,9 @@ export function useRiderForm(rider, onSubmit, onCancel) {
         name: rider.name || '',
         phone: rider.phone || '',
         email: rider.email || '',
-        activity_start_date: rider.activity_start_date || today,
+        activity_start_date: rider.activity_start_date || getTodayISO(),
         activity_end_date: rider.activity_end_date || '',
-        rider_type: rider.rider_type || RIDER_TYPES.LOANER, // ✅ Renommé
+        rider_type: rider.rider_type || RIDER_TYPES.LOANER,
       });
     } else {
       resetForm();
@@ -80,7 +79,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
       name: '',
       phone: '',
       email: '',
-      activity_start_date: today,
+      activity_start_date: getTodayISO(),
       activity_end_date: '',
       rider_type: RIDER_TYPES.LOANER,
     });
@@ -91,7 +90,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     formData,
     errors,
     submitting,
-    riderTypeOptions: Object.values(RIDER_TYPES), // ✅ Ajouté
+    riderTypeOptions: Object.values(RIDER_TYPES),
     handleChange,
     handleSubmit,
     handleCancel,

@@ -22,17 +22,21 @@ export async function handleCalendarWeek(request, env) {
   weekEnd.setDate(weekEnd.getDate() + 6); // 7-day week
 
   try {
-    // 1️⃣ Fetch slots in the week with their single event
+    // Fetch ALL data in one query
     const { data: slots, error: slotsError } = await db
       .from('planning_slots')
       .select(
         `
-        id, slot_date, start_time, end_time, slot_status, is_all_day, actual_instructor_id,
-        cancellation_reason, created_at, updated_at,
-        events!inner (
-          id, event_type, instructor_id, min_participants, max_participants
+        *,
+        events (
+          *
+        ),
+        event_participants (
+          *,
+          riders (id, name),
+          horses (id, name, kind)
         )
-      `
+        `
       )
       .gte('slot_date', weekStart.toISOString().slice(0, 10))
       .lte('slot_date', weekEnd.toISOString().slice(0, 10))
@@ -42,45 +46,7 @@ export async function handleCalendarWeek(request, env) {
 
     if (slotsError) return handleDatabaseError(slotsError, 'calendar.week.fetch', env);
 
-    const slotIds = slots.map((s) => s.id);
-
-    // 2️⃣ Fetch participants linked to these slots
-    const { data: participantsData, error: participantsError } = await db
-      .from('event_participants')
-      .select(
-        `
-        id, planning_slot_id, rider_id, horse_id, horse_assignment_type, is_cancelled,
-        riders(id, name),
-        horses(id, name)
-      `
-      )
-      .in('planning_slot_id', slotIds);
-
-    if (participantsError)
-      return handleDatabaseError(participantsError, 'calendar.week.participants', env);
-
-    // 3️⃣ Merge participants into their slots
-    const slotsWithParticipants = slots.map((slot) => {
-      const event = slot.events ?? null; // single event
-      const slotParticipants = participantsData
-        .filter((p) => p.planning_slot_id === slot.id && !p.is_cancelled)
-        .map((p) => ({
-          participant_id: p.id,
-          rider_id: p.rider_id,
-          rider_name: p.riders?.name ?? null,
-          horse_id: p.horse_id,
-          horse_name: p.horses?.name ?? null,
-          horse_assignment_type: p.horse_assignment_type,
-        }));
-
-      return {
-        ...slot,
-        event,
-        participants: slotParticipants,
-      };
-    });
-
-    const weekData = buildWeekReadModel(weekStart, slotsWithParticipants);
+    const weekData = buildWeekReadModel(weekStart, slots);
     return jsonResponse(weekData, 200, getSecurityHeaders());
   } catch (err) {
     return handleUnexpectedError(err, 'calendar.week', env);
@@ -99,24 +65,21 @@ function buildWeekReadModel(weekStart, slots) {
     const day = days.find((d) => d.date === dateStr);
     if (!day) continue;
 
-    const event = slot.event; // single event
-    const participants = slot.participants ?? [];
+    // Handle both single event or array of events
+    const event = Array.isArray(slot.events)
+      ? slot.events.length > 0
+        ? slot.events[0]
+        : null
+      : slot.events;
 
+    // Keep event_participants as-is, just filter cancelled
+    const participants = (slot.event_participants || []).filter((p) => !p.is_cancelled);
+
+    // Return data structure similar to database
     day.slots.push({
-      id: slot.id,
-      slot_id: slot.id,
-      event_id: event?.id ?? null,
-      event_type: event?.event_type ?? 'blocked',
-      status: slot.slot_status,
-      start_time: slot.start_time,
-      end_time: slot.end_time,
-      is_all_day: slot.is_all_day,
-      instructor_id: event?.instructor_id ?? slot.actual_instructor_id,
-      min_participants: event?.min_participants ?? 0,
-      max_participants: event?.max_participants ?? 0,
-      participant_count: participants.length,
-      participants,
-      cancellation_reason: slot.cancellation_reason,
+      ...slot,
+      events: event, // Normalize to single event
+      event_participants: participants,
     });
   }
 
@@ -124,8 +87,10 @@ function buildWeekReadModel(weekStart, slots) {
   weekEnd.setDate(weekEnd.getDate() + 6);
 
   return {
-    week_start: weekStart.toISOString().slice(0, 10),
-    week_end: weekEnd.toISOString().slice(0, 10),
+    period: {
+      start: weekStart.toISOString().slice(0, 10),
+      end: weekEnd.toISOString().slice(0, 10),
+    },
     days,
   };
 }

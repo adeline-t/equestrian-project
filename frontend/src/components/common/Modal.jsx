@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Portal from './Portal.jsx';
 import { Icons } from '../../lib/icons';
-import '../../styles/common/modals.css';
-import '../../styles/common/buttons.css';
+import '../../styles/app.css';
 
 /**
  * Reusable Modal component

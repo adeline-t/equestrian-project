@@ -1,6 +1,11 @@
 import { useState, useCallback } from 'react';
 import { calendarService } from '../services/calendarService';
 
+/**
+ * Hook to manage event editing
+ * @param {Object} slot - The slot object
+ * @param {Object} event - The event object
+ */
 export function useEventEdit(slot, event) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});

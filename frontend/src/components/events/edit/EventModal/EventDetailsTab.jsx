@@ -1,27 +1,17 @@
 import { format, parseISO, isValid } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import {
-  getEventTypeLabel,
-  getStatusLabel,
-  getEventTypeColor,
-} from '../../../../lib/domain/events';
+import { getEventTypeConfig, getStatusConfig } from '../../../../lib/domain/events';
+import { getInstructorConfig } from '../../../../lib/domain/domain-constants';
+import DomainBadge from '../../../common/DomainBadge';
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles/components/events.css';
-
-const INSTRUCTORS = {
-  1: 'Laury',
-  2: 'Kévin',
-  3: 'Julie',
-  4: 'Capucine',
-  0: 'Autre',
-};
+import '../../../../styles/features/events.css';
 
 const EventDetailsTab = ({ slot, event }) => {
-  const getInstructorName = (id) => INSTRUCTORS[id] || `Instructeur #${id}`;
-
   const eventType = event?.event_type || slot?.event_type;
   const isBlocked = eventType === 'blocked';
-  const eventColor = getEventTypeColor(eventType);
+  const eventTypeConfig = getEventTypeConfig(eventType);
+  const statusConfig = getStatusConfig(slot.slot_status);
+  const instructorConfig = getInstructorConfig(slot.actual_instructor_id || event?.instructor_id);
 
   // Safe date parsing helper
   const formatDate = (dateStr, formatStr, options = {}) => {
@@ -63,10 +53,10 @@ const EventDetailsTab = ({ slot, event }) => {
   return (
     <div className="event-details-tab">
       {/* Event Type Badge */}
-      <div className="event-details-type-banner" style={{ backgroundColor: eventColor }}>
+      <div className="event-details-type-banner">
         <div className="event-details-type-content">
           <Icons.List className="event-details-type-icon" />
-          <span className="event-details-type-label">{getEventTypeLabel(eventType)}</span>
+          {eventTypeConfig && <DomainBadge config={eventTypeConfig} />}
         </div>
       </div>
 
@@ -75,9 +65,9 @@ const EventDetailsTab = ({ slot, event }) => {
         <label className="event-details-label">
           <Icons.Info className="event-details-icon" /> Statut
         </label>
-        <span className={`event-details-status event-details-status-${slot.slot_status}`}>
-          {getStatusLabel(slot.slot_status)}
-        </span>
+        <div className="event-details-value">
+          {statusConfig && <DomainBadge config={statusConfig} />}
+        </div>
       </div>
 
       {/* Date & Time Section */}
@@ -89,7 +79,7 @@ const EventDetailsTab = ({ slot, event }) => {
         <div className="event-details-row">
           <label className="event-details-label">Date</label>
           <span className="event-details-value">
-            {formatDate(slot.start_time, 'EEEE dd MMMM yyyy', { locale: fr })}
+            {formatDate(slot.slot_date, 'EEEE dd MMMM yyyy', { locale: fr })}
           </span>
         </div>
 
@@ -98,7 +88,7 @@ const EventDetailsTab = ({ slot, event }) => {
           <span className="event-details-value">
             {slot.is_all_day
               ? 'Journée entière'
-              : `${slot.start_time.slice(11, 16)} - ${slot.end_time.slice(11, 16)}`}
+              : `${slot.start_time.slice(0, 5)} - ${slot.end_time.slice(0, 5)}`}
           </span>
         </div>
 
@@ -122,10 +112,10 @@ const EventDetailsTab = ({ slot, event }) => {
 
           <div className="event-details-row">
             <label className="event-details-label">Instructeur</label>
-            <span className="event-details-value">
+            <div className="event-details-value">
               <Icons.User className="event-details-inline-icon" />
-              {getInstructorName(slot.actual_instructor_id || event?.instructor_id)}
-            </span>
+              {instructorConfig && <DomainBadge config={instructorConfig} />}
+            </div>
           </div>
 
           <div className="event-details-row">
@@ -164,10 +154,10 @@ const EventDetailsTab = ({ slot, event }) => {
 
           <div className="event-details-row">
             <label className="event-details-label">Responsable</label>
-            <span className="event-details-value">
+            <div className="event-details-value">
               <Icons.User className="event-details-inline-icon" />
-              {getInstructorName(slot.actual_instructor_id)}
-            </span>
+              {instructorConfig && <DomainBadge config={instructorConfig} />}
+            </div>
           </div>
 
           {event?.description && (

@@ -1,15 +1,16 @@
-// ================================
-// useCreateBlockedTime.js
-// ================================
 import { useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { calendarService } from '../services/calendarService';
 import { EVENT_TYPES, SLOT_STATUSES } from '../lib/domain/events';
+import { getTodayISO } from '../lib/helpers/index.js';
 
+/**
+ * Hook to manage blocked time creation
+ */
 export function useCreateBlockedTime() {
   const [formData, setFormData] = useState({
-    event_date: format(new Date(), 'yyyy-MM-dd'),
+    slot_date: getTodayISO(),
     start_time: '09:00',
     end_time: '10:00',
     is_all_day: false,
@@ -28,7 +29,7 @@ export function useCreateBlockedTime() {
       const { name, value } = e.target;
 
       if (name !== 'name' && !formData.name) {
-        const dateStr = format(new Date(formData.event_date), 'dd/MM', { locale: fr });
+        const dateStr = format(new Date(formData.slot_date), 'dd/MM', { locale: fr });
         const autoName = formData.is_all_day
           ? `Bloqué - ${dateStr}`
           : `Bloqué - ${dateStr} ${formData.start_time}`;
@@ -37,12 +38,12 @@ export function useCreateBlockedTime() {
         setFormData((prev) => ({ ...prev, [name]: value }));
       }
     },
-    [formData.name, formData.event_date, formData.start_time, formData.is_all_day]
+    [formData.name, formData.slot_date, formData.start_time, formData.is_all_day]
   );
 
   const resetForm = useCallback((initialDate) => {
     setFormData({
-      event_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
+      slot_date: initialDate || getTodayISO(),
       start_time: '09:00',
       end_time: '10:00',
       is_all_day: false,
@@ -57,16 +58,14 @@ export function useCreateBlockedTime() {
 
   const createBlockedTime = useCallback(async () => {
     setError(null);
+
     try {
       setLoading(true);
 
       const slotPayload = {
-        start_time: formData.is_all_day
-          ? `${formData.event_date}T00:00:00`
-          : `${formData.event_date}T${formData.start_time}:00`,
-        end_time: formData.is_all_day
-          ? `${formData.event_date}T23:59:59`
-          : `${formData.event_date}T${formData.end_time}:00`,
+        slot_date: formData.slot_date,
+        start_time: formData.is_all_day ? '00:00:00' : `${formData.start_time}:00`,
+        end_time: formData.is_all_day ? '23:59:59' : `${formData.end_time}:00`,
         is_all_day: formData.is_all_day,
         slot_status: formData.slot_status,
         actual_instructor_id: formData.instructor_id,
@@ -76,7 +75,7 @@ export function useCreateBlockedTime() {
       const slotResponse = await calendarService.createSlot(slotPayload);
       const slotId = slotResponse.id;
 
-      const dateStr = format(new Date(formData.event_date), 'dd/MM', { locale: fr });
+      const dateStr = format(new Date(formData.slot_date), 'dd/MM', { locale: fr });
       const finalName =
         formData.name ||
         (formData.is_all_day
@@ -94,6 +93,7 @@ export function useCreateBlockedTime() {
       };
 
       const eventResponse = await calendarService.createEvent(eventPayload);
+
       return { success: true, slotId, eventId: eventResponse.id };
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Erreur lors de la création';

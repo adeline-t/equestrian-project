@@ -20,21 +20,21 @@ export function useRiderHorses(riderId) {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch rider-horse pairings
         const response = await axios.get(`/api/riders/${riderId}/horses`);
-        
+
         // The backend returns an array of pairings with nested horses
         // Each pairing has: { id, rider_id, horse_id, link_type, horses: { id, name, ... } }
         let horsesData = [];
-        
+
         if (Array.isArray(response.data)) {
           // Extract horses from pairings and filter out null/deleted horses
           horsesData = response.data
-            .map(pairing => pairing.horses)
-            .filter(horse => horse && horse.id); // Filter out null or invalid horses
+            .map((pairing) => pairing.horses)
+            .filter((horse) => horse && horse.id); // Filter out null or invalid horses
         }
-        
+
         setRiderPairedHorses(horsesData);
       } catch (err) {
         console.error('Error fetching rider horses:', err);

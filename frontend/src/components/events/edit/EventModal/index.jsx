@@ -3,9 +3,10 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useEventDetails } from '../../../../hooks/useEventDetails';
 import { useEventEdit } from '../../../../hooks/useEventEdit';
-import { getEventTypeLabel, getStatusLabel } from '../../../../lib/domain/events';
+import { getEventTypeConfig, getStatusConfig } from '../../../../lib/domain/events';
+import DomainBadge from '../../../common/DomainBadge';
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles/components/events.css';
+import '../../../../styles/features/events.css';
 import Modal from '../../../common/Modal';
 import EventDetailsTab from './EventDetailsTab';
 import EventEditForm from './EventEditForm';
@@ -34,6 +35,9 @@ function EventModal({ slotId, onClose, onUpdate }) {
   const isBlocked = event?.event_type === 'blocked';
   const hasRecurrence = !!recurrence;
 
+  const eventTypeConfig = getEventTypeConfig(event?.event_type || slot?.event_type);
+  const statusConfig = getStatusConfig(slot.slot_status);
+
   // Calculer le nombre d'onglets disponibles
   const availableTabs = [
     'details',
@@ -46,29 +50,27 @@ function EventModal({ slotId, onClose, onUpdate }) {
   const modalTitle = (
     <div className="event-modal-title-section">
       <div className="event-modal-title-main">
-        {event?.name || getEventTypeLabel(event?.event_type || slot?.event_type)}
+        {event?.name || eventTypeConfig?.label || 'Événement'}
       </div>
       <div className="event-modal-title-badges">
         {hasRecurrence && (
-          <span className="event-badge event-badge-recurrence">
+          <span className="badge badge-recurrence">
             <Icons.Repeat /> Récurrent
           </span>
         )}
-        <span className={`event-badge event-badge-status event-badge-${slot.slot_status}`}>
-          {getStatusLabel(slot.slot_status)}
-        </span>
+        {statusConfig && <DomainBadge config={statusConfig} />}
       </div>
       <div className="event-modal-subtitle">
         <div className="event-modal-meta-item">
           <Icons.Calendar className="event-modal-meta-icon" />
-          <span>{format(parseISO(slot.start_time), 'EEEE dd MMMM yyyy', { locale: fr })}</span>
+          <span>{format(parseISO(slot.slot_date), 'EEEE dd MMMM yyyy', { locale: fr })}</span>
         </div>
         <div className="event-modal-meta-item">
           <Icons.Clock className="event-modal-meta-icon" />
           <span>
             {slot.is_all_day
               ? 'Journée entière'
-              : `${slot.start_time.slice(11, 16)} - ${slot.end_time.slice(11, 16)}`}
+              : `${slot.start_time.slice(0, 5)} - ${slot.end_time.slice(0, 5)}`}
           </span>
         </div>
         {event && !isBlocked && (
@@ -86,21 +88,13 @@ function EventModal({ slotId, onClose, onUpdate }) {
   // Footer avec boutons
   const modalFooter = isEditing ? (
     <>
-      <button
-        className="event-modal-btn event-modal-btn-secondary"
-        onClick={cancelEdit}
-        disabled={saving}
-      >
+      <button className="btn btn-secondary" onClick={cancelEdit} disabled={saving}>
         <Icons.Cancel /> Annuler
       </button>
-      <button
-        className="event-modal-btn event-modal-btn-primary"
-        onClick={handleSave}
-        disabled={saving}
-      >
+      <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
         {saving ? (
           <>
-            <Icons.Loading className="event-modal-spin" />
+            <Icons.Loading className="spin" />
             Sauvegarde...
           </>
         ) : (
@@ -112,10 +106,10 @@ function EventModal({ slotId, onClose, onUpdate }) {
     </>
   ) : (
     <>
-      <button className="event-modal-btn event-modal-btn-secondary" onClick={onClose}>
+      <button className="btn btn-secondary" onClick={onClose}>
         <Icons.Close /> Fermer
       </button>
-      <button className="event-modal-btn event-modal-btn-primary" onClick={startEdit}>
+      <button className="btn btn-primary" onClick={startEdit}>
         <Icons.Edit /> Modifier
       </button>
     </>
@@ -155,8 +149,8 @@ function EventModal({ slotId, onClose, onUpdate }) {
       {/* Body */}
       <div className="event-modal-body-content">
         {editError && (
-          <div className="create-event-alert create-event-alert-error">
-            <Icons.Warning className="create-event-alert-icon" />
+          <div className="alert alert-error">
+            <Icons.Warning />
             {editError}
           </div>
         )}
@@ -182,8 +176,8 @@ function EventModal({ slotId, onClose, onUpdate }) {
 // Loading Modal
 const EventModalLoading = ({ isOpen, onClose }) => (
   <Modal isOpen={isOpen} onClose={onClose} title="Chargement" size="medium">
-    <div className="event-modal-loading-content">
-      <Icons.Loading className="event-modal-spin" />
+    <div className="modal-loading">
+      <Icons.Loading className="spin" />
       <p>Chargement des détails...</p>
     </div>
   </Modal>
@@ -195,15 +189,13 @@ const EventModalError = ({ isOpen, error, onClose }) => (
     isOpen={isOpen}
     onClose={onClose}
     title={
-      <div
-        style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-danger)' }}
-      >
+      <div className="modal-title-danger">
         <Icons.Warning />
         Erreur
       </div>
     }
     footer={
-      <button className="event-modal-btn event-modal-btn-secondary" onClick={onClose}>
+      <button className="btn btn-secondary" onClick={onClose}>
         <Icons.Close /> Fermer
       </button>
     }

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from '../../../common/Modal';
 import { Icons } from '../../../../lib/icons';
 import { useBlockedEventEdit } from '../../../../hooks/useBlockedEventEdit';
 import BlockedEventForm from './BlockedEventForm';
 import BlockedEventDisplay from './BlockedEventDisplay';
+import '../../../../styles/features/events.css';
 
 function BlockedEventModal({ slotId, onClose, onUpdate }) {
   const {
@@ -39,8 +40,8 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
   if (loading) {
     return (
       <Modal isOpen onClose={onClose} title="Chargement" size="medium">
-        <div className="event-modal-loading-content">
-          <Icons.Loading className="event-modal-spin" />
+        <div className="modal-loading">
+          <Icons.Loading className="spin" />
           <p>Chargement des détails...</p>
         </div>
       </Modal>
@@ -53,19 +54,12 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
         isOpen
         onClose={onClose}
         title={
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: 'var(--color-danger)',
-            }}
-          >
+          <div className="modal-title-danger">
             <Icons.Warning /> Erreur
           </div>
         }
         footer={
-          <button className="event-modal-btn event-modal-btn-secondary" onClick={onClose}>
+          <button className="btn btn-secondary" onClick={onClose}>
             <Icons.Close /> Fermer
           </button>
         }
@@ -83,34 +77,23 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
         isOpen
         onClose={() => setShowDeleteConfirm(false)}
         title={
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: 'var(--color-danger)',
-            }}
-          >
+          <div className="modal-title-danger">
             <Icons.Warning /> Confirmer la suppression
           </div>
         }
         footer={
           <>
             <button
-              className="event-modal-btn event-modal-btn-secondary"
+              className="btn btn-secondary"
               onClick={() => setShowDeleteConfirm(false)}
               disabled={deleting}
             >
               <Icons.Cancel /> Annuler
             </button>
-            <button
-              className="event-modal-btn event-modal-btn-danger"
-              onClick={handleDelete}
-              disabled={deleting}
-            >
+            <button className="btn btn-danger" onClick={handleDelete} disabled={deleting}>
               {deleting ? (
                 <>
-                  <Icons.Loading className="event-modal-spin" /> Suppression...
+                  <Icons.Loading className="spin" /> Suppression...
                 </>
               ) : (
                 <>
@@ -123,26 +106,21 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
         size="small"
       >
         {deleteError && (
-          <div
-            className="create-event-alert create-event-alert-error"
-            style={{ marginBottom: '16px' }}
-          >
+          <div className="alert alert-error mb-16">
             <Icons.Warning /> {deleteError}
           </div>
         )}
         <p>Êtes-vous sûr de vouloir supprimer cette période bloquée ?</p>
-        <p style={{ marginTop: '12px', color: 'var(--color-danger-medium-dark)', fontWeight: 500 }}>
-          Cette action est irréversible.
-        </p>
+        <p className="text-danger mt-12">Cette action est irréversible.</p>
       </Modal>
     );
   }
 
   const modalFooter = (
-    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+    <div className="modal-footer-split">
       {/* Left side - Delete button */}
       <button
-        className="event-modal-btn event-modal-btn-danger"
+        className="btn btn-danger"
         onClick={() => setShowDeleteConfirm(true)}
         disabled={saving || deleting}
       >
@@ -150,24 +128,16 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
       </button>
 
       {/* Right side - Edit/Save buttons */}
-      <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+      <div className="modal-footer-actions">
         {isEditing ? (
           <>
-            <button
-              className="event-modal-btn event-modal-btn-secondary"
-              onClick={cancelEdit}
-              disabled={saving}
-            >
+            <button className="btn btn-secondary" onClick={cancelEdit} disabled={saving}>
               <Icons.Cancel /> Annuler
             </button>
-            <button
-              className="event-modal-btn event-modal-btn-primary"
-              onClick={saveEdit}
-              disabled={saving}
-            >
+            <button className="btn btn-primary" onClick={saveEdit} disabled={saving}>
               {saving ? (
                 <>
-                  <Icons.Loading className="event-modal-spin" /> Sauvegarde...
+                  <Icons.Loading className="spin" /> Sauvegarde...
                 </>
               ) : (
                 <>
@@ -177,7 +147,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
             </button>
           </>
         ) : (
-          <button className="event-modal-btn event-modal-btn-primary" onClick={startEdit}>
+          <button className="btn btn-primary" onClick={startEdit}>
             <Icons.Edit /> Modifier
           </button>
         )}
@@ -190,7 +160,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
       isOpen
       onClose={onClose}
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="modal-title-with-icon">
           <Icons.Blocked /> Période bloquée
         </div>
       }
@@ -198,7 +168,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
       size="medium"
     >
       {editError && (
-        <div className="create-event-alert create-event-alert-error">
+        <div className="alert alert-error">
           <Icons.Warning /> {editError}
         </div>
       )}

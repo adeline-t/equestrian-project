@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import { useHorseForm } from '../../hooks/index.js';
-import { HORSE_TYPES, OWNER_TYPES } from '../../lib/domain/index.js';
+import {
+  HORSE_TYPES,
+  OWNER_TYPES,
+  getHorseTypeLabel,
+  getOwnerTypeLabel,
+} from '../../lib/domain/domain-constants.js';
 import { Icons } from '../../lib/icons.jsx';
 
 /**
@@ -53,17 +58,17 @@ function HorseForm({ horse, onSubmit, onCancel }) {
     <form onSubmit={handleFormSubmit} className="horse-form">
       {/* Error Alert */}
       {error && (
-        <div className="alert alert-error mb-5">
-          <Icons.Warning style={{ marginRight: '8px' }} />
+        <div className="alert alert-error mb-20">
+          <Icons.Warning />
           <strong>Erreur:</strong> {error}
         </div>
       )}
 
       {/* Basic Information */}
-      <div className="form-section mb-5">
-        <h3 className="mb-5">Informations générales</h3>
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Informations générales</h3>
 
-        <div className="form-group mb-5">
+        <div className="form-group mb-15">
           <label htmlFor="name">
             Nom du cheval <span className="required">*</span>
           </label>
@@ -78,7 +83,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           />
         </div>
 
-        <div className="form-group mb-5">
+        <div className="form-group mb-15">
           <label>
             Type <span className="required">*</span>
           </label>
@@ -96,29 +101,20 @@ function HorseForm({ horse, onSubmit, onCancel }) {
                   className={`segment-btn ${isActive ? 'active' : ''}`}
                   onClick={() => handleChange('kind', type)}
                 >
-                  {label}
+                  {getHorseTypeLabel(type)}
                 </button>
               );
             })}
           </div>
         </div>
 
-        <div className="form-group mb-5">
+        <div className="form-group mb-15">
           <label>
             Propriétaire <span className="required">*</span>
           </label>
 
           <div className="segmented-control">
             {ownershipOptions.map((type) => {
-              const label =
-                type === OWNER_TYPES.LAURY
-                  ? 'Laury'
-                  : type === OWNER_TYPES.PRIVATE_OWNER
-                  ? 'Propriétaire privé'
-                  : type === OWNER_TYPES.CLUB
-                  ? 'Club'
-                  : 'Autre';
-
               const isActive = formData.ownership_type === type;
 
               return (
@@ -128,7 +124,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
                   className={`segment-btn ${isActive ? 'active' : ''}`}
                   onClick={() => handleChange('ownership_type', type)}
                 >
-                  {label}
+                  {getOwnerTypeLabel(type)}
                 </button>
               );
             })}
@@ -137,8 +133,8 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       {/* Activity Period */}
-      <div className="form-section mb-5">
-        <h3 className="mb-5">Période d'activité</h3>
+      <div className="form-section mb-20">
+        <h3 className="mb-15">Période d'activité</h3>
 
         <div className="form-row">
           <div className="form-group">
@@ -174,18 +170,18 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           onClick={handleCancelClick}
           disabled={submitting}
         >
-          <Icons.Cancel style={{ marginRight: '8px' }} />
+          <Icons.Cancel />
           Annuler
         </button>
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? (
             <>
-              <Icons.Loading className="spin" style={{ marginRight: '8px' }} />
+              <Icons.Loading className="spin" />
               Enregistrement...
             </>
           ) : (
             <>
-              <Icons.Save style={{ marginRight: '8px' }} />
+              <Icons.Save />
               {horse ? 'Mettre à jour' : 'Créer'}
             </>
           )}

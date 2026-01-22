@@ -1,26 +1,10 @@
 import { useState, useEffect } from 'react';
-import { horseService } from '../services/index.js';
-import { isActive } from '../lib/helpers/index.js';
-
-// Filtres de type de cheval
-export const HORSE_KIND_FILTERS = {
-  ALL: 'all',
-  HORSE: 'horse',
-  PONY: 'pony',
-};
-
-// Filtres de type de propriétaire
-export const OWNERSHIP_TYPE_FILTERS = {
-  ALL: 'all',
-  LAURY: 'laury',
-  PRIVATE_OWNER: 'private_owner',
-  CLUB: 'club',
-  OTHER: 'other',
-};
+import { horseService } from '../services';
+import { isActive } from '../lib/helpers';
+import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain';
 
 /**
  * Custom hook for managing horses list with filters and stats
- * @returns {Object} Horses data, filters, stats, loading state, and actions
  */
 export function useHorsesList() {
   const [horses, setHorses] = useState([]);
@@ -29,8 +13,8 @@ export function useHorsesList() {
 
   // Filters
   const [includeInactive, setIncludeInactive] = useState(false);
-  const [kindFilter, setKindFilter] = useState(HORSE_KIND_FILTERS.ALL);
-  const [ownershipFilter, setOwnershipFilter] = useState(OWNERSHIP_TYPE_FILTERS.ALL);
+  const [kindFilter, setKindFilter] = useState('all');
+  const [ownershipFilter, setOwnershipFilter] = useState('all');
 
   const fetchHorses = async () => {
     try {
@@ -55,26 +39,21 @@ export function useHorsesList() {
     total: horses.length,
     active: horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date)).length,
     inactive: horses.filter((h) => !isActive(h.activity_start_date, h.activity_end_date)).length,
-    horse: horses.filter((h) => h.kind === 'horse').length,
-    pony: horses.filter((h) => h.kind === 'pony').length,
-    laury: horses.filter((h) => h.ownership_type === 'laury').length,
-    private_owner: horses.filter((h) => h.ownership_type === 'private_owner').length,
-    club: horses.filter((h) => h.ownership_type === 'club').length,
-    other: horses.filter((h) => h.ownership_type === 'other').length,
+    horse: horses.filter((h) => h.kind === HORSE_TYPES.HORSE).length,
+    pony: horses.filter((h) => h.kind === HORSE_TYPES.PONY).length,
+    laury: horses.filter((h) => h.ownership_type === OWNER_TYPES.LAURY).length,
+    private_owner: horses.filter((h) => h.ownership_type === OWNER_TYPES.PRIVATE_OWNER).length,
+    club: horses.filter((h) => h.ownership_type === OWNER_TYPES.CLUB).length,
+    other: horses.filter((h) => h.ownership_type === OWNER_TYPES.OTHER).length,
   };
 
   // Filter horses
   const filteredHorses = horses.filter((horse) => {
-    // Activity filter - par défaut, exclure les inactifs
     const horseIsActive = isActive(horse.activity_start_date, horse.activity_end_date);
     if (!includeInactive && !horseIsActive) return false;
 
-    // Kind filter
-    if (kindFilter !== HORSE_KIND_FILTERS.ALL && horse.kind !== kindFilter) return false;
-
-    // Ownership filter
-    if (ownershipFilter !== OWNERSHIP_TYPE_FILTERS.ALL && horse.ownership_type !== ownershipFilter)
-      return false;
+    if (kindFilter !== 'all' && horse.kind !== kindFilter) return false;
+    if (ownershipFilter !== 'all' && horse.ownership_type !== ownershipFilter) return false;
 
     return true;
   });
@@ -98,8 +77,6 @@ export function useHorsesList() {
     includeInactive,
     kindFilter,
     ownershipFilter,
-    HORSE_KIND_FILTERS,
-    OWNERSHIP_TYPE_FILTERS,
     setKindFilter,
     setOwnershipFilter,
     toggleIncludeInactive,

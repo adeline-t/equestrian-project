@@ -10,7 +10,6 @@ export async function handleEvents(request, env, idParam) {
 
   const db = getDatabase(env);
   const eventColumns = [
-    'planning_slot_id',
     'event_type',
     'instructor_id',
     'min_participants',
@@ -47,7 +46,7 @@ export async function handleEvents(request, env, idParam) {
       const body = await request.json().catch(() => null);
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
-      const missing = validateRequired(['planning_slot_id', 'event_type', 'instructor_id'], body);
+      const missing = validateRequired(['event_type', 'instructor_id'], body);
       if (missing)
         return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
 
@@ -62,21 +61,6 @@ export async function handleEvents(request, env, idParam) {
         return jsonResponse({ error: 'min_participants >= 0' }, 400, getSecurityHeaders());
       if (body.max_participants != null && body.max_participants < 0)
         return jsonResponse({ error: 'max_participants >= 0' }, 400, getSecurityHeaders());
-
-      // Ensure the slot does not already have an event
-      const { data: existingEvent } = await db
-        .from('events')
-        .select('id')
-        .eq('planning_slot_id', body.planning_slot_id)
-        .is('deleted_at', null)
-        .maybeSingle();
-
-      if (existingEvent)
-        return jsonResponse(
-          { error: 'Un événement existe déjà pour ce créneau' },
-          400,
-          getSecurityHeaders()
-        );
 
       const insertData = {
         created_at: new Date().toISOString(),

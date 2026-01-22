@@ -1,25 +1,22 @@
 import { useCreateEvent } from '../../../../hooks/useCreateEvent.js';
+import { useParticipantList } from '../../../../hooks/useParticipantList.js';
 import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/components/events.css';
+import '../../../../styles/features/events.css';
 import Modal from '../../../common/Modal.jsx';
 import EventForm from './EventForm.jsx';
 import ParticipantsForm from './ParticipantsForm.jsx';
 
 function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, initialEndTime }) {
-  const eventForm = useCreateEvent();
-  const {
-    formData,
-    loading,
-    error,
-    createEvent,
-    participants,
-    addParticipant,
-    removeParticipant,
-    updateParticipant,
-  } = eventForm;
+  // Event form logic
+  const eventForm = useCreateEvent(initialDate, initialStartTime, initialEndTime);
+  const { formData, setFormData, handleFormChange, createEvent, loading, error } = eventForm;
+
+  // Participants logic
+  const participantList = useParticipantList();
+  const { participants, addParticipant, removeParticipant, updateParticipant } = participantList;
 
   const handleSubmit = async () => {
-    const result = await createEvent();
+    const result = await createEvent(participants);
     if (result?.success) {
       onSuccess?.();
       onClose();
@@ -31,37 +28,32 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
       isOpen={true}
       onClose={onClose}
       title={
-        <span className="create-event-modal-title">
-          <Icons.Add className="create-event-modal-icon" />
+        <div className="modal-title-with-icon">
+          <Icons.Add />
           Créer un événement
-        </span>
+        </div>
       }
       size="large"
       footer={
-        <div className="create-event-modal-footer">
-          <button
-            type="button"
-            className="create-event-btn create-event-btn-secondary"
-            onClick={onClose}
-            disabled={loading}
-          >
-            <Icons.Cancel className="create-event-btn-icon" />
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
+            <Icons.Cancel />
             Annuler
           </button>
           <button
             type="button"
-            className="create-event-btn create-event-btn-primary"
+            className="btn btn-primary"
             onClick={handleSubmit}
             disabled={loading}
           >
             {loading ? (
               <>
-                <Icons.Loading className="create-event-spin create-event-btn-icon" />
+                <Icons.Loading className="spin" />
                 Création...
               </>
             ) : (
               <>
-                <Icons.Check className="create-event-btn-icon" />
+                <Icons.Check />
                 Créer
               </>
             )}
@@ -70,28 +62,24 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
       }
     >
       {error && (
-        <div className="create-event-alert create-event-alert-error">
-          <Icons.Warning className="create-event-alert-icon" />
+        <div className="alert alert-error">
+          <Icons.Warning />
           {error}
         </div>
       )}
 
       <EventForm
-        {...eventForm}
-        initialDate={initialDate}
-        initialStartTime={initialStartTime}
-        initialEndTime={initialEndTime}
+        formData={formData}
+        handleFormChange={handleFormChange}
+        setFormData={setFormData}
       />
 
-      <div className="create-event-section">
-        <h2 className="create-event-section-title">Participants</h2>
-        <ParticipantsForm
-          participants={participants}
-          addParticipant={addParticipant}
-          removeParticipant={removeParticipant}
-          updateParticipant={updateParticipant}
-        />
-      </div>
+      <ParticipantsForm
+        participants={participants}
+        addParticipant={addParticipant}
+        removeParticipant={removeParticipant}
+        updateParticipant={updateParticipant}
+      />
     </Modal>
   );
 }

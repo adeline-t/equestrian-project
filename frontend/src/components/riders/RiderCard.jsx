@@ -1,15 +1,22 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { usePackageActions, usePairingActions, useRiderCard } from '../../hooks/index.js';
-import { getRiderTypeLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/index.js';
+import {
+  getRiderTypeConfig,
+  getRiderHorseLinkConfig,
+  WEEK_DAYS,
+  WEEK_DAYS_EN,
+} from '../../lib/domain/domain-constants.js';
+import { getStatusConfig } from '../../lib/domain/domain-constants.js';
 import { formatDate, isActive } from '../../lib/helpers/index.js';
 import { Icons } from '../../lib/icons.jsx';
+import DomainBadge from '../common/DomainBadge.jsx';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
-import '../../styles/components/pairings.css';
-import '../../styles/components/riders.css';
+import '../../styles/features/pairings.css';
+import '../../styles/features/riders.css';
 
 /**
  * RiderCard - Detailed rider information card
@@ -55,7 +62,8 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
     }
   };
 
-  const handlePairingSubmit = async (rIdFromForm, pairingData) => {
+  // Nouvelle signature simplifiée - PairingForm envoie directement formData
+  const handlePairingSubmit = async (pairingData) => {
     try {
       await pairingActions.handleSubmit(riderId, pairingData);
     } catch (err) {
@@ -75,7 +83,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
     return (
       <Modal isOpen={true} onClose={onClose} size="large">
         <div className="modal-loading">
-          <Icons.Loading className="spin" style={{ fontSize: '32px' }} />
+          <Icons.Loading className="spin" />
           <p>Chargement...</p>
         </div>
       </Modal>
@@ -86,7 +94,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
     return (
       <Modal isOpen={true} onClose={onClose} size="small">
         <div className="modal-error">
-          <Icons.Warning style={{ fontSize: '32px', color: 'var(--color-danger)' }} />
+          <Icons.Warning />
           <h3>Cavalier non trouvé</h3>
         </div>
       </Modal>
@@ -94,6 +102,8 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
   }
 
   const isRiderActive = isActive(rider.activity_start_date, rider.activity_end_date);
+  const riderTypeConfig = getRiderTypeConfig(rider.rider_type);
+  const statusConfig = getStatusConfig(isRiderActive ? 'active' : 'inactive');
 
   return (
     <>
@@ -109,12 +119,8 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
             <div className="rider-card-title-text">
               <h2>{rider.name}</h2>
               <div className="rider-card-meta">
-                <span className="badge badge-rider-type" data-rider-type={rider.rider_type}>
-                  {getRiderTypeLabel(rider.rider_type)}
-                </span>
-                <span className={`badge ${isRiderActive ? 'badge-success' : 'badge-secondary'}`}>
-                  {isRiderActive ? 'Actif' : 'Inactif'}
-                </span>
+                {riderTypeConfig && <DomainBadge config={riderTypeConfig} />}
+                {statusConfig && <DomainBadge config={statusConfig} />}
               </div>
             </div>
 
@@ -186,7 +192,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                 </div>
                 <div className="info-card-body">
                   <div className="info-item-modern">
-                    <div className="info-icon success">
+                    <div className="info-icon info-icon-success">
                       <Icons.Check />
                     </div>
                     <div className="info-content">
@@ -200,7 +206,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                   </div>
                   {rider.activity_end_date && (
                     <div className="info-item-modern">
-                      <div className="info-icon warning">
+                      <div className="info-icon info-icon-warning">
                         <Icons.Warning />
                       </div>
                       <div className="info-content">
@@ -221,7 +227,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                   <div className="data-card-title">
                     <Icons.Packages />
                     <h3>Forfait</h3>
-                    {activePackage && <span className="badge badge-success">Actif</span>}
+                    {activePackage && <DomainBadge config={getStatusConfig('active')} />}
                   </div>
                   {!activePackage && (
                     <button
@@ -236,7 +242,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                 </div>
                 <div className="data-card-body">
                   {!activePackage ? (
-                    <div className="empty-state-inline">
+                    <div className="empty-state-small">
                       <Icons.Packages />
                       <p>Aucun forfait</p>
                     </div>
@@ -248,7 +254,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                             <span className="package-label">Services hebdomadaires</span>
                             <span className="package-value">{activePackage.services_per_week}</span>
                           </div>
-                          <div className="package-separator">•</div>
+                          <div className="package-separator"> </div>
                           <div className="package-detail">
                             <span className="package-label">Cours collectifs</span>
                             <span className="package-value">
@@ -256,7 +262,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                             </span>
                           </div>
                         </div>
-                        <div className="package-actions">
+                        <div className="pairing-actions">
                           <button
                             className="btn-icon-modern"
                             onClick={() => packageActions.handleEdit(activePackage)}
@@ -297,14 +303,14 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                 </div>
                 <div className="data-card-body">
                   {activePairings.length === 0 ? (
-                    <div className="empty-state-inline">
+                    <div className="empty-state-small">
                       <Icons.Horse />
                       <p>Aucun cheval</p>
                     </div>
                   ) : (
                     <div className="pairings-list-modern">
                       {activePairings.map((pairing) => {
-                        const isLoan = pairing.link_type === 'loan';
+                        const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
                         const loanDays = pairing.loan_days || [];
 
                         return (
@@ -314,11 +320,9 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
                                 <span className="pairing-horse-name">
                                   {pairing.horses?.name || 'N/A'}
                                 </span>
-                                <span className={`pairing-type-badge ${isLoan ? 'loan' : 'own'}`}>
-                                  {isLoan ? 'Demi-pension' : 'Propriétaire'}
-                                </span>
+                                {linkConfig && <DomainBadge config={linkConfig} />}
                               </div>
-                              {isLoan && (
+                              {pairing.link_type === 'loan' && (
                                 <div className="pairing-days">
                                   {WEEK_DAYS_EN.map((dayEn, index) => {
                                     const isLoanDay = loanDays.includes(dayEn);
@@ -432,7 +436,6 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
           >
             <PairingForm
               pairing={pairingActions.editingPairing}
-              riders={riders}
               horses={horses}
               rider={rider}
               riderId={riderId}

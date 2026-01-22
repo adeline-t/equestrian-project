@@ -43,7 +43,7 @@ export function useRiderCard(riderId) {
       const data = await riderService.getPackages(riderId);
       console.log('📦 Packages fetched:', data);
 
-      // ✅ Filtrer les packages supprimés côté client si besoin
+      // Filter out deleted packages client-side if needed
       const activePackages = Array.isArray(data) ? data.filter((pkg) => !pkg.deleted_at) : [];
 
       setPackages(activePackages);

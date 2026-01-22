@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { packageService } from '../services/index.js';
 
+/**
+ * Custom hook for managing package CRUD operations
+ * @param {Function} onSuccess - Callback function to execute on successful operation
+ * @returns {Object} Package action handlers and state
+ */
 export function usePackageActions(onSuccess) {
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
@@ -26,7 +31,7 @@ export function usePackageActions(onSuccess) {
     try {
       let result;
       if (editingPackage) {
-        // Soft delete ancien forfait
+        // Soft delete old package
         await packageService.delete(editingPackage.id);
 
         // Create new
@@ -45,7 +50,7 @@ export function usePackageActions(onSuccess) {
       setShowPackageModal(false);
       return result;
     } catch (err) {
-      // Remonter l'erreur au parent pour affichage
+      // Rethrow error for parent handling
       throw err;
     }
   };

@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
 
+/**
+ * Custom hook for managing package form data and operations
+ * @param {Object} packageData - The package object for editing
+ * @param {string|number} riderId - The rider ID
+ * @param {Function} onSubmit - Submit handler
+ * @returns {Object} Form data, handlers, and state
+ */
 export function usePackageForm(packageData, riderId, onSubmit) {
   const [formData, setFormData] = useState({
     services_per_week: String(packageData?.services_per_week ?? 0),
@@ -10,7 +17,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Réinitialiser le formulaire quand packageData change (create vs edit)
+  // Reset form when packageData changes (create vs edit)
   useEffect(() => {
     setFormData({
       services_per_week: String(packageData?.services_per_week ?? 0),
@@ -30,7 +37,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
     }));
   };
 
-  // handleSubmit accepte soit un event (submit HTML) soit aucun argument (appel programmatique)
+  // handleSubmit accepts either an event (HTML submit) or no argument (programmatic call)
   const handleSubmit = async (e) => {
     if (e && typeof e.preventDefault === 'function') {
       e.preventDefault();
@@ -76,6 +83,6 @@ export function usePackageForm(packageData, riderId, onSubmit) {
     submitting,
     handleChange,
     handleSubmit,
-    setFormData, // exposer si besoin pour tests ou reset manuel
+    setFormData,
   };
 }

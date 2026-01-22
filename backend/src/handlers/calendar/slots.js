@@ -18,6 +18,7 @@ export async function handlePlanningSlots(request, env, idParam) {
     'end_time',
     'is_all_day',
     'slot_date',
+    'event_id',
   ];
 
   try {
@@ -25,42 +26,36 @@ export async function handlePlanningSlots(request, env, idParam) {
     if (request.method === 'GET' && url.pathname.endsWith('/scheduled')) {
       const { data: slots, error: slotsError } = await db
         .from('planning_slots')
-        .select('*')
+        .select(
+          `
+        *,
+        events (*),
+        event_participants (
+          planning_slot_id,
+          rider_id,
+          horse_id,
+          horse_assignment_type,
+          is_cancelled,
+          riders (
+            id,
+            name
+          ),
+          horses (
+            id,
+            name,
+            kind
+          )
+        )
+      `
+        )
         .eq('slot_status', 'scheduled')
-        .gte('slot_date', new Date().toISOString().split('T')[0])
         .is('deleted_at', null)
         .order('slot_date', { ascending: true })
         .order('start_time', { ascending: true });
 
       if (slotsError) return handleDatabaseError(slotsError, 'slots.scheduled', env);
 
-      // Enrichir chaque slot avec les données de l'événement, instructeur et participants
-      const enrichedSlots = await Promise.all(
-        (slots || []).map(async (slot) => {
-          // Get event data
-          const { data: event } = await db
-            .from('events')
-            .select('*')
-            .eq('planning_slot_id', slot.id)
-            .is('deleted_at', null)
-            .maybeSingle();
-
-          // Get participant count
-          const { count: participant_count } = await db
-            .from('event_participants')
-            .select('*', { count: 'exact', head: true })
-            .eq('planning_slot_id', slot.id);
-
-          // Merge slot with event data and additional info
-          return {
-            ...slot,
-            // Keep full event object
-            event: event || null,
-            participant_count: participant_count || 0,
-          };
-        })
-      );
-      return jsonResponse(enrichedSlots, 200, getSecurityHeaders());
+      return jsonResponse(slots, 200, getSecurityHeaders());
     }
 
     // GET single slot with full details
@@ -92,8 +87,8 @@ export async function handlePlanningSlots(request, env, idParam) {
         .select(
           `
           *,
-          rider:riders (id, name, email, phone, rider_type, activity_start_date, activity_end_date),
-          horse:horses (id, name, kind, ownership_type, activity_start_date, activity_end_date)
+          rider:riders (id, name, email, phone, rider_type),
+          horse:horses (id, name, kind, ownership_type)
         `
         )
         .eq('planning_slot_id', id)
@@ -169,7 +164,7 @@ export async function handlePlanningSlots(request, env, idParam) {
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
       const missing = validateRequired(
-        ['slot_date', 'start_time', 'end_time', 'slot_status'],
+        ['slot_date', 'start_time', 'end_time', 'slot_status', 'event_id'],
         body
       );
       if (missing)
@@ -183,6 +178,7 @@ export async function handlePlanningSlots(request, env, idParam) {
         );
 
       const slotData = {
+        event_id: body.event_id,
         slot_date: body.slot_date,
         start_time: body.start_time,
         end_time: body.end_time,

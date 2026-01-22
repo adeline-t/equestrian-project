@@ -6,27 +6,6 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 /**
- * Format week title
- * @param {Object} weekData - Week data with period
- * @returns {string} Formatted week title
- */
-export function formatWeekTitle(weekData) {
-  if (!weekData || !weekData.period) return 'Chargement...';
-
-  const start = new Date(weekData.period.start);
-  const end = new Date(weekData.period.end);
-
-  // Validate dates before formatting
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    return 'Semaine en cours';
-  }
-
-  return `Semaine du ${format(start, 'dd MMMM', { locale: fr })} au ${format(end, 'dd MMMM yyyy', {
-    locale: fr,
-  })}`;
-}
-
-/**
  * Format date for display
  * @param {Date|string} date - Date to format
  * @param {string} formatStr - Format string (default: 'dd/MM/yyyy')
@@ -48,16 +27,4 @@ export function formatDateTime(date, formatStr = 'dd/MM/yyyy HH:mm') {
   if (!date) return '';
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   return format(dateObj, formatStr, { locale: fr });
-}
-
-/**
- * Format date for date input (YYYY-MM-DD)
- * Already in correct format from database, this is a passthrough with validation
- * @param {string} dateStr - Date string in YYYY-MM-DD format
- * @returns {string} Date in YYYY-MM-DD format
- */
-export function formatDateForInput(dateStr) {
-  if (!dateStr) return '';
-  // Date is already in YYYY-MM-DD format from database
-  return String(dateStr);
 }

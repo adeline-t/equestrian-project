@@ -6,37 +6,6 @@ import { isActive } from './activityFilters.js';
 import { ACTIVITY_STATUS_FILTERS, COMMON_FILTERS } from './activityFilters.js';
 
 /**
- * Get active items for a rider
- * @param {Object} rider - Rider object
- * @returns {Object} Active items
- */
-export function getRiderActiveItems(rider) {
-  return {
-    packages: rider.packages ? rider.packages.filter((p) => p.is_active) : [],
-    pairings: rider.pairings
-      ? rider.pairings.filter((p) => isActive(p.pairing_start_date, p.pairing_end_date))
-      : [],
-    horses: rider.horses
-      ? rider.horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date))
-      : [],
-  };
-}
-
-/**
- * Filter riders by status
- * @param {Array} riders - Array of rider objects
- * @param {string} filter - Filter type ('all', 'active', 'inactive')
- * @returns {Array} Filtered riders
- */
-export function filterRidersByStatus(riders, filter) {
-  if (filter === 'all') return riders;
-  return riders.filter((rider) => {
-    const isActiveRider = isActive(rider.activity_start_date, rider.activity_end_date);
-    return filter === 'active' ? isActiveRider : !isActiveRider;
-  });
-}
-
-/**
  * Filter riders based on criteria
  * @param {Array} riders - array of riders
  * @param {Object} filters - filter criteria

@@ -1,8 +1,9 @@
 # 📁 Project Files Export
 
-Generated on: Tue Jan 20 08:53:59 CET 2026
+Generated on: Tue Jan 20 18:52:57 CET 2026
 
 ## 📄 api.js
+
 **Path:** `config/api.js`
 
 ```
@@ -10,85 +11,6 @@ Generated on: Tue Jan 20 08:53:59 CET 2026
  * API - Consolidated configuration
  * Endpoints, errors, settings and helpers
  */
-
-export const AUTH = {
-  LOGIN: '/auth/login',
-  LOGOUT: '/auth/logout',
-  REFRESH: '/auth/refresh',
-};
-
-export const SLOTS = {
-  LIST: '/planning_slots',
-  CREATE: '/planning_slots',
-  UPDATE: '/planning_slots/:id',
-  DELETE: '/planning_slots/:id',
-  GET: '/planning_slots/:id',
-};
-
-export const EVENTS = {
-  LIST: '/events',
-  CREATE: '/events',
-  UPDATE: '/events/:id',
-  DELETE: '/events/:id',
-  GET: '/events/:id',
-  PARTICIPANTS: '/events/:id/participants',
-  ADD_PARTICIPANT: '/events/:id/participants',
-  REMOVE_PARTICIPANT: '/events/:id/participants/:participantId',
-};
-
-export const HORSES = {
-  LIST: '/horses',
-  CREATE: '/horses',
-  UPDATE: '/horses/:id',
-  DELETE: '/horses/:id',
-  GET: '/horses/:id',
-  RIDERS: '/horses/:id/riders',
-};
-
-export const RIDERS = {
-  LIST: '/riders',
-  CREATE: '/riders',
-  UPDATE: '/riders/:id',
-  DELETE: '/riders/:id',
-  GET: '/riders/:id',
-  HORSES: '/riders/:id/horses',
-  PACKAGES: '/riders/:id/packages',
-};
-
-export const PACKAGES = {
-  LIST: '/packages',
-  CREATE: '/packages',
-  UPDATE: '/packages/:id',
-  DELETE: '/packages/:id',
-  GET: '/packages/:id',
-};
-
-export const PAIRINGS = {
-  LIST: '/pairings',
-  CREATE: '/pairings',
-  UPDATE: '/pairings/:id',
-  DELETE: '/pairings/:id',
-  GET: '/pairings/:id',
-};
-
-export const API_ENDPOINTS = {
-  AUTH,
-  SLOTS,
-  EVENTS,
-  HORSES,
-  RIDERS,
-  PACKAGES,
-  PAIRINGS,
-};
-
-/* Utilities */
-export const buildEndpoint = (endpoint, params = {}) => {
-  let url = endpoint;
-  Object.keys(params).forEach((key) => {
-    url = url.replace(`:${key}`, params[key]);
-  });
-  return url;
-};
 
 /* Error codes and messages */
 export const HTTP_STATUS = {
@@ -113,18 +35,6 @@ export const ERROR_MESSAGES = {
   UNKNOWN: 'Une erreur inconnue est survenue.',
 };
 
-export const getErrorMessage = (statusCode) => {
-  const messageMap = {
-    [HTTP_STATUS.BAD_REQUEST]: ERROR_MESSAGES.UNKNOWN,
-    [HTTP_STATUS.UNAUTHORIZED]: ERROR_MESSAGES.UNAUTHORIZED,
-    [HTTP_STATUS.FORBIDDEN]: ERROR_MESSAGES.FORBIDDEN,
-    [HTTP_STATUS.NOT_FOUND]: ERROR_MESSAGES.NOT_FOUND,
-    [HTTP_STATUS.CONFLICT]: ERROR_MESSAGES.UNKNOWN,
-    [HTTP_STATUS.INTERNAL_SERVER_ERROR]: ERROR_MESSAGES.SERVER_ERROR,
-  };
-  return messageMap[statusCode] || ERROR_MESSAGES.UNKNOWN;
-};
-
 /* API settings */
 export const API_SETTINGS = {
   TIMEOUT: 30000,
@@ -132,79 +42,12 @@ export const API_SETTINGS = {
   RETRY_DELAY: 1000,
   CACHE_DURATION: 300000,
 };
-
-export const getApiSetting = (key, defaultValue = null) => API_SETTINGS[key] ?? defaultValue;
-```
-
----
-
-## 📄 forms.js
-**Path:** `config/forms.js`
-
-```
-// lib/config/forms.js
-
-/**
- * Field types for forms
- */
-export const FIELD_TYPES = {
-  TEXT: 'text',
-  NUMBER: 'number',
-  EMAIL: 'email',
-  SELECT: 'select',
-  DATE: 'date',
-  TIME: 'time',
-  CHECKBOX: 'checkbox',
-  RADIO: 'radio',
-  TEXTAREA: 'textarea',
-};
-
-/**
- * Checks if a field type is valid
- * @param {string} type
- * @returns {boolean}
- */
-export const isValidFieldType = (type) => Object.values(FIELD_TYPES).includes(type);
-
-/**
- * Returns human-readable label for a field type
- * @param {string} type
- * @returns {string}
- */
-export const getFieldTypeLabel = (type) => {
-  const labels = {
-    text: 'Texte',
-    number: 'Nombre',
-    email: 'Email',
-    select: 'Sélecteur',
-    date: 'Date',
-    time: 'Heure',
-    checkbox: 'Case à cocher',
-    radio: 'Bouton radio',
-    textarea: 'Zone de texte',
-  };
-  return labels[type] || type;
-};
-
-/**
- * Form settings: default values for forms
- */
-export const FORM_SETTINGS = {
-  requiredFields: [],
-  maxLength: 255,
-};
-
-/**
- * Retrieves a specific form setting
- * @param {string} key
- * @returns {*}
- */
-export const getFormSetting = (key) => FORM_SETTINGS[key];
 ```
 
 ---
 
 ## 📄 index.js
+
 **Path:** `config/index.js`
 
 ```
@@ -212,13 +55,13 @@ export const getFormSetting = (key) => FORM_SETTINGS[key];
  * Config barrel
  */
 export * from './api.js';
-export * from './forms.js';
 export * from './ui.js';
 ```
 
 ---
 
 ## 📄 ui.js
+
 **Path:** `config/ui.js`
 
 ```
@@ -236,54 +79,6 @@ export const MODAL_SIZES = {
   MEDIUM: 'medium',
   LARGE: 'large',
   XLARGE: 'xlarge',
-};
-
-export const MODAL_CONFIG = {
-  defaultSize: MODAL_SIZES.MEDIUM,
-  closeOnOverlay: true,
-  animationDuration: 300,
-};
-
-export const getModalSizeClass = (size) => {
-  const sizeMap = {
-    [MODAL_SIZES.SMALL]: 'small',
-    [MODAL_SIZES.MEDIUM]: 'medium',
-    [MODAL_SIZES.LARGE]: 'large',
-    [MODAL_SIZES.XLARGE]: 'xlarge',
-  };
-  return sizeMap[size] || sizeMap[MODAL_SIZES.MEDIUM];
-};
-
-/* ============================================
-   DATE FORMATS
-   ============================================ */
-
-export const DATE_FORMATS = {
-  DISPLAY: 'DD/MM/YYYY',
-  INPUT: 'YYYY-MM-DD',
-  TIME: 'HH:mm',
-  DATETIME: 'DD/MM/YYYY HH:mm',
-};
-
-/* ============================================
-   TABLE
-   ============================================ */
-
-export const TABLE_CONFIG = {
-  DEFAULT_PAGE_SIZE: 10,
-  PAGE_SIZE_OPTIONS: [10, 25, 50, 100],
-  MIN_SEARCH_LENGTH: 2,
-};
-
-/* ============================================
-   LOADING STATES
-   ============================================ */
-
-export const LOADING_STATES = {
-  IDLE: 'idle',
-  LOADING: 'loading',
-  SUCCESS: 'success',
-  ERROR: 'error',
 };
 
 /* ============================================
@@ -309,11 +104,6 @@ export const CARD_STYLES = {
   },
 };
 
-export const getCardStyle = (layout) => ({
-  ...CARD_STYLES.base,
-  ...(CARD_STYLES[layout] || CARD_STYLES.standard),
-});
-
 /* ============================================
    TEXT STYLES
    ============================================ */
@@ -331,38 +121,12 @@ export const TEXT_STYLES = {
     duration: { fontSize: '10px' },
   },
 };
-
-export const getTextStyle = (layout, element) => {
-  const layoutStyles = TEXT_STYLES[layout] || TEXT_STYLES.standard;
-  return layoutStyles[element] || {};
-};
-
-/* ============================================
-   LAYOUT STYLES
-   ============================================ */
-
-export const LAYOUT_STYLES = {
-  row: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-  },
-  spaceBetween: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  column: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
-  },
-};
 ```
 
 ---
 
 ## 📄 domain-constants.js
+
 **Path:** `domain/domain-constants.js`
 
 ```
@@ -398,9 +162,7 @@ export const HORSE_KIND_LABELS = {
   },
 };
 
-export const getHorseKindLabel = (kind) => HORSE_KIND_LABELS[kind]?.label || kind;
-
-export const HORSE_KINDS = Object.values(HORSE_TYPES);
+export const getHorseTypeLabel = (kind) => HORSE_KIND_LABELS[kind]?.label || kind;
 
 /* ============================================
    OWNERSHIP TYPES
@@ -472,77 +234,12 @@ export const RIDER_TYPE_LABELS = {
 export const getRiderTypeLabel = (type) => RIDER_TYPE_LABELS[type]?.label || type;
 
 /* ============================================
-   PACKAGES DOMAIN
-   ============================================ */
-
-export const PACKAGE_STATUS = {
-  ACTIVE: 'active',
-  UPCOMING: 'upcoming',
-  EXPIRED: 'expired',
-  INACTIVE: 'inactive',
-  SUSPENDED: 'suspended',
-};
-
-export const PACKAGE_STATUS_LABELS = {
-  [PACKAGE_STATUS.ACTIVE]: 'Actif',
-  [PACKAGE_STATUS.UPCOMING]: 'À venir',
-  [PACKAGE_STATUS.EXPIRED]: 'Expiré',
-  [PACKAGE_STATUS.INACTIVE]: 'Inactif',
-  [PACKAGE_STATUS.SUSPENDED]: 'Suspendu',
-};
-
-export const PACKAGE_STATUS_CONFIG = {
-  [PACKAGE_STATUS.ACTIVE]: {
-    value: 'active',
-    label: 'Actif',
-    cssClass: 'active',
-    cssVar: '--color-success-dark',
-  },
-  [PACKAGE_STATUS.UPCOMING]: {
-    value: 'upcoming',
-    label: 'À venir',
-    cssClass: 'upcoming',
-    cssVar: '--color-info-dark',
-  },
-  [PACKAGE_STATUS.EXPIRED]: {
-    value: 'expired',
-    label: 'Expiré',
-    cssClass: 'expired',
-    cssVar: '--color-gray-650',
-  },
-  [PACKAGE_STATUS.INACTIVE]: {
-    value: 'inactive',
-    label: 'Inactif',
-    cssClass: 'inactive',
-    cssVar: '--color-danger-dark',
-  },
-  [PACKAGE_STATUS.SUSPENDED]: {
-    value: 'suspended',
-    label: 'Suspendu',
-    cssClass: 'suspended',
-    cssVar: '--color-warning-dark',
-  },
-};
-
-export const getPackageStatusLabel = (status) => PACKAGE_STATUS_LABELS[status] || status;
-
-export const getPackageStatusConfig = (status) =>
-  PACKAGE_STATUS_CONFIG[status] || PACKAGE_STATUS_CONFIG[PACKAGE_STATUS.INACTIVE];
-
-export const isPackageActive = (status) => status === PACKAGE_STATUS.ACTIVE;
-
-/* ============================================
    PAIRINGS DOMAIN (Rider-Horse Links)
    ============================================ */
 
 export const RIDER_HORSE_LINK_TYPE = {
   OWN: 'own',
   LOAN: 'loan',
-};
-
-export const RIDER_HORSE_LINK_TYPE_LABELS = {
-  [RIDER_HORSE_LINK_TYPE.OWN]: 'Propriétaire',
-  [RIDER_HORSE_LINK_TYPE.LOAN]: 'Pension',
 };
 
 export const RIDER_HORSE_LINK_TYPE_CONFIG = {
@@ -560,7 +257,7 @@ export const RIDER_HORSE_LINK_TYPE_CONFIG = {
   },
 };
 
-export const getRiderHorseLinkLabel = (type) => RIDER_HORSE_LINK_TYPE_LABELS[type] || type;
+export const getRiderHorseLinkLabel = (type) => RIDER_HORSE_LINK_TYPE_CONFIG[type]?.label ?? type;
 
 export const getRiderHorseLinkConfig = (type) =>
   RIDER_HORSE_LINK_TYPE_CONFIG[type] || RIDER_HORSE_LINK_TYPE_CONFIG[RIDER_HORSE_LINK_TYPE.OWN];
@@ -569,33 +266,6 @@ export const isLoanPairing = (pairingOrType) =>
   typeof pairingOrType === 'string'
     ? pairingOrType === RIDER_HORSE_LINK_TYPE.LOAN
     : pairingOrType?.link_type === RIDER_HORSE_LINK_TYPE.LOAN;
-
-export const isOwnPairing = (pairingOrType) =>
-  typeof pairingOrType === 'string'
-    ? pairingOrType === RIDER_HORSE_LINK_TYPE.OWN
-    : pairingOrType?.link_type === RIDER_HORSE_LINK_TYPE.OWN;
-
-/**
- * Returns a human-readable description for a pairing
- * Example:
- * - "Propriétaire"
- * - "Pension – 3 jours / semaine (lun, mer, ven)"
- */
-export const getRiderHorseLinkDescription = (pairing) => {
-  if (!pairing) return null;
-
-  if (pairing.link_type === RIDER_HORSE_LINK_TYPE.LOAN) {
-    const daysLabel =
-      Array.isArray(pairing.loan_days) && pairing.loan_days.length > 0
-        ? ` (${pairing.loan_days.join(', ')})`
-        : '';
-    return `Pension – ${pairing.loan_days_per_week} jour${
-      pairing.loan_days_per_week > 1 ? 's' : ''
-    } / semaine${daysLabel}`;
-  }
-
-  return getRiderHorseLinkLabel(pairing.link_type);
-};
 
 /* -----------------------
  * Validation helpers
@@ -609,31 +279,6 @@ export const WEEK_DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 export const WEEK_DAYS_EN = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 /**
- * Convert weekday number (1=Mon .. 7=Sun) to code ('mon', 'tue', ...)
- * @param {number} n
- * @returns {string|null}
- */
-export const weekDayNumberToCode = (n) => {
-  if (!Number.isInteger(n) || n < 1 || n > 7) return null;
-  return WEEK_DAYS_EN[n - 1];
-};
-
-/**
- * Convert weekday code ('mon','tue',...) to number (1..7)
- * @param {string|number} code
- * @returns {number|null}
- */
-export const weekDayCodeToNumber = (code) => {
-  if (typeof code === 'number') {
-    return code >= 1 && code <= 7 ? code : null;
-  }
-  if (!code) return null;
-  const s = String(code).toLowerCase();
-  const idx = WEEK_DAYS_EN.indexOf(s);
-  return idx === -1 ? null : idx + 1;
-};
-
-/**
  * Convert weekday code ('mon','tue',...) to French abbreviation ('Lun','Mar',...)
  * @param {string} code - weekday code
  * @returns {string|null} French abbreviation or null if invalid
@@ -642,16 +287,6 @@ export const weekDayCodeToFr = (code) => {
   if (!code) return null;
   const idx = WEEK_DAYS_EN.indexOf(String(code).toLowerCase());
   return idx === -1 ? null : WEEK_DAYS[idx];
-};
-
-/**
- * Convert array of weekday codes to French abbreviations
- * @param {string[]} codes
- * @returns {string[]} Array of French abbreviations
- */
-export const weekDaysCodesToFr = (codes) => {
-  if (!Array.isArray(codes)) return [];
-  return codes.map(weekDayCodeToFr).filter(Boolean);
 };
 
 /**
@@ -668,28 +303,6 @@ export const HORSE_ASSIGNMENT_TYPES = {
   MANUAL: 'manual',
   AUTOMATIC: 'automatic',
 };
-
-export const PARTICIPATION_STATUSES = {
-  CONFIRMED: 'confirmed',
-  PENDING: 'pending',
-  CANCELLED: 'cancelled',
-};
-
-export const PARTICIPATION_STATUS_LABELS = {
-  [PARTICIPATION_STATUSES.CONFIRMED]: 'Confirmé',
-  [PARTICIPATION_STATUSES.PENDING]: 'En attente',
-  [PARTICIPATION_STATUSES.CANCELLED]: 'Annulé',
-};
-
-export const getParticipationStatusLabel = (status) =>
-  PARTICIPATION_STATUS_LABELS[status] || status;
-
-/**
- * Map participation status to DB fields (currently maps to is_cancelled)
- */
-export const participationStatusToDb = (status) => ({
-  is_cancelled: status === 'cancelled',
-});
 
 /* ============================================
    GENERAL STATUS
@@ -745,6 +358,7 @@ export const INSTRUCTORS = {
 ---
 
 ## 📄 events.js
+
 **Path:** `domain/events.js`
 
 ```
@@ -835,10 +449,6 @@ export function getEventTypeConfig(type) {
   return EVENT_TYPE_CONFIG[type] || null;
 }
 
-export function getEventTypeIcon(type) {
-  return getEventTypeConfig(type)?.icon;
-}
-
 export function getEventTypeColor(type) {
   return getEventTypeConfig(type)?.color;
 }
@@ -908,24 +518,6 @@ export function getStatusConfig(status) {
   return SLOT_STATUS_CONFIG[status] || SLOT_STATUS_CONFIG[SLOT_STATUSES.SCHEDULED];
 }
 
-export function getStatusBadge(status) {
-  const config = getStatusConfig(status);
-  return {
-    label: config.label,
-    icon: config.icon,
-    color: config.color,
-    bgColor: config.bgColor,
-  };
-}
-
-export function getStatusIcon(status) {
-  return getStatusConfig(status)?.icon;
-}
-
-export function getStatusColor(status) {
-  return getStatusConfig(status)?.color;
-}
-
 export function getStatusLabel(status) {
   return getStatusConfig(status)?.label;
 }
@@ -941,92 +533,15 @@ export function getStatusOptions() {
  * EVENT FORMATTERS
  * ----------------------------------------------------- */
 
-export function getEventColor(eventType) {
-  return getEventTypeColor(eventType);
-}
-
-export function shouldUseCompactLayout(event) {
-  return event && event.duration_minutes < 60;
-}
-
 export function isBlockedEvent(event) {
   return event?.event_type === EVENT_TYPES.BLOCKED;
-}
-
-// helpers/eventsHelpers.js
-export function isBlockedEventFull(selectedEvent) {
-  if (!selectedEvent) return false;
-
-  // Vérifie d'abord le slot
-  if (selectedEvent.slot?.event_type === 'blocked') return true;
-
-  // Vérifie l'event complet si disponible
-  if (selectedEvent.event?.event_type === 'blocked') return true;
-
-  return false;
-}
-
-export function isCancelledEvent(event) {
-  return event?.status === SLOT_STATUSES.CANCELLED;
-}
-
-export function isConfirmedEvent(event) {
-  return event?.status === SLOT_STATUSES.CONFIRMED;
-}
-
-export function isCompletedEvent(event) {
-  return event?.status === SLOT_STATUSES.COMPLETED;
-}
-
-export function getEventDisplayName(event) {
-  if (!event) return 'Cours';
-  if (event.name) return event.name;
-
-  switch (event.event_type) {
-    case EVENT_TYPES.PRIVATE_LESSON:
-      return 'Cours particulier';
-    case EVENT_TYPES.GROUPED_LESSON:
-      return 'Cours collectif';
-    case EVENT_TYPES.SPECIAL:
-      return 'Événement spécial';
-    case EVENT_TYPES.COMPETITION:
-      return 'Compétition';
-    case EVENT_TYPES.SERVICE:
-      return 'Service';
-    case EVENT_TYPES.LOANER_FREE_TIME:
-      return 'Temps libre DP';
-    case EVENT_TYPES.BLOCKED:
-      return event.cancellation_reason || 'Période bloquée';
-    default:
-      return 'Activité';
-  }
-}
-
-export function formatParticipantsCount(event) {
-  if (!event) return '';
-  const count = event.participant_count || 0;
-  const max = event.max_participants || 0;
-  return max > 0 ? `${count}/${max}` : '';
-}
-
-export function hasParticipants(event) {
-  return (event?.participant_count || 0) > 0;
-}
-
-export function isEventFull(event) {
-  if (!event || !event.max_participants) return false;
-  return (event.participant_count || 0) >= event.max_participants;
-}
-
-export function getEventCapacityPercentage(event) {
-  if (!event || !event.max_participants) return 0;
-  return Math.round(((event.participant_count || 0) / event.max_participants) * 100);
 }
 ```
 
 ---
 
 ## 📄 index.js
+
 **Path:** `domain/index.js`
 
 ```
@@ -1041,6 +556,7 @@ export * from './events.js';
 ---
 
 ## 📄 activityFilters.js
+
 **Path:** `helpers/filters/activityFilters.js`
 
 ```
@@ -1081,163 +597,12 @@ export function isActive(startDate, endDate) {
   if (end && end < now) return false;
   return true;
 }
-
-/**
- * Check if an item is in the past
- * @param {string} endDate - Activity end date
- * @returns {boolean} True if the item is in the past
- */
-export function isPast(endDate) {
-  if (!endDate) return false;
-  const end = new Date(endDate);
-  const now = new Date();
-  return end < now;
-}
-
-/**
- * Check if an item is in the future
- * @param {string} startDate - Activity start date
- * @returns {boolean} True if the item is in the future
- */
-export function isFuture(startDate) {
-  if (!startDate) return false;
-  const start = new Date(startDate);
-  const now = new Date();
-  return start > now;
-}
-```
-
----
-
-## 📄 entityFilters.js
-**Path:** `helpers/filters/entityFilters.js`
-
-```
-/**
- * Entity Filter Utilities - Filter arrays of entities by activity status
- */
-
-import { isActive } from './activityFilters';
-import { EVENT_TYPES } from '../../domain/events';
-
-/* -------------------------------------------------------
- * ACTIVE ENTITY FILTERS
- * ----------------------------------------------------- */
-
-export function filterActivePackages(packages) {
-  if (!Array.isArray(packages)) return [];
-  return packages.filter((pkg) => pkg.is_active);
-}
-
-export function filterActivePairings(pairings) {
-  if (!Array.isArray(pairings)) return [];
-
-  return pairings.filter((pairing) => {
-    const pairingActive = isActive(pairing.pairing_start_date, pairing.pairing_end_date);
-
-    const horseObj = pairing.horse || pairing.horses || null;
-    const horseActive =
-      horseObj && typeof horseObj === 'object'
-        ? isActive(horseObj.activity_start_date, horseObj.activity_end_date)
-        : true;
-
-    return pairingActive && horseActive;
-  });
-}
-
-export function filterActiveRiders(riders) {
-  if (!Array.isArray(riders)) return [];
-  return riders.filter((rider) => isActive(rider.activity_start_date, rider.activity_end_date));
-}
-
-/* -------------------------------------------------------
- * CALENDAR FILTER CONFIGURATION
- * (semantic → DB event_type mapping)
- * ----------------------------------------------------- */
-
-export const CALENDAR_EVENT_TYPE_FILTERS = [
-  { value: 'all', label: 'Tous les types' },
-
-  {
-    value: 'lessons',
-    label: 'Cours',
-    eventTypes: [EVENT_TYPES.PRIVATE_LESSON, EVENT_TYPES.GROUPED_LESSON],
-  },
-
-  {
-    value: EVENT_TYPES.SPECIAL,
-    label: 'Événements spéciaux',
-    eventTypes: [EVENT_TYPES.SPECIAL],
-  },
-
-  {
-    value: EVENT_TYPES.COMPETITION,
-    label: 'Compétitions',
-    eventTypes: [EVENT_TYPES.COMPETITION],
-  },
-
-  {
-    value: EVENT_TYPES.SERVICE,
-    label: 'Services',
-    eventTypes: [EVENT_TYPES.SERVICE],
-  },
-
-  {
-    value: EVENT_TYPES.LOANER_FREE_TIME,
-    label: 'Temps libre DP',
-    eventTypes: [EVENT_TYPES.LOANER_FREE_TIME],
-  },
-
-  {
-    value: EVENT_TYPES.BLOCKED,
-    label: 'Bloqués',
-    eventTypes: [EVENT_TYPES.BLOCKED],
-  },
-];
-
-export const CALENDAR_STATUS_FILTERS = [
-  { value: 'all', label: 'Tous les statuts' },
-  { value: 'scheduled', label: 'Planifiés' },
-  { value: 'confirmed', label: 'Confirmés' },
-  { value: 'completed', label: 'Terminés' },
-  { value: 'cancelled', label: 'Annulés' },
-];
-
-export const CALENDAR_DEFAULT_FILTERS = {
-  eventType: 'all',
-  status: 'all',
-};
-
-/* -------------------------------------------------------
- * EVENT FILTER LOGIC
- * ----------------------------------------------------- */
-
-export function filterLessons(events, filters) {
-  if (!Array.isArray(events)) return [];
-
-  return events.filter((event) => {
-    // ---- Event type filter
-    if (filters.eventType !== 'all') {
-      const filterConfig = CALENDAR_EVENT_TYPE_FILTERS.find((f) => f.value === filters.eventType);
-
-      if (!filterConfig || !filterConfig.eventTypes?.includes(event.event_type)) {
-        return false;
-      }
-    }
-
-    // ---- Status filter
-    if (filters.status !== 'all' && event.status !== filters.status) {
-      return false;
-    }
-
-    return true;
-  });
-}
 ```
 
 ---
 
 ## 📄 riders.js
+
 **Path:** `helpers/filters/riders.js`
 
 ```
@@ -1247,37 +612,6 @@ export function filterLessons(events, filters) {
 
 import { isActive } from './activityFilters.js';
 import { ACTIVITY_STATUS_FILTERS, COMMON_FILTERS } from './activityFilters.js';
-
-/**
- * Get active items for a rider
- * @param {Object} rider - Rider object
- * @returns {Object} Active items
- */
-export function getRiderActiveItems(rider) {
-  return {
-    packages: rider.packages ? rider.packages.filter((p) => p.is_active) : [],
-    pairings: rider.pairings
-      ? rider.pairings.filter((p) => isActive(p.pairing_start_date, p.pairing_end_date))
-      : [],
-    horses: rider.horses
-      ? rider.horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date))
-      : [],
-  };
-}
-
-/**
- * Filter riders by status
- * @param {Array} riders - Array of rider objects
- * @param {string} filter - Filter type ('all', 'active', 'inactive')
- * @returns {Array} Filtered riders
- */
-export function filterRidersByStatus(riders, filter) {
-  if (filter === 'all') return riders;
-  return riders.filter((rider) => {
-    const isActiveRider = isActive(rider.activity_start_date, rider.activity_end_date);
-    return filter === 'active' ? isActiveRider : !isActiveRider;
-  });
-}
 
 /**
  * Filter riders based on criteria
@@ -1320,6 +654,7 @@ export const filterRiders = (riders, filters = {}) => {
 ---
 
 ## 📄 date.js
+
 **Path:** `helpers/formatters/date.js`
 
 ```
@@ -1329,27 +664,6 @@ export const filterRiders = (riders, filters = {}) => {
 
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-
-/**
- * Format week title
- * @param {Object} weekData - Week data with period
- * @returns {string} Formatted week title
- */
-export function formatWeekTitle(weekData) {
-  if (!weekData || !weekData.period) return 'Chargement...';
-
-  const start = new Date(weekData.period.start);
-  const end = new Date(weekData.period.end);
-
-  // Validate dates before formatting
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-    return 'Semaine en cours';
-  }
-
-  return `Semaine du ${format(start, 'dd MMMM', { locale: fr })} au ${format(end, 'dd MMMM yyyy', {
-    locale: fr,
-  })}`;
-}
 
 /**
  * Format date for display
@@ -1379,6 +693,7 @@ export function formatDateTime(date, formatStr = 'dd/MM/yyyy HH:mm') {
 ---
 
 ## 📄 duration.js
+
 **Path:** `helpers/formatters/duration.js`
 
 ```
@@ -1427,32 +742,12 @@ export function calculateDurationMinutes(startTime, endTime) {
 
   return Math.max(0, endMinutes - startMinutes);
 }
-
-/**
- * Add minutes to a time string
- * @param {string} timeStr - Time in HH:MM format
- * @param {number} minutesToAdd - Minutes to add
- * @returns {string} New time in HH:MM format
- */
-export function addMinutesToTime(timeStr, minutesToAdd) {
-  if (!timeStr) return '';
-
-  const [hours, minutes] = timeStr.split(':').map(Number);
-  let totalMinutes = hours * 60 + minutes + minutesToAdd;
-
-  // Handle day overflow (24 hours = 1440 minutes)
-  totalMinutes = totalMinutes % 1440;
-
-  const newHours = Math.floor(totalMinutes / 60);
-  const newMinutes = totalMinutes % 60;
-
-  return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
-}
 ```
 
 ---
 
 ## 📄 index.js
+
 **Path:** `helpers/formatters/index.js`
 
 ```
@@ -1463,22 +758,12 @@ export function addMinutesToTime(timeStr, minutesToAdd) {
 export * from './time.js';
 export * from './date.js';
 export * from './duration.js';
-
-// Re-export for backward compatibility
-export {
-  timeToMinutes,
-  minutesToTime,
-  formatTime,
-  calculateLessonStyle,
-  calculateSelectionStyle,
-} from './time.js';
-export { formatWeekTitle, formatDate, formatDateTime } from './date.js';
-export { formatDuration } from './duration.js';
 ```
 
 ---
 
 ## 📄 time.js
+
 **Path:** `helpers/formatters/time.js`
 
 ```
@@ -1486,10 +771,17 @@ export { formatDuration } from './duration.js';
  * Time formatting and calculation utilities
  */
 
-// Dans lib/helpers/formatters.js
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+
+/* ============================================
+   CORE TIME CONVERSION
+   ============================================ */
 
 /**
- * Convertit une chaîne "HH:MM" en minutes depuis minuit
+ * Convert "HH:MM" string to minutes since midnight
+ * @param {string} timeStr - Time in HH:MM format
+ * @returns {number} Minutes since midnight
  */
 export function timeToMinutes(timeStr) {
   if (typeof timeStr !== 'string') {
@@ -1508,7 +800,9 @@ export function timeToMinutes(timeStr) {
 }
 
 /**
- * Convertit des minutes depuis minuit en format "HH:MM"
+ * Convert minutes since midnight to "HH:MM" format
+ * @param {number} minutes - Minutes since midnight
+ * @returns {string} Time in HH:MM format
  */
 export function minutesToTime(minutes) {
   if (typeof minutes !== 'number' || isNaN(minutes)) {
@@ -1520,6 +814,10 @@ export function minutesToTime(minutes) {
   const mins = minutes % 60;
   return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 }
+
+/* ============================================
+   TIME FORMATTING
+   ============================================ */
 
 /**
  * Format time string for display
@@ -1533,49 +831,63 @@ export function formatTime(timeStr) {
 }
 
 /**
- * Calculate event style positioning
- * @param {Object} event - Lesson object
- * @param {number} HOUR_HEIGHT - Height of one hour in pixels
- * @param {number} START_HOUR - Calendar start hour
- * @param {number} END_HOUR - Calendar end hour
- * @returns {Object} Style object with top and height
+ * Format time from either ISO datetime string or HH:MM string
+ * @param {string} value - ISO datetime or HH:MM time string
+ * @returns {string} Formatted time in HH:MM format
  */
-export function calculateLessonStyle(event, HOUR_HEIGHT = 60, START_HOUR = 8, END_HOUR = 22) {
-  if (!event?.start_time || !event?.end_time) {
-    return { display: 'none' };
+export function formatTimeFlexible(value) {
+  if (!value) return '';
+  try {
+    // If it's a full datetime, extract time
+    if (value.includes('T')) {
+      const date = new Date(value);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    // If it's already just time (HH:MM:SS or HH:MM)
+    return value.slice(0, 5);
+  } catch {
+    return value;
   }
-
-  const startMinutes = timeToMinutes(event.start_time);
-  const endMinutes = timeToMinutes(event.end_time);
-  const dayStartMinutes = START_HOUR * 60;
-  const dayEndMinutes = END_HOUR * 60;
-
-  // Check if event is outside visible hours
-  if (endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes) {
-    return { display: 'none' };
-  }
-
-  // Clamp start and end to visible hours
-  const clampedStart = Math.max(startMinutes, dayStartMinutes);
-  const clampedEnd = Math.min(endMinutes, dayEndMinutes);
-
-  const top = (clampedStart - dayStartMinutes) * (HOUR_HEIGHT / 60);
-  const height = (clampedEnd - clampedStart) * (HOUR_HEIGHT / 60);
-
-  return {
-    top: `${top}px`,
-    height: `${height}px`,
-  };
 }
 
 /**
- * Calculate selection style positioning
+ * Format time string to HH:MM for time input
+ * Handles HH:MM:SS from database
+ * @param {string} timeStr - Time in HH:MM:SS or HH:MM format
+ * @returns {string} Time in HH:MM format
+ */
+export function formatTimeForInput(timeStr) {
+  if (!timeStr) return '';
+  return String(timeStr).slice(0, 5);
+}
+
+/**
+ * Format time from input to HH:MM:SS for database
+ * @param {string} timeStr - Time in HH:MM format from input
+ * @returns {string} Time in HH:MM:SS format
+ */
+export function formatTimeForDatabase(timeStr) {
+  if (!timeStr) return '';
+  // If already has seconds, return as is
+  if (timeStr.length === 8) return timeStr;
+  // Otherwise append :00
+  return `${timeStr}:00`;
+}
+
+/* ============================================
+   CALENDAR POSITIONING
+   ============================================ */
+
+/**
+ * Calculate selection style positioning for calendar
  * @param {string} selectionStart - Start time in HH:MM format
  * @param {string} selectionEnd - End time in HH:MM format
- * @param {number} HOUR_HEIGHT - Height of one hour in pixels
- * @param {number} START_HOUR - Calendar start hour
- * @param {number} END_HOUR - Calendar end hour
- * @returns {Object|null} Style object or null if invalid
+ * @param {number} HOUR_HEIGHT - Height of one hour in pixels (default: 60)
+ * @param {number} START_HOUR - Calendar start hour (default: 8)
+ * @param {number} END_HOUR - Calendar end hour (default: 22)
+ * @returns {Object|null} Style object with top and height, or null if invalid
  */
 export function calculateSelectionStyle(
   selectionStart,
@@ -1615,6 +927,7 @@ export function calculateSelectionStyle(
 ---
 
 ## 📄 index.js
+
 **Path:** `helpers/index.js`
 
 ```
@@ -1622,12 +935,9 @@ export function calculateSelectionStyle(
  * Helpers barrel
  */
 
-export * from './ui.js';
-export * from './utils.js';
 export * from './validators.js';
 export * from './formatters/index.js';
 export * from './filters/activityFilters.js';
-export * from './filters/entityFilters.js';
 export * from './filters/riders.js';
 export * from './stats/riders.js';
 ```
@@ -1635,6 +945,7 @@ export * from './stats/riders.js';
 ---
 
 ## 📄 riders.js
+
 **Path:** `helpers/stats/riders.js`
 
 ```
@@ -1660,82 +971,12 @@ export const calculateRiderStats = (riders) => {
 
   return { total, active, inactive };
 };
-
-/**
- * Calculate statistics for riders list
- * @param {Array} riders - Array of rider objects
- * @returns {Object} Statistics object with counts
- */
-export function calculateRiderStatsWithPackages(riders) {
-  return {
-    total: riders.length,
-    active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
-    withActivePackages: riders.filter(
-      (r) => r.packages && r.packages.filter((p) => p.is_active).length > 0
-    ).length,
-  };
-}
-```
-
----
-
-## 📄 ui.js
-**Path:** `helpers/ui.js`
-
-```
-/**
- * Helpers: ui
- */
-import { CARD_STYLES, TEXT_STYLES, MODAL_SIZES } from '../config/ui.js';
-
-export const getCardStyle = (layout) => ({
-  ...CARD_STYLES.base,
-  ...(CARD_STYLES[layout] || CARD_STYLES.standard),
-});
-
-export const getTextStyle = (layout, element) => {
-  const layoutStyles = TEXT_STYLES[layout] || TEXT_STYLES.standard;
-  return layoutStyles[element] || {};
-};
-
-export const getModalSizeClass = (size) => {
-  const sizeMap = {
-    [MODAL_SIZES.SMALL]: 'small',
-    [MODAL_SIZES.MEDIUM]: 'medium',
-    [MODAL_SIZES.LARGE]: 'large',
-  };
-  return sizeMap[size] || sizeMap[MODAL_SIZES.MEDIUM];
-};
-```
-
----
-
-## 📄 utils.js
-**Path:** `helpers/utils.js`
-
-```
-/**
- * Helpers: utils
- */
-
-/**
- * Build endpoint URL with parameters
- * @param {string} endpoint
- * @param {Object} params
- * @returns {string}
- */
-export const buildEndpoint = (endpoint, params = {}) => {
-  let url = endpoint;
-  Object.keys(params).forEach((key) => {
-    url = url.replace(`:${key}`, params[key]);
-  });
-  return url;
-};
 ```
 
 ---
 
 ## 📄 validators.js
+
 **Path:** `helpers/validators.js`
 
 ```
@@ -1749,122 +990,6 @@ export const buildEndpoint = (endpoint, params = {}) => {
  */
 
 import { RIDER_TYPE_LABELS } from '../domain/index.js';
-
-/**
- * Form validation messages
- */
-export const VALIDATION_MESSAGES = {
-  REQUIRED: 'Ce champ est requis',
-  INVALID_EMAIL: "Format d'email invalide",
-  INVALID_PHONE: 'Format de téléphone invalide',
-  FORMAT_INVALID: 'Format invalide',
-  MIN_LENGTH: 'Ce champ doit contenir au moins {min} caractères',
-  MAX_LENGTH: 'Ce champ ne peut pas dépasser {max} caractères',
-  INVALID_DATE: 'Date invalide',
-  INVALID_TIME: 'Heure invalide',
-};
-
-/**
- * UI Validation Rules
- */
-export const VALIDATION_RULES = {
-  NAME: {
-    minLength: 1,
-    maxLength: 100,
-    required: true,
-  },
-  EMAIL: {
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    required: false,
-  },
-  PHONE: {
-    pattern: /^[\d\s\-+()]+$/,
-    minLength: 10,
-    required: false,
-  },
-  DESCRIPTION: {
-    maxLength: 500,
-    required: false,
-  },
-};
-
-/**
- * Get validation message with parameters
- * @param {string} messageKey - Message key
- * @param {Object} params - Parameters to replace
- * @returns {string} Formatted message
- */
-export const getValidationMessage = (messageKey, params = {}) => {
-  let message = VALIDATION_MESSAGES[messageKey] || '';
-  Object.keys(params).forEach((k) => {
-    message = message.replace(`{${k}}`, params[k]);
-  });
-  return message;
-};
-
-/**
- * Format validation message for min/max length
- * @param {string} type - 'min' or 'max'
- * @param {number} value - Length value
- * @returns {string} Formatted message
- */
-export const formatLengthMessage = (type, value) => {
-  const key = type === 'min' ? 'MIN_LENGTH' : 'MAX_LENGTH';
-  return getValidationMessage(key, { [type]: value });
-};
-
-/**
- * Validate value against rule
- * @param {*} value - Value to validate
- * @param {Object} rule - Validation rule
- * @returns {Object} Validation result
- */
-export const validateRule = (value, rule) => {
-  const errors = [];
-
-  // Required check (handle undefined, null, empty string)
-  if (rule.required && (value === undefined || value === null || value === '')) {
-    errors.push(getValidationMessage('REQUIRED'));
-    return { isValid: false, errors };
-  }
-
-  // If value is empty and not required, it's valid
-  if (value === undefined || value === null || value === '') {
-    return { isValid: true, errors };
-  }
-
-  // Min length check
-  if (rule.minLength && value.length < rule.minLength) {
-    errors.push(formatLengthMessage('min', rule.minLength));
-  }
-
-  // Max length check
-  if (rule.maxLength && value.length > rule.maxLength) {
-    errors.push(formatLengthMessage('max', rule.maxLength));
-  }
-
-  // Pattern check
-  if (rule.pattern && !rule.pattern.test(value)) {
-    if (rule === VALIDATION_RULES.EMAIL) {
-      errors.push(getValidationMessage('INVALID_EMAIL'));
-    } else if (rule === VALIDATION_RULES.PHONE) {
-      errors.push(getValidationMessage('INVALID_PHONE'));
-    } else {
-      errors.push(getValidationMessage('FORMAT_INVALID'));
-    }
-  }
-
-  return { isValid: errors.length === 0, errors };
-};
-
-/**
- * Get validation rule by name
- * @param {string} ruleName - Rule name
- * @returns {Object|null} Validation rule
- */
-export const getValidationRule = (ruleName) => {
-  return VALIDATION_RULES[ruleName] || null;
-};
 
 /**
  * Horse validation utilities
@@ -1898,37 +1023,6 @@ export const validateHorseForm = (formData) => {
     errors,
   };
 };
-
-/**
- * Rider validation utilities
- */
-
-/**
- * Validate email format
- * @param {string} email - Email address
- * @returns {boolean} True if valid email format
- */
-export const isValidEmail = (email) => {
-  if (!email) return true; // Email is optional
-  const emailRegex = VALIDATION_RULES.EMAIL.pattern;
-  return emailRegex.test(email);
-};
-
-/**
- * Validate phone format
- * @param {string} phone - Phone number
- * @returns {boolean} True if valid phone format
- */
-export const isValidPhone = (phone) => {
-  if (!phone) return true; // Phone is optional
-  const phoneRegex = VALIDATION_RULES.PHONE.pattern;
-  return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
-};
-
-// Extract allowed values from imported labels (defensive)
-const ALLOWED_TYPES = Array.isArray(RIDER_TYPE_LABELS)
-  ? RIDER_TYPE_LABELS.map((k) => k.value)
-  : Object.values(RIDER_TYPE_LABELS || {}).map((k) => k.value);
 
 /**
  * Validate rider form data
@@ -1996,114 +1090,100 @@ function parseTime(timeStr) {
 ---
 
 ## 📄 icons.jsx
+
 **Path:** `icons.jsx`
 
 ```
 import {
-  FaPlus,
-  FaPencilAlt,
-  FaTrash,
-  FaEye,
-  FaHorseHead,
-  FaCalendarAlt,
-  FaClone,
-  FaCheck,
-  FaTimes,
-  FaExclamationTriangle,
+  FaArrowCircleRight,
   FaArrowUp,
-  FaUser,
-  FaPhone,
-  FaEnvelope,
+  FaAward,
+  FaBan,
   FaCalendar,
-  FaList,
-  FaLink,
+  FaCalendarAlt,
+  FaCalendarDay,
+  FaCheck,
+  FaCheckCircle,
   FaChevronDown,
   FaChevronLeft,
   FaChevronRight,
-  FaUsers,
-  FaInfoCircle,
-  FaSave,
-  FaBan,
-  FaSpinner,
-  FaGraduationCap,
-  FaShoppingBasket,
-  FaUserGraduate,
-  FaAward,
-  FaLocationArrow,
   FaClock,
-  FaCalendarDay,
-  FaArrowCircleRight,
+  FaClone,
   FaCog,
-  FaTag,
+  FaEnvelope,
+  FaExclamationTriangle,
+  FaEye,
   FaFilter,
+  FaGraduationCap,
+  FaHorseHead,
+  FaInfoCircle,
+  FaLink,
+  FaList,
+  FaLocationArrow,
+  FaPencilAlt,
+  FaPhone,
+  FaPlus,
+  FaSave,
+  FaShoppingBasket,
+  FaSpinner,
+  FaTag,
+  FaTimes,
+  FaTrash,
+  FaUser,
+  FaUserGraduate,
+  FaUsers,
 } from 'react-icons/fa';
 
 export const Icons = {
   Add: FaPlus,
-  Edit: FaPencilAlt,
-  Delete: FaTrash,
-  View: FaEye,
-  Horse: FaHorseHead,
+  Award: FaAward,
+  Blocked: FaBan,
   Calendar: FaCalendarAlt,
-  Template: FaClone,
+  Cancel: FaBan,
   Check: FaCheck,
-  Close: FaTimes,
-  Warning: FaExclamationTriangle,
-  Remove: FaArrowUp,
-  User: FaUser,
-  Users: FaUsers,
-  Phone: FaPhone,
-  Email: FaEnvelope,
-  Date: FaCalendar,
-  List: FaList,
-  Link: FaLink,
+  CheckCircle: FaCheckCircle,
   ChevronDown: FaChevronDown,
   ChevronLeft: FaChevronLeft,
   ChevronRight: FaChevronRight,
-  Info: FaInfoCircle,
-  Save: FaSave,
-  Cancel: FaBan,
-  Loading: FaSpinner,
-  Lesson: FaGraduationCap,
-  Packages: FaShoppingBasket,
-  PrivateLesson: FaUserGraduate,
-  GroupLesson: FaUsers,
-  Service: FaShoppingBasket,
   Clock: FaClock,
-  Location: FaLocationArrow,
+  Close: FaTimes,
   Competition: FaAward,
-  Training: FaGraduationCap,
+  Date: FaCalendar,
+  Delete: FaTrash,
+  Edit: FaPencilAlt,
+  Email: FaEnvelope,
   Event: FaCalendarDay,
-  Blocked: FaBan,
+  Filter: FaFilter,
+  GroupLesson: FaUsers,
+  Horse: FaHorseHead,
+  Info: FaInfoCircle,
+  Lesson: FaGraduationCap,
+  Link: FaLink,
+  List: FaList,
+  Loading: FaSpinner,
+  Location: FaLocationArrow,
+  Packages: FaShoppingBasket,
+  Phone: FaPhone,
+  PrivateLesson: FaUserGraduate,
+  Remove: FaArrowUp,
   Repeat: FaArrowCircleRight,
+  Save: FaSave,
+  Service: FaShoppingBasket,
   Settings: FaCog,
   Tag: FaTag,
-  Filter: FaFilter,
+  Template: FaClone,
+  Training: FaGraduationCap,
+  User: FaUser,
+  Users: FaUsers,
+  View: FaEye,
+  Warning: FaExclamationTriangle,
 };
 
 export const renderIcon = (Icon, props = {}) => {
   return <Icon {...props} />;
 };
 
-export default Icons;```
-
----
-
-## 📄 index.js
-**Path:** `index.js`
-
-```
-/**
- * Library root barrel
- *
- * Usage:
- * import { API_ENDPOINTS, HORSE_TYPES, formatDate, getCardStyle } from 'frontend/src/lib';
- */
-
-export * as config from './config/index.js';
-export * as domain from './domain/index.js';
-export * as helpers from './helpers/index.js';
+export default Icons;
 ```
 
 ---
-

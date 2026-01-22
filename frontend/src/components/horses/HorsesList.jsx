@@ -2,17 +2,29 @@ import { useState } from 'react';
 import { useHorseActions, useHorseRiders } from '../../hooks';
 import { useHorsesList } from '../../hooks/useHorsesList.js';
 import { Icons } from '../../lib/icons.jsx';
-import { getHorseKindLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
+import {
+  getHorseTypeConfig,
+  getOwnerTypeConfig,
+  getStatusConfig,
+  WEEK_DAYS_EN,
+  weekDayCodeToFr,
+  getLoanDays,
+} from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers/index.js';
+import DomainBadge from '../common/DomainBadge.jsx';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
 import Modal from '../common/Modal.jsx';
 import HorseForm from './HorseForm.jsx';
+import HorseCard from './HorseCard.jsx';
 import RidersModal from './RidersModal.jsx';
-import '../../styles/components/horses.css';
+import {
+  HORSE_KIND_FILTERS,
+  OWNERSHIP_TYPE_FILTERS,
+} from '../../lib/helpers/filters/activityFilters.js';
+import '../../styles/features/horses.css';
 
 /**
  * HorsesList - Main horses list component
- * Modern design with improved filters like RidersList
  */
 function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');
@@ -27,8 +39,6 @@ function HorsesList() {
     includeInactive,
     kindFilter,
     ownershipFilter,
-    HORSE_KIND_FILTERS,
-    OWNERSHIP_TYPE_FILTERS,
     setKindFilter,
     setOwnershipFilter,
     toggleIncludeInactive,
@@ -36,20 +46,20 @@ function HorsesList() {
     clearError,
   } = useHorsesList();
 
-  const handleSuccess = (message) => {
+  const horseActions = useHorseActions(handleSuccess);
+  const ridersModal = useHorseRiders();
+
+  function handleSuccess(message) {
     setSuccessMessage(message);
     setErrorMessage('');
     setTimeout(() => setSuccessMessage(''), 3000);
     reload();
-  };
+  }
 
-  const handleError = (err) => {
+  function handleError(err) {
     setErrorMessage(err?.message || 'Une erreur est survenue');
     setTimeout(() => setErrorMessage(''), 5000);
-  };
-
-  const horseActions = useHorseActions(handleSuccess);
-  const ridersModal = useHorseRiders();
+  }
 
   const handleFormSubmit = async (horseData) => {
     try {
@@ -61,7 +71,8 @@ function HorsesList() {
     }
   };
 
-  const handleRidersClick = async (horse) => {
+  const handleRidersClick = async (horse, e) => {
+    e.stopPropagation(); // Prevent row click from firing
     try {
       setErrorMessage('');
       await ridersModal.handleRidersClick(horse);
@@ -70,39 +81,37 @@ function HorsesList() {
     }
   };
 
+  // Handler for row clicks
+  const handleRowClick = (horse, e) => {
+    // Don't open card if clicking on action buttons or riders count
+    if (e.target.closest('.riders-count-badge')) {
+      return;
+    }
+    horseActions.openHorseCard(horse);
+  };
+
   const clearSuccessMessage = () => setSuccessMessage('');
   const clearErrorMessage = () => {
     setErrorMessage('');
     clearError();
   };
 
-  const getOwnershipLabel = (ownership) => {
-    const labels = {
-      laury: 'Laury',
-      private_owner: 'Propriétaire',
-      club: 'Club',
-      other: 'Autre',
-    };
-    return labels[ownership] || ownership;
-  };
-
   /**
-   * Render loan days badges for a horse - shows all days with visual distinction
+   * Render loan days badges
    */
   const renderLoanDays = (horse) => {
-    const loanDays = horse.loan_days || [];
-
+    const loanDays = getLoanDays(horse);
     return (
       <div className="loan-days-cell">
-        {WEEK_DAYS_EN.map((dayEn, index) => {
-          const isLoanDay = loanDays.includes(dayEn);
+        {WEEK_DAYS_EN.map((dayCode) => {
+          const isLoanDay = loanDays.includes(dayCode);
           return (
             <span
-              key={dayEn}
+              key={dayCode}
               className={`day-badge ${isLoanDay ? 'active' : 'inactive'}`}
               title={isLoanDay ? 'Jour de pension' : 'Pas de pension'}
             >
-              {WEEK_DAYS[index]}
+              {weekDayCodeToFr(dayCode)}
             </span>
           );
         })}
@@ -127,19 +136,18 @@ function HorsesList() {
         <div className="header-title">
           <h2>Liste des Chevaux</h2>
         </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div className="flex gap-12">
           <button
             className={`btn ${includeInactive ? 'btn-secondary' : 'btn-outline-secondary'}`}
             onClick={toggleIncludeInactive}
-            title={includeInactive ? 'Masquer les inactifs' : 'Afficher les inactifs'}
           >
-            <Icons.Filter style={{ marginRight: '8px' }} />
+            <Icons.Filter />
             {includeInactive
               ? `Inactifs inclus (${stats.inactive})`
               : `Afficher inactifs (${stats.inactive})`}
           </button>
           <button className="btn btn-primary" onClick={horseActions.handleCreate}>
-            <Icons.Add style={{ marginRight: '8px' }} />
+            <Icons.Add />
             Nouveau Cheval
           </button>
         </div>
@@ -148,7 +156,6 @@ function HorsesList() {
       {/* Filters */}
       {horses.length > 0 && (
         <div className="filter-section mb-20">
-          {/* Horse Kind Filter */}
           <div className="filter-pills mb-10">
             <button
               className={`pill ${kindFilter === HORSE_KIND_FILTERS.ALL ? 'pill-active' : ''}`}
@@ -169,15 +176,12 @@ function HorsesList() {
               Poneys ({stats.pony})
             </button>
           </div>
-
-          {/* Ownership Type Filter */}
           <div className="filter-pills">
             <button
               className={`pill ${
                 ownershipFilter === OWNERSHIP_TYPE_FILTERS.ALL ? 'pill-active' : ''
               }`}
               onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.ALL)}
-              data-ownership-type="all"
             >
               Tous propriétaires
             </button>
@@ -186,7 +190,6 @@ function HorsesList() {
                 ownershipFilter === OWNERSHIP_TYPE_FILTERS.LAURY ? 'pill-active' : ''
               }`}
               onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.LAURY)}
-              data-ownership-type="laury"
             >
               Laury ({stats.laury})
             </button>
@@ -195,7 +198,6 @@ function HorsesList() {
                 ownershipFilter === OWNERSHIP_TYPE_FILTERS.PRIVATE_OWNER ? 'pill-active' : ''
               }`}
               onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.PRIVATE_OWNER)}
-              data-ownership-type="private_owner"
             >
               Propriétaires ({stats.private_owner})
             </button>
@@ -204,7 +206,6 @@ function HorsesList() {
                 ownershipFilter === OWNERSHIP_TYPE_FILTERS.CLUB ? 'pill-active' : ''
               }`}
               onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.CLUB)}
-              data-ownership-type="club"
             >
               Club ({stats.club})
             </button>
@@ -213,7 +214,6 @@ function HorsesList() {
                 ownershipFilter === OWNERSHIP_TYPE_FILTERS.OTHER ? 'pill-active' : ''
               }`}
               onClick={() => setOwnershipFilter(OWNERSHIP_TYPE_FILTERS.OTHER)}
-              data-ownership-type="other"
             >
               Autre ({stats.other})
             </button>
@@ -224,7 +224,7 @@ function HorsesList() {
       {/* Messages */}
       {displayError && (
         <div className="alert alert-error mb-20">
-          <Icons.Warning style={{ marginRight: '8px' }} />
+          <Icons.Warning />
           {displayError}
           <button className="btn btn-sm btn-secondary ml-10" onClick={clearErrorMessage}>
             Effacer
@@ -234,7 +234,7 @@ function HorsesList() {
 
       {successMessage && (
         <div className="alert alert-success mb-20">
-          <Icons.Check style={{ marginRight: '8px' }} />
+          <Icons.Check />
           {successMessage}
           <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
             OK
@@ -245,20 +245,12 @@ function HorsesList() {
       {/* Table */}
       {horses.length === 0 ? (
         <div className="empty-state">
-          <Icons.Horse
-            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
-          />
+          <Icons.Horse />
           <p>Aucun cheval trouvé</p>
-          <button className="btn btn-primary mt-20" onClick={horseActions.handleCreate}>
-            <Icons.Add style={{ marginRight: '8px' }} />
-            Ajouter un cheval
-          </button>
         </div>
       ) : filteredHorses.length === 0 ? (
         <div className="empty-state">
-          <Icons.Filter
-            style={{ fontSize: '48px', color: 'var(--color-gray-400)', marginBottom: '16px' }}
-          />
+          <Icons.Filter />
           <p>Aucun cheval ne correspond au filtre</p>
         </div>
       ) : (
@@ -269,78 +261,59 @@ function HorsesList() {
                 <th>Nom</th>
                 <th>Type</th>
                 <th>Propriétaire</th>
-                <th>Cavaliers Actifs</th>
+                <th>Cavaliers actifs</th>
                 <th>Jours de pension</th>
                 <th>Statut</th>
-                <th>Actions</th>
+                <th> </th>
               </tr>
             </thead>
             <tbody>
-              {filteredHorses.map((horse) => (
-                <tr key={horse.id} className="horse-row">
-                  <td data-label="Nom">
-                    <strong>{horse.name}</strong>
-                  </td>
-                  <td data-label="Type">
-                    <span className="badge badge-kind" data-kind={horse.kind}>
-                      {getHorseKindLabel(horse.kind)}
-                    </span>
-                  </td>
-                  <td data-label="Propriétaire">
-                    <span className="badge badge-info">
-                      {getOwnershipLabel(horse.ownership_type)}
-                    </span>
-                  </td>
-                  <td data-label="Cavaliers Actifs">
-                    <span
-                      className={`riders-count-badge ${
-                        horse.active_riders_count > 0 ? 'clickable' : ''
-                      }`}
-                      onClick={() => horse.active_riders_count > 0 && handleRidersClick(horse)}
-                      title={
-                        horse.active_riders_count > 0
-                          ? 'Cliquer pour voir les cavaliers'
-                          : 'Aucun cavalier actif'
-                      }
-                    >
-                      <Icons.Users />
-                      {horse.active_riders_count || 0}
-                    </span>
-                  </td>
-                  <td data-label="Jours de pension">{renderLoanDays(horse)}</td>
-                  <td data-label="Statut">
-                    <span
-                      className={`badge ${
-                        isActive(horse.activity_start_date, horse.activity_end_date)
-                          ? 'badge-success'
-                          : 'badge-secondary'
-                      }`}
-                    >
-                      {isActive(horse.activity_start_date, horse.activity_end_date)
-                        ? 'Actif'
-                        : 'Inactif'}
-                    </span>
-                  </td>
-                  <td data-label="Actions" className="table-actions">
-                    <div className="action-buttons">
-                      <button
-                        className="btn-icon btn-icon-edit"
-                        onClick={() => horseActions.handleEdit(horse)}
-                        title="Modifier"
+              {filteredHorses.map((horse) => {
+                const active = isActive(horse.activity_start_date, horse.activity_end_date);
+                const horseTypeConfig = getHorseTypeConfig(horse.kind);
+                const ownerTypeConfig = getOwnerTypeConfig(horse.ownership_type);
+                const statusConfig = getStatusConfig(active ? 'active' : 'inactive');
+
+                return (
+                  <tr
+                    key={horse.id}
+                    onClick={(e) => handleRowClick(horse, e)}
+                    className="horse-row-clickable"
+                  >
+                    <td>
+                      <strong>{horse.name}</strong>
+                    </td>
+                    <td>{horseTypeConfig && <DomainBadge config={horseTypeConfig} />}</td>
+                    <td>{ownerTypeConfig && <DomainBadge config={ownerTypeConfig} />}</td>
+                    <td>
+                      <span
+                        className={`riders-count-badge ${
+                          horse.active_riders_count > 0 ? 'clickable' : ''
+                        }`}
+                        onClick={(e) =>
+                          horse.active_riders_count > 0 && handleRidersClick(horse, e)
+                        }
                       >
-                        <Icons.Edit />
-                      </button>
-                      <button
-                        className="btn-icon btn-icon-delete"
-                        onClick={() => horseActions.handleDeleteClick(horse)}
-                        title="Supprimer"
-                      >
-                        <Icons.Delete />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        <Icons.Users />
+                        {horse.active_riders_count || 0}
+                      </span>
+                    </td>
+                    <td>{renderLoanDays(horse)}</td>
+                    <td>{statusConfig && <DomainBadge config={statusConfig} />}</td>
+                    <td data-label="Actions" className="table-actions">
+                      <div className="action-buttons">
+                        <button
+                          className="btn-icon btn-icon-view"
+                          onClick={(e) => handleRowClick(horse, e)}
+                          title="Voir les détails"
+                        >
+                          <Icons.View />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -350,22 +323,7 @@ function HorsesList() {
       <Modal
         isOpen={horseActions.showModal}
         onClose={horseActions.closeModal}
-        title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {horseActions.editingHorse ? (
-              <>
-                <Icons.Edit />
-                Modifier le cheval
-              </>
-            ) : (
-              <>
-                <Icons.Add />
-                Nouveau cheval
-              </>
-            )}
-          </div>
-        }
-        size="medium"
+        title={horseActions.editingHorse ? 'Modifier le cheval' : 'Nouveau cheval'}
       >
         <HorseForm
           horse={horseActions.editingHorse}
@@ -374,13 +332,31 @@ function HorsesList() {
         />
       </Modal>
 
-      <RidersModal
-        isOpen={ridersModal.showRidersModal}
-        onClose={ridersModal.closeRidersModal}
-        horseRiders={ridersModal.selectedHorseRiders}
-        loading={ridersModal.loadingRiders}
-        error={ridersModal.error}
-      />
+      {/* HorseCard Modal */}
+      {horseActions.showHorseCard && horseActions.selectedHorse && (
+        <HorseCard
+          horse={horseActions.selectedHorse}
+          onClose={horseActions.closeHorseCard}
+          onEdit={(horse) => {
+            horseActions.closeHorseCard();
+            horseActions.handleEdit(horse);
+          }}
+          onDelete={(horse) => {
+            horseActions.closeHorseCard();
+            horseActions.handleDeleteClick(horse);
+          }}
+        />
+      )}
+
+      {/* RidersModal - Use the hook's state */}
+      {ridersModal.showRidersModal && ridersModal.selectedHorseRiders && (
+        <RidersModal
+          horseName={ridersModal.selectedHorseRiders.horseName}
+          riders={ridersModal.selectedHorseRiders.riders}
+          isOpen={ridersModal.showRidersModal}
+          onClose={ridersModal.closeRidersModal}
+        />
+      )}
 
       <DeleteConfirmationModal
         isOpen={horseActions.showDeleteModal}

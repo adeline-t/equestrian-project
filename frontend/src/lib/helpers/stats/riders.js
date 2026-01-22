@@ -20,18 +20,3 @@ export const calculateRiderStats = (riders) => {
 
   return { total, active, inactive };
 };
-
-/**
- * Calculate statistics for riders list
- * @param {Array} riders - Array of rider objects
- * @returns {Object} Statistics object with counts
- */
-export function calculateRiderStatsWithPackages(riders) {
-  return {
-    total: riders.length,
-    active: riders.filter((r) => isActive(r.activity_start_date, r.activity_end_date)).length,
-    withActivePackages: riders.filter(
-      (r) => r.packages && r.packages.filter((p) => p.is_active).length > 0
-    ).length,
-  };
-}

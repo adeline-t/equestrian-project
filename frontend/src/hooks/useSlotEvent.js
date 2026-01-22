@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
 
+/**
+ * Hook to fetch event associated with a slot
+ * @param {Object} slot - The slot object
+ */
 export function useSlotEvent(slot) {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(Boolean(slot?.event_id));

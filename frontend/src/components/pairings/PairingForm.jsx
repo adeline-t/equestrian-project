@@ -2,59 +2,88 @@ import PropTypes from 'prop-types';
 import { usePairingForm } from '../../hooks/usePairingForm';
 import {
   RIDER_HORSE_LINK_TYPE,
-  getRiderHorseLinkLabel,
+  getRiderHorseLinkConfig,
   isLoanPairing,
   isValidLoanDaysPerWeek,
   weekDayCodeToFr,
-} from '../../lib/domain/index.js';
-import { getHorseKindLabel, WEEK_DAYS, WEEK_DAYS_EN } from '../../lib/domain/domain-constants.js';
+  WEEK_DAYS_EN,
+  getHorseTypeConfig,
+  getRiderTypeConfig,
+} from '../../lib/domain/domain-constants.js';
 import { isActive } from '../../lib/helpers';
 import { Icons } from '../../lib/icons';
-import '../../styles/components/pairings.css';
+import DomainBadge from '../common/DomainBadge.jsx';
+import '../../styles/features/pairings.css';
 
 /**
  * PairingForm - Formulaire modernisé pour attribuer un cheval à un cavalier
+ * Supporte deux modes :
+ * 1. Depuis RiderCard : riderId pré-rempli, sélection du cheval
+ * 2. Depuis HorseCard : horseId pré-rempli, sélection du cavalier
  */
-function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel }) {
-  const {
-    formData,
-    error,
-    submitting,
-    handleChange,
-    toggleLoanDay,
-    validateForm,
-    setError,
-    setSubmitting,
-  } = usePairingForm(pairing, rider, riderId);
+function PairingForm({
+  pairing,
+  horses = [],
+  riders = [],
+  rider,
+  riderId,
+  horse,
+  horseId,
+  onSubmit,
+  onCancel,
+}) {
+  const { formData, error, handleChange, toggleLoanDay, validateForm, setError } = usePairingForm(
+    pairing,
+    rider,
+    riderId,
+    horseId
+  );
 
   const isEdit = !!pairing;
+  const isFromRiderCard = !!riderId || !!rider;
+  const isFromHorseCard = !!horseId || !!horse;
 
   // Debug logs
   console.log('🎨 PairingForm render:', {
     isEdit,
+    isFromRiderCard,
+    isFromHorseCard,
     pairing,
     formData,
     horses: horses?.length,
+    riders: riders?.length,
   });
 
   // Chevaux actifs uniquement
   const availableHorses =
-    horses?.filter((horse) => isActive(horse.activity_start_date, horse.activity_end_date)) || [];
+    horses?.filter((h) => isActive(h.activity_start_date, h.activity_end_date)) || [];
 
-  // selectedHorse : en mode édition, utiliser directement les données du pairing
-  // sinon chercher dans les listes de chevaux
+  // Cavaliers actifs uniquement
+  const availableRiders =
+    riders?.filter((r) => isActive(r.activity_start_date, r.activity_end_date)) || [];
+
+  // Selected horse : en mode édition, utiliser directement les données du pairing
   const selectedHorse =
     isEdit && pairing?.horses
       ? pairing.horses
-      : availableHorses.find((h) => String(h.id) === String(formData.horse_id)) ||
+      : horse ||
+        availableHorses.find((h) => String(h.id) === String(formData.horse_id)) ||
         horses.find((h) => String(h.id) === String(formData.horse_id)) ||
         null;
 
-  console.log('🐴 Selected horse:', {
+  // Selected rider : en mode édition, utiliser directement les données du pairing
+  const selectedRider =
+    isEdit && pairing?.riders
+      ? pairing.riders
+      : rider ||
+        availableRiders.find((r) => String(r.id) === String(formData.rider_id)) ||
+        riders.find((r) => String(r.id) === String(formData.rider_id)) ||
+        null;
+
+  console.log('🐴 Selected entities:', {
     isEdit,
-    'pairing.horses': pairing?.horses,
-    'formData.horse_id': formData.horse_id,
     selectedHorse,
+    selectedRider,
   });
 
   const handleFormSubmit = async (e) => {
@@ -71,19 +100,20 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
     if (!validateForm()) return;
 
     try {
-      setSubmitting(true);
       // ✅ Passer formData directement - loan_days est déjà dedans
-      await onSubmit(riderId, formData);
+      await onSubmit(formData);
     } catch (err) {
       console.error('❌ Error submitting pairing form:', err);
       setError(err?.message || 'Une erreur est survenue lors de la sauvegarde');
-    } finally {
-      setSubmitting(false);
     }
   };
 
   // Défauts sûrs pour loan_days
   const loanDays = Array.isArray(formData.loan_days) ? formData.loan_days : [];
+
+  // Configs pour les badges
+  const ownLinkConfig = getRiderHorseLinkConfig(RIDER_HORSE_LINK_TYPE.OWN);
+  const loanLinkConfig = getRiderHorseLinkConfig(RIDER_HORSE_LINK_TYPE.LOAN);
 
   return (
     <form onSubmit={handleFormSubmit} className="pairing-form-modern" noValidate>
@@ -95,52 +125,109 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
         </div>
       )}
 
-      {/* Section 1 : Sélection du cheval */}
-      <div className="pairing-form-section">
-        <div className="pairing-form-section-header">
-          <div className="pairing-form-section-icon">
-            <Icons.Horse />
-          </div>
-          <h3 className="pairing-form-section-title">Sélection du cheval</h3>
-        </div>
-
-        {isEdit ? (
-          <div className="horse-selection-card">
-            <div className="horse-info">
-              {selectedHorse && (
-                <div className="horse-name">
-                  {selectedHorse?.name ?? 'N/A'}
-                  <span className={`badge badge-${selectedHorse.kind ?? 'horse'}`}>
-                    {selectedHorse.kind === 'horse' ? 'Cheval' : 'Poney'}
-                  </span>
-                </div>
-              )}
+      {/* Section 1 : Sélection du cheval (si depuis RiderCard) */}
+      {isFromRiderCard && (
+        <div className="pairing-form-section">
+          <div className="pairing-form-section-header">
+            <div className="pairing-form-section-icon">
+              <Icons.Horse />
             </div>
+            <h3 className="pairing-form-section-title">Sélection du cheval</h3>
           </div>
-        ) : availableHorses.length === 0 ? (
-          <div className="alert alert-warning">
-            <Icons.Warning />
-            <span>Aucun cheval actif disponible. Veuillez d'abord activer des chevaux.</span>
+
+          {isEdit ? (
+            <div className="horse-selection-card">
+              <div className="horse-info">
+                {selectedHorse && (
+                  <div className="horse-name">
+                    {selectedHorse?.name ?? 'N/A'}
+                    {selectedHorse.kind && (
+                      <DomainBadge config={getHorseTypeConfig(selectedHorse.kind)} />
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : availableHorses.length === 0 ? (
+            <div className="alert alert-warning">
+              <Icons.Warning />
+              <span>Aucun cheval actif disponible. Veuillez d'abord activer des chevaux.</span>
+            </div>
+          ) : (
+            <select
+              id="horse_id"
+              name="horse_id"
+              value={formData.horse_id ?? ''}
+              onChange={handleChange}
+              className="form-select"
+              required
+              autoFocus
+            >
+              <option value="">Sélectionner un cheval</option>
+              {availableHorses.map((horse) => {
+                const horseTypeConfig = getHorseTypeConfig(horse.kind);
+                return (
+                  <option key={horse.id} value={horse.id}>
+                    {horse.name} ({horseTypeConfig?.label || horse.kind})
+                  </option>
+                );
+              })}
+            </select>
+          )}
+        </div>
+      )}
+
+      {/* Section 1 : Sélection du cavalier (si depuis HorseCard) */}
+      {isFromHorseCard && (
+        <div className="pairing-form-section">
+          <div className="pairing-form-section-header">
+            <div className="pairing-form-section-icon">
+              <Icons.User />
+            </div>
+            <h3 className="pairing-form-section-title">Sélection du cavalier</h3>
           </div>
-        ) : (
-          <select
-            id="horse_id"
-            name="horse_id"
-            value={formData.horse_id ?? ''}
-            onChange={handleChange}
-            className="form-select"
-            required
-            autoFocus
-          >
-            <option value="">Sélectionner un cheval</option>
-            {availableHorses.map((horse) => (
-              <option key={horse.id} value={horse.id}>
-                {horse.name} ({horse.kind === 'horse' ? 'Cheval' : 'Poney'})
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
+
+          {isEdit ? (
+            <div className="horse-selection-card">
+              <div className="horse-info">
+                {selectedRider && (
+                  <div className="horse-name">
+                    {selectedRider?.name ?? 'N/A'}
+                    {selectedRider.rider_type && (
+                      <DomainBadge config={getRiderTypeConfig(selectedRider.rider_type)} />
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : availableRiders.length === 0 ? (
+            <div className="alert alert-warning">
+              <Icons.Warning />
+              <span>Aucun cavalier actif disponible. Veuillez d'abord activer des cavaliers.</span>
+            </div>
+          ) : (
+            <select
+              id="rider_id"
+              name="rider_id"
+              value={formData.rider_id ?? ''}
+              onChange={handleChange}
+              className="form-select"
+              required
+              autoFocus
+            >
+              <option value="">Sélectionner un cavalier</option>
+              {availableRiders.map((rider) => {
+                const riderTypeConfig = getRiderTypeConfig(rider.rider_type);
+                return (
+                  <option key={rider.id} value={rider.id}>
+                    {rider.name} ({riderTypeConfig?.label || rider.rider_type})
+                  </option>
+                );
+              })}
+            </select>
+          )}
+        </div>
+      )}
 
       {/* Section 2 : Dates de la pension */}
       <div className="pairing-form-section">
@@ -210,9 +297,7 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
               <div className="link-type-icon">
                 <Icons.User />
               </div>
-              <span className="link-type-text">
-                {getRiderHorseLinkLabel(RIDER_HORSE_LINK_TYPE.OWN)}
-              </span>
+              <span className="link-type-text">{ownLinkConfig?.label}</span>
             </label>
           </div>
 
@@ -229,9 +314,7 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
               <div className="link-type-icon">
                 <Icons.Calendar />
               </div>
-              <span className="link-type-text">
-                {getRiderHorseLinkLabel(RIDER_HORSE_LINK_TYPE.LOAN)}
-              </span>
+              <span className="link-type-text">{loanLinkConfig?.label}</span>
             </label>
           </div>
         </div>
@@ -261,7 +344,7 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
                 Sélectionnez les jours
               </div>
               <div className="days-selector-grid">
-                {WEEK_DAYS_EN.map((dayEn, index) => {
+                {WEEK_DAYS_EN.map((dayEn) => {
                   const selected = loanDays.includes(dayEn);
                   const disabled =
                     !selected && loanDays.length >= Number(formData.loan_days_per_week || 0);
@@ -270,7 +353,7 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
                       type="button"
                       key={dayEn}
                       onClick={() => toggleLoanDay(dayEn)}
-                      disabled={disabled || submitting}
+                      disabled={disabled}
                       className={`day-button ${selected ? 'selected' : ''}`}
                     >
                       {weekDayCodeToFr(dayEn)}
@@ -284,28 +367,16 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
       </div>
 
       {/* Actions */}
-      <div className="pairing-form-actions">
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={onCancel}
-          disabled={submitting}
-        >
-          <Icons.Cancel />
+      <div
+        className="pairing-form-actions"
+        style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}
+      >
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
           Annuler
         </button>
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? (
-            <>
-              <Icons.Loading className="spin" />
-              Enregistrement...
-            </>
-          ) : (
-            <>
-              <Icons.Check />
-              {isEdit ? 'Modifier' : 'Créer'}
-            </>
-          )}
+
+        <button type="submit" className="btn btn-primary">
+          {isEdit ? 'Modifier' : 'Créer'}
         </button>
       </div>
     </form>
@@ -315,12 +386,15 @@ function PairingForm({ pairing, horses = [], rider, riderId, onSubmit, onCancel 
 PairingForm.propTypes = {
   pairing: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    rider_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     horse_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     pairing_start_date: PropTypes.string,
     pairing_end_date: PropTypes.string,
     link_type: PropTypes.string,
     loan_days_per_week: PropTypes.number,
     loan_days: PropTypes.arrayOf(PropTypes.string),
+    riders: PropTypes.object,
+    horses: PropTypes.object,
   }),
   horses: PropTypes.arrayOf(
     PropTypes.shape({
@@ -330,13 +404,28 @@ PairingForm.propTypes = {
       activity_start_date: PropTypes.string,
       activity_end_date: PropTypes.string,
     })
-  ).isRequired,
+  ),
+  riders: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      rider_type: PropTypes.string,
+      activity_start_date: PropTypes.string,
+      activity_end_date: PropTypes.string,
+    })
+  ),
   rider: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.string,
     rider_type: PropTypes.string,
-  }).isRequired,
-  riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  }),
+  riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  horse: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    name: PropTypes.string,
+    kind: PropTypes.string,
+  }),
+  horseId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };

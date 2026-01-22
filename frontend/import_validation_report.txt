@@ -78,7 +78,7 @@
 [0;31m[✗][0m   Import: import { Icons } from '../../../lib/icons';
 [0;31m[✗][0m   Path: ../../../lib/icons
 [0;31m[✗][0m Failed import in: ./src/components/horses/HorsesList/HorsesTable.jsx (line 2)
-[0;31m[✗][0m   Import: import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
+[0;31m[✗][0m   Import: import { getHorseTypeLabel } from '../../../lib/domains/horses/kinds';
 [0;31m[✗][0m   Path: ../../../lib/domains/horses/kinds
 [0;31m[✗][0m Failed import in: ./src/components/horses/HorsesList/HorsesTable.jsx (line 3)
 [0;31m[✗][0m   Import: import { getOwnerTypeLabel } from '../../../lib/domains/horses/owners';
@@ -192,7 +192,7 @@
 [0;31m[✗][0m   Import: import { Icons } from '../../../lib/icons';
 [0;31m[✗][0m   Path: ../../../lib/icons
 [0;31m[✗][0m Failed import in: ./src/components/pairings/PairingsList/PairingsTable.jsx (line 2)
-[0;31m[✗][0m   Import: import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
+[0;31m[✗][0m   Import: import { getHorseTypeLabel } from '../../../lib/domains/horses/kinds';
 [0;31m[✗][0m   Path: ../../../lib/domains/horses/kinds
 [0;31m[✗][0m Failed import in: ./src/components/pairings/PairingsList/PairingsTable.jsx (line 3)
 [0;31m[✗][0m   Import: import { isActive } from '../../../lib/helpers/shared/filters';
@@ -210,7 +210,7 @@
 [0;31m[✗][0m   Import: import { Icons } from '../../../lib/icons';
 [0;31m[✗][0m   Path: ../../../lib/icons
 [0;31m[✗][0m Failed import in: ./src/components/riders/RiderCard/OwnedHorsesList.jsx (line 4)
-[0;31m[✗][0m   Import: import { getHorseKindLabel } from '../../../lib/domains/horses/kinds';
+[0;31m[✗][0m   Import: import { getHorseTypeLabel } from '../../../lib/domains/horses/kinds';
 [0;31m[✗][0m   Path: ../../../lib/domains/horses/kinds
 [0;31m[✗][0m Failed import in: ./src/components/riders/RiderCard/PackagesList.jsx (line 3)
 [0;31m[✗][0m   Import: import { Icons } from '../../../lib/icons';

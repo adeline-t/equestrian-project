@@ -1,242 +1,271 @@
-import { useEffect, useState } from 'react';
-import { useParticipants } from '../../../../hooks/useParticipants.js';
-import { useRiderHorsesWithPairings } from '../../../../hooks/useRiderHorsesWithPairings.js';
+import { useState, useEffect } from 'react';
+import { useParticipantSelection } from '../../../../hooks/useParticipantSelection.js';
+import {
+  RIDER_TYPES,
+  OWNER_TYPES,
+  getRiderTypeLabel,
+} from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/components/events.css';
+import '../../../../styles/features/events.css';
 
 function ParticipantsForm({ participants, addParticipant, removeParticipant, updateParticipant }) {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingParticipantId, setEditingParticipantId] = useState(null);
+  const [riderTypeFilter, setRiderTypeFilter] = useState('all');
+  const [riderSearch, setRiderSearch] = useState('');
+  const [horseOwnershipFilter, setHorseOwnershipFilter] = useState('all');
+
+  const participantSelection = useParticipantSelection(participants, editingParticipantId);
+
   const {
-    riders,
-    horses,
+    loading,
     selectedRiderId,
     setSelectedRiderId,
     selectedHorseId,
     setSelectedHorseId,
-    showAddParticipant,
-    setShowAddParticipant,
-    resetParticipantForm,
-    loading: participantsLoading,
-  } = useParticipants();
+    setSelection,
+    resetSelection,
+    getAvailableRiders,
+    getAvailableHorses,
+    getRiderName,
+    getHorseName,
+  } = participantSelection;
 
-  const { horses: riderHorses } = useRiderHorsesWithPairings(selectedRiderId);
-  const [editingParticipantId, setEditingParticipantId] = useState(null);
-
+  // Auto-select first horse when rider is selected
   useEffect(() => {
-    if (selectedRiderId && riderHorses.length > 0) {
-      setSelectedHorseId(String(riderHorses[0].id));
+    if (selectedRiderId) {
+      const availableHorses = getAvailableHorses(horseOwnershipFilter);
+      if (availableHorses.length > 0 && !selectedHorseId) {
+        setSelectedHorseId(availableHorses[0].id);
+      }
     }
-  }, [selectedRiderId, riderHorses, setSelectedHorseId]);
+  }, [
+    selectedRiderId,
+    horseOwnershipFilter,
+    selectedHorseId,
+    getAvailableHorses,
+    setSelectedHorseId,
+  ]);
 
-  const handleAddParticipant = () => {
-    if (!selectedRiderId && !selectedHorseId) return;
-
-    addParticipant(
-      selectedRiderId ? Number(selectedRiderId) : null,
-      selectedHorseId ? Number(selectedHorseId) : null,
-      'manual'
-    );
-
-    resetParticipantForm();
+  const startAdd = () => {
+    resetSelection();
     setEditingParticipantId(null);
+    setShowAddForm(true);
+    setRiderTypeFilter('all');
+    setHorseOwnershipFilter('all');
   };
 
-  const handleEditParticipant = (participantId) => {
+  const startEdit = (participantId) => {
     const participant = participants.find((p) => p.id === participantId);
-    if (participant) {
-      setSelectedRiderId(participant.rider_id ? String(participant.rider_id) : '');
-      setSelectedHorseId(participant.horse_id ? String(participant.horse_id) : '');
-      setEditingParticipantId(participantId);
-      setShowAddParticipant(true);
-    }
-  };
+    if (!participant) return;
 
-  const handleSaveEdit = () => {
-    if (!selectedRiderId && !selectedHorseId) return;
-
-    updateParticipant(
-      editingParticipantId,
-      selectedRiderId ? Number(selectedRiderId) : null,
-      selectedHorseId ? Number(selectedHorseId) : null
-    );
-
-    resetParticipantForm();
-    setEditingParticipantId(null);
+    setSelection(participant.rider_id, participant.horse_id);
+    setEditingParticipantId(participantId);
+    setShowAddForm(true);
+    setRiderTypeFilter('all');
+    setHorseOwnershipFilter('all');
   };
 
   const cancelEdit = () => {
-    resetParticipantForm();
+    resetSelection();
     setEditingParticipantId(null);
+    setShowAddForm(false);
+    setRiderTypeFilter('all');
+    setHorseOwnershipFilter('all');
   };
 
-  const getRiderName = (id) => riders.find((r) => r.id === id)?.name || `Cavalier #${id}`;
-  const getHorseName = (id) => horses.find((h) => h.id === id)?.name || `Cheval #${id}`;
+  const handleSubmit = () => {
+    if (!selectedRiderId && !selectedHorseId) return;
+
+    if (editingParticipantId) {
+      updateParticipant(editingParticipantId, selectedRiderId, selectedHorseId);
+    } else {
+      addParticipant(selectedRiderId, selectedHorseId);
+    }
+
+    resetSelection();
+    setEditingParticipantId(null);
+    setShowAddForm(false);
+  };
+
+  const availableRiders = getAvailableRiders(riderTypeFilter, riderSearch);
+  const availableHorses = getAvailableHorses(horseOwnershipFilter);
 
   return (
-    <div className="participants-container">
-      {participantsLoading && (
-        <div className="participants-alert participants-alert-info">
-          <Icons.Loading className="participants-spin participants-alert-icon" />
-          Chargement des cavaliers et chevaux...
+    <div className="form-section">
+      <h3 className="mb-15">Participants</h3>
+
+      {loading && (
+        <div className="alert alert-info mb-15">
+          <Icons.Loading className="spin" /> Chargement des cavaliers et chevaux…
         </div>
       )}
 
+      {/* PARTICIPANTS EXISTANTS */}
       {participants.length > 0 ? (
-        <div className="participants-table-wrapper">
-          <table className="participants-table">
-            <thead>
-              <tr>
-                <th>
-                  <Icons.User /> Cavaliers
-                </th>
-                <th>
-                  <Icons.Horse /> Chevaux
-                </th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {participants.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <div className="participant-cell">
-                      {p.rider_id ? (
-                        getRiderName(p.rider_id)
-                      ) : (
-                        <span className="participant-missing">Aucun cavalier</span>
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="participant-cell">
-                      {p.horse_id ? (
-                        getHorseName(p.horse_id)
-                      ) : (
-                        <span className="participant-missing">Aucun cheval</span>
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="participant-actions">
-                      <button
-                        type="button"
-                        className="participants-btn-icon btn-edit-ghost"
-                        onClick={() => handleEditParticipant(p.id)}
-                        title="Modifier"
-                      >
-                        <Icons.Edit />
-                      </button>
-                      <button
-                        type="button"
-                        className="participants-btn-icon btn-danger-ghost"
-                        onClick={() => removeParticipant(p.id)}
-                        title="Supprimer"
-                      >
-                        <Icons.Delete />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="participants-list mb-20">
+          {participants.map((p) => (
+            <div key={p.id} className="participant-card">
+              <div className="participant-card-header">
+                {p.rider_id ? getRiderName(p.rider_id) : 'cavalier à choisir'}
+              </div>
+
+              <div className="participant-card-body">
+                {p.horse_id ? getHorseName(p.horse_id) : 'cheval à choisir'}
+              </div>
+
+              <div className="participant-card-footer">
+                <button
+                  type="button"
+                  className="btn-icon-modern"
+                  onClick={() => startEdit(p.id)}
+                  title="Modifier"
+                >
+                  <Icons.Edit />
+                </button>
+                <button
+                  type="button"
+                  className="btn-icon-modern danger"
+                  onClick={() => removeParticipant(p.id)}
+                  title="Supprimer"
+                >
+                  <Icons.Delete />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
-        <div className="participants-empty-state">
+        <div className="empty-state-small mb-20">
           <Icons.Users />
           <p>Aucun participant ajouté</p>
         </div>
       )}
 
-      {showAddParticipant && (
-        <div className="participants-add-form">
-          <div className="participants-form-header">
-            <h4>{editingParticipantId ? 'Modifier le participant' : 'Ajouter un participant'}</h4>
-            {editingParticipantId && (
-              <button type="button" className="participants-btn-link" onClick={cancelEdit}>
-                Annuler
+      {!showAddForm && (
+        <button type="button" className="btn btn-secondary" onClick={startAdd}>
+          <Icons.Add /> Ajouter un participant
+        </button>
+      )}
+
+      {/* FORMULAIRE ADD / EDIT */}
+      {showAddForm && (
+        <div className="event-form-section mt-20">
+          <h4 className="mb-15">
+            {editingParticipantId ? 'Modifier le participant' : 'Ajouter un participant'}
+          </h4>
+
+          {/* FILTRES CAVALIERS */}
+          <div className="filter-section mb-15">
+            <div className="filter-pills">
+              <button
+                className={`pill ${riderTypeFilter === 'all' ? 'pill-active' : ''}`}
+                onClick={() => setRiderTypeFilter('all')}
+              >
+                Tous
               </button>
-            )}
-          </div>
-
-          <select
-            value={selectedRiderId || ''}
-            onChange={(e) => setSelectedRiderId(e.target.value)}
-          >
-            <option value="">-- Sélectionnez un cavalier (optionnel) --</option>
-            {riders
-              .filter(
-                (r) =>
-                  !participants.some((p) => p.rider_id === r.id && p.id !== editingParticipantId)
-              )
-              .map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name}
-                </option>
+              {Object.values(RIDER_TYPES).map((type) => (
+                <button
+                  key={type}
+                  className={`pill ${riderTypeFilter === type ? 'pill-active' : ''}`}
+                  onClick={() => setRiderTypeFilter(type)}
+                >
+                  {getRiderTypeLabel(type)}
+                </button>
               ))}
-          </select>
-
-          <div className="participants-horses-section">
-            {selectedRiderId && riderHorses.length > 0 && (
-              <>
-                <label className="event-form-label">Ses chevaux</label>
-                <div className="participants-horses">
-                  {riderHorses
-                    .filter(
-                      (h) =>
-                        !participants.some(
-                          (p) => p.horse_id === h.id && p.id !== editingParticipantId
-                        )
-                    )
-                    .map((h) => (
-                      <div
-                        key={h.id}
-                        className={selectedHorseId === String(h.id) ? 'selected' : ''}
-                        onClick={() =>
-                          setSelectedHorseId(selectedHorseId === String(h.id) ? '' : String(h.id))
-                        }
-                      >
-                        <Icons.Horse /> {h.name}
-                      </div>
-                    ))}
-                </div>
-              </>
-            )}
-
-            <label
-              className="event-form-label"
-              style={{ marginTop: selectedRiderId && riderHorses.length > 0 ? '12px' : '0' }}
-            >
-              {selectedRiderId && riderHorses.length > 0 ? 'Autres chevaux' : 'Tous les chevaux'}
-            </label>
-            <div className="participants-horses">
-              {horses
-                .filter(
-                  (h) =>
-                    !riderHorses.some((rh) => rh.id === h.id) &&
-                    !participants.some((p) => p.horse_id === h.id && p.id !== editingParticipantId)
-                )
-                .map((h) => (
-                  <div
-                    key={h.id}
-                    className={selectedHorseId === String(h.id) ? 'selected' : ''}
-                    onClick={() =>
-                      setSelectedHorseId(selectedHorseId === String(h.id) ? '' : String(h.id))
-                    }
-                  >
-                    <Icons.Horse /> {h.name}
-                  </div>
-                ))}
             </div>
           </div>
 
-          <button
-            type="button"
-            className="participants-btn participants-btn-primary"
-            onClick={editingParticipantId ? handleSaveEdit : handleAddParticipant}
-            disabled={!selectedRiderId && !selectedHorseId}
-          >
-            <Icons.Add /> {editingParticipantId ? 'Sauvegarder' : 'Ajouter'}
-          </button>
+          {/* RECHERCHE CAVALIER */}
+          <div className="form-group mb-15">
+            <input
+              type="text"
+              placeholder="Rechercher un cavalier..."
+              value={riderSearch}
+              onChange={(e) => setRiderSearch(e.target.value)}
+              className="form-input"
+            />
+          </div>
+
+          {/* BOUTONS CAVALIERS */}
+          <div className="form-group mb-15">
+            <div className="event-form-times-group">
+              {availableRiders.map((r) => {
+                const isActive = selectedRiderId === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    className={`btn-form ${isActive ? 'active' : ''}`}
+                    onClick={() => setSelectedRiderId(isActive ? null : r.id)}
+                  >
+                    {r.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* FILTRES CHEVAUX */}
+          <div className="filter-section mb-10">
+            <div className="filter-pills">
+              <button
+                className={`pill ${horseOwnershipFilter === 'all' ? 'pill-active' : ''}`}
+                onClick={() => setHorseOwnershipFilter('all')}
+              >
+                Tous
+              </button>
+              {Object.values(OWNER_TYPES).map((type) => (
+                <button
+                  key={type}
+                  className={`pill ${horseOwnershipFilter === type ? 'pill-active' : ''}`}
+                  onClick={() => setHorseOwnershipFilter(type)}
+                >
+                  {type === OWNER_TYPES.LAURY
+                    ? 'Laury'
+                    : type === OWNER_TYPES.PRIVATE_OWNER
+                    ? 'Propriétaire'
+                    : type === OWNER_TYPES.CLUB
+                    ? 'Club'
+                    : 'Autre'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* BOUTONS CHEVAUX */}
+          <div className="form-group mb-15">
+            <div className="event-form-times-group">
+              {availableHorses.map((h) => {
+                const isActive = selectedHorseId === h.id;
+                return (
+                  <button
+                    key={h.id}
+                    type="button"
+                    className={`btn-form ${isActive ? 'active' : ''}`}
+                    onClick={() => setSelectedHorseId(isActive ? null : h.id)}
+                  >
+                    {h.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ACTIONS */}
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={cancelEdit}>
+              <Icons.Cancel /> Annuler
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSubmit}
+              disabled={!selectedRiderId && !selectedHorseId}
+            >
+              <Icons.Check /> {editingParticipantId ? 'Sauvegarder' : 'Ajouter'}
+            </button>
+          </div>
         </div>
       )}
     </div>

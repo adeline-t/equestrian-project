@@ -36,26 +36,18 @@ export function isActive(startDate, endDate) {
   return true;
 }
 
-/**
- * Check if an item is in the past
- * @param {string} endDate - Activity end date
- * @returns {boolean} True if the item is in the past
- */
-export function isPast(endDate) {
-  if (!endDate) return false;
-  const end = new Date(endDate);
-  const now = new Date();
-  return end < now;
-}
+// Filtres de type de cheval
+export const HORSE_KIND_FILTERS = {
+  ALL: 'all',
+  HORSE: 'horse',
+  PONY: 'pony',
+};
 
-/**
- * Check if an item is in the future
- * @param {string} startDate - Activity start date
- * @returns {boolean} True if the item is in the future
- */
-export function isFuture(startDate) {
-  if (!startDate) return false;
-  const start = new Date(startDate);
-  const now = new Date();
-  return start > now;
-}
+// Filtres de type de propriétaire
+export const OWNERSHIP_TYPE_FILTERS = {
+  ALL: 'all',
+  LAURY: 'laury',
+  PRIVATE_OWNER: 'private_owner',
+  CLUB: 'club',
+  OTHER: 'other',
+};

@@ -112,42 +112,6 @@ export function formatTimeForDatabase(timeStr) {
    ============================================ */
 
 /**
- * Calculate event style positioning for calendar
- * @param {Object} event - Event object with start_time and end_time
- * @param {number} HOUR_HEIGHT - Height of one hour in pixels (default: 60)
- * @param {number} START_HOUR - Calendar start hour (default: 8)
- * @param {number} END_HOUR - Calendar end hour (default: 22)
- * @returns {Object} Style object with top and height, or {display: 'none'}
- */
-export function calculateLessonStyle(event, HOUR_HEIGHT = 60, START_HOUR = 8, END_HOUR = 22) {
-  if (!event?.start_time || !event?.end_time) {
-    return { display: 'none' };
-  }
-
-  const startMinutes = timeToMinutes(event.start_time);
-  const endMinutes = timeToMinutes(event.end_time);
-  const dayStartMinutes = START_HOUR * 60;
-  const dayEndMinutes = END_HOUR * 60;
-
-  // Check if event is outside visible hours
-  if (endMinutes <= dayStartMinutes || startMinutes >= dayEndMinutes) {
-    return { display: 'none' };
-  }
-
-  // Clamp start and end to visible hours
-  const clampedStart = Math.max(startMinutes, dayStartMinutes);
-  const clampedEnd = Math.min(endMinutes, dayEndMinutes);
-
-  const top = (clampedStart - dayStartMinutes) * (HOUR_HEIGHT / 60);
-  const height = (clampedEnd - clampedStart) * (HOUR_HEIGHT / 60);
-
-  return {
-    top: `${top}px`,
-    height: `${height}px`,
-  };
-}
-
-/**
  * Calculate selection style positioning for calendar
  * @param {string} selectionStart - Start time in HH:MM format
  * @param {string} selectionEnd - End time in HH:MM format
@@ -188,25 +152,4 @@ export function calculateSelectionStyle(
     top: `${top}px`,
     height: `${height}px`,
   };
-}
-
-/**
- * Format time string for display (HH:MM)
- * Works with HH:MM:SS, HH:MM, or ISO datetime strings
- * @param {string} timeStr - Time string
- * @returns {string} Time in HH:MM format
- */
-export function formatTimeForDisplay(timeStr) {
-  if (!timeStr) return '';
-
-  // If it's an ISO datetime, extract time part
-  if (timeStr.includes('T')) {
-    const date = new Date(timeStr);
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${hours}:${minutes}`;
-  }
-
-  // If it's already time format (HH:MM:SS or HH:MM), take first 5 chars
-  return String(timeStr).slice(0, 5);
 }

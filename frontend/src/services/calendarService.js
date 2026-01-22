@@ -3,7 +3,7 @@ import { calendarApi } from './api';
 import { timeToMinutes, minutesToTime } from '../lib/helpers/formatters';
 
 /**
- * Normalize start_time / end_time for display only
+ * Normalize start_time / end_time to HH:MM format
  */
 function normalizeTimeToHHMM(timeValue) {
   if (!timeValue) return '00:00';
@@ -14,22 +14,16 @@ function normalizeTimeToHHMM(timeValue) {
   return '00:00';
 }
 
+/**
+ * Enrich slot with normalized times only
+ */
 function enrichSlot(slot) {
   if (!slot) return slot;
 
-  const start = normalizeTimeToHHMM(slot.start_time);
-  const end = normalizeTimeToHHMM(slot.end_time);
-
-  let durationMinutes = slot.duration_minutes;
-  if (!durationMinutes || durationMinutes === 0) {
-    durationMinutes = timeToMinutes(end) - timeToMinutes(start);
-  }
-
   return {
     ...slot,
-    start_time: start,
-    end_time: end,
-    duration_minutes: durationMinutes,
+    start_time: normalizeTimeToHHMM(slot.start_time),
+    end_time: normalizeTimeToHHMM(slot.end_time),
   };
 }
 

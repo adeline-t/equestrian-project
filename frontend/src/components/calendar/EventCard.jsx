@@ -1,51 +1,46 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { useSlotEvent } from '../../hooks/useSlotEvent';
-import { CARD_STYLES, LAYOUT_STYLES, TEXT_STYLES } from '../../lib/config/ui';
-import { EVENT_TYPES, getEventTypeColor, getStatusBadge } from '../../lib/domain/events.js';
-import { formatDuration, formatTime } from '../../lib/helpers/formatters';
+import { EVENT_TYPES, getEventTypeConfig, isBlockedEvent } from '../../lib/domain/events';
+import { formatTime, formatDuration } from '../../lib/helpers/formatters';
 import { Icons } from '../../lib/icons';
-import '../../styles/components/calendar.css';
+import '../../styles/features/calendar.css';
+import { SLOT_STATUSES } from '../../lib/domain/events';
 
-// helpers unchanged, just rename param from event -> slot where relevant
 const shouldUseCompactLayout = (slot) => slot.duration_minutes < 60;
-const isBlockedEvent = (slot) => slot.event_type === 'blocked';
 
+/* ------------------------------
+   Status Badge Component
+--------------------------------*/
 function StatusBadge({ status }) {
-  const { icon: Icon, bgColor, color, label } = getStatusBadge(status);
+  const config = getEventTypeConfig(status) || {};
+  const Icon = config.icon || Icons.Info;
+  const label = config.label || status;
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: '4px 4px',
-        borderRadius: '10px',
-        fontSize: '12px',
-        backgroundColor: bgColor,
-        color: color,
-        whiteSpace: 'nowrap',
-        flexShrink: 0,
-        marginRight: '4px',
-      }}
-      role="img"
-      aria-label={label}
-    >
+    <div className={`status-badge status-${status}`} role="img" aria-label={label}>
       <Icon aria-hidden="true" />
     </div>
   );
 }
 
+StatusBadge.propTypes = {
+  status: PropTypes.string.isRequired,
+};
+
+/* ------------------------------
+   Participants Component
+--------------------------------*/
 function Participants({ count = 0, max = 0, isCompact = false }) {
-  if (max === 0) return null;
+  if (!max) return null;
+
   return (
     <div
-      style={{ ...LAYOUT_STYLES.row, fontSize: isCompact ? '9px' : '11px' }}
+      className={`participants ${isCompact ? 'compact' : 'standard'}`}
       role="img"
       aria-label={`${count}/${max} participants`}
     >
-      <Icons.Users
-        style={{ fontSize: isCompact ? '9px' : '11px', flexShrink: 0 }}
-        aria-hidden="true"
-      />
+      <Icons.Users className="participants-icon" aria-hidden="true" />
       <span>
         {count}/{max}
       </span>
@@ -53,101 +48,84 @@ function Participants({ count = 0, max = 0, isCompact = false }) {
   );
 }
 
-function BlockedEventContent({ slot, display }) {
+Participants.propTypes = {
+  count: PropTypes.number,
+  max: PropTypes.number,
+  isCompact: PropTypes.bool,
+};
+
+/* ------------------------------
+   Blocked Slot Content
+--------------------------------*/
+function BlockedSlotContent({ slot }) {
   return (
-    <div style={{ ...LAYOUT_STYLES.column, height: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <Icons.Blocked style={{ fontSize: '14px', color: '#e2e3e5' }} aria-hidden="true" />
-        <span style={{ fontSize: '10px', color: 'white' }}>Période bloquée</span>
+    <div className="blocked-slot-content">
+      <div className="blocked-slot-header">
+        <Icons.Blocked className="blocked-slot-icon" aria-hidden="true" />
+        <span className="blocked-slot-label">Période bloquée</span>
       </div>
-
-      <span
-        style={{
-          ...TEXT_STYLES.standard.name,
-          color: 'white',
-          fontSize: '14px',
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          wordBreak: 'break-word',
-          lineHeight: '1.2',
-        }}
-      >
-        {display.name || display.cancellation_reason || 'Bloqué'}
-      </span>
-
-      <div style={{ ...TEXT_STYLES.standard.time, color: 'white', marginTop: 'auto' }}>
+      <div className="blocked-slot-reason">{slot.cancellation_reason || 'Bloqué'}</div>
+      <div className="blocked-slot-time">
         {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
       </div>
     </div>
   );
 }
 
-function RegularEventContent({ slot, display, isCompact }) {
-  const styles = TEXT_STYLES[isCompact ? 'compact' : 'standard'];
+BlockedSlotContent.propTypes = {
+  slot: PropTypes.object.isRequired,
+};
+
+/* ------------------------------
+   Regular Slot Content
+--------------------------------*/
+function RegularSlotContent({ slot, isCompact }) {
+  const participantCount = slot.event_participants?.length || 0;
+  const maxParticipants = slot.events?.max_participants || 0;
 
   return (
-    <div style={{ ...LAYOUT_STYLES.column, height: '100%', justifyContent: 'space-between' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', minHeight: 0 }}>
-        <StatusBadge status={slot.status} />
-        <span
-          style={{
-            ...styles.name,
-            color: 'white',
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            wordBreak: 'break-word',
-            lineHeight: '1.2',
-          }}
-        >
-          {display.name || 'Événement'}
+    <div className="regular-slot-content">
+      <div className="regular-slot-header">
+        <StatusBadge status={slot.slot_status} />
+        <span className={`regular-slot-name ${isCompact ? 'compact' : 'standard'}`}>
+          {slot.events?.name || 'Événement'}
         </span>
       </div>
 
-      <div style={{ ...LAYOUT_STYLES.spaceBetween }}>
-        <div style={{ ...styles.time, color: 'white' }}>
+      <div className="regular-slot-footer">
+        <div className={`regular-slot-time ${isCompact ? 'compact' : 'standard'}`}>
           {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
         </div>
-        <Participants
-          count={display.participant_count}
-          max={display.max_participants}
-          isCompact={isCompact}
-        />
+        <Participants count={participantCount} max={maxParticipants} isCompact={isCompact} />
       </div>
 
       {!isCompact && slot.duration_minutes && (
-        <div style={{ ...styles.duration, color: 'rgba(255,255,255,0.8)' }}>
-          {formatDuration(slot.duration_minutes)}
-        </div>
+        <div className="regular-slot-duration">{formatDuration(slot.duration_minutes)}</div>
       )}
     </div>
   );
 }
 
+RegularSlotContent.propTypes = {
+  slot: PropTypes.object.isRequired,
+  isCompact: PropTypes.bool,
+};
+
+/* ------------------------------
+   EventCard Component
+--------------------------------*/
 function EventCard({ slot, onClick }) {
   if (!slot) return null;
 
   const { event, loading } = useSlotEvent(slot);
-  const display = event || slot; // use slot fields until event is loaded
-
   const isCompact = shouldUseCompactLayout(slot);
-  const isBlocked = isBlockedEvent(slot);
-  const backgroundColor = getEventTypeColor(slot.event_type);
-
-  const cardStyle = {
-    ...CARD_STYLES.base,
-    ...(isCompact ? CARD_STYLES.compact : CARD_STYLES.standard),
-    backgroundColor,
-    opacity: loading ? 0.7 : 1,
-  };
+  const blocked = isBlockedEvent(slot);
+  const eventType = slot.events?.event_type ?? 'blocked';
+  const displayName = slot.events?.name || 'Événement';
 
   const handleClick = (e) => {
     e.stopPropagation();
-    // pass slot + event to the click handler so the modal has everything
-    onClick?.({ slot, event });
+    onClick?.(slot);
   };
 
   const handleKeyDown = (e) => {
@@ -159,20 +137,19 @@ function EventCard({ slot, onClick }) {
 
   return (
     <div
-      className={`event-card ${isCompact ? 'compact' : 'standard'} ${isBlocked ? 'blocked' : ''}`}
-      style={cardStyle}
+      className={`event-card ${isCompact ? 'compact' : 'standard'} ${blocked ? 'blocked' : ''} ${
+        loading ? 'loading' : ''
+      } event-type-${eventType}`}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`${display.name || 'Événement'}, ${formatTime(slot.start_time)} - ${formatTime(
-        slot.end_time
-      )}`}
+      aria-label={`${displayName}, ${formatTime(slot.start_time)} - ${formatTime(slot.end_time)}`}
     >
-      {isBlocked ? (
-        <BlockedEventContent slot={slot} display={display} />
+      {blocked ? (
+        <BlockedSlotContent slot={slot} />
       ) : (
-        <RegularEventContent slot={slot} display={display} isCompact={isCompact} />
+        <RegularSlotContent slot={slot} isCompact={isCompact} />
       )}
     </div>
   );
@@ -180,17 +157,33 @@ function EventCard({ slot, onClick }) {
 
 EventCard.propTypes = {
   slot: PropTypes.shape({
-    slot_id: PropTypes.number.isRequired,
-    event_id: PropTypes.number,
-    name: PropTypes.string,
-    event_type: PropTypes.oneOf(Object.values(EVENT_TYPES)).isRequired,
-    status: PropTypes.oneOf(['scheduled', 'confirmed', 'completed', 'cancelled']).isRequired,
+    id: PropTypes.number.isRequired,
+    slot_date: PropTypes.string,
     start_time: PropTypes.string.isRequired,
     end_time: PropTypes.string.isRequired,
+    slot_status: PropTypes.oneOf([
+      SLOT_STATUSES.SCHEDULED,
+      SLOT_STATUSES.CONFIRMED,
+      SLOT_STATUSES.COMPLETED,
+      SLOT_STATUSES.CANCELLED,
+    ]).isRequired,
+    is_all_day: PropTypes.bool,
     duration_minutes: PropTypes.number,
-    participant_count: PropTypes.number,
-    max_participants: PropTypes.number,
     cancellation_reason: PropTypes.string,
+    events: PropTypes.shape({
+      id: PropTypes.number,
+      event_type: PropTypes.oneOf(Object.values(EVENT_TYPES)),
+      name: PropTypes.string,
+      min_participants: PropTypes.number,
+      max_participants: PropTypes.number,
+    }),
+    event_participants: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        rider_id: PropTypes.number,
+        horse_id: PropTypes.number,
+      })
+    ),
   }).isRequired,
   onClick: PropTypes.func,
 };
