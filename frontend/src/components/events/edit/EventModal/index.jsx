@@ -1,208 +1,321 @@
-import { useState } from 'react';
-import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import PropTypes from 'prop-types';
 import { useEventDetails } from '../../../../hooks/useEventDetails';
 import { useEventEdit } from '../../../../hooks/useEventEdit';
-import { getEventTypeConfig, getStatusConfig } from '../../../../lib/domain/events';
-import DomainBadge from '../../../common/DomainBadge';
+import { useEventParticipantActions } from '../../../../hooks/useEventParticipantActions';
+import { getInstructorConfig } from '../../../../lib/domain';
+import { SLOT_STATUSES, getEventTypeConfig, getStatusConfig } from '../../../../lib/domain/events';
+import { calculateDurationMinutes, formatDate, formatDuration } from '../../../../lib/helpers';
 import { Icons } from '../../../../lib/icons';
 import '../../../../styles/features/events.css';
+import DomainBadge from '../../../common/DomainBadge';
 import Modal from '../../../common/Modal';
-import EventDetailsTab from './EventDetailsTab';
+import ParticipantsForm from '../../create/CreateEventModal/ParticipantsForm';
+import EventDeleteOrCancelModal from './EventDeleteOrCancelModal';
 import EventEditForm from './EventEditForm';
-import ParticipantsTab from './ParticipantsTab';
-import RecurrenceTab from './RecurrenceTab';
+import EventParticipantRow from './EventParticipantRow';
 
-function EventModal({ slotId, onClose, onUpdate }) {
-  const [activeTab, setActiveTab] = useState('details');
-  const { slot, event, participants, recurrence, loading, error, refresh } =
-    useEventDetails(slotId);
-  const { isEditing, editData, saving, editError, startEdit, handleChange, saveEdit, cancelEdit } =
-    useEventEdit(slot, event);
+export default function EventModal({ slotId, onClose, onDelete }) {
+  const { slot, event, participants, loading, error, reload, deleteSlot } = useEventDetails(slotId);
 
-  const handleSave = async () => {
-    const success = await saveEdit(slotId, event?.id, refresh);
+  const participantActions = useEventParticipantActions(async (msg) => {
+    console.log(msg);
+    reload(); // reload participants
+  });
+
+  const eventEdit = useEventEdit(slot, event, async () => {
+    reload();
+  });
+
+  const handleDeleteEvent = async () => {
+    const success = await eventEdit.deleteSlot(slot.id);
+
     if (success) {
-      onUpdate?.();
-      setIsEditing(false);
+      eventEdit.setShowDeleteModal(false); // ferme DeleteConfirmationModal
+      onDelete?.(); // notifie CalendarView
+      onClose(); // ferme EventModal
     }
   };
 
-  if (loading) return <EventModalLoading isOpen onClose={onClose} />;
-  if (error || !slot) return <EventModalError isOpen error={error} onClose={onClose} />;
+  const handleCancelEvent = async () => {};
 
-  const participantCount = participants?.length || 0;
-  const isBlocked = event?.event_type === 'blocked';
-  const hasRecurrence = !!recurrence;
+  if (loading) {
+    return (
+      <Modal isOpen onClose={onClose} size="medium" title="Chargement…">
+        <div className="loading-state">Chargement…</div>
+      </Modal>
+    );
+  }
 
-  const eventTypeConfig = getEventTypeConfig(event?.event_type || slot?.event_type);
-  const statusConfig = getStatusConfig(slot.slot_status);
+  if (error || !slot || !event) {
+    return (
+      <Modal isOpen onClose={onClose} size="medium" title="Erreur">
+        <p>{error || 'Erreur de chargement'}</p>
+      </Modal>
+    );
+  }
 
-  // Calculer le nombre d'onglets disponibles
-  const availableTabs = [
-    'details',
-    ...(event && !isBlocked ? ['participants'] : []),
-    ...(hasRecurrence ? ['recurrence'] : []),
-  ];
-  const showTabs = availableTabs.length > 1 && !isEditing;
-
-  // Titre du modal avec badges
-  const modalTitle = (
-    <div className="event-modal-title-section">
-      <div className="event-modal-title-main">
-        {event?.name || eventTypeConfig?.label || 'Événement'}
-      </div>
-      <div className="event-modal-title-badges">
-        {hasRecurrence && (
-          <span className="badge badge-recurrence">
-            <Icons.Repeat /> Récurrent
-          </span>
-        )}
-        {statusConfig && <DomainBadge config={statusConfig} />}
-      </div>
-      <div className="event-modal-subtitle">
-        <div className="event-modal-meta-item">
-          <Icons.Calendar className="event-modal-meta-icon" />
-          <span>{format(parseISO(slot.slot_date), 'EEEE dd MMMM yyyy', { locale: fr })}</span>
-        </div>
-        <div className="event-modal-meta-item">
-          <Icons.Clock className="event-modal-meta-icon" />
-          <span>
-            {slot.is_all_day
-              ? 'Journée entière'
-              : `${slot.start_time.slice(0, 5)} - ${slot.end_time.slice(0, 5)}`}
-          </span>
-        </div>
-        {event && !isBlocked && (
-          <div className="event-modal-meta-item">
-            <Icons.Users className="event-modal-meta-icon" />
-            <span>
-              {participantCount} / {event.max_participants || '∞'} participants
-            </span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-
-  // Footer avec boutons
-  const modalFooter = isEditing ? (
-    <>
-      <button className="btn btn-secondary" onClick={cancelEdit} disabled={saving}>
-        <Icons.Cancel /> Annuler
-      </button>
-      <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
-        {saving ? (
-          <>
-            <Icons.Loading className="spin" />
-            Sauvegarde...
-          </>
-        ) : (
-          <>
-            <Icons.Check /> Sauvegarder
-          </>
-        )}
-      </button>
-    </>
-  ) : (
-    <>
-      <button className="btn btn-secondary" onClick={onClose}>
-        <Icons.Close /> Fermer
-      </button>
-      <button className="btn btn-primary" onClick={startEdit}>
-        <Icons.Edit /> Modifier
-      </button>
-    </>
-  );
+  const duration = calculateDurationMinutes(slot.start_time, slot.end_time);
+  const eventTypeConfig = getEventTypeConfig(event.event_type);
+  const slotStatusConfig = getStatusConfig(slot.slot_status);
+  const instructorConfig = getInstructorConfig(event.instructor_id);
+  const actualInstructorConfig = getInstructorConfig(slot.actual_instructor_id);
 
   return (
-    <Modal isOpen={true} onClose={onClose} title={modalTitle} footer={modalFooter} size="large">
-      {/* Tabs - uniquement si plusieurs onglets */}
-      {showTabs && (
-        <div className="event-modal-tabs">
-          <button
-            className={`event-modal-tab ${activeTab === 'details' ? 'active' : ''}`}
-            onClick={() => setActiveTab('details')}
-          >
-            <Icons.Info /> Détails
-          </button>
-          {event && !isBlocked && (
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      size="xlarge"
+      title={
+        <div className="event-modal-header">
+          <div className="event-modal-avatar">
+            <Icons.Lesson />
+          </div>
+
+          <div className="event-modal-title-text">
+            <h2>{event?.name || eventTypeConfig.label}</h2>
+            <div className="event-modal-created">créé le {formatDate(slot?.created_at)}</div>
+          </div>
+
+          <div className="event-modal-actions">
             <button
-              className={`event-modal-tab ${activeTab === 'participants' ? 'active' : ''}`}
-              onClick={() => setActiveTab('participants')}
+              className="btn-icon-modern"
+              onClick={eventEdit.startEdit}
+              title="Modifier l'événement"
             >
-              <Icons.Users /> Participants
-              {participantCount > 0 && <span className="event-tab-badge">{participantCount}</span>}
+              <Icons.Edit />
             </button>
-          )}
-          {hasRecurrence && (
+
             <button
-              className={`event-modal-tab ${activeTab === 'recurrence' ? 'active' : ''}`}
-              onClick={() => setActiveTab('recurrence')}
+              className="btn-icon-modern danger"
+              onClick={eventEdit.openDeleteModal}
+              title="Supprimer l'événement"
             >
-              <Icons.Repeat /> Récurrence
+              <Icons.Delete />
             </button>
-          )}
+          </div>
         </div>
+      }
+    >
+      <div className="event-modal-content">
+        <div className="event-modal-grid">
+          {/* SIDEBAR */}
+          <div className="event-modal-sidebar">
+            <div className="info-card">
+              <div className="info-card-header">
+                <h3>Informations</h3>
+              </div>
+              <div className="info-card-body">
+                <div className="info-item-modern info-content">
+                  <span className="info-label">Type</span>
+                  <DomainBadge config={eventTypeConfig} />
+                  <DomainBadge config={slotStatusConfig} />
+                </div>
+
+                {slot.slot_status === SLOT_STATUSES.CANCELLED && slot.cancellation_reason && (
+                  <div className="info-item-modern info-content">
+                    <span className="info-label">Raison annulation</span>
+                    <span className="info-value">{slot.cancellation_reason}</span>
+                  </div>
+                )}
+
+                <div className="info-item-modern info-content">
+                  <span className="info-label">Enseignant</span>
+                  <DomainBadge config={instructorConfig} />
+                </div>
+
+                {slot.actual_instructor_id && slot.actual_instructor_id !== event.instructor_id && (
+                  <div className="info-item-modern info-content">
+                    <span className="info-label">Remplacé par</span>
+                    <DomainBadge config={actualInstructorConfig} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="info-card">
+              <div className="info-card-header">
+                <h3>Horaires</h3>
+              </div>
+              <div className="info-card-body">
+                <div className="info-item-modern info-content">
+                  <span className="info-label">Date</span>
+                  <span className="info-value">{slot.slot_date}</span>
+                </div>
+
+                <div className="info-item-modern info-content">
+                  <span className="info-label">Heures</span>
+                  <span className="info-value">
+                    {slot.is_all_day ? 'Journée entière' : `${slot.start_time} - ${slot.end_time}`}
+                  </span>
+                </div>
+
+                <div className="info-item-modern info-content">
+                  <span className="info-label">Durée</span>
+                  <span className="info-value">{formatDuration(duration)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-label">
+                <h3>Participants</h3>
+              </div>
+              <div className="stat-number">
+                {participants.length} {slot.max_participants && <>/ {slot.max_participants}</>}
+              </div>
+            </div>
+          </div>
+
+          {/* MAIN */}
+          <div className="event-modal-main">
+            <div className="data-card">
+              <div className="data-card-header">
+                <div className="data-card-title">
+                  <Icons.Users />
+                  <h3>Participants</h3>
+                </div>
+
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => participantActions.handleCreate()}
+                >
+                  <Icons.Add />
+                  <span>Ajouter</span>
+                </button>
+              </div>
+
+              <div className="data-card-body">
+                {participants.length === 0 ? (
+                  <div className="empty-state-small">
+                    <Icons.Users />
+                    <p>Aucun participant</p>
+                  </div>
+                ) : (
+                  <div className="participants-grid">
+                    {participants.map((p, idx) => (
+                      <EventParticipantRow
+                        key={p.id}
+                        participant={p}
+                        onEdit={() => participantActions.handleEdit(p)} // opens edit form
+                        onDelete={() => participantActions.handleDeleteClick(p)} // opens delete confirmation
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Bloc récurrence désactivé */}
+            {false && (
+              <div className="event-box" style={{ marginTop: 16 }}>
+                <div className="event-box-header">
+                  <div className="event-box-title">
+                    <Icons.Clock />
+                    <h3>Récurrence</h3>
+                  </div>
+                </div>
+                <div className="event-box-body">
+                  <h3>Ajouter ou gérer la récurrence de cet événement</h3>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Participant Modal */}
+      {participantActions.showModal && (
+        <Modal
+          isOpen={true}
+          onClose={participantActions.closeModal}
+          title={
+            participantActions.editingParticipant ? 'Modifier participant' : 'Ajouter participant'
+          }
+          size="medium"
+        >
+          <ParticipantsForm
+            participants={participants}
+            canAddParticipant={!participantActions.editingParticipant}
+            addParticipant={(riderId, horseId) => {
+              participantActions.handleSubmit(slot.id, riderId, horseId);
+              reload();
+            }}
+            updateParticipant={(id, riderId, horseId) => {
+              participantActions.handleSubmit(slot.id, riderId, horseId);
+              reload();
+            }}
+            removeParticipant={(id) => participantActions.setShowDeleteModal({ id })}
+          />
+        </Modal>
       )}
 
-      {/* Body */}
-      <div className="event-modal-body-content">
-        {editError && (
-          <div className="alert alert-error">
-            <Icons.Warning />
-            {editError}
-          </div>
-        )}
+      {/* Participant Delete Modal */}
+      {participantActions.showDeleteModal && (
+        <Modal
+          isOpen={true}
+          onClose={participantActions.closeDeleteModal}
+          title="Supprimer participant"
+          size="small"
+        >
+          <p>Voulez-vous vraiment supprimer ce participant ?</p>
+          <button
+            onClick={() => {
+              participantActions.handleRemove();
+              reload();
+            }}
+          >
+            Oui
+          </button>
+          <button onClick={participantActions.closeDeleteModal}>Annuler</button>
+        </Modal>
+      )}
 
-        {isEditing ? (
-          <EventEditForm editData={editData} handleChange={handleChange} />
-        ) : (
-          <>
-            {activeTab === 'details' && <EventDetailsTab slot={slot} event={event} />}
-            {activeTab === 'participants' && !isBlocked && (
-              <ParticipantsTab participants={participants} event={event} onUpdate={refresh} />
-            )}
-            {activeTab === 'recurrence' && hasRecurrence && (
-              <RecurrenceTab recurrence={recurrence} slot={slot} />
-            )}
-          </>
-        )}
-      </div>
+      {eventEdit.isEditing && (
+        <Modal
+          isOpen={true}
+          onClose={eventEdit.cancelEdit}
+          title={`Modifier l'événement`}
+          size="xlarge"
+        >
+          {eventEdit.error && <div className="alert alert-danger mb-10">{eventEdit.error}</div>}
+          <EventEditForm
+            editData={eventEdit.editData} // <-- ici
+            onChange={eventEdit.handleChange} // <-- ici
+            onCancel={eventEdit.cancelEdit} // <-- ici
+            onSubmit={() => {
+              eventEdit.saveEdit(slot.id, event.id);
+            }}
+            disabled={eventEdit.saving} // <-- ici
+          />
+        </Modal>
+      )}
+
+      <EventDeleteOrCancelModal
+        isOpen={eventEdit.showDeleteModal}
+        eventName={event.name}
+        loading={eventEdit.isDeleting}
+        onClose={() => eventEdit.setShowDeleteModal(false)}
+        onCancel={async (reason) => {
+          const success = await eventEdit.cancelSlot(slot.id, reason);
+          if (success) {
+            onDelete?.();
+            onClose();
+          }
+        }}
+        onDelete={async () => {
+          const success = await handleDeleteEvent();
+          if (success) {
+            onDelete?.();
+            onClose();
+          }
+        }}
+      />
     </Modal>
   );
 }
 
-// Loading Modal
-const EventModalLoading = ({ isOpen, onClose }) => (
-  <Modal isOpen={isOpen} onClose={onClose} title="Chargement" size="medium">
-    <div className="modal-loading">
-      <Icons.Loading className="spin" />
-      <p>Chargement des détails...</p>
-    </div>
-  </Modal>
-);
-
-// Error Modal
-const EventModalError = ({ isOpen, error, onClose }) => (
-  <Modal
-    isOpen={isOpen}
-    onClose={onClose}
-    title={
-      <div className="modal-title-danger">
-        <Icons.Warning />
-        Erreur
-      </div>
-    }
-    footer={
-      <button className="btn btn-secondary" onClick={onClose}>
-        <Icons.Close /> Fermer
-      </button>
-    }
-    size="medium"
-  >
-    <p>{error || 'Erreur lors du chargement'}</p>
-  </Modal>
-);
-
-export default EventModal;
+EventModal.propTypes = {
+  slotId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};

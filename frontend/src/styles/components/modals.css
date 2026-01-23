@@ -97,7 +97,7 @@
 
 /* Modal Body */
 .modal-body {
-  padding: 24px;
+  padding: var(--spacing-md);
   overflow-y: auto;
   flex: 1;
 }
@@ -180,7 +180,7 @@
   }
 
   .modal-body {
-    padding: 18px;
+    padding: var(--spacing-sm);
   }
 
   .modal-footer {

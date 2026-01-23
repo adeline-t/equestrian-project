@@ -103,3 +103,15 @@ function parseTime(timeStr) {
   const [h, m] = timeStr.split(':').map(Number);
   return h * 60 + m;
 }
+
+// lib/validators/eventEdit.js
+
+/**
+ * Validation pour l'édition d'un événement
+ * Retourne un tableau de messages d'erreur
+ */
+export function validateEventEdit(editData) {
+  const errors = [];
+
+  return errors;
+}

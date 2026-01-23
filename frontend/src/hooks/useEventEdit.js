@@ -1,91 +1,144 @@
-import { useState, useCallback } from 'react';
-import { calendarService } from '../services/calendarService';
+import { useCallback, useMemo, useState } from 'react';
+import { calendarService } from '../services';
+import { validateEventEdit } from '../lib/helpers';
 
-/**
- * Hook to manage event editing
- * @param {Object} slot - The slot object
- * @param {Object} event - The event object
- */
-export function useEventEdit(slot, event) {
+export function useEventEdit(slot, event, onSuccess) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
+  const [editData, setEditData] = useState({});
+
   const startEdit = useCallback(() => {
     setEditData({
-      slot_status: slot?.slot_status || 'scheduled',
-      event_type: event?.event_type || 'private_lesson',
-      instructor_id: event?.instructor_id || slot?.actual_instructor_id || 1,
-      min_participants: event?.min_participants || 0,
-      max_participants: event?.max_participants || 1,
+      slot_status: slot?.slot_status,
+      instructor_id: event?.instructor_id,
+      event_type: event?.event_type,
       name: event?.name || '',
       description: event?.description || '',
+      min_participants: event?.min_participants,
+      max_participants: event?.max_participants,
     });
+
     setIsEditing(true);
     setError(null);
   }, [slot, event]);
 
+  /* -----------------------------
+     FORM CHANGE
+  ------------------------------ */
   const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    setEditData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    const { name, value } = e.target;
+    setEditData((prev) => ({ ...prev, [name]: value }));
   }, []);
 
-  const saveEdit = useCallback(
-    async (slotId, eventId, onSuccess) => {
-      if (!slotId) return false;
-      try {
-        setSaving(true);
-        setError(null);
+  /* -----------------------------
+     VALIDATION (externe)
+  ------------------------------ */
+  const validationErrors = useMemo(() => validateEventEdit(editData), [editData]);
 
-        // Update slot
-        await calendarService.updateSlot(slotId, {
-          slot_status: editData.slot_status,
-          actual_instructor_id: editData.instructor_id,
-        });
+  /* -----------------------------
+     SAVE
+  ------------------------------ */
+  const saveEdit = async (slotId, eventId) => {
+    if (validationErrors.length) {
+      setError(validationErrors.join(', '));
+      return false;
+    }
 
-        // Update event if exists
-        if (eventId) {
-          await calendarService.updateEvent(eventId, {
-            event_type: editData.event_type,
-            instructor_id: editData.instructor_id,
-            min_participants: parseInt(editData.min_participants) || 0,
-            max_participants: parseInt(editData.max_participants) || 1,
-            name: editData.name,
-            description: editData.description,
-          });
-        }
+    try {
+      setSaving(true);
+      setError(null);
 
-        if (onSuccess) await onSuccess();
-        setIsEditing(false);
-        return true;
-      } catch (err) {
-        setError(err.response?.data?.message || err.message || 'Erreur lors de la sauvegarde');
-        return false;
-      } finally {
-        setSaving(false);
-      }
-    },
-    [editData]
-  );
+      await calendarService.updateSlot(slotId, {
+        slot_status: editData.slot_status,
+        actual_instructor_id: editData.instructor_id,
+      });
 
-  const cancelEdit = useCallback(() => {
+      await calendarService.updateEvent(eventId, {
+        name: editData.name,
+        description: editData.description,
+        event_type: editData.event_type,
+        instructor_id: editData.instructor_id,
+        min_participants: editData.min_participants,
+        max_participants: editData.max_participants,
+      });
+
+      setIsEditing(false);
+      onSuccess?.();
+      return true;
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la sauvegarde');
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const cancelEdit = () => {
     setIsEditing(false);
     setEditData({});
     setError(null);
+  };
+
+  /*
+  Delete
+  */
+  const openDeleteModal = useCallback(() => {
+    setShowDeleteModal(true);
   }, []);
+
+  const deleteSlot = async (slotId) => {
+    try {
+      setError(null);
+      setIsDeleting(true);
+      await calendarService.deleteSlot(slotId);
+      return true;
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la sauvegarde');
+      return false;
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const cancelSlot = async (slotId, cancellationReason) => {
+    try {
+      setError(null);
+      setIsDeleting(true);
+
+      await calendarService.cancelSlot(slotId, {
+        cancellation_reason: cancellationReason,
+      });
+
+      return true;
+    } catch (err) {
+      setError(err.message || "Erreur lors de l'annulation du créneau");
+      return false;
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
 
   return {
     isEditing,
     editData,
     saving,
     error,
+    validationErrors,
     startEdit,
     handleChange,
     saveEdit,
     cancelEdit,
+    deleteSlot,
+    cancelSlot,
+    showDeleteModal, // <- AJOUTER
+    setShowDeleteModal,
+    openDeleteModal, // <- AJOUTER (pour cohérence)
+    isDeleting,
   };
 }

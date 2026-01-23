@@ -9,7 +9,7 @@ import { getTodayISO } from '../lib/helpers/index.js';
  * Hook to manage blocked time creation
  * Uses Event → Slot order (event_id required in planning_slots)
  */
-export function useCreateBlockedTime() {
+export function useEventBlockedCreate() {
   const [formData, setFormData] = useState({
     slot_date: getTodayISO(),
     start_time: '09:00',

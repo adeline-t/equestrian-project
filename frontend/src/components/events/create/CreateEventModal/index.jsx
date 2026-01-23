@@ -1,4 +1,4 @@
-import { useCreateEvent } from '../../../../hooks/useCreateEvent.js';
+import { useEventCreate } from '../../../../hooks/useEventCreate.js';
 import { useParticipantList } from '../../../../hooks/useParticipantList.js';
 import { Icons } from '../../../../lib/icons.jsx';
 import '../../../../styles/features/events.css';
@@ -8,7 +8,7 @@ import ParticipantsForm from './ParticipantsForm.jsx';
 
 function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, initialEndTime }) {
   // Event form logic
-  const eventForm = useCreateEvent(initialDate, initialStartTime, initialEndTime);
+  const eventForm = useEventCreate(initialDate, initialStartTime, initialEndTime);
   const { formData, setFormData, handleFormChange, createEvent, loading, error } = eventForm;
 
   // Participants logic
@@ -76,6 +76,7 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
 
       <ParticipantsForm
         participants={participants}
+        canAddParticipant={true}
         addParticipant={addParticipant}
         removeParticipant={removeParticipant}
         updateParticipant={updateParticipant}

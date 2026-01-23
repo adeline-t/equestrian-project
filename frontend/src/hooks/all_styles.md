@@ -1,8 +1,9 @@
 # 📁 Project Files Export
 
-Generated on: Tue Jan 20 18:55:59 CET 2026
+Generated on: Fri Jan 23 06:07:44 CET 2026
 
 ## 📄 index.js
+
 **Path:** `index.js`
 
 ```
@@ -10,11 +11,22 @@ Generated on: Tue Jan 20 18:55:59 CET 2026
  * Centralized export for all custom hooks (barrel file)
  */
 
+// Calendar & Events
+export * from './useCalendarView.js';
+export * from './useCreateEvent.js';
+export * from './useEventBlockedCreate.js';
+export * from './useEventDetails.js';
+export * from './useEventEdit.js';
+export * from './useBlockedEventEdit.js';
+export * from './useScheduledEvents.js';
+export * from './useEventSlotDetails.js';
+
 // Horses
 export * from './useHorseActions.js';
 export * from './useHorseForm.js';
 export * from './useHorseRiders.js';
 export * from './useHorsesList.js';
+export * from './useHorseCard.js';
 
 // Packages
 export * from './usePackageActions.js';
@@ -27,22 +39,20 @@ export * from './usePairingForm.js';
 // Riders
 export * from './useRiderCard.js';
 export * from './useRiderForm.js';
-
-// Other hooks
+export * from './useRidersList.js';
 export * from './useRiderHorses.js';
-
-export * from './useHorseCard.js';
 ```
 
 ---
 
 ## 📄 useBlockedEventEdit.js
+
 **Path:** `useBlockedEventEdit.js`
 
 ```
 import { useState, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
-import { formatTimeForInput } from '../lib/helpers/formatters';
+import { formatTimeForInput, formatTimeForDatabase } from '../lib/helpers/formatters';
 
 /**
  * Hook pour gérer l'édition d'un événement bloqué
@@ -66,14 +76,13 @@ export function useBlockedEventEdit(slotId) {
       setSlot(fullSlot.slot);
       setEvent(fullSlot.event);
 
-      // Initialize editData with proper format
       setEditData({
         name: fullSlot.event?.name || '',
         description: fullSlot.event?.description || '',
         actual_instructor_id: fullSlot.slot?.actual_instructor_id || 1,
         slot_date: fullSlot.slot?.slot_date || '',
-        start_time: fullSlot.slot?.start_time || '09:00:00',
-        end_time: fullSlot.slot?.end_time || '10:00:00',
+        start_time: formatTimeForInput(fullSlot.slot?.start_time) || '09:00',
+        end_time: formatTimeForInput(fullSlot.slot?.end_time) || '10:00',
         is_all_day: fullSlot.slot?.is_all_day || false,
         slot_status: fullSlot.slot?.slot_status || 'scheduled',
         cancellation_reason: fullSlot.slot?.cancellation_reason || '',
@@ -101,8 +110,8 @@ export function useBlockedEventEdit(slotId) {
         description: event.description || '',
         actual_instructor_id: slot.actual_instructor_id || 1,
         slot_date: slot.slot_date || '',
-        start_time: slot.start_time || '09:00:00',
-        end_time: slot.end_time || '10:00:00',
+        start_time: formatTimeForInput(slot.start_time) || '09:00',
+        end_time: formatTimeForInput(slot.end_time) || '10:00',
         is_all_day: slot.is_all_day || false,
         slot_status: slot.slot_status || 'scheduled',
         cancellation_reason: slot.cancellation_reason || '',
@@ -135,7 +144,6 @@ export function useBlockedEventEdit(slotId) {
     try {
       setSaving(true);
 
-      // Prepare slot data with proper time format
       const slotPayload = {
         slot_date: editData.slot_date,
         actual_instructor_id: editData.actual_instructor_id,
@@ -144,11 +152,9 @@ export function useBlockedEventEdit(slotId) {
         cancellation_reason: editData.cancellation_reason || null,
       };
 
-      // Only add time fields if not all-day
-      // The times are already in HH:MM:SS format from formatTimeForDatabase
       if (!editData.is_all_day) {
-        slotPayload.start_time = editData.start_time;
-        slotPayload.end_time = editData.end_time;
+        slotPayload.start_time = formatTimeForDatabase(editData.start_time);
+        slotPayload.end_time = formatTimeForDatabase(editData.end_time);
       } else {
         slotPayload.start_time = null;
         slotPayload.end_time = null;
@@ -215,6 +221,7 @@ export function useBlockedEventEdit(slotId) {
 ---
 
 ## 📄 useCalendarView.js
+
 **Path:** `useCalendarView.js`
 
 ```
@@ -223,7 +230,7 @@ import { addWeeks, subWeeks, startOfWeek, format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { EVENT_TYPES, SLOT_STATUSES, isBlockedEvent } from '../lib/domain/events';
 import { calendarService } from '../services/calendarService';
-import { timeToMinutes } from '../lib/helpers/formatters';
+import { timeToMinutes, formatTimeForInput } from '../lib/helpers/formatters';
 
 /**
  * Normalize slot times for UI display (HH:mm from HH:mm:ss)
@@ -231,8 +238,8 @@ import { timeToMinutes } from '../lib/helpers/formatters';
 const normalizeSlotTimes = (slot) => {
   if (!slot) return slot;
 
-  const start_time = slot.start_time?.slice(0, 5) || '09:00';
-  const end_time = slot.end_time?.slice(0, 5) || '10:00';
+  const start_time = formatTimeForInput(slot.start_time) || '09:00';
+  const end_time = formatTimeForInput(slot.end_time) || '10:00';
   const duration_minutes =
     slot.duration_minutes ?? timeToMinutes(end_time) - timeToMinutes(start_time);
 
@@ -278,6 +285,12 @@ export function useCalendarView() {
           .map(normalizeSlotTimes),
       }));
       setWeekData({ ...data, days: enrichedDays });
+      console.debug('[loadWeekData]] data', {
+        data,
+      });
+      console.debug('[loadWeekData]] enrichedDays', {
+        enrichedDays,
+      });
     } catch (err) {
       console.error('Error loading week data:', err);
       setError(err.response?.data?.message || err.message || 'Erreur de chargement');
@@ -493,22 +506,25 @@ export function useCalendarView() {
 
 ---
 
-## 📄 useCreateBlockedTime.js
-**Path:** `useCreateBlockedTime.js`
+## 📄 useEventBlockedCreate.js
+
+**Path:** `useEventBlockedCreate.js`
 
 ```
-// ================================
-// useCreateBlockedTime.js
-// ================================
 import { useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { calendarService } from '../services/calendarService';
 import { EVENT_TYPES, SLOT_STATUSES } from '../lib/domain/events';
+import { getTodayISO } from '../lib/helpers/index.js';
 
-export function useCreateBlockedTime() {
+/**
+ * Hook to manage blocked time creation
+ * Uses Event → Slot order (event_id required in planning_slots)
+ */
+export function useEventBlockedCreate() {
   const [formData, setFormData] = useState({
-    event_date: format(new Date(), 'yyyy-MM-dd'),
+    slot_date: getTodayISO(),
     start_time: '09:00',
     end_time: '10:00',
     is_all_day: false,
@@ -526,8 +542,9 @@ export function useCreateBlockedTime() {
     (e) => {
       const { name, value } = e.target;
 
+      // Auto-generate name if user hasn't set a custom one
       if (name !== 'name' && !formData.name) {
-        const dateStr = format(new Date(formData.event_date), 'dd/MM', { locale: fr });
+        const dateStr = format(new Date(formData.slot_date), 'dd/MM', { locale: fr });
         const autoName = formData.is_all_day
           ? `Bloqué - ${dateStr}`
           : `Bloqué - ${dateStr} ${formData.start_time}`;
@@ -536,16 +553,16 @@ export function useCreateBlockedTime() {
         setFormData((prev) => ({ ...prev, [name]: value }));
       }
     },
-    [formData.name, formData.event_date, formData.start_time, formData.is_all_day]
+    [formData.name, formData.slot_date, formData.start_time, formData.is_all_day]
   );
 
   const resetForm = useCallback((initialDate) => {
     setFormData({
-      event_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
+      slot_date: initialDate || getTodayISO(),
       start_time: '09:00',
       end_time: '10:00',
       is_all_day: false,
-      slot_status: SLOT_STATUSES.CONFIRMED,
+      slot_status: SLOT_STATUSES.SCHEDULED,
       event_type: EVENT_TYPES.BLOCKED,
       instructor_id: 1,
       name: '',
@@ -556,34 +573,20 @@ export function useCreateBlockedTime() {
 
   const createBlockedTime = useCallback(async () => {
     setError(null);
+
     try {
       setLoading(true);
 
-      const slotPayload = {
-        start_time: formData.is_all_day
-          ? `${formData.event_date}T00:00:00`
-          : `${formData.event_date}T${formData.start_time}:00`,
-        end_time: formData.is_all_day
-          ? `${formData.event_date}T23:59:59`
-          : `${formData.event_date}T${formData.end_time}:00`,
-        is_all_day: formData.is_all_day,
-        slot_status: formData.slot_status,
-        actual_instructor_id: formData.instructor_id,
-        cancellation_reason: null,
-      };
-
-      const slotResponse = await calendarService.createSlot(slotPayload);
-      const slotId = slotResponse.id;
-
-      const dateStr = format(new Date(formData.event_date), 'dd/MM', { locale: fr });
+      // Generate final name
+      const dateStr = format(new Date(formData.slot_date), 'dd/MM', { locale: fr });
       const finalName =
         formData.name ||
         (formData.is_all_day
           ? `Bloqué - ${dateStr}`
           : `Bloqué - ${dateStr} ${formData.start_time}`);
 
+      // ⚠️ STEP 1: Create EVENT first (required for foreign key constraint)
       const eventPayload = {
-        planning_slot_id: slotId,
         event_type: EVENT_TYPES.BLOCKED,
         instructor_id: formData.instructor_id,
         min_participants: 0,
@@ -592,11 +595,37 @@ export function useCreateBlockedTime() {
         description: formData.description || null,
       };
 
+      console.log('📤 Blocked Event Payload:', eventPayload);
+
       const eventResponse = await calendarService.createEvent(eventPayload);
-      return { success: true, slotId, eventId: eventResponse.id };
+      const eventId = eventResponse.id;
+
+      console.log('✅ Blocked Event created:', eventId);
+
+      // ⚠️ STEP 2: Create SLOT with event_id (required FK)
+      const slotPayload = {
+        event_id: eventId, // ⚠️ CRITICAL: Required foreign key
+        slot_date: formData.slot_date,
+        start_time: formData.is_all_day ? '00:00:00' : `${formData.start_time}:00`,
+        end_time: formData.is_all_day ? '23:59:59' : `${formData.end_time}:00`,
+        is_all_day: formData.is_all_day,
+        slot_status: formData.slot_status || SLOT_STATUSES.SCHEDULED,
+        actual_instructor_id: formData.instructor_id,
+        cancellation_reason: null,
+      };
+
+      console.log('📤 Blocked Slot Payload:', slotPayload);
+
+      const slotResponse = await calendarService.createSlot(slotPayload);
+      const slotId = slotResponse.id;
+
+      console.log('✅ Blocked Slot created:', slotId);
+
+      return { success: true, slotId, eventId };
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Erreur lors de la création';
       setError(errorMsg);
+      console.error('❌ Blocked time creation error:', err);
       return { success: false, error: errorMsg };
     } finally {
       setLoading(false);
@@ -618,31 +647,36 @@ export function useCreateBlockedTime() {
 ---
 
 ## 📄 useCreateEvent.js
+
 **Path:** `useCreateEvent.js`
 
 ```
-// ================================
-// useCreateEvent.js
-// ================================
 import { useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { calendarService } from '../services/calendarService';
 import { EVENT_TYPES, SLOT_STATUSES } from '../lib/domain/events';
+import { formatTimeForDatabase, calculateDurationMinutes } from '../lib/helpers/formatters';
 
 const validateEventForm = (formData, participants) => {
   const errors = {};
+
+  // Required fields validation
   if (!formData.event_date) errors.event_date = 'La date est requise';
-  if (!formData.start_time) errors.start_time = "L'heure de début est requise";
+  if (!formData.start_time && !formData.is_all_day)
+    errors.start_time = "L'heure de début est requise";
+  if (!formData.end_time && !formData.is_all_day) errors.end_time = "L'heure de fin est requise";
   if (!formData.event_type) errors.event_type = "Le type d'événement est requis";
   if (!formData.slot_status) errors.slot_status = 'Le statut est requis';
 
-  if (formData.start_time && formData.end_time) {
-    const [sh, sm] = formData.start_time.split(':').map(Number);
-    const [eh, em] = formData.end_time.split(':').map(Number);
-    if (eh * 60 + em <= sh * 60 + sm)
+  // Time validation (only if not all-day)
+  if (!formData.is_all_day && formData.start_time && formData.end_time) {
+    const duration = calculateDurationMinutes(formData.start_time, formData.end_time);
+    if (duration <= 0) {
       errors.end_time = "L'heure de fin doit être après l'heure de début";
+    }
   }
 
+  // Participants validation (only if not blocked)
   if (formData.event_type !== EVENT_TYPES.BLOCKED) {
     const min = parseInt(formData.min_participants || 0);
     const max = parseInt(formData.max_participants || 0);
@@ -654,11 +688,14 @@ const validateEventForm = (formData, participants) => {
   return { isValid: Object.keys(errors).length === 0, errors };
 };
 
-export function useCreateEvent() {
-  const [formData, setFormData] = useState({
-    event_date: format(new Date(), 'yyyy-MM-dd'),
-    start_time: '09:00',
-    end_time: '10:00',
+/**
+ * Hook to manage event form data and creation logic
+ */
+export function useCreateEvent(initialDate, initialStartTime, initialEndTime) {
+  const [formData, setFormData] = useState(() => ({
+    event_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
+    start_time: initialStartTime || '09:00',
+    end_time: initialEndTime || '10:00',
     is_all_day: false,
     slot_status: SLOT_STATUSES.SCHEDULED,
     actual_instructor_id: null,
@@ -669,9 +706,8 @@ export function useCreateEvent() {
     max_participants: 1,
     name: '',
     description: '',
-  });
+  }));
 
-  const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -680,10 +716,9 @@ export function useCreateEvent() {
       const { name, value, type, checked } = e.target;
       const newValue = type === 'checkbox' ? checked : value;
 
+      // Auto-adjust end_time when start_time changes to maintain duration
       if (name === 'start_time' && formData.start_time && formData.end_time) {
-        const [sh, sm] = formData.start_time.split(':').map(Number);
-        const [eh, em] = formData.end_time.split(':').map(Number);
-        const duration = eh * 60 + em - (sh * 60 + sm);
+        const duration = calculateDurationMinutes(formData.start_time, formData.end_time);
 
         const [nh, nm] = value.split(':').map(Number);
         const totalEnd = nh * 60 + nm + duration;
@@ -698,27 +733,6 @@ export function useCreateEvent() {
     },
     [formData.start_time, formData.end_time]
   );
-
-  const addParticipant = useCallback((riderId, horseId, horseAssignmentType = 'manual') => {
-    setParticipants((prev) => {
-      if (prev.some((p) => p.rider_id === riderId && p.horse_id === horseId)) return prev;
-      return [
-        ...prev,
-        {
-          id: Date.now(),
-          rider_id: riderId,
-          horse_id: horseId,
-          horse_assignment_type: horseAssignmentType,
-        },
-      ];
-    });
-  }, []);
-
-  const removeParticipant = useCallback(
-    (id) => setParticipants((prev) => prev.filter((p) => p.id !== id)),
-    []
-  );
-  const clearParticipants = useCallback(() => setParticipants([]), []);
 
   const resetForm = useCallback((initialDate) => {
     setFormData({
@@ -736,51 +750,24 @@ export function useCreateEvent() {
       name: '',
       description: '',
     });
-    setParticipants([]);
     setError(null);
   }, []);
 
-  const createEvent = useCallback(async () => {
-    setError(null);
-    const validation = validateEventForm(formData, participants);
-    if (!validation.isValid) {
-      const msg = Object.values(validation.errors).join(', ');
-      setError(msg);
-      return { success: false, error: msg };
-    }
+  const createEvent = useCallback(
+    async (participants = []) => {
+      setError(null);
+      const validation = validateEventForm(formData, participants);
+      if (!validation.isValid) {
+        const msg = Object.values(validation.errors).join(', ');
+        setError(msg);
+        return { success: false, error: msg };
+      }
 
-    try {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      // Format times properly
-      const startTime =
-        formData.start_time.includes(':') && formData.start_time.split(':').length === 2
-          ? `${formData.start_time}:00`
-          : formData.start_time;
-
-      const endTime =
-        formData.end_time.includes(':') && formData.end_time.split(':').length === 2
-          ? `${formData.end_time}:00`
-          : formData.end_time;
-
-      const slotPayload = {
-        slot_date: formData.event_date, // YYYY-MM-DD format
-        start_time: startTime, // HH:MM:SS format
-        end_time: endTime, // HH:MM:SS format
-        is_all_day: formData.is_all_day,
-        slot_status: formData.slot_status,
-        actual_instructor_id: formData.actual_instructor_id || null,
-        cancellation_reason: formData.cancellation_reason || null,
-      };
-
-      console.log('Creating slot with payload:', slotPayload); // Debug log
-
-      const slotResponse = await calendarService.createSlot(slotPayload);
-      const slotId = slotResponse.id;
-
-      if (formData.event_type !== EVENT_TYPES.BLOCKED) {
+        // STEP 1: Create event first (required for foreign key constraint)
         const eventPayload = {
-          planning_slot_id: slotId,
           event_type: formData.event_type,
           instructor_id: formData.instructor_id || null,
           min_participants: formData.min_participants,
@@ -789,9 +776,41 @@ export function useCreateEvent() {
           description: formData.description || null,
         };
 
+        console.log('📤 Event Payload:', eventPayload);
+
         const eventResponse = await calendarService.createEvent(eventPayload);
         const eventId = eventResponse.id;
 
+        console.log('✅ Event created:', eventId);
+
+        // STEP 2: Create planning slot with event_id
+        const slotPayload = {
+          event_id: eventId, // Required foreign key
+          slot_date: formData.event_date,
+          is_all_day: formData.is_all_day,
+          slot_status: formData.slot_status,
+          actual_instructor_id: formData.actual_instructor_id || null,
+          cancellation_reason: formData.cancellation_reason || null,
+        };
+
+        // Add time fields only if not all-day
+        if (!formData.is_all_day) {
+          slotPayload.start_time = formatTimeForDatabase(formData.start_time);
+          slotPayload.end_time = formatTimeForDatabase(formData.end_time);
+        } else {
+          // For all-day events, provide default times
+          slotPayload.start_time = '00:00:00';
+          slotPayload.end_time = '23:59:59';
+        }
+
+        console.log('📤 Slot Payload:', slotPayload);
+
+        const slotResponse = await calendarService.createSlot(slotPayload);
+        const slotId = slotResponse.id;
+
+        console.log('✅ Slot created:', slotId);
+
+        // STEP 3: Add participants (if any)
         if (participants.length > 0) {
           await Promise.all(
             participants.map((p) =>
@@ -807,34 +826,29 @@ export function useCreateEvent() {
         }
 
         return { success: true, slotId, eventId };
-      } else {
-        return { success: true, slotId, eventId: null };
+      } catch (err) {
+        const errorMsg =
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          err.message ||
+          'Erreur lors de la création';
+        setError(errorMsg);
+        return { success: false, error: errorMsg };
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMsg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.message ||
-        'Erreur lors de la création';
-      setError(errorMsg);
-      return { success: false, error: errorMsg };
-    } finally {
-      setLoading(false);
-    }
-  }, [formData, participants]);
+    },
+    [formData]
+  );
 
   return {
     formData,
-    participants,
-    loading,
-    error,
+    setFormData,
     handleFormChange,
-    addParticipant,
-    removeParticipant,
-    clearParticipants,
     resetForm,
     createEvent,
-    setFormData,
+    loading,
+    error,
   };
 }
 ```
@@ -842,12 +856,18 @@ export function useCreateEvent() {
 ---
 
 ## 📄 useEventDetails.js
+
 **Path:** `useEventDetails.js`
 
 ```
 import { useState, useCallback, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
+import { formatTimeForInput } from '../lib/helpers/formatters';
 
+/**
+ * Hook to fetch and manage event details
+ * @param {string|number} slotId - The slot ID
+ */
 export function useEventDetails(slotId) {
   const [data, setData] = useState({
     slot: null,
@@ -868,8 +888,8 @@ export function useEventDetails(slotId) {
 
       // Normalize slot times for UI
       if (fullDetails.slot) {
-        fullDetails.slot.start_time = fullDetails.slot.start_time?.slice(11, 16);
-        fullDetails.slot.end_time = fullDetails.slot.end_time?.slice(11, 16);
+        fullDetails.slot.start_time = formatTimeForInput(fullDetails.slot.start_time);
+        fullDetails.slot.end_time = formatTimeForInput(fullDetails.slot.end_time);
       }
 
       setData(fullDetails);
@@ -901,12 +921,18 @@ export function useEventDetails(slotId) {
 ---
 
 ## 📄 useEventEdit.js
+
 **Path:** `useEventEdit.js`
 
 ```
 import { useState, useCallback } from 'react';
 import { calendarService } from '../services/calendarService';
 
+/**
+ * Hook to manage event editing
+ * @param {Object} slot - The slot object
+ * @param {Object} event - The event object
+ */
 export function useEventEdit(slot, event) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
@@ -995,11 +1021,13 @@ export function useEventEdit(slot, event) {
 ---
 
 ## 📄 useHorseActions.js
+
 **Path:** `useHorseActions.js`
 
 ```
 import { useState } from 'react';
 import { horseService } from '../services/index.js';
+import { getTodayISO } from '../lib/helpers/index.js';
 
 /**
  * Custom hook for managing horse CRUD operations
@@ -1011,6 +1039,10 @@ export function useHorseActions(onSuccess) {
   const [editingHorse, setEditingHorse] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [horseToDelete, setHorseToDelete] = useState(null);
+
+  // HorseCard modal state
+  const [showHorseCard, setShowHorseCard] = useState(false);
+  const [selectedHorse, setSelectedHorse] = useState(null);
 
   const handleCreate = () => {
     setEditingHorse(null);
@@ -1044,11 +1076,9 @@ export function useHorseActions(onSuccess) {
 
   const handleRemoveFromInventory = async () => {
     if (!horseToDelete) return;
-
     try {
-      const today = new Date().toISOString().split('T')[0];
       await horseService.update(horseToDelete.id, {
-        activity_end_date: today,
+        activity_end_date: getTodayISO(),
       });
       onSuccess(`${horseToDelete.name} a été retiré de l'inventaire`);
       closeDeleteModal();
@@ -1059,7 +1089,6 @@ export function useHorseActions(onSuccess) {
 
   const handlePermanentDelete = async () => {
     if (!horseToDelete) return;
-
     try {
       await horseService.delete(horseToDelete.id);
       onSuccess(`${horseToDelete.name} a été supprimé définitivement`);
@@ -1079,38 +1108,7 @@ export function useHorseActions(onSuccess) {
     setHorseToDelete(null);
   };
 
-  return {
-    showModal,
-    editingHorse,
-    showDeleteModal,
-    horseToDelete,
-    handleCreate,
-    handleEdit,
-    handleDeleteClick,
-    handleSubmit,
-    handleRemoveFromInventory,
-    handlePermanentDelete,
-    closeModal,
-    closeDeleteModal,
-  };
-}
-```
-
----
-
-## 📄 useHorseCard.js
-**Path:** `useHorseCard.js`
-
-```
-import { useState } from 'react';
-
-/**
- * Hook for managing HorseCard state
- */
-export function useHorseCard() {
-  const [selectedHorse, setSelectedHorse] = useState(null);
-  const [showHorseCard, setShowHorseCard] = useState(false);
-
+  // HorseCard modal handlers
   const openHorseCard = (horse) => {
     setSelectedHorse(horse);
     setShowHorseCard(true);
@@ -1122,8 +1120,25 @@ export function useHorseCard() {
   };
 
   return {
-    selectedHorse,
+    // Form modal
+    showModal,
+    editingHorse,
+    handleCreate,
+    handleEdit,
+    handleSubmit,
+    closeModal,
+
+    // Delete modal
+    showDeleteModal,
+    horseToDelete,
+    handleDeleteClick,
+    handleRemoveFromInventory,
+    handlePermanentDelete,
+    closeDeleteModal,
+
+    // HorseCard modal
     showHorseCard,
+    selectedHorse,
     openHorseCard,
     closeHorseCard,
   };
@@ -1132,13 +1147,178 @@ export function useHorseCard() {
 
 ---
 
+## 📄 useHorseCard.js
+
+**Path:** `useHorseCard.js`
+
+```
+import { useState, useEffect } from 'react';
+import { horseService } from '../services/index.js';
+import { pairingService } from '../services/index.js';
+
+/**
+ * Custom hook for loading complete horse data with pairings for HorseCard
+ * @param {number|string} horseId - The horse ID
+ * @returns {Object} Horse data with pairings and state management
+ */
+export function useHorseCard(horseId) {
+  const [horse, setHorse] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Pairing modal state
+  const [showPairingModal, setShowPairingModal] = useState(false);
+  const [editingPairing, setEditingPairing] = useState(null);
+  const [showDeletePairingModal, setShowDeletePairingModal] = useState(false);
+  const [pairingToDelete, setPairingToDelete] = useState(null);
+
+  const loadHorse = async () => {
+    if (!horseId) {
+      setHorse(null);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Use getById to load horse with complete pairings data
+      const data = await horseService.getById(horseId);
+
+      if (!data) {
+        setError('Cheval non trouvé');
+        setHorse(null);
+        return;
+      }
+
+      // Transform the data to flatten rider information in pairings
+      const transformedHorse = {
+        ...data,
+        pairings: (data.rider_horse_pairings || []).map((pairing) => ({
+          id: pairing.id,
+          rider_id: pairing.riders?.id,
+          rider_name: pairing.riders?.name || 'N/A',
+          horse_id: data.id,
+          link_type: pairing.link_type,
+          loan_days: pairing.loan_days || [],
+          loan_days_per_week: pairing.loan_days_per_week || 0,
+          pairing_start_date: pairing.pairing_start_date,
+          pairing_end_date: pairing.pairing_end_date,
+        })),
+      };
+
+      // Remove the nested rider_horse_pairings to avoid confusion
+      delete transformedHorse.rider_horse_pairings;
+
+      setHorse(transformedHorse);
+    } catch (err) {
+      console.error('Error loading horse with pairings:', err);
+      setError(err.message || 'Erreur lors du chargement du cheval');
+      setHorse(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHorse();
+  }, [horseId]);
+
+  const reload = () => {
+    loadHorse();
+  };
+
+  // Pairing action handlers
+  const handleCreatePairing = () => {
+    setEditingPairing({ horse_id: horseId });
+    setShowPairingModal(true);
+  };
+
+  const handleEditPairing = (pairing) => {
+    setEditingPairing(pairing);
+    setShowPairingModal(true);
+  };
+
+  const handleDeletePairingClick = (pairing) => {
+    setPairingToDelete(pairing);
+    setShowDeletePairingModal(true);
+  };
+
+  const handlePairingSubmit = async (pairingData) => {
+    try {
+      if (editingPairing?.id) {
+        // Update existing pairing
+        await pairingService.update(editingPairing.id, pairingData);
+      } else {
+        // Create new pairing
+        await pairingService.create(pairingData);
+      }
+      closePairingModal();
+      await reload(); // Reload to get updated data
+      return { success: true };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const handleDeletePairing = async () => {
+    if (!pairingToDelete) return;
+
+    try {
+      await pairingService.delete(pairingToDelete.id);
+      closeDeletePairingModal();
+      await reload(); // Reload to get updated data
+      return { success: true };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const closePairingModal = () => {
+    setShowPairingModal(false);
+    setEditingPairing(null);
+  };
+
+  const closeDeletePairingModal = () => {
+    setShowDeletePairingModal(false);
+    setPairingToDelete(null);
+  };
+
+  return {
+    // Horse data
+    horse,
+    loading,
+    error,
+    reload,
+
+    // Pairing modal state
+    showPairingModal,
+    editingPairing,
+    showDeletePairingModal,
+    pairingToDelete,
+
+    // Pairing actions
+    handleCreatePairing,
+    handleEditPairing,
+    handleDeletePairingClick,
+    handlePairingSubmit,
+    handleDeletePairing,
+    closePairingModal,
+    closeDeletePairingModal,
+  };
+}
+```
+
+---
+
 ## 📄 useHorseForm.js
+
 **Path:** `useHorseForm.js`
 
 ```
 import { useEffect, useState } from 'react';
 import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain/index.js';
-import { validateHorseForm } from '../lib/helpers/index.js';
+import { validateHorseForm, getTodayISO } from '../lib/helpers/index.js';
 import { riderService } from '../services';
 
 /**
@@ -1150,9 +1330,9 @@ export function useHorseForm(horse) {
   const [formData, setFormData] = useState({
     name: '',
     kind: HORSE_TYPES.HORSE,
-    activity_start_date: '',
+    activity_start_date: getTodayISO(),
     activity_end_date: '',
-    ownership_type: OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
+    ownership_type: OWNER_TYPES.PRIVATE_OWNER,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -1181,17 +1361,17 @@ export function useHorseForm(horse) {
       setFormData({
         name: horse.name || '',
         kind: horse.kind || HORSE_TYPES.HORSE,
-        activity_start_date: horse.activity_start_date || '',
+        activity_start_date: horse.activity_start_date || getTodayISO(),
         activity_end_date: horse.activity_end_date || '',
-        ownership_type: horse.ownership_type || OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
+        ownership_type: horse.ownership_type || OWNER_TYPES.PRIVATE_OWNER,
       });
     } else {
       setFormData({
         name: '',
         kind: HORSE_TYPES.HORSE,
-        activity_start_date: '',
+        activity_start_date: getTodayISO(),
         activity_end_date: '',
-        ownership_type: OWNER_TYPES.PRIVATE_OWNER, // ✅ Renommé
+        ownership_type: OWNER_TYPES.PRIVATE_OWNER,
       });
     }
   }, [horse]);
@@ -1222,7 +1402,7 @@ export function useHorseForm(horse) {
     setFormData({
       name: '',
       kind: HORSE_TYPES.HORSE,
-      activity_start_date: '',
+      activity_start_date: getTodayISO(),
       activity_end_date: '',
       ownership_type: OWNER_TYPES.PRIVATE_OWNER,
     });
@@ -1255,6 +1435,7 @@ export function useHorseForm(horse) {
 ---
 
 ## 📄 useHorseRiders.js
+
 **Path:** `useHorseRiders.js`
 
 ```
@@ -1281,22 +1462,23 @@ export function useHorseRiders() {
       setShowRidersModal(true);
       setError(null);
 
-      const data = await horseService.getRiders(horse.id);
+      const response = await horseService.getRiders(horse.id);
 
-      if (!data || data.length === 0) {
-        setSelectedHorseRiders({
-          horseName: horse.name,
-          riders: [],
-        });
-        return;
-      }
+      // ✅ L'API retourne { data: { horse_data, pairings: [...] } }
+      // On veut récupérer les pairings qui sont dans data.pairings
+      const horseData = response.data || response;
+      const ridersArray = Array.isArray(horseData.pairings) ? horseData.pairings : [];
 
-      // ✅ MODIFICATION : Garder la structure complète du pairing
-      // Le RidersModal attend maintenant un tableau de pairings complets
-      // avec link_type, loan_days, et riders nested
+      console.log('🐴 Horse riders data:', {
+        horse: horse.name,
+        horseData,
+        ridersArray,
+        count: ridersArray.length,
+      });
+
       setSelectedHorseRiders({
         horseName: horse.name,
-        riders: data, // Passe les pairings complets (pas aplati)
+        riders: ridersArray, // Maintenant c'est un tableau de pairings
       });
     } catch (err) {
       console.error('Error loading riders:', err);
@@ -1327,32 +1509,17 @@ export function useHorseRiders() {
 ---
 
 ## 📄 useHorsesList.js
+
 **Path:** `useHorsesList.js`
 
 ```
 import { useState, useEffect } from 'react';
-import { horseService } from '../services/index.js';
-import { isActive } from '../lib/helpers/index.js';
-
-// Filtres de type de cheval
-export const HORSE_KIND_FILTERS = {
-  ALL: 'all',
-  HORSE: 'horse',
-  PONY: 'pony',
-};
-
-// Filtres de type de propriétaire
-export const OWNERSHIP_TYPE_FILTERS = {
-  ALL: 'all',
-  LAURY: 'laury',
-  PRIVATE_OWNER: 'private_owner',
-  CLUB: 'club',
-  OTHER: 'other',
-};
+import { horseService } from '../services';
+import { isActive } from '../lib/helpers';
+import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain';
 
 /**
  * Custom hook for managing horses list with filters and stats
- * @returns {Object} Horses data, filters, stats, loading state, and actions
  */
 export function useHorsesList() {
   const [horses, setHorses] = useState([]);
@@ -1361,8 +1528,8 @@ export function useHorsesList() {
 
   // Filters
   const [includeInactive, setIncludeInactive] = useState(false);
-  const [kindFilter, setKindFilter] = useState(HORSE_KIND_FILTERS.ALL);
-  const [ownershipFilter, setOwnershipFilter] = useState(OWNERSHIP_TYPE_FILTERS.ALL);
+  const [kindFilter, setKindFilter] = useState('all');
+  const [ownershipFilter, setOwnershipFilter] = useState('all');
 
   const fetchHorses = async () => {
     try {
@@ -1387,26 +1554,21 @@ export function useHorsesList() {
     total: horses.length,
     active: horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date)).length,
     inactive: horses.filter((h) => !isActive(h.activity_start_date, h.activity_end_date)).length,
-    horse: horses.filter((h) => h.kind === 'horse').length,
-    pony: horses.filter((h) => h.kind === 'pony').length,
-    laury: horses.filter((h) => h.ownership_type === 'laury').length,
-    private_owner: horses.filter((h) => h.ownership_type === 'private_owner').length,
-    club: horses.filter((h) => h.ownership_type === 'club').length,
-    other: horses.filter((h) => h.ownership_type === 'other').length,
+    horse: horses.filter((h) => h.kind === HORSE_TYPES.HORSE).length,
+    pony: horses.filter((h) => h.kind === HORSE_TYPES.PONY).length,
+    laury: horses.filter((h) => h.ownership_type === OWNER_TYPES.LAURY).length,
+    private_owner: horses.filter((h) => h.ownership_type === OWNER_TYPES.PRIVATE_OWNER).length,
+    club: horses.filter((h) => h.ownership_type === OWNER_TYPES.CLUB).length,
+    other: horses.filter((h) => h.ownership_type === OWNER_TYPES.OTHER).length,
   };
 
   // Filter horses
   const filteredHorses = horses.filter((horse) => {
-    // Activity filter - par défaut, exclure les inactifs
     const horseIsActive = isActive(horse.activity_start_date, horse.activity_end_date);
     if (!includeInactive && !horseIsActive) return false;
 
-    // Kind filter
-    if (kindFilter !== HORSE_KIND_FILTERS.ALL && horse.kind !== kindFilter) return false;
-
-    // Ownership filter
-    if (ownershipFilter !== OWNERSHIP_TYPE_FILTERS.ALL && horse.ownership_type !== ownershipFilter)
-      return false;
+    if (kindFilter !== 'all' && horse.kind !== kindFilter) return false;
+    if (ownershipFilter !== 'all' && horse.ownership_type !== ownershipFilter) return false;
 
     return true;
   });
@@ -1430,8 +1592,6 @@ export function useHorsesList() {
     includeInactive,
     kindFilter,
     ownershipFilter,
-    HORSE_KIND_FILTERS,
-    OWNERSHIP_TYPE_FILTERS,
     setKindFilter,
     setOwnershipFilter,
     toggleIncludeInactive,
@@ -1446,12 +1606,18 @@ export function useHorsesList() {
 ---
 
 ## 📄 usePackageActions.js
+
 **Path:** `usePackageActions.js`
 
 ```
 import { useState } from 'react';
 import { packageService } from '../services/index.js';
 
+/**
+ * Custom hook for managing package CRUD operations
+ * @param {Function} onSuccess - Callback function to execute on successful operation
+ * @returns {Object} Package action handlers and state
+ */
 export function usePackageActions(onSuccess) {
   const [showPackageModal, setShowPackageModal] = useState(false);
   const [editingPackage, setEditingPackage] = useState(null);
@@ -1477,7 +1643,7 @@ export function usePackageActions(onSuccess) {
     try {
       let result;
       if (editingPackage) {
-        // Soft delete ancien forfait
+        // Soft delete old package
         await packageService.delete(editingPackage.id);
 
         // Create new
@@ -1496,7 +1662,7 @@ export function usePackageActions(onSuccess) {
       setShowPackageModal(false);
       return result;
     } catch (err) {
-      // Remonter l'erreur au parent pour affichage
+      // Rethrow error for parent handling
       throw err;
     }
   };
@@ -1548,11 +1714,19 @@ export function usePackageActions(onSuccess) {
 ---
 
 ## 📄 usePackageForm.js
+
 **Path:** `usePackageForm.js`
 
 ```
 import { useState, useEffect } from 'react';
 
+/**
+ * Custom hook for managing package form data and operations
+ * @param {Object} packageData - The package object for editing
+ * @param {string|number} riderId - The rider ID
+ * @param {Function} onSubmit - Submit handler
+ * @returns {Object} Form data, handlers, and state
+ */
 export function usePackageForm(packageData, riderId, onSubmit) {
   const [formData, setFormData] = useState({
     services_per_week: String(packageData?.services_per_week ?? 0),
@@ -1563,7 +1737,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Réinitialiser le formulaire quand packageData change (create vs edit)
+  // Reset form when packageData changes (create vs edit)
   useEffect(() => {
     setFormData({
       services_per_week: String(packageData?.services_per_week ?? 0),
@@ -1583,7 +1757,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
     }));
   };
 
-  // handleSubmit accepte soit un event (submit HTML) soit aucun argument (appel programmatique)
+  // handleSubmit accepts either an event (HTML submit) or no argument (programmatic call)
   const handleSubmit = async (e) => {
     if (e && typeof e.preventDefault === 'function') {
       e.preventDefault();
@@ -1629,7 +1803,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
     submitting,
     handleChange,
     handleSubmit,
-    setFormData, // exposer si besoin pour tests ou reset manuel
+    setFormData,
   };
 }
 ```
@@ -1637,13 +1811,20 @@ export function usePackageForm(packageData, riderId, onSubmit) {
 ---
 
 ## 📄 usePairingActions.js
+
 **Path:** `usePairingActions.js`
 
 ```
 import { useState } from 'react';
 import { RIDER_HORSE_LINK_TYPE } from '../lib/domain/index.js';
+import { getTodayISO } from '../lib/helpers/index.js';
 import pairingService from '../services/pairingService.js';
 
+/**
+ * Custom hook for managing pairing CRUD operations
+ * @param {Function} onSuccess - Callback function to execute on successful operation
+ * @returns {Object} Pairing action handlers and state
+ */
 export function usePairingActions(onSuccess) {
   const [showPairingModal, setShowPairingModal] = useState(false);
   const [editingPairing, setEditingPairing] = useState(null);
@@ -1671,16 +1852,16 @@ export function usePairingActions(onSuccess) {
 
   const handleSubmit = async (riderId, pairingData) => {
     try {
-      console.log('📤 Submitting pairing data:', pairingData); // ← Ajoutez ce log
+      console.log('📤 Submitting pairing data:', pairingData);
 
-      // Défaut link_type selon le rider
+      // Default link_type based on rider
       const payload = {
         ...pairingData,
         rider_id: riderId,
         link_type: pairingData.link_type ?? RIDER_HORSE_LINK_TYPE.OWN,
       };
 
-      console.log('📦 Final payload:', payload); // ← Et celui-ci
+      console.log('📦 Final payload:', payload);
 
       if (editingPairing) {
         await pairingService.update(editingPairing.id, payload);
@@ -1700,8 +1881,7 @@ export function usePairingActions(onSuccess) {
   const handleRemoveFromInventory = async () => {
     if (!pairingToDelete) return;
     try {
-      const today = new Date().toISOString().split('T')[0];
-      await pairingService.update(pairingToDelete.id, { pairing_end_date: today });
+      await pairingService.update(pairingToDelete.id, { pairing_end_date: getTodayISO() });
       onSuccess("Pension retirée de l'inventaire");
       setShowDeleteModal(false);
       setPairingToDelete(null);
@@ -1752,6 +1932,7 @@ export function usePairingActions(onSuccess) {
 ---
 
 ## 📄 usePairingForm.js
+
 **Path:** `usePairingForm.js`
 
 ```
@@ -1762,19 +1943,21 @@ import {
   isLoanPairing,
   isValidLoanDaysPerWeek,
 } from '../lib/domain/index.js';
+import { getTodayISO } from '../lib/helpers/index.js';
 
 /**
  * Custom hook for managing pairing form data and operations
  * @param {Object} pairing - The pairing object for editing
  * @param {Object} rider - Rider object (needed for default link_type)
  * @param {string|number} riderId - Pre-selected rider ID (optional)
+ * @param {string|number} horseId - Pre-selected horse ID (optional)
  * @returns {Object} Form data, handlers, and state
  */
-export function usePairingForm(pairing, rider, riderId) {
+export function usePairingForm(pairing, rider, riderId, horseId) {
   const [formData, setFormData] = useState({
     rider_id: null,
     horse_id: null,
-    pairing_start_date: now(),
+    pairing_start_date: getTodayISO(),
     pairing_end_date: '',
     link_type: RIDER_HORSE_LINK_TYPE.OWN,
     loan_days_per_week: 1,
@@ -1782,7 +1965,6 @@ export function usePairingForm(pairing, rider, riderId) {
   });
 
   const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     // --- EDIT MODE ---
@@ -1799,12 +1981,14 @@ export function usePairingForm(pairing, rider, riderId) {
         ? parseInt(pairing.horse_id)
         : pairing.horses?.id
         ? parseInt(pairing.horses.id)
+        : horseId
+        ? parseInt(horseId)
         : null;
 
       setFormData({
         rider_id: extractedRiderId,
         horse_id: extractedHorseId,
-        pairing_start_date: pairing.pairing_start_date || now(),
+        pairing_start_date: pairing.pairing_start_date || getTodayISO(),
         pairing_end_date: pairing.pairing_end_date || '',
         link_type: pairing.link_type || RIDER_HORSE_LINK_TYPE.OWN,
         loan_days_per_week: pairing.loan_days_per_week || 1,
@@ -1814,20 +1998,23 @@ export function usePairingForm(pairing, rider, riderId) {
       return;
     }
 
-    // --- CREATION MODE WITH PRE-FILLED RIDER ---
-    if (riderId) {
-      setFormData((prev) => ({
-        ...prev,
-        rider_id: parseInt(riderId),
-        link_type:
-          rider?.rider_type === RIDER_TYPES.OWNER
-            ? RIDER_HORSE_LINK_TYPE.OWN
-            : RIDER_HORSE_LINK_TYPE.LOAN,
-        loan_days_per_week: rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1,
-        loan_days: [],
-      }));
-    }
-  }, [pairing, rider, riderId]);
+    // --- CREATION MODE ---
+    const defaultLinkType =
+      rider?.rider_type === RIDER_TYPES.OWNER
+        ? RIDER_HORSE_LINK_TYPE.OWN
+        : RIDER_HORSE_LINK_TYPE.LOAN;
+
+    const defaultLoanDaysPerWeek = rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1;
+
+    setFormData((prev) => ({
+      ...prev,
+      rider_id: riderId ? parseInt(riderId) : null,
+      horse_id: horseId ? parseInt(horseId) : null,
+      link_type: defaultLinkType,
+      loan_days_per_week: defaultLoanDaysPerWeek,
+      loan_days: [],
+    }));
+  }, [pairing, rider, riderId, horseId]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -1856,16 +2043,14 @@ export function usePairingForm(pairing, rider, riderId) {
 
   // Toggle selection of a day in loan_days
   const toggleLoanDay = (dayCode) => {
-    // ← dayCode au lieu de dayIndex
     if (!isLoanPairing(formData)) return;
 
     setFormData((prev) => {
       const daysSet = new Set(prev.loan_days || []);
       if (daysSet.has(dayCode)) {
-        // ← dayCode
         daysSet.delete(dayCode);
       } else if (daysSet.size < (prev.loan_days_per_week || 1)) {
-        daysSet.add(dayCode); // ← dayCode
+        daysSet.add(dayCode);
       }
       return { ...prev, loan_days: Array.from(daysSet).sort() };
     });
@@ -1877,7 +2062,7 @@ export function usePairingForm(pairing, rider, riderId) {
 
     if (!formData.rider_id || !formData.horse_id || !formData.pairing_start_date) {
       const missingFields = [];
-      if (!formData.rider_id) missingFields.push('Rider');
+      if (!formData.rider_id) missingFields.push('Cavalier');
       if (!formData.horse_id) missingFields.push('Cheval');
       if (!formData.pairing_start_date) missingFields.push('Date de début');
 
@@ -1903,16 +2088,20 @@ export function usePairingForm(pairing, rider, riderId) {
   };
 
   const resetForm = () => {
+    const defaultLinkType =
+      rider?.rider_type === RIDER_TYPES.OWNER
+        ? RIDER_HORSE_LINK_TYPE.OWN
+        : RIDER_HORSE_LINK_TYPE.LOAN;
+
+    const defaultLoanDaysPerWeek = rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1;
+
     setFormData({
       rider_id: riderId ? parseInt(riderId) : null,
-      horse_id: null,
-      pairing_start_date: now(),
+      horse_id: horseId ? parseInt(horseId) : null,
+      pairing_start_date: getTodayISO(),
       pairing_end_date: '',
-      link_type:
-        rider?.rider_type === RIDER_TYPES.OWNER
-          ? RIDER_HORSE_LINK_TYPE.OWN
-          : RIDER_HORSE_LINK_TYPE.LOAN,
-      loan_days_per_week: rider?.rider_type === RIDER_TYPES.OWNER ? 0 : 1,
+      link_type: defaultLinkType,
+      loan_days_per_week: defaultLoanDaysPerWeek,
       loan_days: [],
     });
     setError('');
@@ -1921,10 +2110,8 @@ export function usePairingForm(pairing, rider, riderId) {
   return {
     formData,
     error,
-    submitting,
     setFormData,
     setError,
-    setSubmitting,
     handleChange,
     toggleLoanDay,
     validateForm,
@@ -1935,25 +2122,120 @@ export function usePairingForm(pairing, rider, riderId) {
 
 ---
 
-## 📄 useParticipants.js
-**Path:** `useParticipants.js`
+## 📄 useParticipantList.js
+
+**Path:** `useParticipantList.js`
 
 ```
-import { useState, useEffect } from 'react';
-import riderService from '../services/riderService';
-import horseService from '../services/horseService';
+import { useState, useCallback } from 'react';
+import { HORSE_ASSIGNMENT_TYPES } from '../lib/domain/domain-constants';
 
 /**
- * Hook to manage participant selection form state and fetch riders/horses
+ * Hook to manage the list of participants for an event
+ * Handles add, remove, update operations
  */
-export function useParticipants() {
+export function useParticipantList(initialParticipants = []) {
+  const [participants, setParticipants] = useState(initialParticipants);
+
+  const addParticipant = useCallback(
+    (riderId, horseId, horseAssignmentType = HORSE_ASSIGNMENT_TYPES.MANUAL) => {
+      setParticipants((prev) => {
+        // Prevent duplicates
+        if (prev.some((p) => p.rider_id === riderId && p.horse_id === horseId)) {
+          return prev;
+        }
+
+        return [
+          ...prev,
+          {
+            id: Date.now(),
+            rider_id: riderId,
+            horse_id: horseId,
+            horse_assignment_type: horseAssignmentType,
+          },
+        ];
+      });
+    },
+    []
+  );
+
+  const removeParticipant = useCallback((id) => {
+    setParticipants((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
+  const updateParticipant = useCallback(
+    (id, riderId, horseId, horseAssignmentType = HORSE_ASSIGNMENT_TYPES.MANUAL) => {
+      setParticipants((prev) => {
+        // Prevent duplicate rider + horse combinations (excluding current participant)
+        const hasDuplicate = prev.some(
+          (p) => p.id !== id && p.rider_id === riderId && p.horse_id === horseId
+        );
+
+        if (hasDuplicate) {
+          return prev;
+        }
+
+        return prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                rider_id: riderId,
+                horse_id: horseId,
+                horse_assignment_type: horseAssignmentType,
+              }
+            : p
+        );
+      });
+    },
+    []
+  );
+
+  const clearParticipants = useCallback(() => {
+    setParticipants([]);
+  }, []);
+
+  return {
+    participants,
+    addParticipant,
+    removeParticipant,
+    updateParticipant,
+    clearParticipants,
+  };
+}
+```
+
+---
+
+## 📄 useParticipantSelection.js
+
+**Path:** `useParticipantSelection.js`
+
+```
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import riderService from '../services/riderService';
+import horseService from '../services/horseService';
+import { OWNER_TYPES } from '../lib/domain/domain-constants';
+
+const OWNER_TYPE_SORT_ORDER = {
+  [OWNER_TYPES.LAURY]: 1,
+  [OWNER_TYPES.CLUB]: 2,
+  [OWNER_TYPES.PRIVATE_OWNER]: 3,
+  [OWNER_TYPES.OTHER]: 4,
+};
+
+/**
+ * Hook to manage participant selection logic
+ * Handles fetching riders/horses, filtering, and selection state
+ */
+export function useParticipantSelection(existingParticipants = [], editingParticipantId = null) {
   const [riders, setRiders] = useState([]);
   const [horses, setHorses] = useState([]);
-  const [selectedRiderId, setSelectedRiderId] = useState('');
-  const [selectedHorseId, setSelectedHorseId] = useState('');
-  const [showAddParticipant, setShowAddParticipant] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [selectedRiderId, setSelectedRiderId] = useState(null);
+  const [selectedHorseId, setSelectedHorseId] = useState(null);
+  const [riderHorses, setRiderHorses] = useState([]);
 
   // Fetch riders and horses on mount
   useEffect(() => {
@@ -1964,13 +2246,15 @@ export function useParticipants() {
         setLoading(true);
         setError(null);
 
-        // Fetch riders
-        const ridersData = await riderService.getAll();
-        if (!cancelled) setRiders(Array.isArray(ridersData) ? ridersData : []);
+        const [ridersData, horsesData] = await Promise.all([
+          riderService.getAll(),
+          horseService.getAll(),
+        ]);
 
-        // Fetch horses
-        const horsesData = await horseService.getAll();
-        if (!cancelled) setHorses(Array.isArray(horsesData) ? horsesData : []);
+        if (!cancelled) {
+          setRiders(Array.isArray(ridersData) ? ridersData : []);
+          setHorses(Array.isArray(horsesData) ? horsesData : []);
+        }
       } catch (err) {
         if (!cancelled) {
           console.error('Error fetching participants data:', err);
@@ -1990,24 +2274,139 @@ export function useParticipants() {
     };
   }, []);
 
-  const resetParticipantForm = () => {
-    setSelectedRiderId('');
-    setSelectedHorseId('');
-    setShowAddParticipant(true);
-  };
+  // Fetch horses for selected rider
+  useEffect(() => {
+    if (!selectedRiderId) {
+      setRiderHorses([]);
+      return;
+    }
+
+    const fetchRiderHorses = async () => {
+      try {
+        const data = await riderService.getHorses(selectedRiderId);
+        if (Array.isArray(data)) {
+          const horsesData = data
+            .map((pairing) => pairing.horses)
+            .filter((horse) => horse && horse.id);
+          setRiderHorses(horsesData);
+
+          // Auto-select first horse if available and none selected
+          if (horsesData.length > 0 && !selectedHorseId) {
+            setSelectedHorseId(horsesData[0].id);
+          }
+        } else {
+          setRiderHorses([]);
+        }
+      } catch (err) {
+        console.error('Error fetching rider horses:', err);
+        setRiderHorses([]);
+      }
+    };
+
+    fetchRiderHorses();
+  }, [selectedRiderId, selectedHorseId]);
+
+  // Get available riders (excluding already selected ones)
+  const getAvailableRiders = useCallback(
+    (riderTypeFilter = 'all', searchTerm = '') => {
+      return riders.filter((r) => {
+        // Filter by type
+        if (riderTypeFilter !== 'all' && r.rider_type !== riderTypeFilter) {
+          return false;
+        }
+
+        // Filter by search term
+        if (searchTerm) {
+          const riderNameNormalized = r.name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/\p{Diacritic}/gu, '');
+          const searchNormalized = searchTerm
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/\p{Diacritic}/gu, '');
+
+          if (!riderNameNormalized.includes(searchNormalized)) {
+            return false;
+          }
+        }
+
+        // Exclude already selected riders (unless editing that participant)
+        if (
+          existingParticipants.some((p) => p.rider_id === r.id && p.id !== editingParticipantId)
+        ) {
+          return false;
+        }
+
+        return true;
+      });
+    },
+    [riders, existingParticipants, editingParticipantId]
+  );
+
+  // Get available horses (sorted and filtered)
+  const getAvailableHorses = useCallback(
+    (ownershipFilter = 'all') => {
+      // Combine rider horses (prioritized) with all other horses
+      const sortedHorses = [
+        ...riderHorses,
+        ...horses.filter((h) => !riderHorses.some((rh) => rh.id === h.id)),
+      ]
+        // Exclude already selected horses (unless editing that participant)
+        .filter(
+          (h) =>
+            !existingParticipants.some((p) => p.horse_id === h.id && p.id !== editingParticipantId)
+        )
+        // Sort by ownership type
+        .sort((h1, h2) => {
+          const order1 = OWNER_TYPE_SORT_ORDER[h1.ownership_type] ?? 99;
+          const order2 = OWNER_TYPE_SORT_ORDER[h2.ownership_type] ?? 99;
+          return order1 - order2;
+        });
+
+      // Apply ownership filter
+      if (ownershipFilter === 'all') {
+        return sortedHorses;
+      }
+
+      return sortedHorses.filter((h) => h.ownership_type === ownershipFilter);
+    },
+    [horses, riderHorses, existingParticipants, editingParticipantId]
+  );
+
+  const resetSelection = useCallback(() => {
+    setSelectedRiderId(null);
+    setSelectedHorseId(null);
+    setRiderHorses([]);
+  }, []);
+
+  const setSelection = useCallback((riderId, horseId) => {
+    setSelectedRiderId(riderId);
+    setSelectedHorseId(horseId);
+  }, []);
 
   return {
+    // Data
     riders,
     horses,
-    selectedRiderId,
-    setSelectedRiderId,
-    selectedHorseId,
-    setSelectedHorseId,
-    showAddParticipant,
-    setShowAddParticipant,
-    resetParticipantForm,
     loading,
     error,
+
+    // Selection state
+    selectedRiderId,
+    selectedHorseId,
+    setSelectedRiderId,
+    setSelectedHorseId,
+    setSelection,
+    resetSelection,
+
+    // Filtered/sorted data
+    getAvailableRiders,
+    getAvailableHorses,
+
+    // Helper to get names
+    getRiderName: useCallback((id) => riders.find((r) => r.id === id)?.name || '—', [riders]),
+    getHorseName: useCallback((id) => horses.find((h) => h.id === id)?.name || '—', [horses]),
   };
 }
 ```
@@ -2015,6 +2414,7 @@ export function useParticipants() {
 ---
 
 ## 📄 useRiderCard.js
+
 **Path:** `useRiderCard.js`
 
 ```
@@ -2063,7 +2463,7 @@ export function useRiderCard(riderId) {
       const data = await riderService.getPackages(riderId);
       console.log('📦 Packages fetched:', data);
 
-      // ✅ Filtrer les packages supprimés côté client si besoin
+      // Filter out deleted packages client-side if needed
       const activePackages = Array.isArray(data) ? data.filter((pkg) => !pkg.deleted_at) : [];
 
       setPackages(activePackages);
@@ -2132,14 +2532,14 @@ export function useRiderCard(riderId) {
 ---
 
 ## 📄 useRiderForm.js
+
 **Path:** `useRiderForm.js`
 
 ```
 import { useEffect, useState } from 'react';
 import { RIDER_TYPES } from '../lib/domain/index.js';
-import { validateRiderForm } from '../lib/helpers/index.js';
+import { validateRiderForm, getTodayISO } from '../lib/helpers/index.js';
 
-const today = new Date().toISOString().split('T')[0];
 /**
  * Custom hook for managing rider form data and operations
  * @param {Object} rider - The rider object for editing
@@ -2152,7 +2552,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     name: '',
     phone: '',
     email: '',
-    activity_start_date: today,
+    activity_start_date: getTodayISO(),
     activity_end_date: '',
     rider_type: RIDER_TYPES.LOANER,
   });
@@ -2165,9 +2565,9 @@ export function useRiderForm(rider, onSubmit, onCancel) {
         name: rider.name || '',
         phone: rider.phone || '',
         email: rider.email || '',
-        activity_start_date: rider.activity_start_date || today,
+        activity_start_date: rider.activity_start_date || getTodayISO(),
         activity_end_date: rider.activity_end_date || '',
-        rider_type: rider.rider_type || RIDER_TYPES.LOANER, // ✅ Renommé
+        rider_type: rider.rider_type || RIDER_TYPES.LOANER,
       });
     } else {
       resetForm();
@@ -2217,7 +2617,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
       name: '',
       phone: '',
       email: '',
-      activity_start_date: today,
+      activity_start_date: getTodayISO(),
       activity_end_date: '',
       rider_type: RIDER_TYPES.LOANER,
     });
@@ -2228,7 +2628,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
     formData,
     errors,
     submitting,
-    riderTypeOptions: Object.values(RIDER_TYPES), // ✅ Ajouté
+    riderTypeOptions: Object.values(RIDER_TYPES),
     handleChange,
     handleSubmit,
     handleCancel,
@@ -2243,6 +2643,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
 ---
 
 ## 📄 useRiderHorses.js
+
 **Path:** `useRiderHorses.js`
 
 ```
@@ -2268,21 +2669,21 @@ export function useRiderHorses(riderId) {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch rider-horse pairings
         const response = await axios.get(`/api/riders/${riderId}/horses`);
-        
+
         // The backend returns an array of pairings with nested horses
         // Each pairing has: { id, rider_id, horse_id, link_type, horses: { id, name, ... } }
         let horsesData = [];
-        
+
         if (Array.isArray(response.data)) {
           // Extract horses from pairings and filter out null/deleted horses
           horsesData = response.data
-            .map(pairing => pairing.horses)
-            .filter(horse => horse && horse.id); // Filter out null or invalid horses
+            .map((pairing) => pairing.horses)
+            .filter((horse) => horse && horse.id); // Filter out null or invalid horses
         }
-        
+
         setRiderPairedHorses(horsesData);
       } catch (err) {
         console.error('Error fetching rider horses:', err);
@@ -2306,88 +2707,15 @@ export function useRiderHorses(riderId) {
 
 ---
 
-## 📄 useRiderHorsesWithPairings.js
-**Path:** `useRiderHorsesWithPairings.js`
-
-```
-import { useState, useEffect } from 'react';
-import riderService from '../services/riderService';
-
-/**
- * Hook to fetch horses associated with a specific rider
- * Also returns pairing information (loan days, link type, etc.)
- * @param {string|number} riderId - The selected rider ID
- */
-export function useRiderHorsesWithPairings(riderId) {
-  const [pairings, setPairings] = useState([]);
-  const [horses, setHorses] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!riderId) {
-      setPairings([]);
-      setHorses([]);
-      return;
-    }
-
-    const fetchRiderHorses = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch rider-horse pairings using riderService
-        const data = await riderService.getHorses(riderId);
-
-        if (Array.isArray(data)) {
-          setPairings(data);
-
-          // Extract just the horses (for backward compatibility)
-          const horsesData = data
-            .map((pairing) => pairing.horses)
-            .filter((horse) => horse && horse.id);
-          setHorses(horsesData);
-        } else {
-          setPairings([]);
-          setHorses([]);
-        }
-      } catch (err) {
-        console.error('Error fetching rider horses:', err);
-        setError('Erreur lors du chargement des chevaux du cavalier');
-        setPairings([]);
-        setHorses([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRiderHorses();
-  }, [riderId]);
-
-  return {
-    pairings, // Full pairing data with all details
-    horses, // Just the horses (simplified)
-    riderPairedHorses: horses, // Alias for backward compatibility
-    loading,
-    error,
-  };
-}
-```
-
----
-
 ## 📄 useRidersList.js
+
 **Path:** `useRidersList.js`
 
 ```
 import { useEffect, useState } from 'react';
-import {
-  calculateRiderStats,
-  COMMON_FILTERS,
-  filterRiders,
-  isActive,
-} from '../lib/helpers/index.js';
-import { riderService } from '../services/index.js';
+import { calculateRiderStats, filterRiders } from '../lib/helpers';
+import { COMMON_FILTERS } from '../lib/helpers/filters/activityFilters';
+import { riderService } from '../services';
 
 /**
  * Custom hook for managing riders list data and operations
@@ -2396,15 +2724,18 @@ export function useRidersList() {
   const [riders, setRiders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingRider, setEditingRider] = useState(null);
   const [selectedRiderId, setSelectedRiderId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [riderToDelete, setRiderToDelete] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+
+  // Separate state for each filter
   const [riderTypeFilter, setRiderTypeFilter] = useState(COMMON_FILTERS.ALL);
   const [includeInactive, setIncludeInactive] = useState(false);
 
+  // Load riders from service
   useEffect(() => {
     loadRiders();
   }, []);
@@ -2413,12 +2744,7 @@ export function useRidersList() {
     try {
       setLoading(true);
       setError(null);
-
-      // Une seule requête qui retourne tout !
       const data = await riderService.getAllWithPairings();
-
-      // Les données sont déjà normalisées côté backend
-      // Plus besoin de Promise.all ou de transformations
       setRiders(data);
     } catch (err) {
       setError(err.message || 'Erreur lors du chargement des cavaliers');
@@ -2427,6 +2753,19 @@ export function useRidersList() {
     }
   };
 
+  // Filtered list using current filter values
+  const filteredRiders = filterRiders(riders, {
+    riderType: riderTypeFilter,
+    includeInactive,
+  });
+
+  // Stats
+  const stats = calculateRiderStats(riders);
+
+  // Filter handlers
+  const toggleIncludeInactive = () => setIncludeInactive((prev) => !prev);
+
+  // CRUD Handlers
   const handleCreate = () => {
     setEditingRider(null);
     setShowModal(true);
@@ -2437,13 +2776,38 @@ export function useRidersList() {
     setShowModal(true);
   };
 
-  const handleViewDetails = (riderId) => {
-    setSelectedRiderId(riderId);
-  };
+  const handleViewDetails = (riderId) => setSelectedRiderId(riderId);
 
   const handleDeleteClick = (rider) => {
     setRiderToDelete(rider);
     setShowDeleteModal(true);
+  };
+
+  const handleRemoveFromInventory = async () => {
+    if (!riderToDelete) return;
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      await riderService.update(riderToDelete.id, { activity_end_date: today });
+      setSuccessMessage("Cavalier retiré de l'inventaire");
+      setShowDeleteModal(false);
+      await loadRiders();
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!riderToDelete) return;
+    try {
+      await riderService.delete(riderToDelete.id);
+      setSuccessMessage('Cavalier supprimé définitivement');
+      setShowDeleteModal(false);
+      await loadRiders();
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteModal(false);
+    }
   };
 
   const handleFormSubmit = async (riderData) => {
@@ -2455,73 +2819,15 @@ export function useRidersList() {
         await riderService.create(riderData);
         setSuccessMessage('Cavalier créé avec succès');
       }
-
-      setTimeout(() => setSuccessMessage(''), 3000);
       setShowModal(false);
       setEditingRider(null);
       await loadRiders();
     } catch (err) {
-      throw err;
-    }
-  };
-
-  const handleRemoveFromInventory = async () => {
-    if (!riderToDelete) return;
-
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      await riderService.update(riderToDelete.id, {
-        activity_end_date: today,
-      });
-      setSuccessMessage("Cavalier retiré de l'inventaire");
-      setTimeout(() => setSuccessMessage(''), 3000);
-      closeDeleteModal();
-      await loadRiders();
-    } catch (err) {
       setError(err.message);
-      closeDeleteModal();
     }
   };
 
-  const handlePermanentDelete = async () => {
-    if (!riderToDelete) return;
-
-    try {
-      await riderService.delete(riderToDelete.id);
-      setSuccessMessage('Cavalier supprimé définitivement');
-      setTimeout(() => setSuccessMessage(''), 3000);
-      closeDeleteModal();
-      await loadRiders();
-    } catch (err) {
-      setError(err.message);
-      closeDeleteModal();
-    }
-  };
-
-  const toggleIncludeInactive = () => {
-    setIncludeInactive((prev) => !prev);
-  };
-
-  const stats = calculateRiderStats(riders);
-
-  const filteredRiders = riders.filter((rider) => {
-    const active = isActive(rider.activity_start_date, rider.activity_end_date);
-
-    if (!includeInactive && !active) {
-      return false;
-    }
-
-    if (riderTypeFilter !== COMMON_FILTERS.ALL && rider.rider_type !== riderTypeFilter) {
-      return false;
-    }
-
-    return true;
-  });
-
-  const getRiderStatus = (rider) => isActive(rider.activity_start_date, rider.activity_end_date);
-
-  const getStatusBadge = (rider) => (getRiderStatus(rider) ? 'Actif' : 'Inactif');
-
+  // Modal handlers
   const closeRiderModal = () => {
     setShowModal(false);
     setEditingRider(null);
@@ -2532,28 +2838,22 @@ export function useRidersList() {
     setRiderToDelete(null);
   };
 
-  const closeRiderCard = () => {
-    setSelectedRiderId(null);
-  };
+  const closeRiderCard = () => setSelectedRiderId(null);
 
+  // Message handlers
   const clearSuccessMessage = () => setSuccessMessage('');
   const clearError = () => setError(null);
 
   /**
-   * Retourne la liste unique des jours de tous les pairings d’un cavalier
+   * Retourne la liste unique des jours de tous les pairings d'un cavalier
    */
   const getRiderPairingDays = (rider) => {
-    if (!rider.pairings || rider.pairings.length === 0) {
-      return [];
-    }
-
+    if (!rider.pairings || rider.pairings.length === 0) return [];
     const daysSet = new Set();
-
     rider.pairings.forEach((pairing) => {
       const days = pairing.days || pairing.loan_days || [];
       days.forEach((day) => daysSet.add(day));
     });
-
     return Array.from(daysSet);
   };
 
@@ -2570,7 +2870,6 @@ export function useRidersList() {
     riderToDelete,
     successMessage,
     riderTypeFilter,
-    COMMON_FILTERS,
     includeInactive,
     toggleIncludeInactive,
     setRiderTypeFilter,
@@ -2584,8 +2883,6 @@ export function useRidersList() {
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
-    getStatusBadge,
-    getRiderStatus,
     getRiderPairingDays,
     clearSuccessMessage,
     clearError,
@@ -2596,6 +2893,7 @@ export function useRidersList() {
 ---
 
 ## 📄 useScheduledEvents.js
+
 **Path:** `useScheduledEvents.js`
 
 ```
@@ -2603,13 +2901,13 @@ import { useState, useCallback, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
 
 /**
- * Hook pour gérer les événements programmés
+ * Hook to manage scheduled events
  */
 export function useScheduledEvents() {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [actionLoading, setActionLoading] = useState(null); // ID du slot en cours de traitement
+  const [actionLoading, setActionLoading] = useState(null); // ID of slot being processed
   const [actionError, setActionError] = useState(null);
 
   const loadScheduledSlots = useCallback(async () => {
@@ -2617,6 +2915,7 @@ export function useScheduledEvents() {
       setLoading(true);
       setError(null);
       const data = await calendarService.getScheduledSlots();
+      console.log('Loaded scheduled slots:', data);
       setSlots(data || []);
     } catch (err) {
       console.error('Error loading scheduled events:', err);
@@ -2637,7 +2936,7 @@ export function useScheduledEvents() {
         setActionLoading(slotId);
         setActionError(null);
         await calendarService.updateSlot(slotId, { slot_status: 'confirmed' });
-        await loadScheduledSlots(); // Recharger la liste
+        await loadScheduledSlots(); // Reload the list
         return true;
       } catch (err) {
         console.error('Error validating slot:', err);
@@ -2656,7 +2955,7 @@ export function useScheduledEvents() {
         setActionLoading(slotId);
         setActionError(null);
         await calendarService.deleteSlot(slotId);
-        await loadScheduledSlots(); // Recharger la liste
+        await loadScheduledSlots(); // Reload the list
         return true;
       } catch (err) {
         console.error('Error deleting slot:', err);
@@ -2688,14 +2987,19 @@ export function useScheduledEvents() {
 
 ---
 
-## 📄 useSlotEvent.js
-**Path:** `useSlotEvent.js`
+## 📄 useEventSlotDetails.js
+
+**Path:** `useEventSlotDetails.js`
 
 ```
 import { useState, useEffect } from 'react';
 import { calendarService } from '../services/calendarService';
 
-export function useSlotEvent(slot) {
+/**
+ * Hook to fetch event associated with a slot
+ * @param {Object} slot - The slot object
+ */
+export function useEventSlotDetails(slot) {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(Boolean(slot?.event_id));
   const [error, setError] = useState(null);
@@ -2737,4 +3041,3 @@ export function useSlotEvent(slot) {
 ```
 
 ---
-

@@ -552,7 +552,7 @@
 }
 
 .event-modal-content {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xs);
 }
 
 /* ============================================
@@ -594,6 +594,14 @@
   text-overflow: ellipsis;
 }
 
+.event-modal-created {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  font-style: italic;
+  margin-top: var(--spacing-xs);
+  text-align: left;
+}
+
 .event-modal-actions {
   display: flex;
   flex-direction: row;
@@ -630,7 +638,7 @@
    CARDS
    ============================================ */
 
-.event-card,
+.event-box,
 .event-participant-card,
 .event-recurrence-card {
   background: var(--color-white);
@@ -642,7 +650,7 @@
   gap: var(--spacing-md);
 }
 
-.event-card-header h3,
+.event-box-header h3,
 .event-participant-card-header h3,
 .event-recurrence-card-header h3 {
   margin: 0;
@@ -653,7 +661,7 @@
   margin-bottom: 6px;
 }
 
-.event-card-body,
+.event-box-body,
 .event-participant-card-body,
 .event-recurrence-card-body {
   display: flex;
@@ -815,7 +823,7 @@
 
 @media (max-width: 768px) {
   .event-modal-content {
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs);
   }
 
   .event-participant-item,
@@ -823,4 +831,211 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* ============================================
+   EVENT MODAL STYLES (was Rider Card)
+   ============================================ */
+
+.event-modal {
+  max-width: 1200px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.event-modal-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.event-modal-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.event-modal-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-modal-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-modal-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.event-modal-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-sm);
+}
+
+.event-modal-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.event-modal-sidebar,
+.event-modal-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Reusable Cards */
+.event-box {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.event-box-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-gray-200);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.event-box-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Participants Grid */
+.participants-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ============================================
+   EVENT PARTICIPANT ROW
+   Rider Card Mini (Event Context)
+   ============================================ */
+
+.participant-mini-card {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.participant-mini-card:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+}
+
+/* Cancelled state */
+.participant-mini-card.cancelled {
+  opacity: 0.7;
+  background: var(--color-gray-50);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.participant-mini-card-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.participant-mini-card-header svg {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.participant-mini-card-title {
+  gap: 4px;
+  min-width: 0;
+}
+
+.participant-mini-card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .participant-mini-card {
+    padding: var(--spacing-sm);
+  }
+
+  .participant-mini-card-header {
+    gap: var(--spacing-xs);
+  }
+
+  .participant-mini-card-title strong {
+    font-size: var(--font-size-xs);
+  }
+}
+
+.segmented-control {
+  display: flex;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.segment {
+  flex: 1;
+  padding: 8px;
+  background: white;
+  border: none;
+  cursor: pointer;
+}
+
+.segment.active {
+  background: var(--color-primary-100);
+  font-weight: 600;
+}
+
+.segment.danger.active {
+  background: var(--color-danger-100);
 }

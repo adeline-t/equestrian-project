@@ -4,7 +4,7 @@ import { calendarService } from '../services/calendarService';
 /**
  * Hook to manage scheduled events
  */
-export function useScheduledEvents() {
+export function useEventScheduledList() {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

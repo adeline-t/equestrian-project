@@ -8,9 +8,15 @@ const INSTRUCTOR_OPTIONS = Object.keys(INSTRUCTORS).map((id) => ({
   label: getInstructorLabel(id),
 }));
 
-const EventEditForm = ({ editData, handleChange }) => {
+export default function EventEditForm({ editData, onChange, onCancel, onSubmit, disabled }) {
   return (
-    <form className="event-edit-form" onSubmit={(e) => e.preventDefault()}>
+    <form
+      className="event-edit-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit?.(); // ici on envoie la copie locale au parent
+      }}
+    >
       {/* Name */}
       <div className="event-edit-form-group">
         <label className="event-edit-label">
@@ -19,13 +25,14 @@ const EventEditForm = ({ editData, handleChange }) => {
         <input
           name="name"
           value={editData.name || ''}
-          onChange={handleChange}
+          onChange={onChange}
+          disabled={disabled}
           className="event-edit-input"
           placeholder="Nom de l'événement"
         />
       </div>
 
-      {/* Type & Status Row */}
+      {/* Type & Status */}
       <div className="event-edit-form-row">
         <div className="event-edit-form-group">
           <label className="event-edit-label">
@@ -34,7 +41,8 @@ const EventEditForm = ({ editData, handleChange }) => {
           <select
             name="event_type"
             value={editData.event_type || ''}
-            onChange={handleChange}
+            onChange={onChange}
+            disabled={disabled}
             className="event-edit-select"
           >
             {getEventTypeOptions().map((option) => (
@@ -52,7 +60,8 @@ const EventEditForm = ({ editData, handleChange }) => {
           <select
             name="slot_status"
             value={editData.slot_status || 'scheduled'}
-            onChange={handleChange}
+            onChange={onChange}
+            disabled={disabled}
             className="event-edit-select"
           >
             {getStatusOptions().map((option) => (
@@ -74,10 +83,10 @@ const EventEditForm = ({ editData, handleChange }) => {
             <button
               key={inst.id}
               type="button"
+              disabled={disabled}
               className={`badge clickable ${editData.instructor_id === inst.id ? 'active' : ''}`}
-              data-type={inst.id}
               onClick={() =>
-                handleChange({
+                onChange({
                   target: { name: 'instructor_id', value: inst.id },
                 })
               }
@@ -88,7 +97,7 @@ const EventEditForm = ({ editData, handleChange }) => {
         </div>
       </div>
 
-      {/* Participants Min/Max */}
+      {/* Participants Min / Max */}
       {editData.event_type !== 'blocked' && (
         <div className="event-edit-form-row">
           <div className="event-edit-form-group">
@@ -98,8 +107,9 @@ const EventEditForm = ({ editData, handleChange }) => {
             <input
               type="number"
               name="min_participants"
-              value={editData.min_participants || 0}
-              onChange={handleChange}
+              value={editData.min_participants ?? 0}
+              onChange={onChange}
+              disabled={disabled}
               min="0"
               className="event-edit-input"
             />
@@ -112,8 +122,9 @@ const EventEditForm = ({ editData, handleChange }) => {
             <input
               type="number"
               name="max_participants"
-              value={editData.max_participants || 1}
-              onChange={handleChange}
+              value={editData.max_participants ?? 1}
+              onChange={onChange}
+              disabled={disabled}
               min="1"
               className="event-edit-input"
             />
@@ -129,14 +140,23 @@ const EventEditForm = ({ editData, handleChange }) => {
         <textarea
           name="description"
           value={editData.description || ''}
-          onChange={handleChange}
+          onChange={onChange}
+          disabled={disabled}
           className="event-edit-textarea"
           rows="3"
           placeholder="Description de l'événement..."
         />
       </div>
+
+      {/* Footer */}
+      <div className="modal-footer mt-20">
+        <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          <Icons.Cancel /> Annuler
+        </button>
+        <button type="submit" className="btn btn-primary" disabled={disabled}>
+          <Icons.Check /> Sauvegarder
+        </button>
+      </div>
     </form>
   );
-};
-
-export default EventEditForm;
+}

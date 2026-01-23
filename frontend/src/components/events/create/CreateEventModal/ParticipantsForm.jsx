@@ -8,7 +8,13 @@ import {
 import { Icons } from '../../../../lib/icons.jsx';
 import '../../../../styles/features/events.css';
 
-function ParticipantsForm({ participants, addParticipant, removeParticipant, updateParticipant }) {
+function ParticipantsForm({
+  participants,
+  canAddParticipant,
+  addParticipant,
+  removeParticipant,
+  updateParticipant,
+}) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingParticipantId, setEditingParticipantId] = useState(null);
   const [riderTypeFilter, setRiderTypeFilter] = useState('all');
@@ -59,6 +65,7 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
     const participant = participants.find((p) => p.id === participantId);
     if (!participant) return;
 
+    // Set the current participant selection
     setSelection(participant.rider_id, participant.horse_id);
     setEditingParticipantId(participantId);
     setShowAddForm(true);
@@ -101,19 +108,17 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
         </div>
       )}
 
-      {/* PARTICIPANTS EXISTANTS */}
+      {/* EXISTING PARTICIPANTS */}
       {participants.length > 0 ? (
         <div className="participants-list mb-20">
           {participants.map((p) => (
             <div key={p.id} className="participant-card">
               <div className="participant-card-header">
-                {p.rider_id ? getRiderName(p.rider_id) : 'cavalier à choisir'}
+                {p.rider_id ? getRiderName(p.rider_id) : 'Cavalier à choisir'}
               </div>
-
               <div className="participant-card-body">
-                {p.horse_id ? getHorseName(p.horse_id) : 'cheval à choisir'}
+                {p.horse_id ? getHorseName(p.horse_id) : 'Cheval à choisir'}
               </div>
-
               <div className="participant-card-footer">
                 <button
                   type="button"
@@ -142,20 +147,20 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
         </div>
       )}
 
-      {!showAddForm && (
+      {!showAddForm && canAddParticipant && (
         <button type="button" className="btn btn-secondary" onClick={startAdd}>
           <Icons.Add /> Ajouter un participant
         </button>
       )}
 
-      {/* FORMULAIRE ADD / EDIT */}
+      {/* ADD / EDIT FORM */}
       {showAddForm && (
         <div className="event-form-section mt-20">
           <h4 className="mb-15">
             {editingParticipantId ? 'Modifier le participant' : 'Ajouter un participant'}
           </h4>
 
-          {/* FILTRES CAVALIERS */}
+          {/* RIDER FILTERS */}
           <div className="filter-section mb-15">
             <div className="filter-pills">
               <button
@@ -176,7 +181,7 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
             </div>
           </div>
 
-          {/* RECHERCHE CAVALIER */}
+          {/* RIDER SEARCH */}
           <div className="form-group mb-15">
             <input
               type="text"
@@ -187,7 +192,7 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
             />
           </div>
 
-          {/* BOUTONS CAVALIERS */}
+          {/* RIDER BUTTONS */}
           <div className="form-group mb-15">
             <div className="event-form-times-group">
               {availableRiders.map((r) => {
@@ -206,7 +211,7 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
             </div>
           </div>
 
-          {/* FILTRES CHEVAUX */}
+          {/* HORSE FILTERS */}
           <div className="filter-section mb-10">
             <div className="filter-pills">
               <button
@@ -233,7 +238,7 @@ function ParticipantsForm({ participants, addParticipant, removeParticipant, upd
             </div>
           </div>
 
-          {/* BOUTONS CHEVAUX */}
+          {/* HORSE BUTTONS */}
           <div className="form-group mb-15">
             <div className="event-form-times-group">
               {availableHorses.map((h) => {

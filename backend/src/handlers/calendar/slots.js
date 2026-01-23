@@ -186,6 +186,34 @@ export async function handlePlanningSlots(request, env, idParam) {
       return jsonResponse(data, 201, getSecurityHeaders());
     }
 
+    // PUT cancel slot
+    if (request.method === 'PUT' && id && pathname.endsWith('/cancel')) {
+      const body = await request.json().catch(() => null);
+
+      if (!body || typeof body.cancellation_reason !== 'string') {
+        return jsonResponse(
+          { error: 'cancellation_reason requis (string)' },
+          400,
+          getSecurityHeaders()
+        );
+      }
+
+      const { data, error } = await db
+        .from('planning_slots')
+        .update({
+          slot_status: 'cancelled',
+          cancellation_reason: body.cancellation_reason,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) return handleDatabaseError(error, 'slots.cancel', env);
+
+      return jsonResponse(data, 200, getSecurityHeaders());
+    }
+
     // PUT update slot
     if (request.method === 'PUT' && id) {
       const body = await request.json().catch(() => null);

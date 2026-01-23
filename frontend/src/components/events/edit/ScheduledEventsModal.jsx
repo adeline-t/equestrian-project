@@ -5,13 +5,13 @@ import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { getEventTypeConfig } from '../../../lib/domain/events';
 import { getInstructorConfig } from '../../../lib/domain/domain-constants';
-import DomainBadge from '../../common/DomainBadge';
-import { useScheduledEvents } from '../../../hooks/useScheduledEvents';
+import DomainBadge from '../../common/DomainBadge.jsx';
+import { useEventScheduledList } from '../../../hooks/useEventScheduledList';
 import '../../../styles/features/events.css';
 
 function ScheduledEventsModal({ onClose, onUpdate }) {
   const { slots, loading, error, actionLoading, actionError, validateSlot, deleteSlot } =
-    useScheduledEvents();
+    useEventScheduledList();
 
   const [confirmDelete, setConfirmDelete] = useState(null);
 

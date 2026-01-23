@@ -5,7 +5,7 @@ import { formatTimeForInput, formatTimeForDatabase } from '../lib/helpers/format
 /**
  * Hook pour gérer l'édition d'un événement bloqué
  */
-export function useBlockedEventEdit(slotId) {
+export function useEventBlockedEdit(slotId) {
   const [slot, setSlot] = useState(null);
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);

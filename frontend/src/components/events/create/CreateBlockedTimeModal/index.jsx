@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useCreateBlockedTime } from '../../../../hooks/useCreateBlockedTime.js';
+import { useEventBlockedCreate } from '../../../../hooks/useEventBlockedCreate.js';
 import { Icons } from '../../../../lib/icons';
 import '../../../../styles/features/events.css';
 import Modal from '../../../common/Modal';
@@ -7,7 +7,7 @@ import BlockedTimeForm from './BlockedTimeForm';
 
 function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
   const { formData, handleChange, setFormData, loading, error, createBlockedTime } =
-    useCreateBlockedTime();
+    useEventBlockedCreate();
 
   // Initialize date when modal opens
   useEffect(() => {

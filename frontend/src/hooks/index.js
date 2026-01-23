@@ -4,13 +4,12 @@
 
 // Calendar & Events
 export * from './useCalendarView.js';
-export * from './useCreateEvent.js';
-export * from './useCreateBlockedTime.js';
+export * from './useEventCreate.js';
+export * from './useEventBlockedCreate.js';
 export * from './useEventDetails.js';
 export * from './useEventEdit.js';
-export * from './useBlockedEventEdit.js';
-export * from './useScheduledEvents.js';
-export * from './useSlotEvent.js';
+export * from './useEventBlockedEdit.js';
+export * from './useEventScheduledList.js';
 
 // Horses
 export * from './useHorseActions.js';

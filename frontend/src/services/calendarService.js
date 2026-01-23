@@ -77,6 +77,17 @@ export const calendarService = {
     return enrichSlot(response.data);
   },
 
+  cancelSlot: async (id, payload) => {
+    // payload attendu :
+    // { cancellation_reason: string }
+
+    const response = await calendarApi.put(`/slots/${id}/cancel`, {
+      cancellation_reason: payload.cancellation_reason,
+    });
+
+    return enrichSlot(response.data);
+  },
+
   deleteSlot: async (id) => {
     const response = await calendarApi.delete(`/slots/${id}`);
     return response.data;

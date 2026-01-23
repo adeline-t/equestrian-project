@@ -41,16 +41,14 @@ function WeekView({ weekData, onSlotClick, onQuickCreate }) {
   }
 
   /* ---------------- handlers with debug ---------------- */
-  const handleSlotClick = (slot) => {
+  const handleSlotClick = (slot, isSelectedSlotBlocked) => {
     if (DEBUG) {
       console.debug('[WeekView] slot click', {
         slotId: slot?.id,
-        start: slot?.start_time,
-        duration: slot?.duration_minutes,
-        eventType: slot?.events?.event_type,
+        isSelectedSlotBlocked: isSelectedSlotBlocked,
       });
     }
-    onSlotClick?.(slot);
+    onSlotClick?.(slot, isSelectedSlotBlocked);
   };
 
   const handleQuickCreate = (payload) => {

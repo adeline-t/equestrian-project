@@ -1,9 +1,8 @@
 # 📁 Project Files Export
 
-Generated on: Tue Jan 20 18:52:57 CET 2026
+Generated on: Fri Jan 23 05:28:07 CET 2026
 
 ## 📄 api.js
-
 **Path:** `config/api.js`
 
 ```
@@ -47,7 +46,6 @@ export const API_SETTINGS = {
 ---
 
 ## 📄 index.js
-
 **Path:** `config/index.js`
 
 ```
@@ -61,7 +59,6 @@ export * from './ui.js';
 ---
 
 ## 📄 ui.js
-
 **Path:** `config/ui.js`
 
 ```
@@ -121,53 +118,50 @@ export const TEXT_STYLES = {
     duration: { fontSize: '10px' },
   },
 };
+
+export function getSlotLayout(duration) {
+  if (duration <= 59) return 'ultra-compact';
+  if (duration <= 60) return 'compact';
+  if (duration <= 90) return 'medium';
+  return 'full';
+}
 ```
 
 ---
 
 ## 📄 domain-constants.js
-
 **Path:** `domain/domain-constants.js`
 
 ```
 /**
- * Domain Constants - Unified & Complete
- *
- * Toutes les constantes métier de l'application
- * Les couleurs sont définies dans base.css via CSS variables
- * Ici on ne garde que les valeurs, labels et références CSS
+ * Domain Constants - Simplified & Unified
  */
 
 /* ============================================
    HORSES DOMAIN
    ============================================ */
-
 export const HORSE_TYPES = {
   PONY: 'pony',
   HORSE: 'horse',
 };
 
-export const HORSE_KIND_LABELS = {
+export const HORSE_TYPE_LABELS = {
   [HORSE_TYPES.PONY]: {
     value: HORSE_TYPES.PONY,
     label: 'Poney',
-    badgeClass: 'badge-pony',
-    cssVar: '--color-pony-light',
   },
   [HORSE_TYPES.HORSE]: {
     value: HORSE_TYPES.HORSE,
     label: 'Cheval',
-    badgeClass: 'badge-horse',
-    cssVar: '--color-info',
   },
 };
 
-export const getHorseTypeLabel = (kind) => HORSE_KIND_LABELS[kind]?.label || kind;
+export const getHorseTypeConfig = (type) => HORSE_TYPE_LABELS[type] || null;
+export const getHorseTypeLabel = (type) => getHorseTypeConfig(type)?.label ?? type;
 
 /* ============================================
    OWNERSHIP TYPES
    ============================================ */
-
 export const OWNER_TYPES = {
   LAURY: 'laury',
   PRIVATE_OWNER: 'private_owner',
@@ -179,31 +173,28 @@ export const OWNER_TYPE_LABELS = {
   [OWNER_TYPES.LAURY]: {
     value: OWNER_TYPES.LAURY,
     label: 'Laury',
-    cssVar: '--color-laury',
   },
   [OWNER_TYPES.PRIVATE_OWNER]: {
     value: OWNER_TYPES.PRIVATE_OWNER,
     label: 'Propriétaire',
-    cssVar: '--color-success-medium',
   },
   [OWNER_TYPES.CLUB]: {
     value: OWNER_TYPES.CLUB,
     label: 'Club',
-    cssVar: '--color-info',
   },
   [OWNER_TYPES.OTHER]: {
     value: OWNER_TYPES.OTHER,
     label: 'Autre',
-    cssVar: '--color-warning-orange',
   },
 };
 
-export const getOwnerTypeLabel = (type) => OWNER_TYPE_LABELS[type]?.label || type;
+export const getOwnerTypeConfig = (type) =>
+  OWNER_TYPE_LABELS[type] || OWNER_TYPE_LABELS[OWNER_TYPES.OTHER];
+export const getOwnerTypeLabel = (type) => getOwnerTypeConfig(type)?.label ?? type;
 
 /* ============================================
    RIDERS DOMAIN
    ============================================ */
-
 export const RIDER_TYPES = {
   OWNER: 'owner',
   CLUB: 'club',
@@ -214,100 +205,74 @@ export const RIDER_TYPE_LABELS = {
   [RIDER_TYPES.OWNER]: {
     value: RIDER_TYPES.OWNER,
     label: 'Propriétaire',
-    badgeClass: 'badge-rider-type',
-    cssVar: '--color-warning-orange',
   },
   [RIDER_TYPES.CLUB]: {
     value: RIDER_TYPES.CLUB,
     label: 'Club',
-    badgeClass: 'badge-rider-type',
-    cssVar: '--color-info-blue',
   },
   [RIDER_TYPES.LOANER]: {
     value: RIDER_TYPES.LOANER,
     label: 'Pensionnaire',
-    badgeClass: 'badge-rider-type',
-    cssVar: '--color-success-medium',
   },
 };
 
-export const getRiderTypeLabel = (type) => RIDER_TYPE_LABELS[type]?.label || type;
+export const getRiderTypeConfig = (type) => RIDER_TYPE_LABELS[type] || null;
+export const getRiderTypeLabel = (type) => getRiderTypeConfig(type)?.label ?? type;
 
 /* ============================================
    PAIRINGS DOMAIN (Rider-Horse Links)
    ============================================ */
-
 export const RIDER_HORSE_LINK_TYPE = {
   OWN: 'own',
   LOAN: 'loan',
 };
 
-export const RIDER_HORSE_LINK_TYPE_CONFIG = {
+export const RIDER_HORSE_LINK_LABELS = {
   [RIDER_HORSE_LINK_TYPE.OWN]: {
     value: 'own',
     label: 'Propriétaire',
-    badgeClass: 'badge-pairing', // Classe de base commune
-    cssVar: '--color-warning-orange',
   },
   [RIDER_HORSE_LINK_TYPE.LOAN]: {
     value: 'loan',
     label: 'Pension',
-    badgeClass: 'badge-pairing', // Classe de base commune
-    cssVar: '--color-success-medium',
   },
 };
 
-export const getRiderHorseLinkLabel = (type) => RIDER_HORSE_LINK_TYPE_CONFIG[type]?.label ?? type;
-
 export const getRiderHorseLinkConfig = (type) =>
-  RIDER_HORSE_LINK_TYPE_CONFIG[type] || RIDER_HORSE_LINK_TYPE_CONFIG[RIDER_HORSE_LINK_TYPE.OWN];
+  RIDER_HORSE_LINK_LABELS[type] || RIDER_HORSE_LINK_LABELS[RIDER_HORSE_LINK_TYPE.OWN];
+
+export const getRiderHorseLinkLabel = (type) => getRiderHorseLinkConfig(type)?.label ?? type;
 
 export const isLoanPairing = (pairingOrType) =>
   typeof pairingOrType === 'string'
     ? pairingOrType === RIDER_HORSE_LINK_TYPE.LOAN
     : pairingOrType?.link_type === RIDER_HORSE_LINK_TYPE.LOAN;
 
-/* -----------------------
- * Validation helpers
- * ----------------------- */
-
-export const isValidLoanDaysPerWeek = (value) =>
-  Number.isInteger(value) && value >= 1 && value <= 7;
-
-export const WEEK_DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-
-export const WEEK_DAYS_EN = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-
-/**
- * Convert weekday code ('mon','tue',...) to French abbreviation ('Lun','Mar',...)
- * @param {string} code - weekday code
- * @returns {string|null} French abbreviation or null if invalid
- */
-export const weekDayCodeToFr = (code) => {
-  if (!code) return null;
-  const idx = WEEK_DAYS_EN.indexOf(String(code).toLowerCase());
-  return idx === -1 ? null : WEEK_DAYS[idx];
-};
-
-/**
- * Defensive helper to get loan days safely (returns array or empty array)
- */
-export const getLoanDays = (pairing) =>
-  Array.isArray(pairing?.loan_days) ? pairing.loan_days : [];
-
 /* ============================================
-   EVENTS DOMAIN
+   HORSE ASSIGNMENTS
    ============================================ */
-
 export const HORSE_ASSIGNMENT_TYPES = {
   MANUAL: 'manual',
   AUTOMATIC: 'automatic',
 };
 
-/* ============================================
-   GENERAL STATUS
-   ============================================ */
+export const HORSE_ASSIGNMENT_LABELS = {
+  [HORSE_ASSIGNMENT_TYPES.MANUAL]: {
+    value: HORSE_ASSIGNMENT_TYPES.MANUAL,
+    label: 'Manuel',
+  },
+  [HORSE_ASSIGNMENT_TYPES.AUTOMATIC]: {
+    value: HORSE_ASSIGNMENT_TYPES.AUTOMATIC,
+    label: 'Automatique',
+  },
+};
 
+export const getHorseAssignmentConfig = (type) => HORSE_ASSIGNMENT_LABELS[type] || null;
+export const getHorseAssignmentLabel = (type) => getHorseAssignmentConfig(type)?.label ?? type;
+
+/* ============================================
+   STATUS TYPES
+   ============================================ */
 export const STATUS_TYPES = {
   ACTIVE: 'active',
   INACTIVE: 'inactive',
@@ -318,34 +283,33 @@ export const STATUS_TYPES = {
 
 export const STATUS_LABELS = {
   [STATUS_TYPES.ACTIVE]: {
-    value: STATUS_TYPES.ACTIVE,
+    value: 'active',
     label: 'Actif',
-    cssVar: '--color-success-medium',
   },
   [STATUS_TYPES.INACTIVE]: {
-    value: STATUS_TYPES.INACTIVE,
+    value: 'inactive',
     label: 'Inactif',
-    cssVar: '--color-gray-600',
   },
   [STATUS_TYPES.PENDING]: {
-    value: STATUS_TYPES.PENDING,
+    value: 'pending',
     label: 'En attente',
-    cssVar: '--color-warning-orange',
   },
   [STATUS_TYPES.COMPLETED]: {
-    value: STATUS_TYPES.COMPLETED,
+    value: 'completed',
     label: 'Terminé',
-    cssVar: '--color-primary-purple',
   },
   [STATUS_TYPES.CANCELLED]: {
-    value: STATUS_TYPES.CANCELLED,
+    value: 'cancelled',
     label: 'Annulé',
-    cssVar: '--color-danger-medium',
   },
 };
 
-export const getStatusLabel = (status) => STATUS_LABELS[status]?.label || status;
+export const getStatusConfig = (type) => STATUS_LABELS[type] || null;
+export const getStatusLabel = (type) => getStatusConfig(type)?.label ?? type;
 
+/* ============================================
+   INSTRUCTORS
+   ============================================ */
 export const INSTRUCTORS = {
   1: 'Laury',
   2: 'Kévin',
@@ -353,12 +317,42 @@ export const INSTRUCTORS = {
   4: 'Capucine',
   0: 'Autre',
 };
+
+export const INSTRUCTOR_LABELS = Object.fromEntries(
+  Object.entries(INSTRUCTORS).map(([key, label]) => [
+    key,
+    {
+      value: key,
+      label,
+    },
+  ])
+);
+
+export const getInstructorConfig = (id) => INSTRUCTOR_LABELS[id] || null;
+export const getInstructorLabel = (id) => getInstructorConfig(id)?.label ?? 'Autre';
+
+/* -----------------------
+ * Validation helpers
+ * ----------------------- */
+export const isValidLoanDaysPerWeek = (value) =>
+  Number.isInteger(value) && value >= 1 && value <= 7;
+
+export const WEEK_DAYS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+export const WEEK_DAYS_EN = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+export const weekDayCodeToFr = (code) => {
+  if (!code) return null;
+  const idx = WEEK_DAYS_EN.indexOf(String(code).toLowerCase());
+  return idx === -1 ? null : WEEK_DAYS[idx];
+};
+
+export const getLoanDays = (pairing) =>
+  Array.isArray(pairing?.loan_days) ? pairing.loan_days : [];
 ```
 
 ---
 
 ## 📄 events.js
-
 **Path:** `domain/events.js`
 
 ```
@@ -372,7 +366,6 @@ import { Icons } from '../icons';
 /* -------------------------------------------------------
  * EVENT TYPES
  * ----------------------------------------------------- */
-
 export const EVENT_TYPES = {
   PRIVATE_LESSON: 'private_lesson',
   GROUPED_LESSON: 'grouped_lesson',
@@ -387,57 +380,57 @@ export const EVENT_TYPE_CONFIG = {
   [EVENT_TYPES.PRIVATE_LESSON]: {
     value: EVENT_TYPES.PRIVATE_LESSON,
     label: 'Cours particulier',
-    icon: Icons.Horse,
-    color: '#3b82f6',
     description: 'Cours individuel',
+    icon: Icons.PrivateLesson,
+    slotClass: 'slot-private',
   },
 
   [EVENT_TYPES.GROUPED_LESSON]: {
     value: EVENT_TYPES.GROUPED_LESSON,
     label: 'Cours collectif',
-    icon: Icons.Users,
-    color: '#2563eb',
     description: 'Cours en groupe',
+    icon: Icons.GroupLesson,
+    slotClass: 'slot-grouped',
   },
 
   [EVENT_TYPES.SPECIAL]: {
     value: EVENT_TYPES.SPECIAL,
     label: 'Spécial',
-    icon: Icons.Star,
-    color: '#8b5cf6',
     description: 'Événement spécial',
+    icon: Icons.Lesson,
+    slotClass: 'slot-special',
   },
 
   [EVENT_TYPES.COMPETITION]: {
     value: EVENT_TYPES.COMPETITION,
     label: 'Compétition',
-    icon: Icons.Trophy,
-    color: '#f59e0b',
     description: 'Compétition',
+    icon: Icons.Competition,
+    slotClass: 'slot-competition',
   },
 
   [EVENT_TYPES.BLOCKED]: {
     value: EVENT_TYPES.BLOCKED,
     label: 'Bloqué',
-    icon: Icons.Blocked,
-    color: '#6b7280',
     description: 'Créneau bloqué',
+    icon: Icons.Blocked,
+    slotClass: 'slot-blocked',
   },
 
   [EVENT_TYPES.SERVICE]: {
     value: EVENT_TYPES.SERVICE,
     label: 'Service',
-    icon: Icons.Settings,
-    color: '#06b6d4',
     description: 'Service équestre',
+    icon: Icons.Service,
+    slotClass: 'slot-service',
   },
 
   [EVENT_TYPES.LOANER_FREE_TIME]: {
     value: EVENT_TYPES.LOANER_FREE_TIME,
     label: 'Temps libre DP',
-    icon: Icons.Clock,
-    color: '#10b981',
     description: 'Temps libre demi-pension',
+    icon: Icons.Horse,
+    slotClass: 'slot-loaner',
   },
 };
 
@@ -447,10 +440,6 @@ export const EVENT_TYPE_CONFIG = {
 
 export function getEventTypeConfig(type) {
   return EVENT_TYPE_CONFIG[type] || null;
-}
-
-export function getEventTypeColor(type) {
-  return getEventTypeConfig(type)?.color;
 }
 
 export function getEventTypeLabel(type) {
@@ -480,32 +469,24 @@ export const SLOT_STATUS_CONFIG = {
     value: 'scheduled',
     label: 'Planifié',
     icon: Icons.Clock,
-    color: '#64748b',
-    bgColor: '#f1f5f9',
     description: 'Planifié mais non confirmé',
   },
   [SLOT_STATUSES.CONFIRMED]: {
     value: 'confirmed',
     label: 'Confirmé',
     icon: Icons.Check,
-    color: '#16a34a',
-    bgColor: '#dcfce7',
     description: 'Confirmé',
   },
   [SLOT_STATUSES.COMPLETED]: {
     value: 'completed',
     label: 'Terminé',
     icon: Icons.CheckCircle,
-    color: '#0891b2',
-    bgColor: '#cffafe',
     description: 'Terminé',
   },
   [SLOT_STATUSES.CANCELLED]: {
     value: 'cancelled',
     label: 'Annulé',
     icon: Icons.Close,
-    color: '#dc2626',
-    bgColor: '#fee2e2',
     description: 'Annulé',
   },
 };
@@ -541,7 +522,6 @@ export function isBlockedEvent(event) {
 ---
 
 ## 📄 index.js
-
 **Path:** `domain/index.js`
 
 ```
@@ -555,8 +535,34 @@ export * from './events.js';
 
 ---
 
-## 📄 activityFilters.js
+## 📄 date-utils.js
+**Path:** `helpers/date-utils.js`
 
+```
+/**
+ * Date utility helpers
+ */
+
+/**
+ * Get today's date in ISO format (YYYY-MM-DD)
+ * @returns {string} Today's date in ISO format
+ */
+export const getTodayISO = () => {
+  return new Date().toISOString().split('T')[0];
+};
+
+/**
+ * Get current datetime in ISO format
+ * @returns {string} Current datetime in ISO format
+ */
+export const getNowISO = () => {
+  return new Date().toISOString();
+};
+```
+
+---
+
+## 📄 activityFilters.js
 **Path:** `helpers/filters/activityFilters.js`
 
 ```
@@ -597,12 +603,27 @@ export function isActive(startDate, endDate) {
   if (end && end < now) return false;
   return true;
 }
+
+// Filtres de type de cheval
+export const HORSE_KIND_FILTERS = {
+  ALL: 'all',
+  HORSE: 'horse',
+  PONY: 'pony',
+};
+
+// Filtres de type de propriétaire
+export const OWNERSHIP_TYPE_FILTERS = {
+  ALL: 'all',
+  LAURY: 'laury',
+  PRIVATE_OWNER: 'private_owner',
+  CLUB: 'club',
+  OTHER: 'other',
+};
 ```
 
 ---
 
 ## 📄 riders.js
-
 **Path:** `helpers/filters/riders.js`
 
 ```
@@ -654,7 +675,6 @@ export const filterRiders = (riders, filters = {}) => {
 ---
 
 ## 📄 date.js
-
 **Path:** `helpers/formatters/date.js`
 
 ```
@@ -693,7 +713,6 @@ export function formatDateTime(date, formatStr = 'dd/MM/yyyy HH:mm') {
 ---
 
 ## 📄 duration.js
-
 **Path:** `helpers/formatters/duration.js`
 
 ```
@@ -747,7 +766,6 @@ export function calculateDurationMinutes(startTime, endTime) {
 ---
 
 ## 📄 index.js
-
 **Path:** `helpers/formatters/index.js`
 
 ```
@@ -763,7 +781,6 @@ export * from './duration.js';
 ---
 
 ## 📄 time.js
-
 **Path:** `helpers/formatters/time.js`
 
 ```
@@ -927,7 +944,6 @@ export function calculateSelectionStyle(
 ---
 
 ## 📄 index.js
-
 **Path:** `helpers/index.js`
 
 ```
@@ -940,12 +956,12 @@ export * from './formatters/index.js';
 export * from './filters/activityFilters.js';
 export * from './filters/riders.js';
 export * from './stats/riders.js';
+export * from './date-utils.js';
 ```
 
 ---
 
 ## 📄 riders.js
-
 **Path:** `helpers/stats/riders.js`
 
 ```
@@ -976,7 +992,6 @@ export const calculateRiderStats = (riders) => {
 ---
 
 ## 📄 validators.js
-
 **Path:** `helpers/validators.js`
 
 ```
@@ -1090,7 +1105,6 @@ function parseTime(timeStr) {
 ---
 
 ## 📄 icons.jsx
-
 **Path:** `icons.jsx`
 
 ```
@@ -1187,3 +1201,4 @@ export default Icons;
 ```
 
 ---
+

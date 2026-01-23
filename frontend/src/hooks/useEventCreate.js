@@ -38,7 +38,7 @@ const validateEventForm = (formData, participants) => {
 /**
  * Hook to manage event form data and creation logic
  */
-export function useCreateEvent(initialDate, initialStartTime, initialEndTime) {
+export function useEventCreate(initialDate, initialStartTime, initialEndTime) {
   const [formData, setFormData] = useState(() => ({
     event_date: initialDate || format(new Date(), 'yyyy-MM-dd'),
     start_time: initialStartTime || '09:00',

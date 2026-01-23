@@ -11,13 +11,6 @@ import { Icons } from '../../lib/icons';
 import '../../styles/features/calendar.css';
 
 /* -------------------------------------------------------
- * HELPER: Check if slot is blocked (no event)
- * ----------------------------------------------------- */
-function isBlockedSlot(slot) {
-  return isBlockedEvent(slot.events);
-}
-
-/* -------------------------------------------------------
  * ERROR STATE
  * ----------------------------------------------------- */
 
@@ -179,6 +172,7 @@ function CalendarModals({
   showCreateBlockedModal,
   showScheduledModal,
   selectedSlot,
+  isSelectedSlotBlocked,
   createEventData,
   onCloseSlotModal,
   onCloseCreateEventModal,
@@ -194,22 +188,26 @@ function CalendarModals({
   );
   const ScheduledEventsModal = React.lazy(() => import('../events/edit/ScheduledEventsModal'));
 
+  console.debug('[CalendarModals] showSlotModal:', showSlotModal);
+  console.debug('[CalendarModals] selectedSlot:', selectedSlot);
+  console.debug('[CalendarModals] isSelectedSlotBlocked:', isSelectedSlotBlocked);
+
   return (
-    <React.Suspense fallback={null}>
+    <React.Suspense fallback={<div>Chargement du modal...</div>}>
       {showSlotModal &&
         selectedSlot &&
-        (isBlockedSlot(selectedSlot) ? (
+        (isSelectedSlotBlocked ? (
           <BlockedEventModal
             slotId={selectedSlot.id}
             onClose={onCloseSlotModal}
+            onSave={onModalSuccess}
             onUpdate={onModalSuccess}
           />
         ) : (
           <EventModal
             slotId={selectedSlot.id}
-            eventId={selectedSlot.events?.id}
             onClose={onCloseSlotModal}
-            onUpdate={onModalSuccess}
+            onDelete={onModalSuccess}
           />
         ))}
 
@@ -244,6 +242,7 @@ CalendarModals.propTypes = {
   showCreateBlockedModal: PropTypes.bool.isRequired,
   showScheduledModal: PropTypes.bool.isRequired,
   selectedSlot: PropTypes.object,
+  isSelectedSlotBlocked: PropTypes.bool,
   createEventData: PropTypes.object,
   onCloseSlotModal: PropTypes.func.isRequired,
   onCloseCreateEventModal: PropTypes.func.isRequired,
@@ -262,6 +261,7 @@ function CalendarView() {
     loading,
     error,
     selectedSlot,
+    isSelectedSlotBlocked,
     createEventData,
     showSlotModal,
     showCreateEventModal,
@@ -327,6 +327,7 @@ function CalendarView() {
         showCreateBlockedModal={showCreateBlockedModal}
         showScheduledModal={showScheduledModal}
         selectedSlot={selectedSlot}
+        isSelectedSlotBlocked={isSelectedSlotBlocked}
         createEventData={createEventData}
         onCloseSlotModal={closeSlotModal}
         onCloseCreateEventModal={closeCreateEventModal}

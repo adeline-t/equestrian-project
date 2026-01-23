@@ -49,6 +49,16 @@ function DeleteConfirmationModal({
       deleteDescription:
         'Le cheval sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
     },
+    event: {
+      title: itemName
+        ? `Que faire avec l'événement "${itemName}" ?`
+        : 'Que faire avec cet événement ?',
+      removeText: "Annuler l'événement",
+      removeDescription:
+        "L'événement sera marqué comme annulé mais restera visible dans l'historique.",
+      deleteDescription:
+        "L'événement sera supprimé définitivement du planning et de la base de données. Cette action ne peut pas être annulée.",
+    },
   };
 
   const label = labels[itemType] || labels.forfait;
@@ -135,7 +145,7 @@ DeleteConfirmationModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onRemoveFromInventory: PropTypes.func.isRequired,
   onPermanentDelete: PropTypes.func.isRequired,
-  itemType: PropTypes.oneOf(['forfait', 'pension', 'cheval', 'cavalier']),
+  itemType: PropTypes.oneOf(['forfait', 'pension', 'cheval', 'cavalier', 'event']),
   itemName: PropTypes.string,
 };
 

@@ -1,7 +1,7 @@
 import { endOfDay, isPast, isToday, parseISO } from 'date-fns';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { EVENT_TYPES, getEventTypeConfig } from '../../lib/domain';
-import { getStatusConfig } from '../../lib/domain/events.js';
+import { getStatusConfig, isBlockedEvent } from '../../lib/domain/events.js';
 import { calculateSelectionStyle, formatDate, timeToMinutes } from '../../lib/helpers/formatters';
 import { getValidSlots } from '../../lib/helpers/validators';
 import { Icons } from '../../lib/icons';
@@ -112,12 +112,12 @@ function AllDaySlots({ slots, onSlotClick }) {
             data-type={eventType}
             onClick={(e) => {
               e.stopPropagation();
-              onSlotClick?.(slot);
+              onSlotClick?.(slot, isBlockedEvent(slot.events));
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                onSlotClick?.(slot);
+                onSlotClick?.(slot, isBlockedEvent(slot.events));
               }
             }}
             tabIndex={0}

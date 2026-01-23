@@ -1,56 +1,41 @@
-import { useState, useCallback, useEffect } from 'react';
-import { calendarService } from '../services/calendarService';
-import { formatTimeForInput } from '../lib/helpers/formatters';
+import { useEffect, useState } from 'react';
+import { calendarService } from '../services';
 
-/**
- * Hook to fetch and manage event details
- * @param {string|number} slotId - The slot ID
- */
 export function useEventDetails(slotId) {
-  const [data, setData] = useState({
-    slot: null,
-    event: null,
-    participants: [],
-    recurrence: null,
-  });
+  const [slot, setSlot] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [participants, setParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadData = useCallback(async (id) => {
-    if (!id) return;
+  const fetchEvent = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const fullDetails = await calendarService.getSlotFullDetails(id);
+      const response = await calendarService.getSlotFullDetails(slotId);
 
-      // Normalize slot times for UI
-      if (fullDetails.slot) {
-        fullDetails.slot.start_time = formatTimeForInput(fullDetails.slot.start_time);
-        fullDetails.slot.end_time = formatTimeForInput(fullDetails.slot.end_time);
-      }
-
-      setData(fullDetails);
+      setSlot(response.slot);
+      setEvent(response.slot?.events || null);
+      setParticipants(response.participants || []);
     } catch (err) {
-      console.error('Error loading event details:', err);
-      setError(err.response?.data?.message || err.message || 'Erreur de chargement');
+      console.error(err);
+      setError('Erreur lors du chargement de l’événement');
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    loadData(slotId);
-  }, [slotId, loadData]);
-
-  const refresh = useCallback(() => {
-    loadData(slotId);
-  }, [slotId, loadData]);
+    if (slotId) fetchEvent();
+  }, [slotId]);
 
   return {
-    ...data,
+    slot,
+    event,
+    participants,
     loading,
     error,
-    refresh,
+    reload: fetchEvent,
   };
 }

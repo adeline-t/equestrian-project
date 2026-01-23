@@ -33,6 +33,7 @@ export function useCalendarView() {
   const [error, setError] = useState(null);
 
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [isSelectedSlotBlocked, setIsSelectedSlotBlocked] = useState(false);
   const [showSlotModal, setShowSlotModal] = useState(false);
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [showCreateBlockedModal, setShowCreateBlockedModal] = useState(false);
@@ -89,8 +90,13 @@ export function useCalendarView() {
   /* -------------------------------------------------------
    * SLOT / EVENT MODAL HANDLERS
    * ----------------------------------------------------- */
-  const handleSlotClick = useCallback((slot) => {
+  const handleSlotClick = useCallback((slot, isSlotEventBlocked) => {
+    console.debug('[useCalendarView] slot click', {
+      slotId: slot?.id,
+      isSelectedSlotBlocked: isSelectedSlotBlocked,
+    });
     setSelectedSlot(slot);
+    setIsSelectedSlotBlocked(isSlotEventBlocked);
     setShowSlotModal(true);
   }, []);
 
@@ -248,6 +254,7 @@ export function useCalendarView() {
     loading,
     error,
     selectedSlot,
+    isSelectedSlotBlocked,
     createEventData,
     showSlotModal,
     showCreateEventModal,

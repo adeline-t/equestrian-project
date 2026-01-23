@@ -93,6 +93,12 @@ export default {
       }
 
       // Full details route must be checked before the general slots route
+      if (path.match(/^\/api\/calendar\/slots\/\d+\/cancel$/)) {
+        const slotId = path.split('/')[4];
+        return handlePlanningSlots(request, env, slotId);
+      }
+
+      // Full details route must be checked before the general slots route
       if (path.match(/^\/api\/calendar\/slots\/\d+\/full-details$/)) {
         const slotId = path.split('/')[4];
         return handlePlanningSlots(request, env, slotId);

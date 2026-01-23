@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Modal from '../../../common/Modal';
 import { Icons } from '../../../../lib/icons';
-import { useBlockedEventEdit } from '../../../../hooks/useBlockedEventEdit';
+import { useEventBlockedEdit } from '../../../../hooks/useEventBlockedEdit';
 import BlockedEventForm from './BlockedEventForm';
 import BlockedEventDisplay from './BlockedEventDisplay';
 import '../../../../styles/features/events.css';
@@ -23,7 +23,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
     deleteSlot,
     handleChange,
     editData,
-  } = useBlockedEventEdit(slotId);
+  } = useEventBlockedEdit(slotId);
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
