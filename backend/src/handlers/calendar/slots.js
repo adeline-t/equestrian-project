@@ -62,24 +62,15 @@ export async function handlePlanningSlots(request, env, idParam) {
     if (request.method === 'GET' && id && url.pathname.endsWith('/full-details')) {
       const { data: slot, error: slotError } = await db
         .from('planning_slots')
-        .select('*')
+        .select(
+          `
+          *,
+          events(*)
+        `
+        )
         .eq('id', id)
         .is('deleted_at', null)
         .single();
-
-      if (slotError) return handleDatabaseError(slotError, 'slots.get', env);
-      if (!slot) return jsonResponse({ error: 'Slot non trouvé' }, 404, getSecurityHeaders());
-
-      // Get the single event for the slot
-      const { data: event, error: eventError } = await db
-        .from('events')
-        .select('*')
-        .eq('planning_slot_id', id)
-        .is('deleted_at', null)
-        .maybeSingle();
-
-      if (eventError && eventError.code !== 'PGRST116')
-        return handleDatabaseError(eventError, 'events.get', env);
 
       // Get participants linked to the slot (planning_slot_id)
       const { data: participantsData, error: participantsError } = await db
@@ -127,7 +118,7 @@ export async function handlePlanningSlots(request, env, idParam) {
       }
 
       return jsonResponse(
-        { slot, event, participants: participantsData || [] },
+        { slot, participants: participantsData || [] },
         200,
         getSecurityHeaders()
       );

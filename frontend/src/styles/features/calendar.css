@@ -1,6 +1,6 @@
 /* ============================================
    CALENDAR FEATURE
-   Version corrigée + améliorée (structure + UI)
+   Structure + UI unifiée
    ============================================ */
 
 @import '../common.css';
@@ -149,103 +149,16 @@
   padding-top: 2px;
   font-size: 11px;
   color: var(--color-gray-600);
-  letter-spacing: 0.02em;
 }
 
-/* ============================================
-   DAY COLUMN
-   ============================================ */
-
-.day-column {
-  position: relative;
+.time-all-day-spacer {
   display: flex;
-  flex-direction: column;
-  min-width: 0;
-  height: 100%;
-  border-right: 1px solid var(--color-gray-200);
-  background: var(--color-white);
-}
-
-.day-column:last-child {
-  border-right: none;
-}
-
-.day-column.today {
-  background: linear-gradient(to bottom, var(--today-bg), transparent 120px);
-}
-
-.day-column.past {
-  opacity: 0.6;
-}
-
-/* ============================================
-   DAY HEADER
-   ============================================ */
-
-.day-header {
+  align-items: flex-start;
+  justify-content: flex-end;
   height: 80px;
-  padding: var(--spacing-sm);
+  min-height: 80px;
   border-bottom: 1px solid var(--color-gray-300);
-  text-align: center;
-  background: linear-gradient(to bottom, var(--color-white), var(--color-gray-50));
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.day-header.today {
-  background: var(--gradient-primary);
-  color: var(--color-white);
-}
-
-.day-name {
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-sm);
-  text-transform: capitalize;
-}
-
-/* ============================================
-   ALL DAY SLOTS
-   ============================================ */
-
-.all-day-slots {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-/* ============================================
-   DAY GRID
-   ============================================ */
-
-.day-grid-container {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-}
-
-.day-grid {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* Scrollbar */
-.day-grid::-webkit-scrollbar {
-  width: 6px;
-}
-
-.day-grid::-webkit-scrollbar-thumb {
-  background: var(--color-gray-300);
-  border-radius: var(--radius-full);
+  background: var(--color-gray-50);
 }
 
 /* ============================================
@@ -276,6 +189,166 @@
 }
 
 /* ============================================
+   DAY COLUMN / HEADER
+   ============================================ */
+
+.day-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid var(--color-gray-200);
+  background: var(--color-white);
+}
+
+.day-column:last-child {
+  border-right: none;
+}
+
+.day-column.today {
+  background: linear-gradient(to bottom, var(--today-bg), transparent 120px);
+}
+
+.day-header {
+  height: var(--day-header-height);
+  border-bottom: 1px solid var(--color-gray-300);
+  text-align: center;
+  background: linear-gradient(to bottom, var(--color-white), var(--color-gray-50));
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.day-header.today {
+  background: var(--gradient-primary);
+  color: var(--color-white);
+}
+
+.day-name {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  text-transform: capitalize;
+}
+
+/* ============================================
+   ALL DAY SLOTS
+   ============================================ */
+
+.all-day-section {
+  height: var(--day-header-height);
+  min-height: var(--day-header-height);
+  padding: 0 var(--spacing-xs);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.all-day-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) 0;
+}
+
+.all-day-slot-card {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-white);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+}
+
+.all-day-slot-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.all-day-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.all-day-slot-status-icon {
+  flex-shrink: 0;
+  font-size: var(--font-size-base);
+}
+
+.all-day-slot-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Couleurs selon event_type (réutilise les gradients des badges) */
+.all-day-slot-card[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.all-day-slot-card[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.all-day-slot-card[data-type='special'] {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.all-day-slot-card[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.all-day-slot-card[data-type='blocked'] {
+  background: var(--gradient-secondary);
+}
+
+.all-day-slot-card[data-type='service'] {
+  background: var(--gradient-alert-error);
+}
+
+.all-day-slot-card[data-type='loaner_free_time'] {
+  background: var(--gradient-success);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .all-day-slot-card {
+    font-size: var(--font-size-xs);
+    padding: 6px var(--spacing-sm);
+  }
+
+  .all-day-slot-status-icon {
+    font-size: var(--font-size-sm);
+  }
+}
+/* ============================================
+   DAY GRID
+   ============================================ */
+
+.day-grid-container {
+  position: relative;
+  flex: 1;
+}
+
+.day-grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ============================================
    SELECTION
    ============================================ */
 
@@ -301,12 +374,11 @@
 
 .event-slot-wrapper {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset: 0;
 }
 
 /* ============================================
-   EVENT CARD
+   EVENT CARD (CORE)
    ============================================ */
 
 .event-card {
@@ -314,28 +386,62 @@
   width: 100%;
   height: 100%;
   border-radius: var(--radius-lg);
-  background: var(--color-white);
-  border-left: 4px solid var(--color-info-blue);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .event-card:hover {
-  transform: translateY(-3px) scale(1.01);
+  transform: translateY(-2px) scale(1.01);
   box-shadow: var(--shadow-xl);
   z-index: 10;
 }
 
 /* ============================================
-   MOBILE
+   EVENT CARD – LAYOUTS BY DURATION
    ============================================ */
 
-.mobile-day-view,
-.mobile-days-nav {
-  display: none;
+.event-card.ultra-compact {
+  font-size: 12px;
+  padding: 4px 6px;
+}
+
+.event-card.compact {
+  font-size: 13px;
+  padding: 6px 8px;
+}
+
+.event-card.medium {
+  font-size: 14px;
+  padding: 8px 10px;
+}
+
+.event-card.full {
+  font-size: 15px;
+  padding: 10px 12px;
+}
+
+/* ============================================
+   PARTICIPANTS
+   ============================================ */
+
+.participants {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.participants svg {
+  width: 14px;
+  height: 14px;
+}
+
+.participants.full {
+  color: var(--color-danger);
+  font-weight: var(--font-weight-bold);
 }
 
 /* ============================================
@@ -346,9 +452,152 @@
   .week-grid {
     display: none;
   }
+}
 
-  .mobile-day-view,
-  .mobile-days-nav {
-    display: block;
-  }
+/* ============================================
+   SLOT BASE
+   ============================================ */
+
+.slot-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--radius-lg);
+
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.slot-content:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   EVENT TYPE COLORS (Badge-like)
+   ============================================ */
+
+.slot-content[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.slot-content[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.slot-content[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.slot-content[data-type='special'] {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.slot-content[data-type='service'] {
+  background: var(--gradient-alert-error);
+}
+
+.slot-content[data-type='blocked'] {
+  background: var(--gradient-secondary);
+  opacity: 0.8;
+}
+
+.slot-content[data-type='loaner_free_time'] {
+  background: var(--gradient-success);
+  opacity: 0.8;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slot-title {
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-status-icon {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ============================================
+   INSTRUCTOR
+   ============================================ */
+
+.slot-instructor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+/* ============================================
+   TIME
+   ============================================ */
+
+.slot-time {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.slot-duration {
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* ============================================
+   PARTICIPANTS
+   ============================================ */
+
+.slot-participants {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============================================
+   LAYOUTS
+   ============================================ */
+
+.slot-content[data-layout='ultra-compact'] {
+  gap: 0px;
+  padding: 3px;
+  font-size: var(--font-size-xs);
+}
+
+.slot-content[data-layout='ultra-compact'] .slot-instructor,
+.slot-content[data-layout='ultra-compact'] .slot-participants {
+  display: none;
+}
+
+.slot-content[data-layout='compact'] {
+  gap: 0px;
+  padding: 3px;
+  font-size: var(--font-size-xs);
+}
+
+.slot-content[data-layout='medium'] {
+  gap: 4px;
+  padding: 4px 5px;
+}
+
+.slot-content[data-layout='full'] {
+  gap: 6px;
+
+  padding: 8px 10px;
 }

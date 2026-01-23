@@ -54,3 +54,10 @@ export const TEXT_STYLES = {
     duration: { fontSize: '10px' },
   },
 };
+
+export function getSlotLayout(duration) {
+  if (duration <= 59) return 'ultra-compact';
+  if (duration <= 60) return 'compact';
+  if (duration <= 90) return 'medium';
+  return 'full';
+}

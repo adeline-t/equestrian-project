@@ -227,7 +227,7 @@
 }
 
 .badge[data-type='service'] {
-  background: var(--gradient-info);
+  background: var(--gradient-alert-error);
 }
 
 .badge[data-type='loaner_free_time'] {

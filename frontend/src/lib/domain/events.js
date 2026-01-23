@@ -8,7 +8,6 @@ import { Icons } from '../icons';
 /* -------------------------------------------------------
  * EVENT TYPES
  * ----------------------------------------------------- */
-
 export const EVENT_TYPES = {
   PRIVATE_LESSON: 'private_lesson',
   GROUPED_LESSON: 'grouped_lesson',
@@ -23,50 +22,57 @@ export const EVENT_TYPE_CONFIG = {
   [EVENT_TYPES.PRIVATE_LESSON]: {
     value: EVENT_TYPES.PRIVATE_LESSON,
     label: 'Cours particulier',
-    icon: Icons.PrivateLesson,
     description: 'Cours individuel',
+    icon: Icons.PrivateLesson,
+    slotClass: 'slot-private',
   },
 
   [EVENT_TYPES.GROUPED_LESSON]: {
     value: EVENT_TYPES.GROUPED_LESSON,
     label: 'Cours collectif',
-    icon: Icons.GroupLesson,
     description: 'Cours en groupe',
+    icon: Icons.GroupLesson,
+    slotClass: 'slot-grouped',
   },
 
   [EVENT_TYPES.SPECIAL]: {
     value: EVENT_TYPES.SPECIAL,
     label: 'Spécial',
-    icon: Icons.Lesson,
     description: 'Événement spécial',
+    icon: Icons.Lesson,
+    slotClass: 'slot-special',
   },
 
   [EVENT_TYPES.COMPETITION]: {
     value: EVENT_TYPES.COMPETITION,
     label: 'Compétition',
-    icon: Icons.Competition,
     description: 'Compétition',
+    icon: Icons.Competition,
+    slotClass: 'slot-competition',
   },
 
   [EVENT_TYPES.BLOCKED]: {
     value: EVENT_TYPES.BLOCKED,
     label: 'Bloqué',
-    icon: Icons.Blocked,
     description: 'Créneau bloqué',
+    icon: Icons.Blocked,
+    slotClass: 'slot-blocked',
   },
 
   [EVENT_TYPES.SERVICE]: {
     value: EVENT_TYPES.SERVICE,
     label: 'Service',
-    icon: Icons.Service,
     description: 'Service équestre',
+    icon: Icons.Service,
+    slotClass: 'slot-service',
   },
 
   [EVENT_TYPES.LOANER_FREE_TIME]: {
     value: EVENT_TYPES.LOANER_FREE_TIME,
     label: 'Temps libre DP',
-    icon: Icons.Horse,
     description: 'Temps libre demi-pension',
+    icon: Icons.Horse,
+    slotClass: 'slot-loaner',
   },
 };
 

@@ -41,16 +41,24 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
             Instructeur <span className="required">*</span>
           </label>
           <div className="segmented-control">
-            {instructorOptions.map((inst) => (
-              <button
-                key={inst.id}
-                type="button"
-                className={`segment-btn ${formData.instructor_id === inst.id ? 'active' : ''}`}
-                onClick={() => setFormData((prev) => ({ ...prev, instructor_id: inst.id }))}
-              >
-                {inst.label}
-              </button>
-            ))}
+            {instructorOptions.map((inst) => {
+              const isActive = formData.instructor_id === inst.id;
+
+              return (
+                <button
+                  key={inst.id}
+                  type="button"
+                  className={`segment-btn ${isActive ? 'active' : ''}`}
+                  onClick={() =>
+                    handleChange({
+                      target: { name: 'instructor_id', value: inst.id },
+                    })
+                  }
+                >
+                  {inst.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -82,7 +90,7 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
               className={`segment-btn ${formData.is_all_day ? 'active' : ''}`}
               onClick={() => setFormData((prev) => ({ ...prev, is_all_day: true }))}
             >
-              <Icons.Calendar className="segment-icon" />
+              <Icons.Calendar />
               Journée entière
             </button>
 
@@ -91,7 +99,7 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
               className={`segment-btn ${!formData.is_all_day ? 'active' : ''}`}
               onClick={() => setFormData((prev) => ({ ...prev, is_all_day: false }))}
             >
-              <Icons.Clock className="segment-icon" />
+              <Icons.Clock />
               Horaires
             </button>
           </div>

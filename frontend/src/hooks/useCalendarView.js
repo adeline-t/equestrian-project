@@ -58,6 +58,12 @@ export function useCalendarView() {
           .map(normalizeSlotTimes),
       }));
       setWeekData({ ...data, days: enrichedDays });
+      console.debug('[loadWeekData]] data', {
+        data,
+      });
+      console.debug('[loadWeekData]] enrichedDays', {
+        enrichedDays,
+      });
     } catch (err) {
       console.error('Error loading week data:', err);
       setError(err.response?.data?.message || err.message || 'Erreur de chargement');

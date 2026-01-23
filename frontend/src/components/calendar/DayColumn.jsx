@@ -1,11 +1,12 @@
 import { endOfDay, isPast, isToday, parseISO } from 'date-fns';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { EVENT_TYPES } from '../../lib/domain';
+import { EVENT_TYPES, getEventTypeConfig } from '../../lib/domain';
+import { getStatusConfig } from '../../lib/domain/events.js';
 import { calculateSelectionStyle, formatDate, timeToMinutes } from '../../lib/helpers/formatters';
 import { getValidSlots } from '../../lib/helpers/validators';
 import { Icons } from '../../lib/icons';
 import '../../styles/features/calendar.css';
-import EventCard from './EventCard';
+import SlotEventGridCard from './SlotEventGridCard';
 
 const CALENDAR_CONFIG = {
   HOUR_HEIGHT: 60,
@@ -83,12 +84,6 @@ function DayHeader({ date, dayName }) {
       <div className="day-name">
         {dayName} {formattedDate}
       </div>
-
-      {isCurrentDay && (
-        <div className="today-badge" role="status" aria-label="Jour actuel">
-          Aujourd'hui
-        </div>
-      )}
     </div>
   );
 }
@@ -103,12 +98,18 @@ function AllDaySlots({ slots, onSlotClick }) {
     <div className="all-day-slots">
       {slots.map((slot) => {
         const eventType = slot.events?.event_type ?? EVENT_TYPES.BLOCKED;
-        const isBlocked = !slot.events;
+        const slotStatus = slot.slot_status ?? SLOT_STATUSES.SCHEDULED;
+
+        const eventConfig = getEventTypeConfig(eventType);
+        const statusConfig = getStatusConfig(slotStatus);
+
+        const StatusIcon = statusConfig?.icon;
 
         return (
           <div
             key={slot.id}
-            className={`all-day-slot-card event-type-${eventType} ${isBlocked ? 'blocked' : ''}`}
+            className="all-day-slot-card"
+            data-type={eventType}
             onClick={(e) => {
               e.stopPropagation();
               onSlotClick?.(slot);
@@ -121,11 +122,15 @@ function AllDaySlots({ slots, onSlotClick }) {
             }}
             tabIndex={0}
             role="button"
-            aria-label={`Créneau journée entière: ${slot.events?.name || 'Sans titre'}`}
+            aria-label={`Créneau journée entière: ${
+              slot.events?.name || eventConfig?.label || 'Sans titre'
+            }`}
           >
             <div className="all-day-slot-content">
-              {isBlocked && <Icons.Blocked className="all-day-slot-icon" aria-hidden="true" />}
-              <span className="all-day-slot-name">{slot.events?.name || 'Journée entière'}</span>
+              {StatusIcon && <StatusIcon className="all-day-slot-status-icon" />}
+              <span className="all-day-slot-name">
+                {slot.events?.name || eventConfig?.label || 'Journée entière'}
+              </span>
             </div>
           </div>
         );
@@ -185,7 +190,7 @@ function DayGrid({
 
             return (
               <div key={slot.id} className="event-slot-wrapper" style={style}>
-                <EventCard slot={slot} onClick={onSlotClick} />
+                <SlotEventGridCard slot={slot} onClick={onSlotClick} />
               </div>
             );
           })}
@@ -297,7 +302,10 @@ function DayColumn({ date, dayName, slots, onSlotClick, onQuickCreate }) {
     <div className={`day-column ${isCurrentDay ? 'today' : ''} ${isPastDay ? 'past' : ''}`}>
       <DayHeader date={date} dayName={dayName} />
 
-      <AllDaySlots slots={allDaySlots} onSlotClick={onSlotClick} />
+      {/* Section all-day avec hauteur fixe pour maintenir l'alignement */}
+      <div className="all-day-section">
+        <AllDaySlots slots={allDaySlots} onSlotClick={onSlotClick} />
+      </div>
 
       <div ref={dayGridRef} className="day-grid-container">
         <DayGrid

@@ -1,7 +1,5 @@
 /* ============================================
-   EVENTS FEATURE
-   Styles spécifiques aux événements uniquement
-   Les styles communs sont dans common.css
+   EVENT MODAL FUSIONNÉ (Rider Card Style)
    ============================================ */
 
 @import '../common.css';
@@ -108,6 +106,7 @@
 
 .participant-cell {
   display: flex;
+
   align-items: center;
   gap: var(--spacing-xs);
 }
@@ -153,127 +152,6 @@
 .icon-user,
 .icon-horse {
   color: var(--color-primary);
-}
-
-/* ============================================
-   EVENT MODAL
-   ============================================ */
-
-.event-modal-title-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  width: 100%;
-}
-
-.event-modal-title-badges {
-  display: flex;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
-}
-
-.event-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-xl);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  white-space: nowrap;
-}
-
-.event-badge svg {
-  width: 14px;
-  height: 14px;
-}
-
-.event-badge-recurrence {
-  background: #e9d5ff;
-  color: #7c3aed;
-}
-
-.event-badge-scheduled {
-  background: var(--color-info-light);
-  color: var(--color-info-blue-dark);
-}
-
-.event-badge-confirmed {
-  background: var(--color-success-light);
-  color: var(--color-success-medium-dark);
-}
-
-.event-badge-cancelled {
-  background: var(--color-danger-light);
-  color: var(--color-danger-dark);
-}
-
-.event-badge-blocked {
-  background: var(--color-gray-100);
-  color: var(--color-gray-700);
-}
-
-.event-modal-subtitle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  color: var(--color-gray-600);
-  font-size: var(--font-size-sm);
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--color-gray-200);
-}
-
-.event-modal-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.event-tab-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  background: var(--color-primary);
-  color: var(--color-white);
-  border-radius: var(--radius-full);
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  margin-left: var(--spacing-xs);
-}
-
-/* ============================================
-   EVENT DETAILS
-   ============================================ */
-
-.event-details-row {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) 0;
-  border-bottom: 1px solid var(--color-gray-150);
-}
-
-.event-details-row:last-child {
-  border-bottom: none;
-}
-
-.event-details-label {
-  min-width: 140px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
-  font-size: var(--font-size-sm);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.event-details-value {
-  flex: 1;
-  color: var(--color-gray-900);
-  font-size: var(--font-size-sm);
 }
 
 /* ============================================
@@ -428,6 +306,7 @@
 .scheduled-event-participant {
   flex: 1;
   display: flex;
+
   align-items: center;
   gap: var(--spacing-xs);
   font-size: var(--font-size-sm);
@@ -591,6 +470,7 @@
 
 .modal-footer-actions {
   display: flex;
+
   gap: var(--spacing-md);
 }
 
@@ -655,4 +535,292 @@
 
 .btn-link:hover {
   color: var(--color-primary-dark);
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+
+.event-modal {
+  max-width: 1200px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.event-modal-content {
+  padding: var(--spacing-lg);
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.event-modal-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.event-modal-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.event-modal-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.event-modal-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-modal-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.event-modal-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-sm);
+}
+
+/* ============================================
+   GRID LAYOUT
+   ============================================ */
+
+.event-modal-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.event-modal-sidebar,
+.event-modal-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+
+.event-card,
+.event-participant-card,
+.event-recurrence-card {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.event-card-header h3,
+.event-participant-card-header h3,
+.event-recurrence-card-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-gray-200);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+
+.event-card-body,
+.event-participant-card-body,
+.event-recurrence-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ============================================
+   PARTICIPANTS & PAIRINGS
+   ============================================ */
+
+.event-participants-list,
+.event-recurrence-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.event-participant-item,
+.event-recurrence-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--gradient-light);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.event-participant-item:hover,
+.event-recurrence-item:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateX(2px);
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.event-badge,
+.event-badge-recurrence,
+.event-badge-scheduled,
+.event-badge-confirmed,
+.event-badge-cancelled,
+.event-badge-blocked {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.event-badge-recurrence {
+  background: var(--color-info-light);
+  color: var(--color-info-dark);
+}
+
+.event-badge-scheduled {
+  background: var(--color-info-light);
+  color: var(--color-info-blue-dark);
+}
+
+.event-badge-confirmed {
+  background: var(--color-success-light);
+  color: var(--color-success-medium-dark);
+}
+
+.event-badge-cancelled {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
+.event-badge-blocked {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+/* ============================================
+   EVENT DETAILS
+   ============================================ */
+
+.event-details-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--color-gray-150);
+}
+
+.event-details-row:last-child {
+  border-bottom: none;
+}
+
+.event-details-label {
+  min-width: 140px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.event-details-value {
+  flex: 1;
+  color: var(--color-gray-900);
+  font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   BUTTONS & ACTIONS
+   ============================================ */
+
+.btn-icon-modern {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.btn-icon-modern:hover {
+  color: var(--color-primary);
+}
+
+.btn-icon-modern.danger:hover {
+  color: var(--color-danger);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.btn-link:hover {
+  color: var(--color-primary-dark);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .event-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-modal-content {
+    padding: var(--spacing-md);
+  }
+
+  .event-participant-item,
+  .event-recurrence-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

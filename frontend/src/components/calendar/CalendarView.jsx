@@ -293,6 +293,10 @@ function CalendarView() {
   if (loading) return <CalendarLoading />;
   if (error) return <CalendarError error={error} onRetry={loadWeekData} />;
 
+  console.debug('[WeekView]] WeekData', {
+    weekData,
+  });
+
   return (
     <div className="calendar-view card-enhanced">
       <CalendarHeader
