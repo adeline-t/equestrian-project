@@ -4,6 +4,8 @@ import { Icons } from '../../../../lib/icons.jsx';
 import { formatTimeForInput } from '../../../../lib/helpers/formatters/index.js';
 import '../../../../styles/features/events.css';
 
+import { useAppMode } from '../../../../context/AppMode.jsx';
+
 const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
   id: Number(id),
   label,
@@ -14,13 +16,24 @@ const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
  * Receives all state and handlers as props from parent (CreateEventModal)
  */
 function EventForm({ formData, handleFormChange, setFormData }) {
-  const availableEventTypes = getEventTypeOptions().filter(
-    (option) => option.value !== EVENT_TYPES.BLOCKED
-  );
+  const mode = useAppMode();
+
+  const availableEventTypes =
+    mode === 'admin'
+      ? getEventTypeOptions().filter((option) => option.value !== EVENT_TYPES.BLOCKED)
+      : getEventTypeOptions().filter(
+          (option) =>
+            option.value !== EVENT_TYPES.BLOCKED &&
+            option.value !== EVENT_TYPES.COMPETITION &&
+            option.value !== EVENT_TYPES.GROUPED_LESSON &&
+            option.value !== EVENT_TYPES.SPECIAL
+        );
 
   const hideParticipantCount =
     formData.event_type === EVENT_TYPES.LOANER_FREE_TIME ||
     formData.event_type === EVENT_TYPES.SERVICE;
+
+  const hideInstructorSelecteur = formData.event_type === EVENT_TYPES.LOANER_FREE_TIME;
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="event-form-modern">
@@ -106,32 +119,34 @@ function EventForm({ formData, handleFormChange, setFormData }) {
         )}
 
         {/* Instructor Selector */}
-        <div className="form-group">
-          <label>
-            Instructeur <span className="required">*</span>
-          </label>
+        {!hideInstructorSelecteur && (
+          <div className="form-group">
+            <label>
+              Instructeur <span className="required">*</span>
+            </label>
 
-          <div className="segmented-control">
-            {instructorOptions.map((inst) => {
-              const isActive = formData.instructor_id === inst.id;
+            <div className="segmented-control">
+              {instructorOptions.map((inst) => {
+                const isActive = formData.instructor_id === inst.id;
 
-              return (
-                <button
-                  key={inst.id}
-                  type="button"
-                  className={`segment-btn ${isActive ? 'active' : ''}`}
-                  onClick={() =>
-                    handleFormChange({
-                      target: { name: 'instructor_id', value: inst.id },
-                    })
-                  }
-                >
-                  {inst.label}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={inst.id}
+                    type="button"
+                    className={`segment-btn ${isActive ? 'active' : ''}`}
+                    onClick={() =>
+                      handleFormChange({
+                        target: { name: 'instructor_id', value: inst.id },
+                      })
+                    }
+                  >
+                    {inst.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* DATE & TIME */}

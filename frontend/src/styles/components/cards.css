@@ -70,10 +70,6 @@
   gap: 8px;
 }
 
-.card-body {
-  /* Card body styles */
-}
-
 .card-footer {
   display: flex;
   gap: 8px;

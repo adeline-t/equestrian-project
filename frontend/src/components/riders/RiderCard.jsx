@@ -17,6 +17,7 @@ import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
 import '../../styles/features/pairings.css';
 import '../../styles/features/riders.css';
+import { useAppMode } from '../../context/AppMode.jsx';
 
 /**
  * RiderCard - Detailed rider information card
@@ -25,6 +26,7 @@ import '../../styles/features/riders.css';
 function RiderCard({ riderId, onClose, onEdit, onDelete }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState(null);
+  const mode = useAppMode();
 
   const {
     rider,
@@ -133,14 +135,15 @@ function RiderCard({ riderId, onClose, onEdit, onDelete }) {
               >
                 <Icons.Edit />
               </button>
-
-              <button
-                className="btn-icon-modern danger"
-                onClick={() => onDelete(rider)}
-                title="Supprimer le cavalier"
-              >
-                <Icons.Delete />
-              </button>
+              {mode === 'admin' && (
+                <button
+                  className="btn-icon-modern danger"
+                  onClick={() => onDelete(rider)}
+                  title="Supprimer le cavalier"
+                >
+                  <Icons.Delete />
+                </button>
+              )}
             </div>
           </div>
         }

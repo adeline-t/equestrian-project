@@ -1,42 +1,49 @@
-import { NavLink, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/common/ErrorBoundary';
+
+import { AppModeProvider } from './context/AppMode';
+import RequireMode from './components/common/RequireMode';
+
+import HomeSelector from './components/home/HomeSelector';
+import Header from './components/home/Header';
+
+import CalendarView from './components/calendar/CalendarView';
 import HorsesList from './components/horses/HorsesList';
 import RidersList from './components/riders/RidersList';
-import CalendarView from './components/calendar/CalendarView';
-import { Icons } from './lib/icons.jsx';
+import Restricted from './components/common/Restricted';
 
 function App() {
   return (
     <ErrorBoundary>
       <Router>
-        <div className="app">
-          <header>
-            <div className="container">
-              <h1>
-                <Icons.Horse style={{ marginRight: '12px' }} /> Gestion Centre Équestre
-              </h1>
-              <nav>
-                <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  <Icons.User style={{ marginRight: '8px' }} /> Cavaliers
-                </NavLink>
-                <NavLink to="/horses" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  <Icons.Horse style={{ marginRight: '8px' }} /> Chevaux
-                </NavLink>
-                <NavLink to="/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
-                  <Icons.Calendar style={{ marginRight: '8px' }} /> Planning
-                </NavLink>
-              </nav>
-            </div>
-          </header>
+        <AppModeProvider>
+          <Routes>
+            <Route path="/select" element={<HomeSelector />} />
 
-          <main className="container">
-            <Routes>
-              <Route path="/" element={<RidersList />} />
-              <Route path="/horses" element={<HorsesList />} />
-              <Route path="/calendar" element={<CalendarView />} />
-            </Routes>
-          </main>
-        </div>
+            <Route
+              path="/*"
+              element={
+                <RequireMode>
+                  <div className="app">
+                    <Header />
+                    <Routes>
+                      <Route path="calendar" element={<CalendarView />} />
+                      <Route path="horses" element={<HorsesList />} />
+                      <Route
+                        path="riders"
+                        element={
+                          <Restricted adminOnly>
+                            <RidersList />
+                          </Restricted>
+                        }
+                      />
+                    </Routes>
+                  </div>
+                </RequireMode>
+              }
+            />
+          </Routes>
+        </AppModeProvider>
       </Router>
     </ErrorBoundary>
   );

@@ -2,18 +2,19 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 import { useCalendarView } from '../../hooks/useCalendarView';
+import { useAppMode } from '../../context/AppMode.jsx';
+
 import ErrorBoundary from '../common/ErrorBoundary';
 import WeekView from './WeekView';
 
-import { getEventTypeOptions, getStatusOptions, isBlockedEvent } from '../../lib/domain';
+import { getEventTypeOptions, getStatusOptions } from '../../lib/domain';
 import { Icons } from '../../lib/icons';
 
 import '../../styles/features/calendar.css';
 
-/* -------------------------------------------------------
+/* -----------------------
  * ERROR STATE
- * ----------------------------------------------------- */
-
+ * --------------------- */
 function CalendarError({ error, onRetry }) {
   return (
     <div className="calendar-error" role="alert">
@@ -26,16 +27,14 @@ function CalendarError({ error, onRetry }) {
     </div>
   );
 }
-
 CalendarError.propTypes = {
   error: PropTypes.string.isRequired,
   onRetry: PropTypes.func.isRequired,
 };
 
-/* -------------------------------------------------------
+/* -----------------------
  * LOADING STATE
- * ----------------------------------------------------- */
-
+ * --------------------- */
 function CalendarLoading() {
   return (
     <div className="calendar-loading" role="status" aria-live="polite">
@@ -46,28 +45,22 @@ function CalendarLoading() {
   );
 }
 
-/* -------------------------------------------------------
+/* -----------------------
  * HEADER
- * ----------------------------------------------------- */
-
-function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday, stats }) {
+ * --------------------- */
+function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday }) {
   return (
     <div className="calendar-header flex-between mb-20">
-      {/* Titre à gauche */}
       <div className="header-title">
         <h2>{weekTitle}</h2>
       </div>
-
-      {/* Boutons à droite */}
       <div className="calendar-nav-buttons">
         <button className="btn btn-secondary btn-sm" onClick={onPrevWeek}>
           <Icons.ChevronLeft /> Précédente
         </button>
-
         <button className="btn btn-primary" onClick={onToday}>
           <Icons.Calendar /> Aujourd'hui
         </button>
-
         <button className="btn btn-secondary btn-sm" onClick={onNextWeek}>
           Suivante <Icons.ChevronRight />
         </button>
@@ -75,33 +68,26 @@ function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday, stats }) {
     </div>
   );
 }
-
 CalendarHeader.propTypes = {
   weekTitle: PropTypes.string.isRequired,
   onPrevWeek: PropTypes.func.isRequired,
   onNextWeek: PropTypes.func.isRequired,
   onToday: PropTypes.func.isRequired,
-  stats: PropTypes.shape({
-    total: PropTypes.number,
-    confirmed: PropTypes.number,
-    blocked: PropTypes.number,
-  }).isRequired,
 };
 
-/* -------------------------------------------------------
+/* -----------------------
  * FILTERS
- * ----------------------------------------------------- */
-
+ * --------------------- */
 function CalendarFilters({
   filters,
   onFilterChange,
   onCreateEvent,
   onCreateBlockedTime,
   onShowScheduled,
+  mode,
 }) {
   return (
     <div className="calendar-filters">
-      {/* Ligne des filtres */}
       <div className="filter-line">
         <div className="filter-group">
           <label>Type</label>
@@ -118,7 +104,6 @@ function CalendarFilters({
             ))}
           </select>
         </div>
-
         <div className="filter-group">
           <label>Statut</label>
           <select
@@ -136,19 +121,24 @@ function CalendarFilters({
         </div>
       </div>
 
-      {/* Ligne des boutons */}
       <div className="filters-group">
-        <button className="btn btn-info" onClick={onShowScheduled}>
-          <Icons.Calendar /> Événements programmés
-        </button>
-
+        {mode === 'admin' && (
+          <>
+            <button className="btn btn-info" onClick={onShowScheduled}>
+              <Icons.Calendar /> Événements en attente
+            </button>
+          </>
+        )}
         <button className="btn btn-success" onClick={onCreateEvent}>
           <Icons.Add /> Nouvel événement
         </button>
-
-        <button className="btn btn-warning" onClick={onCreateBlockedTime}>
-          <Icons.Blocked /> Bloquer un créneau
-        </button>
+        {mode === 'admin' && (
+          <>
+            <button className="btn btn-warning" onClick={onCreateBlockedTime}>
+              <Icons.Blocked /> Bloquer un créneau
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -160,26 +150,13 @@ CalendarFilters.propTypes = {
   onCreateEvent: PropTypes.func.isRequired,
   onCreateBlockedTime: PropTypes.func.isRequired,
   onShowScheduled: PropTypes.func.isRequired,
+  mode: PropTypes.object.isRequired,
 };
 
-/* -------------------------------------------------------
+/* -----------------------
  * MODALS
- * ----------------------------------------------------- */
-
-function CalendarModals({
-  showSlotModal,
-  showCreateEventModal,
-  showCreateBlockedModal,
-  showScheduledModal,
-  selectedSlot,
-  isSelectedSlotBlocked,
-  createEventData,
-  onCloseSlotModal,
-  onCloseCreateEventModal,
-  onCloseCreateBlockedModal,
-  onCloseScheduledModal,
-  onModalSuccess,
-}) {
+ * --------------------- */
+function CalendarModals({ mode, ...props }) {
   const BlockedEventModal = React.lazy(() => import('../events/edit/BlockedEventModal'));
   const EventModal = React.lazy(() => import('../events/edit/EventModal'));
   const CreateEventModal = React.lazy(() => import('../events/create/CreateEventModal'));
@@ -188,74 +165,63 @@ function CalendarModals({
   );
   const ScheduledEventsModal = React.lazy(() => import('../events/edit/ScheduledEventsModal'));
 
-  console.debug('[CalendarModals] showSlotModal:', showSlotModal);
-  console.debug('[CalendarModals] selectedSlot:', selectedSlot);
-  console.debug('[CalendarModals] isSelectedSlotBlocked:', isSelectedSlotBlocked);
-
   return (
     <React.Suspense fallback={<div>Chargement du modal...</div>}>
-      {showSlotModal &&
-        selectedSlot &&
-        (isSelectedSlotBlocked ? (
+      {props.showSlotModal &&
+        props.selectedSlot &&
+        (props.isSelectedSlotBlocked ? (
           <BlockedEventModal
-            slotId={selectedSlot.id}
-            onClose={onCloseSlotModal}
-            onSave={onModalSuccess}
-            onUpdate={onModalSuccess}
+            slotId={props.selectedSlot.id}
+            onClose={props.onCloseSlotModal}
+            onSave={props.onModalSuccess}
+            onUpdate={props.onModalSuccess}
           />
         ) : (
           <EventModal
-            slotId={selectedSlot.id}
-            onClose={onCloseSlotModal}
-            onDelete={onModalSuccess}
+            slotId={props.selectedSlot.id}
+            onClose={props.onCloseSlotModal}
+            onDelete={props.onModalSuccess}
           />
         ))}
 
-      {showCreateEventModal && createEventData && (
+      {props.showCreateEventModal && props.createEventData && (
         <CreateEventModal
-          initialDate={createEventData.date}
-          initialStartTime={createEventData.start_time}
-          initialEndTime={createEventData.end_time}
-          onClose={onCloseCreateEventModal}
-          onSuccess={onModalSuccess}
+          initialDate={props.createEventData.date}
+          initialStartTime={props.createEventData.start_time}
+          initialEndTime={props.createEventData.end_time}
+          onClose={props.onCloseCreateEventModal}
+          onSuccess={props.onModalSuccess}
         />
       )}
 
-      {showCreateBlockedModal && createEventData && (
+      {props.showCreateBlockedModal && props.createEventData && (
         <CreateBlockedTimeModal
-          initialDate={createEventData.date}
-          onClose={onCloseCreateBlockedModal}
-          onSuccess={onModalSuccess}
+          initialDate={props.createEventData.date}
+          onClose={props.onCloseCreateBlockedModal}
+          onSuccess={props.onModalSuccess}
         />
       )}
 
-      {showScheduledModal && (
-        <ScheduledEventsModal onClose={onCloseScheduledModal} onUpdate={onModalSuccess} />
+      {props.showScheduledModal && (
+        <ScheduledEventsModal
+          onClose={props.onCloseScheduledModal}
+          onUpdate={props.onModalSuccess}
+        />
       )}
     </React.Suspense>
   );
 }
 
 CalendarModals.propTypes = {
-  showSlotModal: PropTypes.bool.isRequired,
-  showCreateEventModal: PropTypes.bool.isRequired,
-  showCreateBlockedModal: PropTypes.bool.isRequired,
-  showScheduledModal: PropTypes.bool.isRequired,
-  selectedSlot: PropTypes.object,
-  isSelectedSlotBlocked: PropTypes.bool,
-  createEventData: PropTypes.object,
-  onCloseSlotModal: PropTypes.func.isRequired,
-  onCloseCreateEventModal: PropTypes.func.isRequired,
-  onCloseCreateBlockedModal: PropTypes.func.isRequired,
-  onCloseScheduledModal: PropTypes.func.isRequired,
-  onModalSuccess: PropTypes.func.isRequired,
+  mode: PropTypes.object.isRequired,
 };
 
-/* -------------------------------------------------------
+/* -----------------------
  * MAIN VIEW
- * ----------------------------------------------------- */
-
+ * --------------------- */
 function CalendarView() {
+  const mode = useAppMode(); // Mode accessible everywhere
+
   const {
     weekData,
     loading,
@@ -269,7 +235,6 @@ function CalendarView() {
     showScheduledModal,
     filters,
     weekTitle,
-    stats,
 
     handlePrevWeek,
     handleNextWeek,
@@ -293,10 +258,6 @@ function CalendarView() {
   if (loading) return <CalendarLoading />;
   if (error) return <CalendarError error={error} onRetry={loadWeekData} />;
 
-  console.debug('[WeekView]] WeekData', {
-    weekData,
-  });
-
   return (
     <div className="calendar-view card-enhanced">
       <CalendarHeader
@@ -304,7 +265,6 @@ function CalendarView() {
         onPrevWeek={handlePrevWeek}
         onNextWeek={handleNextWeek}
         onToday={handleToday}
-        stats={stats}
       />
 
       <CalendarFilters
@@ -313,6 +273,7 @@ function CalendarView() {
         onCreateEvent={handleCreateEvent}
         onCreateBlockedTime={handleCreateBlockedTime}
         onShowScheduled={handleShowScheduled}
+        mode={mode}
       />
 
       <WeekView
@@ -322,24 +283,26 @@ function CalendarView() {
       />
 
       <CalendarModals
-        showSlotModal={showSlotModal}
-        showCreateEventModal={showCreateEventModal}
-        showCreateBlockedModal={showCreateBlockedModal}
-        showScheduledModal={showScheduledModal}
-        selectedSlot={selectedSlot}
-        isSelectedSlotBlocked={isSelectedSlotBlocked}
-        createEventData={createEventData}
-        onCloseSlotModal={closeSlotModal}
-        onCloseCreateEventModal={closeCreateEventModal}
-        onCloseCreateBlockedModal={closeCreateBlockedModal}
-        onCloseScheduledModal={closeScheduledModal}
-        onModalSuccess={handleModalSuccess}
+        {...{
+          mode,
+          showSlotModal,
+          showCreateEventModal,
+          showCreateBlockedModal,
+          showScheduledModal,
+          selectedSlot,
+          isSelectedSlotBlocked,
+          createEventData,
+          onCloseSlotModal: closeSlotModal,
+          onCloseCreateEventModal: closeCreateEventModal,
+          onCloseCreateBlockedModal: closeCreateBlockedModal,
+          onCloseScheduledModal: closeScheduledModal,
+          onModalSuccess: handleModalSuccess,
+        }}
       />
     </div>
   );
 }
 
-/* Export */
 export default function CalendarViewWithErrorBoundary() {
   return (
     <ErrorBoundary>

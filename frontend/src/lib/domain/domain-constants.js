@@ -180,7 +180,7 @@ export const INSTRUCTORS = {
   2: 'Kévin',
   3: 'Julie',
   4: 'Capucine',
-  0: 'Autre',
+  0: 'Aucun',
 };
 
 export const INSTRUCTOR_LABELS = Object.fromEntries(

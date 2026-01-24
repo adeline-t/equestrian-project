@@ -36,6 +36,7 @@ import {
   FaUser,
   FaUserGraduate,
   FaUsers,
+  FaLock,
 } from 'react-icons/fa';
 
 export const Icons = {
@@ -81,6 +82,7 @@ export const Icons = {
   Users: FaUsers,
   View: FaEye,
   Warning: FaExclamationTriangle,
+  Lock: FaLock,
 };
 
 export const renderIcon = (Icon, props = {}) => {

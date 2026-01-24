@@ -1,7 +1,17 @@
 import { getSecurityHeaders, jsonResponse, validateRequired, getDatabase } from '../../db.js';
 import { handleDatabaseError, handleUnexpectedError } from '../../utils/errorHandler.js';
 
-const EVENT_TYPES = ['private_lesson', 'grouped_lesson', 'service', 'blocked'];
+export const EVENT_TYPES = {
+  PRIVATE_LESSON: 'private_lesson',
+  GROUPED_LESSON: 'grouped_lesson',
+  SERVICE: 'service',
+  BLOCKED: 'blocked',
+  SPECIAL: 'special',
+  LOANER_FREE_TIME: 'loaner_free_time',
+  COMPETITION: 'competition',
+};
+
+export const EVENT_TYPE_VALUES = Object.values(EVENT_TYPES);
 
 export async function handleEvents(request, env, idParam) {
   const id = idParam ? parseInt(idParam, 10) : null;
@@ -44,18 +54,24 @@ export async function handleEvents(request, env, idParam) {
     // POST create
     if (request.method === 'POST') {
       const body = await request.json().catch(() => null);
-      if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
+      if (!body) {
+        return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
+      }
 
-      const missing = validateRequired(['event_type', 'instructor_id'], body);
-      if (missing)
+      const missing = validateRequired(['event_type'], body);
+      if (missing) {
         return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
+      }
 
-      if (!EVENT_TYPES.includes(body.event_type))
+      if (!EVENT_TYPE_VALUES.includes(body.event_type)) {
         return jsonResponse(
-          { error: `event_type invalide. Valeurs: ${EVENT_TYPES.join(', ')}` },
+          {
+            error: `event_type invalide. Valeurs: ${EVENT_TYPE_VALUES.join(', ')}`,
+          },
           400,
           getSecurityHeaders()
         );
+      }
 
       if (body.min_participants != null && body.min_participants < 0)
         return jsonResponse({ error: 'min_participants >= 0' }, 400, getSecurityHeaders());
@@ -80,12 +96,16 @@ export async function handleEvents(request, env, idParam) {
       const body = await request.json().catch(() => null);
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
-      if (body.event_type && !EVENT_TYPES.includes(body.event_type))
+      if (body.event_type && !EVENT_TYPE_VALUES.includes(body.event_type)) {
         return jsonResponse(
-          { error: `event_type invalide. Valeurs: ${EVENT_TYPES.join(', ')}` },
+          {
+            error: `event_type invalide. Valeurs: ${EVENT_TYPE_VALUES.join(', ')}`,
+          },
           400,
           getSecurityHeaders()
         );
+      }
+
       if (body.min_participants != null && body.min_participants < 0)
         return jsonResponse({ error: 'min_participants >= 0' }, 400, getSecurityHeaders());
       if (body.max_participants != null && body.max_participants < 0)

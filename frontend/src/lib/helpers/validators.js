@@ -7,7 +7,8 @@
  * - domain validators: horse and rider
  */
 
-import { RIDER_TYPE_LABELS } from '../domain/index.js';
+import { EVENT_TYPES, RIDER_TYPE_LABELS } from '../domain/index.js';
+import { calculateDurationMinutes } from './formatters/duration.js';
 
 /**
  * Horse validation utilities
@@ -115,3 +116,34 @@ export function validateEventEdit(editData) {
 
   return errors;
 }
+
+export const validateEventForm = (formData, participants) => {
+  const errors = {};
+
+  // Required fields validation
+  if (!formData.event_date) errors.event_date = 'La date est requise';
+  if (!formData.start_time && !formData.is_all_day)
+    errors.start_time = "L'heure de début est requise";
+  if (!formData.end_time && !formData.is_all_day) errors.end_time = "L'heure de fin est requise";
+  if (!formData.event_type) errors.event_type = "Le type d'événement est requis";
+  if (!formData.slot_status) errors.slot_status = 'Le statut est requis';
+
+  // Time validation (only if not all-day)
+  if (!formData.is_all_day && formData.start_time && formData.end_time) {
+    const duration = calculateDurationMinutes(formData.start_time, formData.end_time);
+    if (duration <= 0) {
+      errors.end_time = "L'heure de fin doit être après l'heure de début";
+    }
+  }
+
+  // Participants validation (only if not blocked)
+  if (formData.event_type !== EVENT_TYPES.BLOCKED) {
+    const min = parseInt(formData.min_participants || 0);
+    const max = parseInt(formData.max_participants || 0);
+    if (min > max) errors.min_participants = 'Le minimum ne peut pas dépasser le maximum';
+    if (participants && participants.length > max)
+      errors.participants = `Il y a ${participants.length} participants mais le maximum est de ${max}`;
+  }
+
+  return { isValid: Object.keys(errors).length === 0, errors };
+};

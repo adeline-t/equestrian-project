@@ -4,6 +4,7 @@ import { fr } from 'date-fns/locale';
 import { EVENT_TYPES, SLOT_STATUSES, isBlockedEvent } from '../lib/domain/events';
 import { calendarService } from '../services/calendarService';
 import { timeToMinutes, formatTimeForInput } from '../lib/helpers/formatters';
+import { getTodayISO } from '../lib/helpers';
 
 /**
  * Normalize slot times for UI display (HH:mm from HH:mm:ss)
@@ -103,9 +104,9 @@ export function useCalendarView() {
   const handleCreateEvent = useCallback(
     (selectionData) => {
       setCreateEventData({
-        date: selectionData?.date || format(currentWeekStart, 'yyyy-MM-dd'),
-        start_time: selectionData?.start_time || '09:00',
-        end_time: selectionData?.end_time || '10:00',
+        date: selectionData?.date || getTodayISO(),
+        start_time: selectionData?.start_time || '16:00',
+        end_time: selectionData?.end_time || '17:00',
       });
       setShowCreateEventModal(true);
     },
@@ -114,9 +115,9 @@ export function useCalendarView() {
 
   const handleCreateBlockedTime = useCallback(() => {
     setCreateEventData({
-      date: format(new Date(), 'yyyy-MM-dd'),
-      start_time: '09:00',
-      end_time: '10:00',
+      date: getTodayISO(),
+      start_time: '16:00',
+      end_time: '17:00',
     });
     setShowCreateBlockedModal(true);
   }, []);
@@ -195,55 +196,6 @@ export function useCalendarView() {
     return { ...weekData, days: filteredDays };
   }, [weekData, filters]);
 
-  const stats = useMemo(() => {
-    if (!weekData?.days)
-      return {
-        confirmed: 0,
-        scheduled: 0,
-        privateLessons: 0,
-        groupedLessons: 0,
-        services: 0,
-        blocked: 0,
-        total: 0,
-      };
-    const result = {
-      confirmed: 0,
-      scheduled: 0,
-      privateLessons: 0,
-      groupedLessons: 0,
-      services: 0,
-      blocked: 0,
-      total: 0,
-    };
-
-    weekData.days.forEach((day) =>
-      day.slots?.forEach((slot) => {
-        result.total++;
-        if (slot.slot_status === SLOT_STATUSES.CONFIRMED) result.confirmed++;
-        if (slot.slot_status === SLOT_STATUSES.SCHEDULED) result.scheduled++;
-
-        const eventType = slot.events?.event_type ?? EVENT_TYPES.BLOCKED;
-
-        switch (eventType) {
-          case EVENT_TYPES.PRIVATE_LESSON:
-            result.privateLessons++;
-            break;
-          case EVENT_TYPES.GROUPED_LESSON:
-            result.groupedLessons++;
-            break;
-          case EVENT_TYPES.SERVICE:
-            result.services++;
-            break;
-          case EVENT_TYPES.BLOCKED:
-            result.blocked++;
-            break;
-        }
-      })
-    );
-
-    return result;
-  }, [weekData]);
-
   const hasActiveFilters = useMemo(() => Boolean(filters.eventType || filters.status), [filters]);
 
   /* -------------------------------------------------------
@@ -263,7 +215,6 @@ export function useCalendarView() {
     filters,
     hasActiveFilters,
     weekTitle,
-    stats,
     handlePrevWeek,
     handleNextWeek,
     handleToday,
