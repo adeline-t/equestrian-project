@@ -60,12 +60,6 @@ export function useCalendarView() {
           .map(normalizeSlotTimes),
       }));
       setWeekData({ ...data, days: enrichedDays });
-      console.debug('[loadWeekData]] data', {
-        data,
-      });
-      console.debug('[loadWeekData]] enrichedDays', {
-        enrichedDays,
-      });
     } catch (err) {
       console.error('Error loading week data:', err);
       setError(err.response?.data?.message || err.message || 'Erreur de chargement');
@@ -92,10 +86,6 @@ export function useCalendarView() {
    * SLOT / EVENT MODAL HANDLERS
    * ----------------------------------------------------- */
   const handleSlotClick = useCallback((slot, isSlotEventBlocked) => {
-    console.debug('[useCalendarView] slot click', {
-      slotId: slot?.id,
-      isSelectedSlotBlocked: isSelectedSlotBlocked,
-    });
     setSelectedSlot(slot);
     setIsSelectedSlotBlocked(isSlotEventBlocked);
     setShowSlotModal(true);

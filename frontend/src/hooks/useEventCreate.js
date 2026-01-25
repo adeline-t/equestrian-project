@@ -94,8 +94,6 @@ export function useEventCreate(initialDate, initialStartTime, initialEndTime) {
           description: formData.description || null,
         };
 
-        console.log('📤 Event Payload:', eventPayload);
-
         const eventResponse = await calendarService.createEvent(eventPayload);
         const eventId = eventResponse.id;
 
@@ -118,8 +116,6 @@ export function useEventCreate(initialDate, initialStartTime, initialEndTime) {
           slotPayload.start_time = '00:00:00';
           slotPayload.end_time = '23:59:59';
         }
-
-        console.log('📤 Slot Payload:', slotPayload);
 
         const slotResponse = await calendarService.createSlot(slotPayload);
         const slotId = slotResponse.id;

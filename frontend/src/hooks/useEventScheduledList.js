@@ -16,7 +16,6 @@ export function useEventScheduledList() {
       setLoading(true);
       setError(null);
       const data = await calendarService.getScheduledSlots();
-      console.log('Loaded scheduled slots:', data);
       setSlots(data || []);
     } catch (err) {
       console.error('Error loading scheduled events:', err);

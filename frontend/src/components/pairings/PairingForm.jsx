@@ -43,17 +43,6 @@ function PairingForm({
   const isFromRiderCard = !!riderId || !!rider;
   const isFromHorseCard = !!horseId || !!horse;
 
-  // Debug logs
-  console.log('🎨 PairingForm render:', {
-    isEdit,
-    isFromRiderCard,
-    isFromHorseCard,
-    pairing,
-    formData,
-    horses: horses?.length,
-    riders: riders?.length,
-  });
-
   // Chevaux actifs uniquement
   const availableHorses =
     horses?.filter((h) => isActive(h.activity_start_date, h.activity_end_date)) || [];
@@ -79,12 +68,6 @@ function PairingForm({
         availableRiders.find((r) => String(r.id) === String(formData.rider_id)) ||
         riders.find((r) => String(r.id) === String(formData.rider_id)) ||
         null;
-
-  console.log('🐴 Selected entities:', {
-    isEdit,
-    selectedHorse,
-    selectedRider,
-  });
 
   const handleFormSubmit = async (e) => {
     if (e && typeof e.preventDefault === 'function') e.preventDefault();

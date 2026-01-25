@@ -35,16 +35,12 @@ export function usePairingActions(onSuccess) {
 
   const handleSubmit = async (riderId, pairingData) => {
     try {
-      console.log('📤 Submitting pairing data:', pairingData);
-
       // Default link_type based on rider
       const payload = {
         ...pairingData,
         rider_id: riderId,
         link_type: pairingData.link_type ?? RIDER_HORSE_LINK_TYPE.OWN,
       };
-
-      console.log('📦 Final payload:', payload);
 
       if (editingPairing) {
         await pairingService.update(editingPairing.id, payload);

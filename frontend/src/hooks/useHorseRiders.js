@@ -28,13 +28,6 @@ export function useHorseRiders() {
       const horseData = response.data || response;
       const ridersArray = Array.isArray(horseData.pairings) ? horseData.pairings : [];
 
-      console.log('🐴 Horse riders data:', {
-        horse: horse.name,
-        horseData,
-        ridersArray,
-        count: ridersArray.length,
-      });
-
       setSelectedHorseRiders({
         horseName: horse.name,
         riders: ridersArray, // Maintenant c'est un tableau de pairings

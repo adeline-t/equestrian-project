@@ -120,8 +120,6 @@ export function usePairingForm(pairing, rider, riderId, horseId) {
 
   // Basic validation
   const validateForm = () => {
-    console.log('🔍 Validating form data:', formData);
-
     if (!formData.rider_id || !formData.horse_id || !formData.pairing_start_date) {
       const missingFields = [];
       if (!formData.rider_id) missingFields.push('Cavalier');
@@ -145,7 +143,6 @@ export function usePairingForm(pairing, rider, riderId, horseId) {
       }
     }
 
-    console.log('✅ Validation passed');
     return true;
   };
 

@@ -16,6 +16,7 @@ export function AppModeProvider({ children }) {
   const [currentRider, setCurrentRider] = useState(storedRider ? JSON.parse(storedRider) : null);
 
   const setMode = (newMode) => {
+    console.info('Mode', newMode);
     localStorage.setItem('appMode', newMode);
     setModeState(newMode);
   };

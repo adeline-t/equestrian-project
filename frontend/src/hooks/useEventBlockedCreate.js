@@ -82,14 +82,9 @@ export function useEventBlockedCreate() {
         description: formData.description || null,
       };
 
-      console.log('📤 Blocked Event Payload:', eventPayload);
-
       const eventResponse = await calendarService.createEvent(eventPayload);
       const eventId = eventResponse.id;
 
-      console.log('✅ Blocked Event created:', eventId);
-
-      // ⚠️ STEP 2: Create SLOT with event_id (required FK)
       const slotPayload = {
         event_id: eventId, // ⚠️ CRITICAL: Required foreign key
         slot_date: formData.slot_date,
@@ -101,12 +96,8 @@ export function useEventBlockedCreate() {
         cancellation_reason: null,
       };
 
-      console.log('📤 Blocked Slot Payload:', slotPayload);
-
       const slotResponse = await calendarService.createSlot(slotPayload);
       const slotId = slotResponse.id;
-
-      console.log('✅ Blocked Slot created:', slotId);
 
       return { success: true, slotId, eventId };
     } catch (err) {

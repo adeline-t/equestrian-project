@@ -27,8 +27,6 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  console.log('[Modal] render', { slot, event, loading, error });
-
   const handleDelete = async () => {
     const success = await deleteSlot();
     if (success) {

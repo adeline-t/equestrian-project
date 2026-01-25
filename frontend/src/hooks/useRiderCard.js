@@ -41,19 +41,11 @@ export function useRiderCard(riderId) {
   const fetchPackages = async () => {
     try {
       const data = await riderService.getPackages(riderId);
-      console.log('📦 Packages fetched:', data);
 
       // Filter out deleted packages client-side if needed
       const activePackages = Array.isArray(data) ? data.filter((pkg) => !pkg.deleted_at) : [];
 
       setPackages(activePackages);
-
-      if (activePackages.length > 0) {
-        console.log(
-          '✅ Active package:',
-          activePackages.find((pkg) => pkg.is_active)
-        );
-      }
     } catch (error) {
       console.error('❌ Error fetching packages:', error);
       setPackages([]);
@@ -63,7 +55,6 @@ export function useRiderCard(riderId) {
   const fetchPairings = async () => {
     try {
       const data = await riderService.getHorses(riderId);
-      console.log('🐴 Pairings fetched:', data);
       setPairings(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('❌ Error fetching pairings:', error);
@@ -92,7 +83,6 @@ export function useRiderCard(riderId) {
   };
 
   const reload = () => {
-    console.log('🔄 Reloading rider data...');
     fetchRiderData();
   };
 

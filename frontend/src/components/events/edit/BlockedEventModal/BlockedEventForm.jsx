@@ -28,8 +28,6 @@ function BlockedEventForm({ editData, handleChange }) {
         )
       : 0;
 
-  console.log('[Form] render', { editData, duration });
-
   return (
     <form onSubmit={(e) => e.preventDefault()} className="blocked-time-form">
       {/* GENERAL INFORMATION */}

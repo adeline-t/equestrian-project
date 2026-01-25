@@ -7,8 +7,6 @@ import { formatDate, formatDateTime, formatTimeFlexible } from '../../../../lib/
 import '../../../../styles/features/events.css';
 
 export default function BlockedEventDisplay({ slot, event, recurrence }) {
-  console.log('[Display] render', { slot, event, recurrence });
-
   if (!slot || !event) {
     return <div className="blocked-event-loading">Chargement du créneau...</div>;
   }

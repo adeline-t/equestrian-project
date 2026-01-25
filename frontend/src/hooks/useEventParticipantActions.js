@@ -58,6 +58,10 @@ export function useEventParticipantActions(onSuccess) {
 
   // Remove participant using calendarService
   const handleRemove = async (participantToDeleteId) => {
+    if (!participantToDeleteId) {
+      console.warn('ID du participant manquant');
+      return;
+    }
     try {
       await calendarService.removeParticipant(participantToDeleteId);
       onSuccess?.('Participant supprimé');
