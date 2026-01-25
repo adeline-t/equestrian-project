@@ -29,7 +29,7 @@ function HorsesList() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const mode = useAppMode();
+  const { mode } = useAppMode();
 
   const {
     horses,

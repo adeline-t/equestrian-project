@@ -16,7 +16,7 @@ const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
  * Receives all state and handlers as props from parent (CreateEventModal)
  */
 function EventForm({ formData, handleFormChange, setFormData }) {
-  const mode = useAppMode();
+  const { mode } = useAppMode();
 
   const availableEventTypes = getEventTypesOptionForMode(mode);
 

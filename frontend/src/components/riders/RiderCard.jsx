@@ -26,7 +26,7 @@ import { useAppMode } from '../../context/AppMode.jsx';
 function RiderCard({ riderId, onClose, onEdit, onDelete }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState(null);
-  const mode = useAppMode();
+  const { mode } = useAppMode();
 
   const {
     rider,
