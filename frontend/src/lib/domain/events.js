@@ -95,6 +95,18 @@ export function getEventTypeOptions() {
   }));
 }
 
+export function getEventTypesOptionForMode(mode) {
+  if (mode === 'admin') {
+    return getEventTypeOptions().filter((o) => o.value !== EVENT_TYPES.BLOCKED);
+  }
+
+  return getEventTypeOptions().filter((o) =>
+    [EVENT_TYPES.PRIVATE_LESSON, EVENT_TYPES.LOANER_FREE_TIME, EVENT_TYPES.SERVICE].includes(
+      o.value
+    )
+  );
+}
+
 /* -------------------------------------------------------
  * SLOT STATUSES
  * ----------------------------------------------------- */

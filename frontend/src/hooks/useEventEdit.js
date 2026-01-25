@@ -13,7 +13,15 @@ export function useEventEdit(slot, event, onSuccess) {
 
   const startEdit = useCallback(() => {
     setEditData({
+      // ✨ NOUVEAUX champs de slot
       slot_status: slot?.slot_status,
+      slot_date: slot?.slot_date, // ← Date
+      start_time: slot?.start_time, // ← Heure début
+      end_time: slot?.end_time, // ← Heure fin
+      is_all_day: slot?.is_all_day || false, // ← Journée entière
+      actual_instructor_id: slot?.actual_instructor_id,
+
+      // Champs existants
       instructor_id: event?.instructor_id,
       event_type: event?.event_type,
       name: event?.name || '',
@@ -54,6 +62,10 @@ export function useEventEdit(slot, event, onSuccess) {
 
       await calendarService.updateSlot(slotId, {
         slot_status: editData.slot_status,
+        slot_date: editData.slot_date, // ← Date
+        start_time: editData.is_all_day ? null : editData.start_time, // ← Heure début
+        end_time: editData.is_all_day ? null : editData.end_time, // ← Heure fin
+        is_all_day: editData.is_all_day, // ← Journée entière
         actual_instructor_id: editData.instructor_id,
       });
 

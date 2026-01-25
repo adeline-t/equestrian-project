@@ -3,12 +3,18 @@ import { useEventDetails } from '../../../../hooks/useEventDetails';
 import { useEventEdit } from '../../../../hooks/useEventEdit';
 import { useEventParticipantActions } from '../../../../hooks/useEventParticipantActions';
 import { getInstructorConfig } from '../../../../lib/domain';
-import { SLOT_STATUSES, getEventTypeConfig, getStatusConfig } from '../../../../lib/domain/events';
+import {
+  EVENT_TYPES,
+  SLOT_STATUSES,
+  getEventTypeConfig,
+  getStatusConfig,
+} from '../../../../lib/domain/events';
 import { calculateDurationMinutes, formatDate, formatDuration } from '../../../../lib/helpers';
 import { Icons } from '../../../../lib/icons';
 import '../../../../styles/features/events.css';
 import DomainBadge from '../../../common/DomainBadge';
 import Modal from '../../../common/Modal';
+import { useAppMode } from '../../../../context/AppMode.jsx';
 import ParticipantsForm from '../../create/CreateEventModal/ParticipantsForm';
 import EventDeleteOrCancelModal from './EventDeleteOrCancelModal';
 import EventEditForm from './EventEditForm';
@@ -16,6 +22,8 @@ import EventParticipantRow from './EventParticipantRow';
 
 export default function EventModal({ slotId, onClose, onDelete }) {
   const { slot, event, participants, loading, error, reload, deleteSlot } = useEventDetails(slotId);
+
+  const { mode, currentRider } = useAppMode();
 
   const participantActions = useEventParticipantActions(async (msg) => {
     console.log(msg);
@@ -35,8 +43,6 @@ export default function EventModal({ slotId, onClose, onDelete }) {
       onClose(); // ferme EventModal
     }
   };
-
-  const handleCancelEvent = async () => {};
 
   if (loading) {
     return (
@@ -59,6 +65,17 @@ export default function EventModal({ slotId, onClose, onDelete }) {
   const slotStatusConfig = getStatusConfig(slot.slot_status);
   const instructorConfig = getInstructorConfig(event.instructor_id);
   const actualInstructorConfig = getInstructorConfig(slot.actual_instructor_id);
+  const canEditEvent =
+    mode === 'admin' ||
+    slot.events.event_type === EVENT_TYPES.PRIVATE_LESSON ||
+    slot.events.event_type === EVENT_TYPES.LOANER_FREE_TIME;
+
+  const canEditParticipant = (riderId) => {
+    if (mode === 'admin') return true;
+    if (!currentRider) return false;
+    return currentRider.id === riderId;
+  };
+  const canAddParticipant = participants.length < (event.max_participants ?? 1);
 
   return (
     <Modal
@@ -77,21 +94,24 @@ export default function EventModal({ slotId, onClose, onDelete }) {
           </div>
 
           <div className="event-modal-actions">
-            <button
-              className="btn-icon-modern"
-              onClick={eventEdit.startEdit}
-              title="Modifier l'événement"
-            >
-              <Icons.Edit />
-            </button>
-
-            <button
-              className="btn-icon-modern danger"
-              onClick={eventEdit.openDeleteModal}
-              title="Supprimer l'événement"
-            >
-              <Icons.Delete />
-            </button>
+            {canEditEvent && (
+              <button
+                className="btn-icon-modern"
+                onClick={eventEdit.startEdit}
+                title="Modifier l'événement"
+              >
+                <Icons.Edit />
+              </button>
+            )}
+            {mode === 'admin' && (
+              <button
+                className="btn-icon-modern danger"
+                onClick={eventEdit.openDeleteModal}
+                title="Supprimer l'événement"
+              >
+                <Icons.Delete />
+              </button>
+            )}
           </div>
         </div>
       }
@@ -174,14 +194,17 @@ export default function EventModal({ slotId, onClose, onDelete }) {
                   <Icons.Users />
                   <h3>Participants</h3>
                 </div>
-
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => participantActions.handleCreate()}
-                >
-                  <Icons.Add />
-                  <span>Ajouter</span>
-                </button>
+                {canAddParticipant && (
+                  <>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => participantActions.handleCreate()}
+                    >
+                      <Icons.Add />
+                      <span>Ajouter</span>
+                    </button>
+                  </>
+                )}
               </div>
 
               <div className="data-card-body">
@@ -196,6 +219,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
                       <EventParticipantRow
                         key={p.id}
                         participant={p}
+                        canEdit={canEditParticipant(p.id)}
                         onEdit={() => participantActions.handleEdit(p)} // opens edit form
                         onDelete={() => participantActions.handleDeleteClick(p)} // opens delete confirmation
                       />

@@ -1,4 +1,4 @@
-import { EVENT_TYPES, getEventTypeOptions } from '../../../../lib/domain/events.js';
+import { EVENT_TYPES, getEventTypesOptionForMode } from '../../../../lib/domain/events.js';
 import { INSTRUCTORS } from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
 import { formatTimeForInput } from '../../../../lib/helpers/formatters/index.js';
@@ -18,16 +18,7 @@ const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
 function EventForm({ formData, handleFormChange, setFormData }) {
   const mode = useAppMode();
 
-  const availableEventTypes =
-    mode === 'admin'
-      ? getEventTypeOptions().filter((option) => option.value !== EVENT_TYPES.BLOCKED)
-      : getEventTypeOptions().filter(
-          (option) =>
-            option.value !== EVENT_TYPES.BLOCKED &&
-            option.value !== EVENT_TYPES.COMPETITION &&
-            option.value !== EVENT_TYPES.GROUPED_LESSON &&
-            option.value !== EVENT_TYPES.SPECIAL
-        );
+  const availableEventTypes = getEventTypesOptionForMode(mode);
 
   const hideParticipantCount =
     formData.event_type === EVENT_TYPES.LOANER_FREE_TIME ||

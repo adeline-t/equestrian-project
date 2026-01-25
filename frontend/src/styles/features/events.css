@@ -12,10 +12,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  max-height: 70vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: var(--spacing-sm);
+  /* Suppression du max-height et overflow - le scroll sera sur la modale */
 }
 
 .event-form-row {
@@ -106,7 +103,6 @@
 
 .participant-cell {
   display: flex;
-
   align-items: center;
   gap: var(--spacing-xs);
 }
@@ -120,8 +116,45 @@
 .participants-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--spacing-sm);
 }
+
+/* ============================================
+   PARTICIPANT BADGES (nouveau style)
+   ============================================ */
+
+.participant-badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-white);
+  color: var(--color-info-blue-dark);
+  border: 1px solid var(--color-info-blue-dark);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-base);
+  animation: slideIn 0.2s ease-out;
+}
+
+.participant-badge:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.participant-badge-content {
+  gap: var(--spacing-xs);
+}
+
+.participant-btn {
+  width: 18px;
+  height: 18px;
+  margin-bottom: 4px;
+}
+
+/* Anciens styles de carte - conservés pour compatibilité avec autres vues */
 
 .participant-card {
   display: flex;
@@ -306,7 +339,6 @@
 .scheduled-event-participant {
   flex: 1;
   display: flex;
-
   align-items: center;
   gap: var(--spacing-xs);
   font-size: var(--font-size-sm);
@@ -366,74 +398,6 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 768px) {
-  .event-form-modern {
-    max-height: 60vh;
-    gap: var(--spacing-sm);
-  }
-
-  .event-form-row {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-sm);
-  }
-
-  .event-form-times-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .participants-table-wrapper {
-    overflow-x: auto;
-  }
-
-  .participants-table {
-    min-width: 500px;
-  }
-
-  .event-modal-subtitle {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-  }
-
-  .scheduled-events-content {
-    max-height: 50vh;
-  }
-
-  .scheduled-event-card {
-    padding: var(--spacing-sm);
-  }
-
-  .scheduled-event-content {
-    flex-direction: column;
-    gap: var(--spacing-md);
-  }
-
-  .scheduled-event-time {
-    min-width: auto;
-  }
-
-  .scheduled-event-participants {
-    min-width: auto;
-    width: 100%;
-  }
-
-  .scheduled-date-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xs);
-  }
-}
-
-@media (max-width: 480px) {
-  .event-form-modern {
-    max-height: 50vh;
-  }
-}
-
 /* Event Time Range */
 .scheduled-event-time-range {
   display: flex;
@@ -470,7 +434,6 @@
 
 .modal-footer-actions {
   display: flex;
-
   gap: var(--spacing-md);
 }
 
@@ -812,28 +775,6 @@
 }
 
 /* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 1024px) {
-  .event-modal-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .event-modal-content {
-    padding: var(--spacing-xs);
-  }
-
-  .event-participant-item,
-  .event-recurrence-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* ============================================
    EVENT MODAL STYLES (was Rider Card)
    ============================================ */
 
@@ -998,11 +939,227 @@
   justify-content: flex-end;
 }
 
+
+/* ============================================
+   CREATE EVENT MODAL - LAYOUT EN COLONNES
+   Layout dynamique sans scroll imbriqué
+   ============================================ */
+
+.create-event-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  /* Pas de max-height ici - on laisse le contenu définir la hauteur */
+}
+
+.create-event-form-column,
+.create-event-participants-column {
+  /* Pas de overflow ici - le scroll sera sur la modale entière */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.create-event-participants-column {
+  border-left: 2px solid var(--color-gray-300);
+  padding-left: var(--spacing-lg);
+}
+
+/* ============================================
+   PARTICIPANTS HEADER
+   ============================================ */
+
+.participants-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.participants-header h3 {
+  margin: 0;
+}
+
+.participants-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 var(--spacing-xs);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ============================================
+   SCROLL INDICATOR
+   ============================================ */
+
+.scroll-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  color: var(--color-gray-500);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  background: var(--gradient-light);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+  animation: bounce 2s infinite;
+}
+
+.scroll-indicator-icon {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* ============================================
+   FORM SECTION HEADER (pour l'ajout de participant)
+   ============================================ */
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-md);
+}
+
+.form-section-header h4 {
+  margin: 0;
+  flex: 1;
+}
+
+/* Bouton d'ajout en haut à droite */
+.form-section-header .btn-sm {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+/* ============================================
+   FORM LABELS
+   ============================================ */
+
+.form-label-small {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-xs);
+}
+
+/* ============================================
+   TEXT MUTED
+   ============================================ */
+
+.text-muted {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  margin: 0;
+  padding: var(--spacing-sm);
+  text-align: center;
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */
 
 @media (max-width: 768px) {
+  .event-form-modern {
+    gap: var(--spacing-sm);
+  }
+
+  .event-form-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .event-form-times-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .participants-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .participants-table {
+    min-width: 500px;
+  }
+
+  .event-modal-subtitle {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .scheduled-events-content {
+    max-height: 50vh;
+  }
+
+  .scheduled-event-card {
+    padding: var(--spacing-sm);
+  }
+
+  .scheduled-event-content {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .scheduled-event-time {
+    min-width: auto;
+  }
+
+  .scheduled-event-participants {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .scheduled-date-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .create-event-layout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  .create-event-participants-column {
+    border-left: none;
+    border-top: 1px solid var(--color-gray-200);
+    padding-left: 0;
+    padding-top: var(--spacing-lg);
+  }
+
+  .event-modal-content {
+    padding: var(--spacing-xs);
+  }
+
+  .event-participant-item,
+  .event-recurrence-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .participant-mini-card {
     padding: var(--spacing-sm);
   }
@@ -1016,26 +1173,43 @@
   }
 }
 
-.segmented-control {
-  display: flex;
-  border: 1px solid var(--color-gray-300);
-  border-radius: 8px;
-  overflow: hidden;
+@media (max-width: 1024px) {
+  .event-modal-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.segment {
-  flex: 1;
-  padding: 8px;
-  background: white;
-  border: none;
-  cursor: pointer;
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+.participant-card {
+  animation: slideIn 0.2s ease-out;
 }
 
-.segment.active {
-  background: var(--color-primary-100);
-  font-weight: 600;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.segment.danger.active {
-  background: var(--color-danger-100);
+.btn-form.active {
+  animation: pulse 0.3s ease-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

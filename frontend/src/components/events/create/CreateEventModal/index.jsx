@@ -33,7 +33,7 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
           Créer un événement
         </div>
       }
-      size="large"
+      size="xlarge"
       footer={
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
@@ -62,25 +62,32 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
       }
     >
       {error && (
-        <div className="alert alert-error">
+        <div className="alert alert-error mb-15">
           <Icons.Warning />
           {error}
         </div>
       )}
 
-      <EventForm
-        formData={formData}
-        handleFormChange={handleFormChange}
-        setFormData={setFormData}
-      />
+      {/* Layout sans max-height - laisse le contenu définir la hauteur */}
+      <div className="create-event-layout">
+        <div className="create-event-form-column">
+          <EventForm
+            formData={formData}
+            handleFormChange={handleFormChange}
+            setFormData={setFormData}
+          />
+        </div>
 
-      <ParticipantsForm
-        participants={participants}
-        canAddParticipant={true}
-        addParticipant={addParticipant}
-        removeParticipant={removeParticipant}
-        updateParticipant={updateParticipant}
-      />
+        <div className="create-event-participants-column">
+          <ParticipantsForm
+            participants={participants}
+            canAddParticipant={true}
+            addParticipant={addParticipant}
+            removeParticipant={removeParticipant}
+            updateParticipant={updateParticipant}
+          />
+        </div>
+      </div>
     </Modal>
   );
 }

@@ -9,7 +9,7 @@ import {
 } from '../../../../lib/domain/domain-constants';
 import '../../../../styles/features/events.css';
 
-export default function EventParticipantRow({ participant, onEdit, onDelete }) {
+export default function EventParticipantRow({ participant, canEdit, onEdit, onDelete }) {
   const { rider, horse, horse_assignment_type, is_cancelled } = participant || {};
 
   const riderTypeConfig = rider ? getRiderTypeConfig(rider.rider_type) : null;
@@ -38,31 +38,27 @@ export default function EventParticipantRow({ participant, onEdit, onDelete }) {
             <>Cheval à définir</>
           )}
         </div>
-
-        {horseAssignmentConfig && (
-          <div className="participant-mini-card-title">
-            <DomainBadge config={horseAssignmentConfig} />
-          </div>
-        )}
       </div>
 
-      <div className="participant-mini-card-actions">
-        <button
-          className="btn-icon-modern"
-          onClick={() => onEdit?.(participant)}
-          title="Modifier le participant"
-        >
-          <Icons.Edit />
-        </button>
+      {canEdit && (
+        <div className="participant-mini-card-actions">
+          <button
+            className="btn-icon-modern"
+            onClick={() => onEdit?.(participant)}
+            title="Modifier le participant"
+          >
+            <Icons.Edit />
+          </button>
 
-        <button
-          className="btn-icon-modern danger"
-          onClick={onDelete}
-          title="Supprimer le participant"
-        >
-          <Icons.Delete />
-        </button>
-      </div>
+          <button
+            className="btn-icon-modern danger"
+            onClick={onDelete}
+            title="Supprimer le participant"
+          >
+            <Icons.Delete />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
