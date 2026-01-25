@@ -11,6 +11,7 @@ import CalendarView from './components/calendar/CalendarView';
 import HorsesList from './components/horses/HorsesList';
 import RidersList from './components/riders/RidersList';
 import Restricted from './components/common/Restricted';
+import MonthlyStatsView from './components/stats/MonthlyStatsView';
 
 function App() {
   return (
@@ -34,6 +35,14 @@ function App() {
                         element={
                           <Restricted adminOnly>
                             <RidersList />
+                          </Restricted>
+                        }
+                      />
+                      <Route
+                        path="stats"
+                        element={
+                          <Restricted adminOnly>
+                            <MonthlyStatsView />
                           </Restricted>
                         }
                       />

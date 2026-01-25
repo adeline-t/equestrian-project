@@ -59,6 +59,12 @@ export default function Header() {
             <Icons.Horse /> Chevaux
           </NavLink>
 
+          {mode === 'admin' && (
+            <NavLink className="nav-link" to="/stats">
+              <Icons.BarChart /> Statistiques
+            </NavLink>
+          )}
+
           <button className="btn btn-secondary" onClick={handleLogout}>
             Changer de profil
           </button>
