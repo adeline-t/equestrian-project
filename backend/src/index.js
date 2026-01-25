@@ -13,6 +13,11 @@ import { handlePlanningSlots } from './handlers/calendar/slots.js';
 import { handleEvents } from './handlers/calendar/events.js';
 import { handleEventParticipants } from './handlers/calendar/participants.js';
 import { handleRecurrences } from './handlers/calendar/recurrences.js';
+import {
+  handleHorseStats,
+  handleRiderStats,
+  handleMonthlyStats,
+} from './handlers/calendar/stats.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -83,6 +88,19 @@ export default {
       }
 
       // -----------------------
+      // Calendar Stats routes (MUST come before general calendar routes)
+      // -----------------------
+      if (path === '/api/calendar/stats/monthly') {
+        return handleMonthlyStats(request, env);
+      }
+      if (path === '/api/calendar/stats/horses') {
+        return handleHorseStats(request, env);
+      }
+      if (path === '/api/calendar/stats/riders') {
+        return handleRiderStats(request, env);
+      }
+
+      // -----------------------
       // Calendar routes (modulaire)
       // -----------------------
       if (path.startsWith('/api/calendar/week')) return handleCalendarWeek(request, env);
@@ -123,7 +141,7 @@ export default {
             status: 'ok',
             message: 'API opérationnelle',
             timestamp: new Date().toISOString(),
-            version: '1.3.0',
+            version: '1.4.0',
             environment: env.ENVIRONMENT || 'unknown',
           },
           200

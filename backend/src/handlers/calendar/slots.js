@@ -9,7 +9,7 @@ export async function handlePlanningSlots(request, env, idParam) {
     return jsonResponse({ error: 'ID invalide' }, 400, getSecurityHeaders());
 
   const db = getDatabase(env);
-  const url = new URL(request.url);
+  const url = new URL(request.url); // <-- On utilise url.pathname partout
   const slotColumns = [
     'slot_status',
     'actual_instructor_id',
@@ -187,7 +187,7 @@ export async function handlePlanningSlots(request, env, idParam) {
     }
 
     // PUT cancel slot
-    if (request.method === 'PUT' && id && pathname.endsWith('/cancel')) {
+    if (request.method === 'PUT' && id && url.pathname.endsWith('/cancel')) {
       const body = await request.json().catch(() => null);
 
       if (!body || typeof body.cancellation_reason !== 'string') {
