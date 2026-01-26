@@ -1,17 +1,14 @@
 /* ============================================
-   BUTTONS - All Button Styles Consolidated
+   BUTTONS - Optimisé avec variables
    ============================================ */
 
-/* ============================================
-   BASE BUTTON
-   ============================================ */
-
+/* BASE BUTTON */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  padding: 10px 20px;
+  padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   border: none;
@@ -19,7 +16,7 @@
   cursor: pointer;
   transition: all var(--transition-base);
   text-decoration: none;
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
 }
 
 .btn:disabled {
@@ -31,79 +28,29 @@
   transform: scale(0.98);
 }
 
-.btn svg,
-.btn i {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: inherit;
-}
-
-.btn-form {
-  padding: 10px 16px;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  min-width: 32px;
-
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-normal);
-  font-weight: var(--font-weight-semibold);
-
-  background: var(--gradient-light);
-  color: var(--color-gray-600);
-
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-300);
-}
-
-.btn-form.active {
-  background: var(--gradient-primary);
-  color: var(--color-white);
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.btn-form.active:hover {
-  transform: translateY(-2px);
-}
-
-.btn-form:active {
-  transform: scale(0.97);
-}
-
-/* ============================================
-   BUTTON SIZES
-   ============================================ */
-
+/* BUTTON SIZES */
 .btn-sm {
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: 6px var(--spacing-sm);
+  font-size: var(--font-size-xs);
   gap: 6px;
   height: 36px;
 }
 
 .btn-md {
-  padding: 10px 20px;
+  padding: var(--spacing-sm) var(--spacing-lg);
   height: 42px;
 }
 
 .btn-lg {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  font-size: var(--font-size-md);
   gap: 10px;
   height: 48px;
 }
 
-/* ============================================
-   ICON BUTTONS
-   ============================================ */
-
+/* ICON BUTTONS */
 .btn-icon {
-  padding: 8px;
+  padding: var(--spacing-sm);
   width: 36px;
   height: 36px;
   gap: 0;
@@ -114,22 +61,22 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-300);
-  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-base);
-  color: var(--color-gray-600);
-  font-size: 16px;
+  color: var(--color-text-muted);
+  font-size: var(--spacing-md);
   padding: 0;
 }
 
 .btn-icon-modern:hover {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: white;
+  color: var(--color-white);
   transform: scale(1.1);
 }
 
@@ -143,7 +90,6 @@
   background: var(--color-success-medium);
   border-color: var(--color-success-medium);
   color: var(--color-white);
-  transform: scale(1.1);
 }
 
 .btn-icon-modern.danger {
@@ -156,89 +102,9 @@
   background: var(--color-danger);
   border-color: var(--color-danger);
   color: var(--color-white);
-  transform: scale(1.1);
 }
 
-.btn-icon-modern svg {
-  display: block;
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.btn-icon-modern.success svg {
-  color: var(--color-success-medium-dark);
-}
-
-.btn-icon-modern.success:hover:not(:disabled) svg {
-  color: var(--color-white);
-}
-
-.btn-icon-modern.danger svg {
-  color: var(--color-danger-medium-dark);
-}
-
-.btn-icon-modern.danger:hover:not(:disabled) svg {
-  color: var(--color-white);
-}
-
-/* ============================================
-   ICON BUTTON VARIANTS - Boutons d'actions
-   ============================================ */
-
-.btn-icon-view,
-.btn-icon-edit,
-.btn-icon-delete {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.btn-icon-view {
-  color: var(--color-info-blue);
-  border-color: var(--color-info-light);
-}
-
-.btn-icon-view:hover {
-  background: var(--color-info-light);
-  border-color: var(--color-info-blue);
-  color: var(--color-info-blue-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
-}
-
-.btn-icon-edit {
-  color: var(--color-gray-600);
-  border-color: var(--color-gray-300);
-}
-
-.btn-icon-edit:hover {
-  background: var(--color-gray-100);
-  border-color: var(--color-gray-400);
-  color: var(--color-gray-800);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-icon-delete {
-  color: var(--color-danger-medium);
-  border-color: var(--color-danger-light);
-}
-
-.btn-icon-delete:hover {
-  background: var(--color-danger-light);
-  border-color: var(--color-danger);
-  color: var(--color-danger-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
-}
-
-/* ============================================
-   BUTTON VARIANTS - SOLID
-   ============================================ */
-
+/* BUTTON VARIANTS - SOLID */
 .btn-primary {
   background-image: var(--gradient-primary);
   color: var(--color-white);
@@ -279,30 +145,7 @@
   box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
 }
 
-.btn-warning {
-  background-image: var(--gradient-warning);
-  color: var(--color-white);
-}
-
-.btn-warning:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(237, 137, 54, 0.4);
-}
-
-.btn-info {
-  background-image: var(--gradient-info);
-  color: var(--color-white);
-}
-
-.btn-info:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
-}
-
-/* ============================================
-   BUTTON VARIANTS - OUTLINE
-   ============================================ */
-
+/* BUTTON VARIANTS - OUTLINE */
 .btn-outline-primary {
   background: transparent;
   color: var(--color-primary);
@@ -316,8 +159,8 @@
 
 .btn-outline-secondary {
   background: transparent;
-  color: var(--color-gray-600);
-  border: 2px solid var(--color-gray-300);
+  color: var(--color-text-muted);
+  border: 2px solid var(--color-border-dark);
 }
 
 .btn-outline-secondary:hover:not(:disabled) {
@@ -328,111 +171,58 @@
 }
 
 .btn-outline-danger {
-  background-color: transparent;
+  background: transparent;
   color: var(--color-danger);
   border: 1px solid var(--color-danger);
 }
 
 .btn-outline-danger:hover:not(:disabled) {
-  background-color: var(--color-danger);
+  background: var(--color-danger);
   color: var(--color-white);
 }
 
-/* ============================================
-   BUTTON VARIANTS - GHOST
-   ============================================ */
-
+/* BUTTON VARIANTS - GHOST */
 .btn-ghost {
   background: none;
   border: none;
-  color: var(--color-gray-600);
+  color: var(--color-text-muted);
   padding: var(--spacing-xs);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--color-gray-100);
-  color: var(--color-gray-900);
+  background: var(--color-bg-hover);
+  color: var(--color-text);
 }
 
-.btn-edit-ghost:hover {
-  background: var(--color-info-light);
-  color: var(--color-info-blue-dark);
-}
-
-.btn-danger-ghost:hover {
-  background: var(--color-danger-light);
-  color: var(--color-danger-medium-dark);
-}
-
-/* ============================================
-   BUTTON VARIANTS - LINK
-   ============================================ */
-
-.btn-link {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  transition: all var(--transition-base);
-  text-decoration: none;
-}
-
-.btn-link:hover {
-  color: var(--color-primary-dark);
-  text-decoration: underline;
-}
-
-/* ============================================
-   CLOSE BUTTON
-   ============================================ */
-
+/* CLOSE BUTTON */
 .btn-close,
 .modal-close {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
+  padding: var(--spacing-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
   transition: background-color var(--transition-base);
-  color: var(--color-gray-600);
+  color: var(--color-text-muted);
   flex-shrink: 0;
-  font-size: 24px;
+  font-size: var(--spacing-lg);
   width: 36px;
   height: 36px;
 }
 
 .btn-close:hover,
 .modal-close:hover {
-  background-color: var(--color-gray-100);
-  color: var(--color-gray-900);
+  background: var(--color-bg-hover);
+  color: var(--color-text);
 }
 
-/* ============================================
-   BUTTON GROUPS
-   ============================================ */
-
+/* BUTTON GROUPS */
 .btn-group {
   display: inline-flex;
   gap: var(--spacing-sm);
-}
-
-.btn-group-vertical {
-  display: inline-flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-xs);
 }
 
 /* ============================================
@@ -492,27 +282,11 @@
   height: 18px;
   flex-shrink: 0;
 }
-
-/* ============================================
-   MOBILE MENU BUTTON
-   ============================================ */
-
-.btn-menu {
-  color: var(--color-info-blue);
-  padding: 10px;
-  font-size: 18px;
-  min-width: 44px;
-  min-height: 44px;
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .btn {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-xs);
   }
 
   .btn-sm {
@@ -521,22 +295,25 @@
   }
 
   .btn-lg {
-    padding: 10px 20px;
+    padding: 10px var(--spacing-lg);
     font-size: 15px;
   }
 
-  .segment-btn {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  .btn-group,
-  .button-group {
+  .btn-group {
     width: 100%;
   }
 
-  .btn-group .btn,
-  .button-group .btn {
+  .btn-group .btn {
     flex: 1;
+  }
+  .segmented-control {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .segmented-control .segment-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

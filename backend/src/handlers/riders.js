@@ -118,7 +118,14 @@ export async function handleRiders(request, env) {
 
       const { data, error } = await db
         .from('riders')
-        .select('*')
+        .select(
+          `*,
+            packages(*),
+          rider_horse_pairings(
+          *, 
+          horses(*))
+            `
+        )
         .is('deleted_at', null)
         .eq('id', riderId)
         .single();

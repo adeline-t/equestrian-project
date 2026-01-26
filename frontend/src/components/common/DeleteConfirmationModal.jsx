@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Modal from './Modal.jsx';
 import { Icons } from '../../lib/icons';
-import '../../styles/app.css';
+import '../../styles/common.css';
 
 /**
  * Unified Delete Confirmation Modal Component
@@ -10,143 +10,61 @@ import '../../styles/app.css';
  */
 function DeleteConfirmationModal({
   isOpen,
+  allowSoftDelete = true,
   onClose,
-  onRemoveFromInventory,
+  onRemoveFromInventory = null,
   onPermanentDelete,
-  itemType = 'forfait',
+  itemType = 'package',
   itemName,
 }) {
-  const labels = {
-    cavalier: {
-      title: 'Que faire avec ce cavalier ?',
-      removeText: "Retirer de l'inventaire",
-      removeDescription:
-        "Le cavalier restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
-      deleteDescription:
-        'Le cavalier sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
-    },
-    forfait: {
-      title: 'Que faire avec ce forfait ?',
-      removeText: "Retirer de l'inventaire",
-      removeDescription:
-        "Le forfait restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
-      deleteDescription:
-        'Le forfait sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
-    },
-    pension: {
-      title: 'Que faire avec cette pension ?',
-      removeText: "Retirer de l'inventaire",
-      removeDescription:
-        "La pension restera sauvegardée mais sera marquée comme inactive. La date de fin sera définie à aujourd'hui.",
-      deleteDescription:
-        'Les données de la pension seront supprimées de la base de données de manière permanente. Cette action ne peut pas être annulée.',
-    },
-    cheval: {
-      title: itemName ? `Que faire avec ${itemName} ?` : 'Que faire avec ce cheval ?',
-      removeText: "Retirer de l'inventaire",
-      removeDescription:
-        "Le cheval restera dans la base de données mais sera marqué comme inactif. La date de fin d'activité sera définie à aujourd'hui.",
-      deleteDescription:
-        'Le cheval sera supprimé de la base de données de manière permanente. Cette action ne peut pas être annulée.',
-    },
-    event: {
-      title: itemName
-        ? `Que faire avec l'événement "${itemName}" ?`
-        : 'Que faire avec cet événement ?',
-      removeText: "Annuler l'événement",
-      removeDescription:
-        "L'événement sera marqué comme annulé mais restera visible dans l'historique.",
-      deleteDescription:
-        "L'événement sera supprimé définitivement du planning et de la base de données. Cette action ne peut pas être annulée.",
-    },
+  const titles = {
+    rider: 'ce cavalier',
+    package: 'ce forfait',
+    pairing: 'cette pension',
+    horse: itemName ? itemName : 'ce cheval',
+    event: itemName ? `l’événement "${itemName}"` : 'cet événement',
   };
-
-  const label = labels[itemType] || labels.forfait;
-
-  const footer = (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      <div>
-        <h4
-          style={{
-            margin: '0 0 8px 0',
-            color: 'var(--color-gray-800)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <Icons.Remove style={{ flexShrink: 0 }} />
-          {label.removeText}
-        </h4>
-        <p style={{ margin: '0 0 12px 0', color: 'var(--color-gray-500)', fontSize: '0.9rem' }}>
-          {label.removeDescription}
-        </p>
-        <button
-          className="btn btn-warning"
-          onClick={onRemoveFromInventory}
-          style={{ width: '100%' }}
-        >
-          <Icons.Remove style={{ marginRight: '8px' }} />
-          {label.removeText}
-        </button>
-      </div>
-
-      <div style={{ borderTop: '1px solid var(--color-gray-200)', paddingTop: '12px' }}>
-        <h4
-          style={{
-            margin: '0 0 8px 0',
-            color: 'var(--color-gray-800)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <Icons.Delete style={{ flexShrink: 0 }} />
-          Supprimer définitivement
-        </h4>
-        <p style={{ margin: '0 0 12px 0', color: 'var(--color-gray-500)', fontSize: '0.9rem' }}>
-          {label.deleteDescription}
-        </p>
-        <button className="btn btn-danger" onClick={onPermanentDelete} style={{ width: '100%' }}>
-          <Icons.Delete style={{ marginRight: '8px' }} />
-          Supprimer définitivement
-        </button>
-      </div>
-
-      <button className="btn btn-secondary" onClick={onClose} style={{ width: '100%' }}>
-        <Icons.Cancel style={{ marginRight: '8px' }} />
-        Annuler
-      </button>
-    </div>
-  );
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
+      size="sm"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Icons.Warning style={{ color: 'var(--color-warning-orange)', flexShrink: 0 }} />
-          {label.title}
+        <div className="modal-title">
+          <Icons.Warning />
+          Supprimer {titles[itemType]}
         </div>
       }
-      footer={footer}
-      size="small"
+      footer={null}
     >
-      <p style={{ marginBottom: '20px', color: 'var(--color-gray-650)' }}>
-        Choisissez l'action à effectuer :
-      </p>
+      {allowSoftDelete ? (
+        <p className="modal-body">
+          Souhaitez-vous <strong>retirer</strong> cet élément ou le
+          <strong> supprimer définitivement</strong> ?
+        </p>
+      ) : (
+        <p className="modal-body">
+          Souhaitez-vous <strong> supprimer définitivement</strong> ?
+        </p>
+      )}
+
+      <div className="modal-footer">
+        {allowSoftDelete && onRemoveFromInventory && (
+          <button className="btn btn-secondary" onClick={onRemoveFromInventory}>
+            Retirer
+          </button>
+        )}
+
+        <button className="btn btn-danger" onClick={onPermanentDelete}>
+          Supprimer définitivement
+        </button>
+
+        <button className="btn btn-cancel" onClick={onClose}>
+          Annuler
+        </button>
+      </div>
     </Modal>
   );
 }
-
-DeleteConfirmationModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onRemoveFromInventory: PropTypes.func.isRequired,
-  onPermanentDelete: PropTypes.func.isRequired,
-  itemType: PropTypes.oneOf(['forfait', 'pension', 'cheval', 'cavalier', 'event']),
-  itemName: PropTypes.string,
-};
-
 export default DeleteConfirmationModal;

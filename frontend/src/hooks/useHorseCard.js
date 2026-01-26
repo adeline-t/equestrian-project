@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
-import { horseService } from '../services/index.js';
-import { pairingService } from '../services/index.js';
+import { horseService, pairingService, riderService } from '../services';
 
-/**
- * Custom hook for loading complete horse data with pairings for HorseCard
- * @param {number|string} horseId - The horse ID
- * @returns {Object} Horse data with pairings and state management
- */
 export function useHorseCard(horseId) {
-  const [horse, setHorse] = useState(null);
+  const [fetchedHorse, setFetchedHorse] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null);
 
   // Pairing modal state
   const [showPairingModal, setShowPairingModal] = useState(false);
@@ -18,51 +12,59 @@ export function useHorseCard(horseId) {
   const [showDeletePairingModal, setShowDeletePairingModal] = useState(false);
   const [pairingToDelete, setPairingToDelete] = useState(null);
 
+  // Riders for pairing form
+  const [riders, setRiders] = useState([]);
+  const [loadingRiders, setLoadingRiders] = useState(false);
+
   const loadHorse = async () => {
-    if (!horseId) {
-      setHorse(null);
-      return;
-    }
+    if (!horseId) return setFetchedHorse(null);
 
     try {
       setLoading(true);
-      setError(null);
-
-      // Use getById to load horse with complete pairings data
+      setLoadError(null);
       const data = await horseService.getById(horseId);
 
       if (!data) {
-        setError('Cheval non trouvé');
-        setHorse(null);
+        setLoadError('Cheval non trouvé');
+        setFetchedHorse(null);
         return;
       }
 
-      // Transform the data to flatten rider information in pairings
       const transformedHorse = {
         ...data,
-        pairings: (data.rider_horse_pairings || []).map((pairing) => ({
-          id: pairing.id,
-          rider_id: pairing.riders?.id,
-          rider_name: pairing.riders?.name || 'N/A',
+        pairings: (data.rider_horse_pairings || []).map((p) => ({
+          id: p.id,
+          rider_id: p.riders?.id,
+          rider_name: p.riders?.name || 'N/A',
           horse_id: data.id,
-          link_type: pairing.link_type,
-          loan_days: pairing.loan_days || [],
-          loan_days_per_week: pairing.loan_days_per_week || 0,
-          pairing_start_date: pairing.pairing_start_date,
-          pairing_end_date: pairing.pairing_end_date,
+          link_type: p.link_type,
+          loan_days: p.loan_days || [],
+          loan_days_per_week: p.loan_days_per_week || 0,
+          pairing_start_date: p.pairing_start_date,
+          pairing_end_date: p.pairing_end_date,
         })),
       };
 
-      // Remove the nested rider_horse_pairings to avoid confusion
       delete transformedHorse.rider_horse_pairings;
-
-      setHorse(transformedHorse);
+      setFetchedHorse(transformedHorse);
     } catch (err) {
-      console.error('Error loading horse with pairings:', err);
-      setError(err.message || 'Erreur lors du chargement du cheval');
-      setHorse(null);
+      setLoadError(err.message || 'Erreur lors du chargement du cheval');
+      setFetchedHorse(null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRiders = async () => {
+    try {
+      setLoadingRiders(true);
+      const data = await riderService.getAll();
+      setRiders(data || []);
+    } catch (err) {
+      console.error('Error loading riders:', err);
+      setRiders([]);
+    } finally {
+      setLoadingRiders(false);
     }
   };
 
@@ -70,13 +72,18 @@ export function useHorseCard(horseId) {
     loadHorse();
   }, [horseId]);
 
-  const reload = () => {
-    loadHorse();
-  };
+  // Load riders when pairing modal opens
+  useEffect(() => {
+    if (showPairingModal) {
+      loadRiders();
+    }
+  }, [showPairingModal]);
 
-  // Pairing action handlers
+  const reload = () => loadHorse();
+
+  // Pairing modal actions
   const handleCreatePairing = () => {
-    setEditingPairing({ horse_id: horseId });
+    setEditingPairing(null);
     setShowPairingModal(true);
   };
 
@@ -93,17 +100,14 @@ export function useHorseCard(horseId) {
   const handlePairingSubmit = async (pairingData) => {
     try {
       if (editingPairing?.id) {
-        // Update existing pairing
         await pairingService.update(editingPairing.id, pairingData);
       } else {
-        // Create new pairing
         await pairingService.create(pairingData);
       }
       closePairingModal();
-      await reload(); // Reload to get updated data
-      return { success: true };
+      await reload();
     } catch (err) {
-      throw err;
+      throw err; // Propagate to HorseCard for error handling
     }
   };
 
@@ -113,10 +117,9 @@ export function useHorseCard(horseId) {
     try {
       await pairingService.delete(pairingToDelete.id);
       closeDeletePairingModal();
-      await reload(); // Reload to get updated data
-      return { success: true };
+      await reload();
     } catch (err) {
-      throw err;
+      throw err; // Propagate to HorseCard for error handling
     }
   };
 
@@ -131,18 +134,18 @@ export function useHorseCard(horseId) {
   };
 
   return {
-    // Horse data
-    horse,
+    fetchedHorse,
     loading,
-    error,
+    loadError,
     reload,
-
     // Pairing modal state
     showPairingModal,
     editingPairing,
     showDeletePairingModal,
     pairingToDelete,
-
+    // Riders data
+    riders,
+    loadingRiders,
     // Pairing actions
     handleCreatePairing,
     handleEditPairing,

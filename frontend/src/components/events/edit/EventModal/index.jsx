@@ -11,7 +11,7 @@ import {
 } from '../../../../lib/domain/events';
 import { calculateDurationMinutes, formatDate, formatDuration } from '../../../../lib/helpers';
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-modal.css';
 import DomainBadge from '../../../common/DomainBadge';
 import Modal from '../../../common/Modal';
 import { useAppMode } from '../../../../context/AppMode.jsx';
@@ -26,7 +26,6 @@ export default function EventModal({ slotId, onClose, onDelete }) {
   const { mode, currentRider } = useAppMode();
 
   const participantActions = useEventParticipantActions(async (msg) => {
-    console.log(msg);
     reload(); // reload participants
   });
 
@@ -46,7 +45,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
 
   if (loading) {
     return (
-      <Modal isOpen onClose={onClose} size="medium" title="Chargement…">
+      <Modal isOpen onClose={onClose} size="md" title="Chargement…">
         <div className="loading-state">Chargement…</div>
       </Modal>
     );
@@ -54,7 +53,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
 
   if (error || !slot || !event) {
     return (
-      <Modal isOpen onClose={onClose} size="medium" title="Erreur">
+      <Modal isOpen onClose={onClose} size="md" title="Erreur">
         <p>{error || 'Erreur de chargement'}</p>
       </Modal>
     );
@@ -81,7 +80,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
     <Modal
       isOpen={true}
       onClose={onClose}
-      size="xlarge"
+      size="xl"
       title={
         <div className="event-modal-header">
           <div className="event-modal-avatar">
@@ -255,18 +254,18 @@ export default function EventModal({ slotId, onClose, onDelete }) {
           title={
             participantActions.editingParticipant ? 'Modifier participant' : 'Ajouter participant'
           }
-          size="medium"
+          size="md"
         >
           <ParticipantsForm
             participants={participants}
             canAddParticipant={!participantActions.editingParticipant}
             addParticipant={(riderId, horseId) => {
-              participantActions.handleSubmit(slot.id, riderId, horseId);
-              reload();
+              if (!riderId || !horseId) return console.warn('Rider ou Horse ID manquant');
+              participantActions.handleSubmit(slot.id, riderId, horseId).then(() => reload());
             }}
             updateParticipant={(id, riderId, horseId) => {
-              participantActions.handleSubmit(slot.id, riderId, horseId);
-              reload();
+              if (!riderId || !horseId) return console.warn('Rider ou Horse ID manquant');
+              participantActions.handleSubmit(slot.id, riderId, horseId).then(() => reload());
             }}
             removeParticipant={(id) => participantActions.setShowDeleteModal({ id })}
           />
@@ -279,17 +278,20 @@ export default function EventModal({ slotId, onClose, onDelete }) {
           isOpen={true}
           onClose={participantActions.closeDeleteModal}
           title="Supprimer participant"
-          size="small"
+          size="sm"
         >
           <p>Voulez-vous vraiment supprimer ce participant ?</p>
           <button
             onClick={() => {
-              participantActions.handleRemove();
-              reload();
+              if (!participantActions.participantToDelete?.id) return;
+              participantActions
+                .handleRemove(participantActions.participantToDelete.id)
+                .then(() => reload());
             }}
           >
             Oui
           </button>
+
           <button onClick={participantActions.closeDeleteModal}>Annuler</button>
         </Modal>
       )}
@@ -299,7 +301,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
           isOpen={true}
           onClose={eventEdit.cancelEdit}
           title={`Modifier l'événement`}
-          size="xlarge"
+          size="xl"
         >
           {eventEdit.error && <div className="alert alert-danger mb-10">{eventEdit.error}</div>}
           <EventEditForm

@@ -28,7 +28,7 @@ export default function EventDeleteOrCancelModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="small"
+      size="sm"
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Icons.Warning />

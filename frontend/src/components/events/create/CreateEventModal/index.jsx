@@ -1,7 +1,7 @@
 import { useEventCreate } from '../../../../hooks/useEventCreate.js';
 import { useParticipantList } from '../../../../hooks/useParticipantList.js';
 import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-modal.css';
 import Modal from '../../../common/Modal.jsx';
 import EventForm from './EventForm.jsx';
 import ParticipantsForm from './ParticipantsForm.jsx';
@@ -33,7 +33,7 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
           Créer un événement
         </div>
       }
-      size="xlarge"
+      size="xl"
       footer={
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>

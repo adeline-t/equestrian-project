@@ -1,61 +1,48 @@
 /* ============================================
-   CSS VARIABLES - Design System
+   CSS VARIABLES - Design System v2.0
+   Variables harmonisées et complètes
    ============================================ */
 
 :root {
-  /* ============================================
-     COLORS - Primary
-     ============================================ */
+  /* COLORS - Primary */
   --color-primary: #007bff;
   --color-primary-dark: #0056b3;
   --color-primary-light: #667eea;
   --color-primary-purple: #764ba2;
 
-  /* ============================================
-     COLORS - Secondary
-     ============================================ */
+  /* COLORS - Secondary */
   --color-secondary: #6c757d;
   --color-secondary-dark: #545b62;
 
-  /* ============================================
-     COLORS - Success
-     ============================================ */
+  /* COLORS - Success */
   --color-success: #28a745;
   --color-success-dark: #1e7e34;
   --color-success-light: #d4edda;
   --color-success-medium: #48bb78;
   --color-success-medium-dark: #38a169;
 
-  /* ============================================
-     COLORS - Danger
-     ============================================ */
+  /* COLORS - Danger */
   --color-danger: #dc3545;
   --color-danger-dark: #bd2130;
   --color-danger-light: #f8d7da;
   --color-danger-medium: #f56565;
   --color-danger-medium-dark: #e53e3e;
 
-  /* ============================================
-     COLORS - Warning
-     ============================================ */
+  /* COLORS - Warning */
   --color-warning: #ffc107;
   --color-warning-dark: #e0a800;
   --color-warning-light: #fff3cd;
   --color-warning-orange: #ed8936;
   --color-warning-orange-dark: #dd6b20;
 
-  /* ============================================
-     COLORS - Info
-     ============================================ */
+  /* COLORS - Info */
   --color-info: #17a2b8;
   --color-info-dark: #117a8b;
   --color-info-light: #d1ecf1;
   --color-info-blue: #4299e1;
   --color-info-blue-dark: #3182ce;
 
-  /* ============================================
-     COLORS - Neutral
-     ============================================ */
+  /* COLORS - Neutral */
   --color-white: #ffffff;
   --color-black: #000000;
   --color-gray-50: #f7fafc;
@@ -72,25 +59,33 @@
   --color-gray-800: #2d3748;
   --color-gray-900: #212529;
 
-  /* ============================================
-     COLORS - Badge Specific
-     ============================================ */
+  /* COLORS - Semantic Aliases */
+  --color-surface: var(--color-white);
+  --color-border: var(--color-gray-200);
+  --color-border-light: var(--color-gray-150);
+  --color-border-dark: var(--color-gray-300);
+  --color-text: var(--color-gray-900);
+  --color-text-muted: var(--color-gray-600);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-light: var(--color-gray-400);
+  --color-bg-primary: var(--color-white);
+  --color-bg-secondary: var(--color-gray-50);
+  --color-bg-tertiary: var(--color-gray-100);
+  --color-bg-hover: var(--color-gray-100);
+
+  /* COLORS - Badge Variants */
   --color-success-badge-light: #c6f6d5;
   --color-success-badge-medium: #9ae6b4;
   --color-danger-badge-light: #fed7d7;
   --color-danger-badge-medium: #fc8181;
 
-  /* ============================================
-   DOMAIN COLORS - CSS VARIABLES
-   ============================================ */
-
-  /* HORSES */
+  /* DOMAIN COLORS - Horses */
   --color-pony-light: #ed64a6;
   --color-pony-dark: #d53f8c;
   --color-horse-light: #63b3ed;
   --color-horse-dark: #4299e1;
 
-  /* OWNERS */
+  /* DOMAIN COLORS - Owners */
   --color-laury-light: #fddce3;
   --color-laury-dark: #f5576c;
   --color-owner-light: #fee3c5;
@@ -100,7 +95,7 @@
   --color-other-light: #fcdada;
   --color-other-dark: #f56565;
 
-  /* RIDERS */
+  /* DOMAIN COLORS - Riders */
   --color-rider-owner-light: #ed8936;
   --color-rider-owner-dark: #dd6b20;
   --color-rider-club-light: #4299e1;
@@ -108,19 +103,19 @@
   --color-rider-loaner-light: #28a745;
   --color-rider-loaner-dark: #1e7e34;
 
-  /* PAIRINGS */
+  /* DOMAIN COLORS - Pairings */
   --color-pairing-own-light: #fef3c7;
   --color-pairing-own-dark: #ed8936;
   --color-pairing-loan-light: #d1fae5;
   --color-pairing-loan-dark: #48bb78;
 
-  /* ASSIGNMENTS */
+  /* DOMAIN COLORS - Assignments */
   --color-assignment-manual-light: #90cdf4;
   --color-assignment-manual-dark: #4299e1;
   --color-assignment-automatic-light: #9ae6b4;
   --color-assignment-automatic-dark: #38a169;
 
-  /* STATUS */
+  /* DOMAIN COLORS - Status */
   --color-status-active-light: #c6f6d5;
   --color-status-active-dark: #48bb78;
   --color-status-inactive-light: #e2e8f0;
@@ -132,112 +127,97 @@
   --color-status-cancelled-light: #fed7d7;
   --color-status-cancelled-dark: #f56565;
 
-  /* INSTRUCTORS */
-  --color-instructor-light: #bee3f8;
-  --color-instructor-dark: #4299e1;
-
-  /* ============================================
-     SPACING
-     ============================================ */
+  /* SPACING */
+  --spacing-0: 0;
+  --spacing-px: 1px;
+  --spacing-2xs: 2px;
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
 
-  /* ============================================
-   SHARED HEIGHTS (ALIGNMENT)
-   ============================================ */
-
-  --day-header-height: 80px;
-  --all-day-height: 40px;
-
-  /* ============================================
-     BORDER RADIUS
-     ============================================ */
+  /* BORDER RADIUS */
+  --radius-none: 0;
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
   --radius-full: 9999px;
 
-  /* ============================================
-     SHADOWS
-     ============================================ */
+  /* SHADOWS */
+  --shadow-none: none;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
   --shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.25);
 
-  /* ============================================
-     TRANSITIONS
-     ============================================ */
+  /* TRANSITIONS */
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
+  --transition-slower: 0.5s ease;
 
-  /* ============================================
-     TYPOGRAPHY - Font Sizes
-     ============================================ */
+  /* TYPOGRAPHY - Font Sizes */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
+  --font-size-normal: 1rem;
+  --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.75rem;
+  --font-size-4xl: 2rem;
 
-  /* ============================================
-     TYPOGRAPHY - Font Weights
-     ============================================ */
+  /* TYPOGRAPHY - Font Weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* ============================================
-     GRADIENTS
-     ============================================ */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--color-primary-light) 0%,
-    var(--color-primary-purple) 100%
-  );
+  /* TYPOGRAPHY - Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Z-INDEX System */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+
+  /* GRADIENTS */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-purple) 100%);
   --gradient-pony: linear-gradient(135deg, var(--color-pony-light) 0%, var(--color-pony-dark) 100%);
-  --gradient-success: linear-gradient(
-    135deg,
-    var(--color-success-medium) 0%,
-    var(--color-success-medium-dark) 100%
-  );
-  --gradient-danger: linear-gradient(
-    135deg,
-    var(--color-danger-medium) 0%,
-    var(--color-danger-medium-dark) 100%
-  );
-  --gradient-secondary: linear-gradient(
-    135deg,
-    var(--color-gray-500) 0%,
-    var(--color-gray-650) 100%
-  );
-  --gradient-warning: linear-gradient(
-    135deg,
-    var(--color-warning-orange) 0%,
-    var(--color-warning-orange-dark) 100%
-  );
-  --gradient-info: linear-gradient(
-    135deg,
-    var(--color-info-blue) 0%,
-    var(--color-info-blue-dark) 100%
-  );
+  --gradient-success: linear-gradient(135deg, var(--color-success-medium) 0%, var(--color-success-medium-dark) 100%);
+  --gradient-danger: linear-gradient(135deg, var(--color-danger-medium) 0%, var(--color-danger-medium-dark) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--color-gray-500) 0%, var(--color-gray-650) 100%);
+  --gradient-warning: linear-gradient(135deg, var(--color-warning-orange) 0%, var(--color-warning-orange-dark) 100%);
+  --gradient-info: linear-gradient(135deg, var(--color-info-blue) 0%, var(--color-info-blue-dark) 100%);
   --gradient-light: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-150) 100%);
-  --gradient-alert-success: linear-gradient(
-    135deg,
-    var(--color-success-badge-light) 0%,
-    var(--color-success-badge-medium) 100%
-  );
-  --gradient-alert-error: linear-gradient(
-    135deg,
-    var(--color-danger-badge-light) 0%,
-    var(--color-danger-badge-medium) 100%
-  );
+  --gradient-alert-success: linear-gradient(135deg, var(--color-success-badge-light) 0%, var(--color-success-badge-medium) 100%);
+  --gradient-alert-error: linear-gradient(135deg, var(--color-danger-badge-light) 0%, var(--color-danger-badge-medium) 100%);
+
+  /* CALENDAR SPECIFIC */
+  --hour-height: 60px;
+  --start-hour: 9;
+  --end-hour: 22;
+  --day-header-height: 50px;
+  --all-day-section-height: 50px;
+  --selection-color: rgba(66, 153, 225, 0.2);
+  --selection-border: var(--color-info-blue);
+  --today-bg: var(--color-info-light, #ebf8ff);
+  --hour-line-color: var(--color-gray-200);
 }

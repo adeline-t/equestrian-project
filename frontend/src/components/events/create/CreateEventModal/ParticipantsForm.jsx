@@ -6,7 +6,7 @@ import {
   getRiderTypeLabel,
 } from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-participants.css';
 
 function ParticipantsForm({
   participants,

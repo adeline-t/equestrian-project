@@ -8,7 +8,7 @@ import {
 import { Icons } from '../../../../lib/icons.jsx';
 import { INSTRUCTORS } from '../../../../lib/domain';
 
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-form.css';
 
 // Convert domain map → array for UI
 const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({

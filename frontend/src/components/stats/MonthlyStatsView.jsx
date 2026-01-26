@@ -3,7 +3,7 @@ import { fr } from 'date-fns/locale';
 import { useMonthlyStats } from '../../hooks/useMonthlyStats';
 import { Icons } from '../../lib/icons';
 import { getEventTypeConfig } from '../../lib/domain/events';
-import '../../styles/features/stats.css';
+import '../../styles/features/stats/stats.css';
 
 function MonthlyStatsView() {
   const {

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { useHorseForm } from '../../hooks/index.js';
 import {
   HORSE_TYPES,
-  OWNER_TYPES,
   getHorseTypeLabel,
   getOwnerTypeLabel,
 } from '../../lib/domain/domain-constants.js';
@@ -55,20 +54,20 @@ function HorseForm({ horse, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={handleFormSubmit} className="horse-form">
+    <form onSubmit={handleFormSubmit} className="entity-form">
       {/* Error Alert */}
       {error && (
-        <div className="alert alert-error mb-20">
+        <div className="alert alert-error">
           <Icons.Warning />
           <strong>Erreur:</strong> {error}
         </div>
       )}
 
       {/* Basic Information */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      <div className="form-section">
+        <h3>Informations générales</h3>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label htmlFor="name">
             Nom du cheval <span className="required">*</span>
           </label>
@@ -83,15 +82,13 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           />
         </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>
             Type <span className="required">*</span>
           </label>
 
           <div className="segmented-control">
             {kindOptions.map((type) => {
-              const label = type === HORSE_TYPES.HORSE ? 'Cheval' : 'Poney';
-
               const isActive = formData.kind === type;
 
               return (
@@ -108,7 +105,7 @@ function HorseForm({ horse, onSubmit, onCancel }) {
           </div>
         </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>
             Propriétaire <span className="required">*</span>
           </label>
@@ -133,8 +130,8 @@ function HorseForm({ horse, onSubmit, onCancel }) {
       </div>
 
       {/* Activity Period */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Période d'activité</h3>
+      <div className="form-section">
+        <h3>Période d'activité</h3>
 
         <div className="form-row">
           <div className="form-group">

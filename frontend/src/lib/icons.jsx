@@ -38,6 +38,9 @@ import {
   FaUsers,
   FaLock,
   FaArrowDown,
+  FaChartBar,
+  FaBars, // ✨ NOUVEAU
+  FaSignOutAlt,
 } from 'react-icons/fa';
 
 export const Icons = {
@@ -85,6 +88,10 @@ export const Icons = {
   Warning: FaExclamationTriangle,
   Lock: FaLock,
   ArrowDown: FaArrowDown,
+  BarChart: FaChartBar,
+  Menu: FaBars,
+  X: FaTimes, // (alias de Close)
+  LogOut: FaSignOutAlt,
 };
 
 export const renderIcon = (Icon, props = {}) => {

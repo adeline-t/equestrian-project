@@ -3,15 +3,11 @@ import { horseService } from '../services';
 import { isActive } from '../lib/helpers';
 import { HORSE_TYPES, OWNER_TYPES } from '../lib/domain';
 
-/**
- * Custom hook for managing horses list with filters and stats
- */
 export function useHorsesList() {
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filters
   const [includeInactive, setIncludeInactive] = useState(false);
   const [kindFilter, setKindFilter] = useState('all');
   const [ownershipFilter, setOwnershipFilter] = useState('all');
@@ -23,7 +19,6 @@ export function useHorsesList() {
       const data = await horseService.getAll();
       setHorses(data || []);
     } catch (err) {
-      console.error('Error fetching horses:', err);
       setError(err.message || 'Erreur lors du chargement des chevaux');
     } finally {
       setLoading(false);
@@ -34,7 +29,6 @@ export function useHorsesList() {
     fetchHorses();
   }, []);
 
-  // Calculate stats
   const stats = {
     total: horses.length,
     active: horses.filter((h) => isActive(h.activity_start_date, h.activity_end_date)).length,
@@ -47,25 +41,15 @@ export function useHorsesList() {
     other: horses.filter((h) => h.ownership_type === OWNER_TYPES.OTHER).length,
   };
 
-  // Filter horses
-  const filteredHorses = horses.filter((horse) => {
-    const horseIsActive = isActive(horse.activity_start_date, horse.activity_end_date);
-    if (!includeInactive && !horseIsActive) return false;
-
-    if (kindFilter !== 'all' && horse.kind !== kindFilter) return false;
-    if (ownershipFilter !== 'all' && horse.ownership_type !== ownershipFilter) return false;
-
+  const filteredHorses = horses.filter((h) => {
+    if (!includeInactive && !isActive(h.activity_start_date, h.activity_end_date)) return false;
+    if (kindFilter !== 'all' && h.kind !== kindFilter) return false;
+    if (ownershipFilter !== 'all' && h.ownership_type !== ownershipFilter) return false;
     return true;
   });
 
-  const reload = async () => {
-    await fetchHorses();
-  };
-
-  const toggleIncludeInactive = () => {
-    setIncludeInactive(!includeInactive);
-  };
-
+  const reload = () => fetchHorses();
+  const toggleIncludeInactive = () => setIncludeInactive(!includeInactive);
   const clearError = () => setError(null);
 
   return {

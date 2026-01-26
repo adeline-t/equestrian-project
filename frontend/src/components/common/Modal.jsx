@@ -21,17 +21,19 @@ const Modal = ({ isOpen, onClose, title, children, footer, size = 'medium', clas
   return (
     <Portal>
       <div className="modal-overlay" onClick={onClose}>
-        <div className={`modal-content ${size} ${className}`} onClick={(e) => e.stopPropagation()}>
-          {title && (
-            <div className="modal-header">
-              <h2>{title}</h2>
-              <button className="btn-close" onClick={onClose} aria-label="Close modal">
-                <Icons.Close />
-              </button>
-            </div>
-          )}
-          <div className="modal-body">{children}</div>
-          {footer && <div className="modal-footer">{footer}</div>}
+        <div className={`modal modal--${size} ${className}`} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content">
+            {title && (
+              <div className="modal-header">
+                <h2>{title}</h2>
+                <button className="btn-close" onClick={onClose} aria-label="Close modal">
+                  <Icons.Close />
+                </button>
+              </div>
+            )}
+            <div className="modal-body">{children}</div>
+            {footer && <div className="modal-footer">{footer}</div>}
+          </div>
         </div>
       </div>
     </Portal>
@@ -44,7 +46,7 @@ Modal.propTypes = {
   title: PropTypes.node,
   children: PropTypes.node.isRequired,
   footer: PropTypes.node,
-  size: PropTypes.oneOf(['small', 'medium', 'large', 'xlarge']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg', 'xl']),
   className: PropTypes.string,
 };
 

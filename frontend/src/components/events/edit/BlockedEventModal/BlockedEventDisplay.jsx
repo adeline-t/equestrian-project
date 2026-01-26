@@ -4,7 +4,7 @@ import { getStatusConfig } from '../../../../lib/domain/events';
 import { getInstructorConfig } from '../../../../lib/domain/domain-constants';
 import DomainBadge from '../../../common/DomainBadge';
 import { formatDate, formatDateTime, formatTimeFlexible } from '../../../../lib/helpers/formatters';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-modal.css';
 
 export default function BlockedEventDisplay({ slot, event, recurrence }) {
   if (!slot || !event) {

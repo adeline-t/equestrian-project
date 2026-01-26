@@ -1,0 +1,136 @@
+/* ============================================
+   RIDER SELECTOR MODAL
+   Style iOS moderne pour la sélection de cavalier
+   ============================================ */
+
+.rider-selector-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  min-height: 300px;
+}
+
+/* ============================================
+   FILTERS - Pills standard de l'app
+   ============================================ */
+
+.rider-selector-filters {
+  /* Pas de padding supplémentaire, les pills gèrent leur propre style */
+}
+
+/* ============================================
+   RIDERS LIST - iOS Style
+   ============================================ */
+
+.rider-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.rider-selector-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.rider-selector-card:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-primary-light);
+  transform: translateX(2px);
+}
+
+.rider-selector-card:active {
+  transform: scale(0.98);
+  background: var(--color-gray-100);
+}
+
+.rider-selector-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rider-selector-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rider-selector-name {
+  font-size: 17px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rider-selector-type {
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+.rider-selector-chevron {
+  font-size: 24px;
+  color: var(--color-gray-400);
+  font-weight: 300;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .rider-selector-content {
+    gap: var(--spacing-md);
+    min-height: auto;
+  }
+
+  .rider-selector-card {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .rider-selector-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .rider-selector-name {
+    font-size: 16px;
+  }
+
+  .rider-selector-type {
+    font-size: 13px;
+  }
+
+  .rider-selector-chevron {
+    font-size: 20px;
+  }
+}
+
+/* ============================================
+   EMPTY STATE OVERRIDE
+   ============================================ */
+
+.rider-selector-list .empty-state-small {
+  margin-top: var(--spacing-lg);
+}

@@ -3,7 +3,7 @@ import { Icons } from '../../lib/icons';
 import { usePackageForm } from '../../hooks/usePackageForm.js';
 
 /**
- * PackageForm - Version complète, préremplie et minimale
+ * PackageForm - Formulaire de forfait
  * Props:
  *  - initialPackage : objet du forfait à éditer (ou null pour création)
  *  - riderId : id du cavalier
@@ -20,46 +20,54 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
   const isEdit = !!initialPackage;
 
   return (
-    <form onSubmit={handleSubmit} className="form-group" noValidate>
+    <form onSubmit={handleSubmit} className="entity-form" noValidate>
       {error && (
-        <div className="alert alert-error mb-16">
+        <div className="alert alert-error">
           <Icons.Warning />
           <span>{error}</span>
         </div>
       )}
 
-      <div className="form-row mb-20">
-        <div className="form-group">
-          <label htmlFor="services_per_week">Services / semaine</label>
-          <input
-            type="number"
-            id="services_per_week"
-            name="services_per_week"
-            value={formData.services_per_week}
-            onChange={handleChange}
-            min="0"
-            step="1"
-            disabled={submitting}
-            className="form-input text-center"
-            required
-            autoFocus
-          />
-        </div>
+      <div className="form-section">
+        <h3>Détails du forfait</h3>
 
-        <div className="form-group">
-          <label htmlFor="group_lessons_per_week">Cours collectifs / semaine</label>
-          <input
-            type="number"
-            id="group_lessons_per_week"
-            name="group_lessons_per_week"
-            value={formData.group_lessons_per_week}
-            onChange={handleChange}
-            min="0"
-            step="1"
-            disabled={submitting}
-            className="form-input text-center"
-            required
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="services_per_week">
+              Services / semaine <span className="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="services_per_week"
+              name="services_per_week"
+              value={formData.services_per_week}
+              onChange={handleChange}
+              min="0"
+              step="1"
+              disabled={submitting}
+              className="form-input"
+              required
+              autoFocus
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="group_lessons_per_week">
+              Cours collectifs / semaine <span className="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="group_lessons_per_week"
+              name="group_lessons_per_week"
+              value={formData.group_lessons_per_week}
+              onChange={handleChange}
+              min="0"
+              step="1"
+              disabled={submitting}
+              className="form-input"
+              required
+            />
+          </div>
         </div>
       </div>
 
@@ -70,9 +78,8 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
           onClick={onCancel}
           disabled={submitting}
         >
-          Annuler
+          <Icons.Cancel /> Annuler
         </button>
-
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? (
             <>
@@ -80,7 +87,9 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
               Enregistrement...
             </>
           ) : (
-            <>{isEdit ? 'Modifier' : 'Créer'}</>
+            <>
+              <Icons.Save /> {isEdit ? 'Modifier' : 'Créer'}
+            </>
           )}
         </button>
       </div>
@@ -96,7 +105,7 @@ PackageForm.propTypes = {
     is_active: PropTypes.bool,
   }),
   riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  onSubmit: PropTypes.func.isRequired, // signature: (riderId, packageData) => Promise
+  onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
 

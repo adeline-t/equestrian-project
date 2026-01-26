@@ -400,3 +400,237 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   DETAIL CARDS - Entity detail view cards
+   Shared between HorseCard, RiderCard, etc.
+   ============================================ */
+
+/* ============================================
+   CARD TITLE (in modal header)
+   ============================================ */
+
+.detail-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.detail-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-card-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-card-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.detail-card-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.detail-card-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   CARD CONTENT
+   ============================================ */
+
+.detail-card-content {
+  padding: var(--spacing-xs);
+}
+
+/* ============================================
+   CARD GRID LAYOUT
+   ============================================ */
+
+.detail-card-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.detail-card-sidebar,
+.detail-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ============================================
+   PAIRINGS LIST - Modern iOS style
+   ============================================ */
+
+.pairings-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.pairing-item-modern {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.pairing-item-modern:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-primary-light);
+  transform: translateX(2px);
+}
+
+.pairing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.pairing-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.pairing-header span:first-child {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.pairing-days {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.pairing-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PACKAGE ITEM - Modern style
+   ============================================ */
+
+.package-item-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: var(--gradient-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.package-item-modern:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(2px);
+}
+
+.package-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.package-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+/* ============================================
+   INFO ITEMS - Simple layout
+   ============================================ */
+
+.detail-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 992px) {
+  .detail-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-card-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-card-content {
+    padding: var(--spacing-xs);
+  }
+
+  .detail-card-title {
+    flex-wrap: wrap;
+  }
+
+  .detail-card-avatar {
+    display: none;
+  }
+
+  .detail-card-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .detail-card-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .pairing-item-modern {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

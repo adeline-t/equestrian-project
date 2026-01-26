@@ -7,7 +7,6 @@ import {
 } from '../../lib/domain/domain-constants.js';
 import DomainBadge from '../common/DomainBadge.jsx';
 import Modal from '../common/Modal.jsx';
-import '../../styles/features/horses.css';
 
 /**
  * RidersModal - Shows riders for a horse with their loan days
@@ -45,13 +44,8 @@ function RidersModal({ isOpen, onClose, horseName, riders, loading, error }) {
     }
 
     return (
-      <div className="riders-modal-content">
-        <p className="riders-modal-info">
-          <Icons.Info />
-          {ridersArray.length} cavalier(s) actif(s)
-        </p>
-
-        <ul className="riders-modal-list">
+      <div className="modal-content">
+        <ul className="cards-list">
           {ridersArray.map((pairing) => {
             const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
             const isLoan = pairing.link_type === 'loan';
@@ -60,9 +54,9 @@ function RidersModal({ isOpen, onClose, horseName, riders, loading, error }) {
             return (
               <li key={pairing.id} className="riders-modal-item">
                 {/* Rider header */}
-                <div className="riders-modal-header">
-                  <div className="riders-modal-rider-info">
-                    <div className="riders-modal-rider-name">{pairing.rider_name || 'N/A'}</div>
+                <div className="modal-body">
+                  <div className="modal-title mb-20">
+                    <h4>{pairing.rider_name || 'N/A'}</h4>
                     {linkConfig && <DomainBadge config={linkConfig} />}
                   </div>
 
@@ -97,12 +91,12 @@ function RidersModal({ isOpen, onClose, horseName, riders, loading, error }) {
       isOpen={isOpen}
       onClose={onClose}
       title={
-        <div className="modal-title-with-icon">
+        <div className="modal-title">
           <Icons.Users />
           Cavaliers de {horseName || 'ce cheval'}
         </div>
       }
-      size="medium"
+      size="md"
     >
       {getContent()}
     </Modal>

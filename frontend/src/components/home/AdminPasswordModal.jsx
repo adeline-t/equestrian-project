@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Icons } from '../../lib/icons';
-import '../../styles/features/home.css';
+import '../../styles/features/home/home.css';
 import Modal from '../common/Modal';
 
 const ADMIN_PASSWORD = 'defly';
@@ -25,7 +25,7 @@ export default function AdminPasswordModal({ isOpen, onClose, onSuccess }) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="small"
+      size="sm"
       title={
         <span className="modal-title">
           <Icons.Lock />
@@ -48,6 +48,7 @@ export default function AdminPasswordModal({ isOpen, onClose, onSuccess }) {
           <label>Mot de passe</label>
           <input
             type="password"
+            className="form-input"
             value={password}
             autoFocus
             onChange={(e) => {

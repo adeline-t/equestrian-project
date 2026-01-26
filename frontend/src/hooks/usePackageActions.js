@@ -55,7 +55,7 @@ export function usePackageActions(onSuccess) {
     }
   };
 
-  const handleRemoveFromInventory = async () => {
+  const handlePermanentDelete = async () => {
     if (!packageToDelete) return;
 
     try {
@@ -66,10 +66,6 @@ export function usePackageActions(onSuccess) {
     } catch (err) {
       throw err;
     }
-  };
-
-  const handlePermanentDelete = async () => {
-    await handleRemoveFromInventory();
   };
 
   const closeModal = () => {
@@ -91,7 +87,6 @@ export function usePackageActions(onSuccess) {
     handleEdit,
     handleDeleteClick,
     handleSubmit,
-    handleRemoveFromInventory,
     handlePermanentDelete,
     closeModal,
     closeDeleteModal,

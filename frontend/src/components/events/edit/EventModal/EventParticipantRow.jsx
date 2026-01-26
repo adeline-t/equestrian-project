@@ -7,7 +7,7 @@ import {
   getHorseTypeConfig,
   getHorseAssignmentConfig,
 } from '../../../../lib/domain/domain-constants';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-participants.css';
 
 export default function EventParticipantRow({ participant, canEdit, onEdit, onDelete }) {
   const { rider, horse, horse_assignment_type, is_cancelled } = participant || {};

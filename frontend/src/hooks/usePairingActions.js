@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { RIDER_HORSE_LINK_TYPE } from '../lib/domain/index.js';
+import { OWNER_TYPES, RIDER_HORSE_LINK_TYPE } from '../lib/domain/index.js';
 import { getTodayISO } from '../lib/helpers/index.js';
 import pairingService from '../services/pairingService.js';
 
@@ -15,11 +15,13 @@ export function usePairingActions(onSuccess) {
   const [pairingToDelete, setPairingToDelete] = useState(null);
 
   const handleCreate = () => {
+    console.log('create pairing');
     setEditingPairing(null);
     setShowPairingModal(true);
   };
 
   const handleEdit = (pairing) => {
+    console.log('edit pairing :', pairing);
     const pairingWithDays = {
       ...pairing,
       loan_days: pairing.loan_days || [],
@@ -37,9 +39,17 @@ export function usePairingActions(onSuccess) {
     try {
       // Default link_type based on rider
       const payload = {
-        ...pairingData,
         rider_id: riderId,
-        link_type: pairingData.link_type ?? RIDER_HORSE_LINK_TYPE.OWN,
+        horse_id: pairingData.horse_id,
+        pairing_start_date: pairingData.pairing_start_date,
+        pairing_end_date: pairingData.pairing_end_date,
+        updated_at: new Date(),
+        link_type: pairingData.link_type,
+        loan_days_per_week:
+          pairingData.link_type === RIDER_HORSE_LINK_TYPE.OWN
+            ? null
+            : pairingData.loan_days_per_week,
+        loan_days: pairingData.link_type === RIDER_HORSE_LINK_TYPE.OWN ? [] : pairingData.loan_days,
       };
 
       if (editingPairing) {

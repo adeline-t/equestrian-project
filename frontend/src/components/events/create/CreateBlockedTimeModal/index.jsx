@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useEventBlockedCreate } from '../../../../hooks/useEventBlockedCreate.js';
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles/features/events.css';
+import '../../../../styles//events-modal.css';
 import Modal from '../../../common/Modal';
 import BlockedTimeForm from './BlockedTimeForm';
 
@@ -29,7 +29,7 @@ function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
       isOpen={true}
       onClose={onClose}
       title="Bloquer une période"
-      size="medium"
+      size="md"
       footer={
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>

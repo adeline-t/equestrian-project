@@ -32,29 +32,20 @@
 }
 
 /* ============================================
-   STATS GRID
+   SPECIFIC GRIDS
    ============================================ */
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: var(--spacing-md);
 }
-
-/* ============================================
-   CARDS GRID
-   ============================================ */
 
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
-
-/* ============================================
-   TWO COLUMN LAYOUT
-   ============================================ */
 
 .two-column {
   display: grid;

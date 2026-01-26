@@ -90,34 +90,6 @@
    GAP UTILITIES
    ============================================ */
 
-.gap-4 {
-  gap: 4px;
-}
-
-.gap-8 {
-  gap: 8px;
-}
-
-.gap-10 {
-  gap: 10px;
-}
-
-.gap-12 {
-  gap: 12px;
-}
-
-.gap-16 {
-  gap: 16px;
-}
-
-.gap-20 {
-  gap: 20px;
-}
-
-.gap-24 {
-  gap: 24px;
-}
-
 .gap-xs {
   gap: var(--spacing-xs);
 }
@@ -139,7 +111,7 @@
 }
 
 /* ============================================
-   COMMON FLEX PATTERNS
+   COMMON PATTERNS
    ============================================ */
 
 .flex-between {

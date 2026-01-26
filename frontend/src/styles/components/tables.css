@@ -1,17 +1,8 @@
-/* ============================================
-   TABLES - All Table Styles Consolidated
-   ============================================ */
-
-/* Table Container */
+/* TABLES - Optimisé */
 .table-container {
   overflow-x: auto;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-gray-200);
-}
-
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--color-border);
 }
 
 /* Base Table */
@@ -19,30 +10,41 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: var(--color-white);
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
+}
+
+.table thead,
+.table tbody {
+  display: block;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .table thead {
   background-image: var(--gradient-light);
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 2px solid var(--color-border);
 }
 
 .table th {
-  padding: 12px 16px;
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: center;
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
   color: var(--color-gray-650);
-  border-bottom: 1px solid var(--color-gray-300);
+  border-bottom: 1px solid var(--color-border-dark);
 }
 
 .table td {
-  padding: 12px 16px;
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: var(--font-size-sm);
   text-align: center;
-  color: var(--color-gray-900);
-  border-bottom: 1px solid var(--color-gray-200);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .table tbody tr:last-child td {
@@ -50,10 +52,9 @@
 }
 
 .table tbody tr:hover {
-  background-color: var(--color-gray-100);
+  background: var(--color-bg-hover);
 }
 
-/* Table Actions */
 .table-actions,
 .action-buttons {
   display: flex;
@@ -63,45 +64,194 @@
   flex-wrap: nowrap;
 }
 
-.table-actions button,
-.action-buttons button {
-  /* Les styles spécifiques sont sur .btn-icon-view, .btn-icon-edit, etc. */
-  flex-shrink: 0;
+.row-clickable {
+  position: relative;
+  cursor: pointer;
+  transition: all var(--transition-base);
 }
 
-/* Table Variants */
-.table-sm {
-  font-size: var(--font-size-sm);
+.row-clickable:hover {
+  cursor: pointer;
+  background: var(--color-bg-hover);
+  transform: translateX(2px);
 }
 
-.table-sm th,
-.table-sm td {
-  padding: 8px 12px;
-}
-
-.table-sm .table-actions button {
-  padding: 4px 8px;
-  font-size: 11px;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-  .table {
-    font-size: 13px;
-  }
-
   .table th,
   .table td {
-    padding: 8px 12px;
+    padding: var(--spacing-sm) var(--spacing-sm);
+  }
+}
+@media (max-width: 640px) {
+  .table thead {
+    display: none;
   }
 
-  .table-actions {
+  .table tbody tr td.table-actions {
+    display: none;
+  }
+
+  .table tbody tr {
+    display: block;
+    background: var(--color-surface);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-light);
+  }
+
+  .table tbody tr td {
+    display: flex;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--color-bg-tertiary);
+    justify-content: flex-start;
+    text-align: left;
+    gap: var(--spacing-sm);
+  }
+
+  .table tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  .table tbody tr td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    margin-right: var(--spacing-md);
+    flex-shrink: 0;
+  }
+}
+
+/* ============================================
+   LIST VIEWS - Common styles for list pages
+   Shared between HorsesList, RidersList, etc.
+   ============================================ */
+
+/* ============================================
+   LIST HEADER
+   ============================================ */
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.list-header h2 {
+  margin: 0;
+}
+
+.list-header-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+/* ============================================
+   FILTER SECTION
+   ============================================ */
+
+.list-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* ============================================
+   MESSAGES SECTION
+   ============================================ */
+
+.list-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* ============================================
+   COUNT BADGE (for clickable counts)
+   ============================================ */
+
+.count-badge-interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px var(--spacing-sm);
+  background: var(--gradient-info);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-base);
+  cursor: default;
+}
+
+.count-badge-interactive.clickable {
+  cursor: pointer;
+}
+
+.count-badge-interactive.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+/* ============================================
+   DAY BADGES (for loan/activity days)
+   ============================================ */
+
+.days-cell {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.days-cell .day-badge {
+  /* Utilise les styles existants de badges.css */
+}
+
+/* ============================================
+   BADGES CONTAINER (for multiple badges in cell)
+   ============================================ */
+
+.badges-cell {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .list-header {
     flex-direction: column;
-    gap: 4px;
+    align-items: flex-start;
   }
 
-  .table-actions button {
+  .list-header-actions {
     width: 100%;
-    justify-content: center;
+    flex-direction: column;
+  }
+
+  .list-header-actions .btn {
+    width: 100%;
+  }
+
+  .days-cell {
+    gap: 2px;
+    padding: 2px;
+    flex-wrap: wrap;
   }
 }

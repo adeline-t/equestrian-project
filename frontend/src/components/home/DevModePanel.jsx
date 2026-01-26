@@ -1,5 +1,5 @@
 import { useAppMode } from '../../context/AppMode';
-import '../../styles/features/home.css';
+import '../../styles/features/home/home.css';
 
 export default function DevModePanel() {
   const { mode, setMode } = useAppMode();

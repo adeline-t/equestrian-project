@@ -10,9 +10,12 @@
    NOTE: Feature-specific styles should be imported
    separately in their respective components:
    
-   - calendar.css for calendar features
-   - events.css for event features
-   - riders.css for rider features
-   - horses.css for horse features
-   - pairings.css for pairing features
+   - features/calendar/calendar/calendar.css for calendar features
+   - features/events/event-modal.css for event modals
+   - features/riders/riders-list.css for rider lists
+   - features/horses/horses-list.css for horse lists
+   - features/pairings/pairings.css for pairing features
+   - features/stats/stats.css for statistics
+   - features/home/header.css for header (desktop)
+   - features/home/header-mobile.css for header (mobile)
    ============================================ */

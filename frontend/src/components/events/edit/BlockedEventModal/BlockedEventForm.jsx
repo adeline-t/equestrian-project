@@ -8,7 +8,7 @@ import {
   formatTimeForInput,
   formatTimeForDatabase,
 } from '../../../../lib/helpers/formatters';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-form.css';
 
 // Convert domain map → array for UI
 const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({

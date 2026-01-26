@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import SlotContent from './SlotContent';
-import '../../styles/features/calendar.css';
 import { isBlockedEvent } from '../../lib/domain';
+import '../../styles/features/calendar/calendar.css';
+import SlotContent from './SlotContent';
 
 /* ------------------------------
    EventCard Component
@@ -13,11 +13,6 @@ function SlotEventGridCard({ slot, onClick }) {
   }
 
   const handleClick = () => {
-    console.debug('[EventCard] click', {
-      slotId: slot.id,
-      eventType: slot.events?.event_type,
-    });
-
     onClick?.(slot, isBlockedEvent(slot.events));
   };
 

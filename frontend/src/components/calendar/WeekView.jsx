@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
+import { minutesToTime } from '../../lib/helpers/formatters';
 import DayColumn from './DayColumn';
-import { minutesToTime } from '../../lib/helpers';
 
 /* -------------------------------------------------------
  * DEBUG FLAG (facile à désactiver)
@@ -13,48 +13,15 @@ const DEBUG = true;
 function WeekView({ weekData, onSlotClick, onQuickCreate }) {
   const hours = Array.from({ length: 14 }, (_, i) => i + 8);
 
-  /* ---------------- DEBUG: render ---------------- */
-  if (DEBUG) {
-    console.debug('[WeekView] render', {
-      hasWeekData: !!weekData,
-      daysCount: weekData?.days?.length,
-    });
-  }
-
   if (!weekData?.days) {
-    if (DEBUG) {
-      console.warn('[WeekView] weekData.days manquant', weekData);
-    }
     return <div>Chargement...</div>;
   }
 
-  /* ---------------- DEBUG: days summary ---------------- */
-  if (DEBUG) {
-    console.debug(
-      '[WeekView] days summary',
-      weekData.days.map((day) => ({
-        date: day.date,
-        dayName: day.day_name,
-        slotsCount: day.slots?.length || 0,
-      }))
-    );
-  }
-
-  /* ---------------- handlers with debug ---------------- */
   const handleSlotClick = (slot, isSelectedSlotBlocked) => {
-    if (DEBUG) {
-      console.debug('[WeekView] slot click', {
-        slotId: slot?.id,
-        isSelectedSlotBlocked: isSelectedSlotBlocked,
-      });
-    }
     onSlotClick?.(slot, isSelectedSlotBlocked);
   };
 
   const handleQuickCreate = (payload) => {
-    if (DEBUG) {
-      console.debug('[WeekView] quick create', payload);
-    }
     onQuickCreate?.(payload);
   };
 

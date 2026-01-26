@@ -1,67 +1,50 @@
 /* ============================================
-   FORMS - All Form Styles Consolidated
-   ============================================ */
-
-/* ============================================
-   FORM GROUPS
+   FORMS - Optimisé avec variables
    ============================================ */
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  padding: 8px;
+  margin-bottom: var(--spacing-md);
 }
 
 .form-row {
   display: flex;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 .form-row .form-group {
   flex: 1;
 }
 
-/* ============================================
-   FORM LABELS
-   ============================================ */
-
 .form-group label,
 .form-label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
-}
-
-.form-label-icon {
   display: flex;
   align-items: center;
-  gap: 8px;
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  gap: var(--spacing-xs);
 }
 
-.form-label-icon svg {
-  color: var(--color-primary);
-  font-size: 16px;
+.form-label svg {
+  font-size: var(--spacing-md);
 }
-
-/* ============================================
-   FORM INPUTS
-   ============================================ */
 
 .form-input,
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: var(--spacing-sm) var(--spacing-sm);
   font-size: var(--font-size-sm);
   border: 1px solid var(--color-gray-400);
   border-radius: var(--radius-md);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
   font-family: inherit;
-  background: var(--color-white);
-  color: var(--color-gray-900);
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .form-input:focus,
@@ -75,13 +58,13 @@
 .form-input:disabled,
 .form-select:disabled,
 .form-textarea:disabled {
-  background-color: var(--color-gray-100);
+  background: var(--color-bg-tertiary);
   cursor: not-allowed;
   opacity: 0.6;
 }
 
 .form-input::placeholder {
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
 }
 
 .form-textarea {
@@ -89,7 +72,6 @@
   min-height: 80px;
 }
 
-/* Input with specific heights */
 .form-input-md {
   height: 42px;
 }
@@ -100,10 +82,18 @@
   font-size: var(--font-size-sm);
 }
 
-/* ============================================
-   INLINE FORM GROUPS
-   ============================================ */
+/* FORM ERROR */
+.form-error {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  border-left: 4px solid var(--color-danger);
+}
 
+/* INLINE FORM GROUP */
 .inline-form-group {
   display: flex;
   flex-direction: row;
@@ -115,17 +105,12 @@
 .inline-form-group label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-700);
+  color: var(--color-text);
   margin-bottom: 0;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.inline-form-group label svg {
-  font-size: 14px;
-  flex-shrink: 0;
+  gap: var(--spacing-sm);
 }
 
 .inline-form-group input,
@@ -133,7 +118,7 @@
   flex: 1;
   height: 36px;
   padding: 0 var(--spacing-sm);
-  border: 1px solid var(--color-gray-300);
+  border: 1px solid var(--color-border-dark);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   transition: all var(--transition-base);
@@ -146,43 +131,18 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* ============================================
-   NUMBER INPUTS
-   ============================================ */
-
-.compact-number-input {
-  width: 80px;
-  height: 36px;
-  padding: 0 var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--radius-md);
-  text-align: center;
-  color: var(--color-gray-900);
-  transition: all var(--transition-base);
-}
-
-.compact-number-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* ============================================
-   DATE & TIME INPUTS
-   ============================================ */
-
+/* DATE & TIME INPUTS */
 input[type='date'],
 input[type='time'],
 input[type='datetime-local'] {
   width: 100%;
-  padding: 12px;
-  border: 2px solid var(--color-gray-200);
+  padding: var(--spacing-sm);
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-family: inherit;
   transition: all var(--transition-base);
-  background: var(--color-white);
+  background: var(--color-surface);
 }
 
 input[type='date']:focus,
@@ -193,14 +153,11 @@ input[type='datetime-local']:focus {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* ============================================
-   CHECKBOX & RADIO
-   ============================================ */
-
+/* CHECKBOX & RADIO */
 input[type='checkbox'],
 input[type='radio'] {
-  width: 16px;
-  height: 16px;
+  width: var(--spacing-md);
+  height: var(--spacing-md);
   cursor: pointer;
 }
 
@@ -218,10 +175,7 @@ input[type='radio'] {
   gap: var(--spacing-sm);
 }
 
-/* ============================================
-   FORM VALIDATION STATES
-   ============================================ */
-
+/* FORM VALIDATION */
 .form-input.is-invalid,
 .form-select.is-invalid,
 .form-textarea.is-invalid {
@@ -260,128 +214,73 @@ input[type='radio'] {
   color: var(--color-success);
 }
 
-/* ============================================
-   HELPER TEXT
-   ============================================ */
-
+/* HELPER TEXT */
 .form-helper-text,
 .text-muted {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  color: var(--color-gray-600);
+  color: var(--color-text-muted);
 }
 
-.text-info {
-  display: block;
-  margin-top: 4px;
-  font-size: 12px;
-  color: var(--color-info);
-}
-
-.text-danger {
-  display: block;
-  margin-top: 4px;
-  font-size: 12px;
-  color: var(--color-danger);
-}
-
-/* ============================================
-   FORM ACTIONS
-   ============================================ */
-
+/* FORM ACTIONS */
 .form-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 20px;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
   align-items: center;
 }
 
 .form-actions-end {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-sm);
   justify-content: flex-end;
-  padding-top: 24px;
-  border-top: 2px solid var(--color-gray-150);
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid var(--color-border-light);
 }
 
-/* ============================================
-   SPECIAL INPUT TYPES
-   ============================================ */
-
-/* Selection Cards (for radio/checkbox alternatives) */
-.selection-cards {
+.date-input-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  align-items: center;
 }
 
-.selection-card {
-  position: relative;
+.date-input-wrapper label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
 }
 
-.selection-card input[type='radio'],
-.selection-card input[type='checkbox'] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
+.date-input-wrapper label svg {
+  color: var(--color-primary);
+  font-size: var(--font-size-md);
 }
 
-.selection-card-label {
+.date-input-helper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+}
+
+.date-input-helper svg {
+  font-size: var(--font-size-sm);
+  color: var(--color-info);
+}
+
+/* BUTTON GROUP */
+.button-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px;
-  border: 2px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  text-align: center;
-  background: var(--color-white);
+  gap: var(--spacing-sm);
 }
 
-.selection-card-label:hover {
-  border-color: var(--color-primary-light);
-  background: rgba(102, 126, 234, 0.05);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.selection-card input:checked + .selection-card-label {
-  border-color: var(--color-primary);
-  background: var(--gradient-primary);
-  color: var(--color-white);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.selection-card-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: var(--radius-md);
-  font-size: 20px;
-  transition: all var(--transition-base);
-}
-
-.selection-card input:checked + .selection-card-label .selection-card-icon {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--color-white);
-}
-
-.selection-card-text {
-  font-size: 14px;
-  font-weight: var(--font-weight-semibold);
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;
@@ -403,10 +302,6 @@ input[type='radio'] {
     width: 100%;
   }
 
-  .selection-cards {
-    grid-template-columns: 1fr;
-  }
-
   .form-actions {
     flex-direction: column;
     align-items: stretch;
@@ -417,8 +312,136 @@ input[type='radio'] {
   }
 }
 
-@media (max-width: 480px) {
-  .form-group {
-    padding: var(--spacing-xs);
+/* ============================================
+   FORM LAYOUTS - Common form structures
+   Shared between entity forms (Horse, Rider, etc.)
+   ============================================ */
+
+/* ============================================
+   ENTITY FORM CONTAINER
+   ============================================ */
+
+.entity-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
+
+.entity-form .form-section {
+  /* Utilise les styles de sections.css */
+}
+
+.entity-form .form-section h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-gray-150);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+}
+
+/* ============================================
+   FORM GROUPS
+   ============================================ */
+
+.entity-form .form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.entity-form .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   REQUIRED INDICATOR
+   ============================================ */
+
+.required {
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
+/* ============================================
+   ERROR MESSAGES
+   ============================================ */
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.error-message svg {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   FORM INPUT ERROR STATE
+   ============================================ */
+
+.entity-form .form-input.error,
+.entity-form .form-select.error,
+.entity-form .form-textarea.error {
+  border-color: var(--color-danger);
+  background: var(--color-danger-light);
+}
+
+.entity-form .form-input.error:focus,
+.entity-form .form-select.error:focus,
+.entity-form .form-textarea.error:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* ============================================
+   FORM HELP TEXT
+   ============================================ */
+
+.form-help {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  font-style: italic;
+}
+
+/* ============================================
+   SEGMENTED CONTROL IN FORMS
+   ============================================ */
+
+.entity-form .segmented-control {
+  margin-top: var(--spacing-xs);
+}
+
+/* ============================================
+   FORM FOOTER (actions)
+   ============================================ */
+
+.entity-form .modal-footer {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid var(--color-border-light);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .entity-form .form-section h3 {
+    font-size: var(--font-size-sm);
+  }
+
+  .entity-form .modal-footer {
+    margin-top: var(--spacing-lg);
   }
 }

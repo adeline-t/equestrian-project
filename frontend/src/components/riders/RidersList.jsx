@@ -2,33 +2,32 @@ import { useRidersList } from '../../hooks/useRidersList.js';
 import {
   getRiderHorseLinkConfig,
   getRiderTypeConfig,
+  getRiderTypeLabel,
   RIDER_TYPES,
   WEEK_DAYS,
   WEEK_DAYS_EN,
-  getRiderTypeLabel,
 } from '../../lib/domain/domain-constants.js';
 import { COMMON_FILTERS } from '../../lib/helpers/filters/activityFilters.js';
 import { Icons } from '../../lib/icons.jsx';
-import DomainBadge from '../common/DomainBadge.jsx';
-import '../../styles/features/riders.css';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
+import DomainBadge from '../common/DomainBadge.jsx';
 import Modal from '../common/Modal.jsx';
 import RiderCard from './RiderCard.jsx';
 import RiderForm from './RiderForm.jsx';
+import '../../styles/features/riders/riders-list.css';
 
 function RidersList() {
   const {
-    riders,
     filteredRiders,
     stats,
     loading,
     error,
+    successMessage,
     showModal,
     editingRider,
     selectedRiderId,
     showDeleteModal,
     riderToDelete,
-    successMessage,
     riderTypeFilter,
     includeInactive,
     toggleIncludeInactive,
@@ -40,6 +39,7 @@ function RidersList() {
     handleRemoveFromInventory,
     handlePermanentDelete,
     handleFormSubmit,
+    handleSuccess,
     closeRiderModal,
     closeDeleteModal,
     closeRiderCard,
@@ -53,14 +53,12 @@ function RidersList() {
     handleViewDetails(riderId);
   };
 
-  const getRiderHorses = (rider) => (rider.pairings?.length ? rider.pairings : null);
-
   const renderRiderDays = (rider) => {
     const days = getRiderPairingDays(rider);
     if (!days.length) return <span className="text-muted">-</span>;
 
     return (
-      <div className="loan-days-cell">
+      <div className="days-cell">
         {WEEK_DAYS_EN.map((dayEn, index) => (
           <span key={dayEn} className={`day-badge ${days.includes(dayEn) ? 'active' : 'inactive'}`}>
             {WEEK_DAYS[index]}
@@ -70,20 +68,34 @@ function RidersList() {
     );
   };
 
+  const renderRiderHorses = (pairings) => {
+    if (!pairings?.length) return <span className="text-muted">-</span>;
+    return (
+      <div className="badges-cell">
+        {pairings.map((pairing) => {
+          const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
+          if (!linkConfig) return null;
+          const horseName = pairing.horses?.name || pairing.horse?.name;
+          return <DomainBadge key={pairing.id} config={{ ...linkConfig, label: horseName }} />;
+        })}
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="loading">
-        <Icons.Loading className="spin" /> Chargement des cavaliers...
+        <Icons.Loading className="spin" /> Chargement ...
       </div>
     );
   }
 
   return (
-    <div className="card-enhanced riders-list">
-      <div className="flex-between mb-20">
-        <h2>Liste des Cavaliers</h2>
-
-        <div className="flex gap-12">
+    <div className="card-enhanced">
+      {/* Header */}
+      <div className="list-header">
+        <h2>Liste des cavaliers</h2>
+        <div className="list-header-actions">
           <button
             className={`btn ${includeInactive ? 'btn-secondary' : 'btn-outline-secondary'}`}
             onClick={toggleIncludeInactive}
@@ -93,70 +105,53 @@ function RidersList() {
               ? `Inactifs inclus (${stats.inactive})`
               : `Afficher inactifs (${stats.inactive})`}
           </button>
-
           <button className="btn btn-primary" onClick={handleCreate}>
-            <Icons.Add /> Nouveau Cavalier
+            <Icons.Add /> Ajouter
           </button>
         </div>
       </div>
 
-      {/* Filters */}
-      {riders.length > 0 && (
-        <div className="filter-section mb-20">
-          <div className="filter-pills">
-            <button
-              className={`pill ${riderTypeFilter === COMMON_FILTERS.ALL ? 'pill-active' : ''}`}
-              onClick={() => setRiderTypeFilter(COMMON_FILTERS.ALL)}
-              data-rider-type="all"
-            >
-              Tous
-            </button>
-            <button
-              className={`pill ${riderTypeFilter === RIDER_TYPES.OWNER ? 'pill-active' : ''}`}
-              onClick={() => setRiderTypeFilter(RIDER_TYPES.OWNER)}
-              data-rider-type={RIDER_TYPES.OWNER}
-            >
-              {getRiderTypeLabel(RIDER_TYPES.OWNER)}
-            </button>
-            <button
-              className={`pill ${riderTypeFilter === RIDER_TYPES.CLUB ? 'pill-active' : ''}`}
-              onClick={() => setRiderTypeFilter(RIDER_TYPES.CLUB)}
-              data-rider-type={RIDER_TYPES.CLUB}
-            >
-              {getRiderTypeLabel(RIDER_TYPES.CLUB)}
-            </button>
-            <button
-              className={`pill ${riderTypeFilter === RIDER_TYPES.LOANER ? 'pill-active' : ''}`}
-              onClick={() => setRiderTypeFilter(RIDER_TYPES.LOANER)}
-              data-rider-type={RIDER_TYPES.LOANER}
-            >
-              {getRiderTypeLabel(RIDER_TYPES.LOANER)}
-            </button>
-          </div>
+      {/* Filter Pills */}
+      <div className="list-filters">
+        <div className="filter-pills">
+          {[COMMON_FILTERS.ALL, RIDER_TYPES.OWNER, RIDER_TYPES.CLUB, RIDER_TYPES.LOANER].map(
+            (type) => (
+              <button
+                key={type}
+                className={`pill ${riderTypeFilter === type ? 'pill-active' : ''}`}
+                onClick={() => setRiderTypeFilter(type)}
+                data-rider-type={type}
+              >
+                {type === COMMON_FILTERS.ALL ? 'Tous' : getRiderTypeLabel(type)}
+              </button>
+            )
+          )}
         </div>
-      )}
+      </div>
 
       {/* Messages */}
-      {error && (
-        <div className="alert alert-error mb-20">
-          <Icons.Warning /> {error}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={clearError}>
-            Effacer
-          </button>
-        </div>
-      )}
+      <div className="list-messages">
+        {error && (
+          <div className="alert alert-error">
+            <Icons.Warning /> {error}
+            <button className="btn btn-sm btn-secondary" onClick={clearError}>
+              Effacer
+            </button>
+          </div>
+        )}
 
-      {successMessage && (
-        <div className="alert alert-success mb-20">
-          <Icons.Check /> {successMessage}
-          <button className="btn btn-sm btn-secondary ml-10" onClick={clearSuccessMessage}>
-            OK
-          </button>
-        </div>
-      )}
+        {successMessage && (
+          <div className="alert alert-success">
+            <Icons.Check /> {successMessage}
+            <button className="btn btn-sm btn-secondary" onClick={clearSuccessMessage}>
+              OK
+            </button>
+          </div>
+        )}
+      </div>
 
-      {/* Table */}
-      <div className="table-responsive">
+      {/* Riders Table */}
+      <div className="table-container">
         <table className="table">
           <thead>
             <tr>
@@ -165,58 +160,30 @@ function RidersList() {
               <th>Email</th>
               <th>Téléphone</th>
               <th>Chevaux</th>
-              <th>Jours</th>
+              <th>Jours d'activité</th>
               <th />
             </tr>
           </thead>
-
           <tbody>
             {filteredRiders.map((rider) => {
-              const horses = getRiderHorses(rider);
               const riderTypeConfig = getRiderTypeConfig(rider.rider_type);
-
               return (
                 <tr
                   key={rider.id}
-                  className="rider-row rider-row-clickable"
+                  className="row-clickable"
                   onClick={(e) => handleRowClick(e, rider.id)}
                 >
                   <td>
                     <strong>{rider.name}</strong>
                   </td>
-
                   <td>{riderTypeConfig && <DomainBadge config={riderTypeConfig} />}</td>
-
                   <td>{rider.email || '-'}</td>
                   <td>{rider.phone || '-'}</td>
-
-                  <td>
-                    {horses ? (
-                      <div className="horses-badges">
-                        {horses.map((pairing) => {
-                          const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
-                          if (!linkConfig) return null;
-
-                          const horseName = pairing.horses?.name || pairing.horse?.name;
-
-                          return (
-                            <DomainBadge
-                              key={pairing.id}
-                              config={{ ...linkConfig, label: horseName }}
-                            />
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <span className="text-muted">-</span>
-                    )}
-                  </td>
-
+                  <td>{renderRiderHorses(rider.pairings)}</td>
                   <td>{renderRiderDays(rider)}</td>
-
                   <td className="table-actions">
                     <button
-                      className="btn-icon btn-icon-view"
+                      className="btn-icon-modern"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleViewDetails(rider.id);
@@ -233,7 +200,7 @@ function RidersList() {
       </div>
 
       {/* Modals */}
-      <Modal isOpen={showModal} onClose={closeRiderModal} size="medium">
+      <Modal isOpen={showModal} onClose={closeRiderModal} size="md">
         <RiderForm rider={editingRider} onSubmit={handleFormSubmit} onCancel={closeRiderModal} />
       </Modal>
 
@@ -243,6 +210,7 @@ function RidersList() {
           onClose={closeRiderCard}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
+          onSuccess={handleSuccess}
         />
       )}
 
@@ -251,7 +219,7 @@ function RidersList() {
         onClose={closeDeleteModal}
         onRemoveFromInventory={handleRemoveFromInventory}
         onPermanentDelete={handlePermanentDelete}
-        itemType="cavalier"
+        itemType="rider"
         itemName={riderToDelete?.name}
       />
     </div>

@@ -1,0 +1,441 @@
+@import '../../common.css';
+
+/* ============================================
+   MOBILE CALENDAR VIEW - iOS Style
+   ============================================ */
+.mobile-calendar-view {
+  display: none; /* Caché par défaut, visible sur mobile */
+  flex-direction: column;
+  height: 100%;
+  background: #f2f2f7; /* iOS background */
+  overflow: hidden;
+}
+
+.mobile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--spacing-md);
+  color: var(--color-gray-500);
+}
+
+/* ============================================
+   HEADER - SÉLECTEUR DE SEMAINE
+   ============================================ */
+
+.mobile-calendar-header {
+  background: var(--color-white);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-md) var(--spacing-sm) var(--spacing-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.mobile-week-selector {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.mobile-day-button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-xs);
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 0;
+  position: relative;
+}
+
+.mobile-day-button:active {
+  transform: scale(0.95);
+}
+
+.mobile-day-name {
+  font-size: 11px;
+  font-weight: 400;
+  color: #8e8e93;
+  text-transform: capitalize;
+  line-height: 1;
+}
+
+.mobile-day-number {
+  font-size: 24px;
+  font-weight: 300;
+  color: #000;
+  line-height: 1;
+}
+
+.mobile-event-count {
+  font-size: 8px;
+  color: #8e8e93;
+  min-height: 10px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+/* Selected day - iOS blue */
+.mobile-day-button.selected {
+  background: #007aff;
+  color: var(--color-white);
+}
+
+.mobile-day-button.selected .mobile-day-name,
+.mobile-day-button.selected .mobile-day-number,
+.mobile-day-button.selected .mobile-event-count {
+  color: var(--color-white);
+}
+
+/* Today indicator */
+.mobile-day-button.today:not(.selected) .mobile-day-number {
+  color: #007aff;
+  font-weight: 400;
+}
+
+/* ============================================
+   EVENTS CONTAINER
+   ============================================ */
+
+.mobile-events-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-selected-date {
+  margin-bottom: var(--spacing-lg);
+  padding: 0 var(--spacing-xs);
+}
+
+.mobile-selected-date h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.mobile-date-number {
+  color: #8e8e93;
+  font-weight: 400;
+}
+
+/* ============================================
+   ALL-DAY EVENTS
+   ============================================ */
+
+.mobile-allday-section {
+  margin-bottom: var(--spacing-md);
+}
+
+.mobile-allday-card {
+  background: var(--color-white);
+  border-radius: 10px;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-allday-card:active {
+  transform: scale(0.98);
+  opacity: 0.7;
+}
+
+.mobile-allday-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.mobile-allday-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  color: #8e8e93;
+}
+
+.mobile-allday-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobile-allday-title {
+  font-size: 17px;
+  font-weight: 400;
+  color: #000;
+  margin-bottom: 2px;
+}
+
+.mobile-allday-subtitle {
+  font-size: 15px;
+  color: #8e8e93;
+}
+
+/* ============================================
+   TIMED EVENTS LIST - iOS Style
+   ============================================ */
+
+.mobile-events-list {
+  background: var(--color-white);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+}
+
+.mobile-event-card {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-height: 72px;
+}
+
+.mobile-event-card:last-child {
+  border-bottom: none;
+}
+
+.mobile-event-card:active {
+  background-color: #f8f8f8;
+}
+
+/* Time column - iOS style */
+.mobile-event-time {
+  min-width: 48px;
+  padding-right: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.mobile-time-value {
+  font-size: 15px;
+  font-weight: 400;
+  color: #000;
+  line-height: 1.2;
+}
+
+/* Vertical divider */
+.mobile-event-divider {
+  width: 2px;
+  align-self: stretch;
+  background: rgba(0, 0, 0, 0.04);
+  margin: 0 var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* Event content */
+.mobile-event-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mobile-event-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.mobile-event-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.04);
+  color: #8e8e93;
+}
+
+.mobile-event-title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 400;
+  color: #000;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Details */
+.mobile-event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 44px; /* Aligné avec le texte */
+}
+
+.mobile-detail-line {
+  font-size: 15px;
+  color: #8e8e93;
+  line-height: 1.3;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.mobile-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl) var(--spacing-xl);
+  text-align: center;
+  color: #8e8e93;
+  margin-top: var(--spacing-2xl);
+}
+
+.mobile-empty-state p {
+  margin: var(--spacing-md) 0 0 0;
+  font-size: 17px;
+  font-weight: 400;
+}
+
+/* ============================================
+   FLOATING ACTION BUTTON - iOS Style
+   ============================================ */
+
+.mobile-fab {
+  position: fixed;
+  bottom: calc(var(--spacing-xl) + env(safe-area-inset-bottom, 0px));
+  right: var(--spacing-lg);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #007aff;
+  color: var(--color-white);
+  border: none;
+  box-shadow: 0 3px 10px rgba(0, 122, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 90;
+}
+
+.mobile-fab:active {
+  transform: scale(0.9);
+}
+
+.mobile-fab svg {
+  font-size: 28px;
+}
+
+/* ============================================
+   RESPONSIVE - SHOW ON MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Cacher la vue desktop */
+  .week-view,
+  .calendar-filters {
+    display: none !important;
+  }
+
+  /* Afficher la vue mobile */
+  .mobile-calendar-view {
+    display: flex;
+  }
+
+  /* Ajuster le container parent */
+  .calendar-view {
+    padding: 0;
+    gap: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .calendar-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-white);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-week-selector {
+    gap: 2px;
+    padding: 0;
+  }
+
+  .mobile-day-button {
+    padding: 6px 4px;
+  }
+
+  .mobile-day-name {
+    font-size: 10px;
+  }
+
+  .mobile-day-number {
+    font-size: 22px;
+  }
+
+  .mobile-selected-date h2 {
+    font-size: 28px;
+  }
+
+  .mobile-events-container {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .mobile-event-time {
+    min-width: 44px;
+  }
+
+  .mobile-fab {
+    right: var(--spacing-md);
+    width: 52px;
+    height: 52px;
+  }
+
+  .mobile-fab svg {
+    font-size: 26px;
+  }
+}
+
+/* ============================================
+   SAFE AREAS (iPhone notch, etc.)
+   ============================================ */
+
+@supports (padding: max(0px)) {
+  .mobile-calendar-view {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mobile-calendar-header {
+    padding-top: max(var(--spacing-md), env(safe-area-inset-top, 0px));
+  }
+
+  .mobile-fab {
+    bottom: max(var(--spacing-xl), calc(var(--spacing-xl) + env(safe-area-inset-bottom, 0px)));
+  }
+}

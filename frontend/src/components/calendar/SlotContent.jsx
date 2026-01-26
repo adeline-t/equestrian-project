@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import { Icons } from '../../lib/icons';
-import { formatTime, formatDuration } from '../../lib/helpers/formatters';
-import { getEventTypeConfig, getStatusConfig } from '../../lib/domain/events';
-import { getInstructorLabel } from '../../lib/domain/domain-constants';
 import { getSlotLayout } from '../../lib/config/ui';
-import '../../styles/features/calendar.css';
+import { getInstructorLabel } from '../../lib/domain/domain-constants';
+import { getEventTypeConfig, getStatusConfig } from '../../lib/domain/events';
+import { formatDuration, formatTime } from '../../lib/helpers/formatters';
+import { Icons } from '../../lib/icons';
+import '../../styles/features/calendar/calendar.css';
 
 function SlotContent({ slot }) {
   const duration = slot.duration_minutes || 0;

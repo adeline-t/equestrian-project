@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import { useRiderForm } from '../../hooks';
-import { RIDER_TYPES, getRiderTypeLabel } from '../../lib/domain/domain-constants.js';
+import { getRiderTypeLabel } from '../../lib/domain/domain-constants.js';
 import { Icons } from '../../lib/icons.jsx';
 
 /**
- * RiderForm - Form for creating/editing riders
+ * RiderForm - Formulaire pour créer ou éditer un cavalier
  */
 function RiderForm({ rider, onSubmit, onCancel }) {
   const {
@@ -18,20 +18,21 @@ function RiderForm({ rider, onSubmit, onCancel }) {
   } = useRiderForm(rider, onSubmit, onCancel);
 
   return (
-    <form onSubmit={handleSubmit} className="rider-form">
-      {/* Error Alert */}
+    <form onSubmit={handleSubmit} className="entity-form">
+      {/* Erreur générale */}
       {errors.submit && (
-        <div className="alert alert-error mb-20">
+        <div className="alert alert-error">
           <Icons.Warning />
-          <strong>Erreur:</strong> {errors.submit}
+          <strong>Erreur :</strong> {errors.submit}
         </div>
       )}
 
-      {/* Basic Information */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      {/* Informations générales */}
+      <div className="form-section">
+        <h3>Informations générales</h3>
 
-        <div className="form-group mb-15">
+        {/* Nom */}
+        <div className="form-group">
           <label htmlFor="name">
             Nom complet <span className="required">*</span>
           </label>
@@ -47,46 +48,39 @@ function RiderForm({ rider, onSubmit, onCancel }) {
           />
           {errors.name && (
             <span className="error-message">
-              <Icons.Warning />
-              {errors.name}
+              <Icons.Warning /> {errors.name}
             </span>
           )}
         </div>
 
-        <div className="form-group mb-15">
+        {/* Type de cavalier */}
+        <div className="form-group">
           <label>
             Type de cavalier <span className="required">*</span>
           </label>
-
           <div className="segmented-control">
             {riderTypeOptions.map((type) => {
-              const isActive = formData.rider_type === type;
-
+              const isActiveBtn = formData.rider_type === type;
               return (
                 <button
                   key={type}
                   type="button"
-                  className={`segment-btn ${isActive ? 'active' : ''}`}
-                  onClick={() =>
-                    handleChange({
-                      target: { name: 'rider_type', value: type },
-                    })
-                  }
+                  className={`segment-btn ${isActiveBtn ? 'active' : ''}`}
+                  onClick={() => handleChange({ target: { name: 'rider_type', value: type } })}
                 >
                   {getRiderTypeLabel(type)}
                 </button>
               );
             })}
           </div>
-
           {errors.rider_type && (
             <span className="error-message">
-              <Icons.Warning />
-              {errors.rider_type}
+              <Icons.Warning /> {errors.rider_type}
             </span>
           )}
         </div>
 
+        {/* Email et téléphone */}
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -101,12 +95,10 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             />
             {errors.email && (
               <span className="error-message">
-                <Icons.Warning />
-                {errors.email}
+                <Icons.Warning /> {errors.email}
               </span>
             )}
           </div>
-
           <div className="form-group">
             <label htmlFor="phone">Téléphone</label>
             <input
@@ -120,18 +112,16 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             />
             {errors.phone && (
               <span className="error-message">
-                <Icons.Warning />
-                {errors.phone}
+                <Icons.Warning /> {errors.phone}
               </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Activity Period */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Période d'activité</h3>
-
+      {/* Période d'activité */}
+      <div className="form-section">
+        <h3>Période d'activité</h3>
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="activity_start_date">Date de début</label>
@@ -145,8 +135,7 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             />
             {errors.activity_start_date && (
               <span className="error-message">
-                <Icons.Warning />
-                {errors.activity_start_date}
+                <Icons.Warning /> {errors.activity_start_date}
               </span>
             )}
           </div>
@@ -164,15 +153,14 @@ function RiderForm({ rider, onSubmit, onCancel }) {
             <small className="form-help">Laissez vide si toujours actif</small>
             {errors.activity_end_date && (
               <span className="error-message">
-                <Icons.Warning />
-                {errors.activity_end_date}
+                <Icons.Warning /> {errors.activity_end_date}
               </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Form Actions */}
+      {/* Actions */}
       <div className="modal-footer">
         <button
           type="button"
@@ -180,19 +168,16 @@ function RiderForm({ rider, onSubmit, onCancel }) {
           onClick={handleCancel}
           disabled={submitting}
         >
-          <Icons.Cancel />
-          Annuler
+          <Icons.Cancel /> Annuler
         </button>
         <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? (
             <>
-              <Icons.Loading className="spin" />
-              Enregistrement...
+              <Icons.Loading className="spin" /> Enregistrement...
             </>
           ) : (
             <>
-              <Icons.Save />
-              {rider ? 'Mettre à jour' : 'Créer'}
+              <Icons.Save /> {rider ? 'Mettre à jour' : 'Créer'}
             </>
           )}
         </button>

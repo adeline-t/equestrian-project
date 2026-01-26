@@ -1,0 +1,29 @@
+/* RIDERS - Liste & Table - Optimisé */
+@import '../../common.css';
+
+/* ============================================
+   RIDERS LIST - Specific styles only
+   Most styles come from list-views.css
+   ============================================ */
+
+/* Table column widths specific to riders */
+.table thead tr,
+.table tbody tr {
+  display: grid;
+  align-items: center;
+  grid-template-columns:
+    2fr
+    minmax(100px, 150px)
+    minmax(120px, 180px)
+    minmax(80px, 110px)
+    minmax(130px, 180px)
+    3fr
+    1fr;
+}
+
+@media (max-width: 768px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 180px 100px 180px 120px 90px 1fr;
+  }
+}

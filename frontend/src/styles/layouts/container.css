@@ -10,13 +10,14 @@
 
 .container {
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--spacing-lg);
   width: 90%;
+  max-width: 1400px;
 }
 
 main {
   flex: 1;
-  padding-bottom: 40px;
+  padding-bottom: var(--spacing-3xl);
 }
 
 /* ============================================
@@ -24,12 +25,12 @@ main {
    ============================================ */
 
 .view-container {
-  padding: 20px;
-  background: var(--color-gray-100);
+  padding: var(--spacing-lg);
+  background: var(--color-bg-secondary);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .content-wrapper {
@@ -38,7 +39,7 @@ main {
   flex-direction: column;
   min-height: 0;
   overflow-x: auto;
-  padding: 8px;
+  padding: var(--spacing-sm);
 }
 
 /* ============================================
@@ -47,18 +48,24 @@ main {
 
 @media (max-width: 768px) {
   .container {
-    padding: 16px;
+    padding: var(--spacing-md);
+    width: 95%;
   }
 
   .view-container {
-    padding: 12px;
-    gap: 12px;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
   }
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+    width: 100%;
+  }
+  
   .view-container {
-    padding: 8px;
-    gap: 8px;
+    padding: var(--spacing-xs);
+    gap: var(--spacing-xs);
   }
 }

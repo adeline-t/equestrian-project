@@ -7,7 +7,7 @@ import { getEventTypeConfig } from '../../../lib/domain/events';
 import { getInstructorConfig } from '../../../lib/domain/domain-constants';
 import DomainBadge from '../../common/DomainBadge.jsx';
 import { useEventScheduledList } from '../../../hooks/useEventScheduledList';
-import '../../../styles/features/events.css';
+import '../../../styles/features/events/event-modal.css';
 
 function ScheduledEventsModal({ onClose, onUpdate }) {
   const { slots, loading, error, actionLoading, actionError, validateSlot, deleteSlot } =
@@ -93,7 +93,7 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
             </button>
           </>
         }
-        size="small"
+        size="sm"
       >
         <div className="scheduled-delete-content">
           {actionError && (
@@ -135,7 +135,7 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
         </div>
       }
       footer={<></>}
-      size="large"
+      size="lg"
     >
       {loading && (
         <div className="loading">

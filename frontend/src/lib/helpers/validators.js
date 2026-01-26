@@ -7,7 +7,7 @@
  * - domain validators: horse and rider
  */
 
-import { EVENT_TYPES, RIDER_TYPE_LABELS } from '../domain/index.js';
+import { EVENT_TYPES, RIDER_TYPE_LABELS, RIDER_TYPES } from '../domain/index.js';
 import { calculateDurationMinutes } from './formatters/duration.js';
 
 /**
@@ -59,18 +59,6 @@ export const validateRiderForm = (formData) => {
   // Type validation
   if (!formData.rider_type) {
     errors.rider_type = 'Le type de cavalier est requis';
-  } else if (!ALLOWED_TYPES.includes(formData.rider_type)) {
-    errors.rider_type = 'Le type doit être "owner", "club" ou "loaner"';
-  }
-
-  // Email validation
-  if (formData.email && !isValidEmail(formData.email)) {
-    errors.email = getValidationMessage('INVALID_EMAIL');
-  }
-
-  // Phone validation
-  if (formData.phone && !isValidPhone(formData.phone)) {
-    errors.phone = `${getValidationMessage('INVALID_PHONE')} (minimum 10 chiffres)`;
   }
 
   return {

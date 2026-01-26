@@ -1,0 +1,22 @@
+/* HORSES - Liste & Table - Optimisé */
+@import '../../common.css';
+
+/* ============================================
+   HORSES LIST - Specific styles only
+   Most styles come from list-views.css
+   ============================================ */
+
+/* Table column widths specific to horses */
+.table thead tr,
+.table tbody tr {
+  display: grid;
+  grid-template-columns: 200px 120px 140px 140px 420px 100px 1fr;
+  gap: 0;
+}
+
+@media (max-width: 768px) {
+  .table thead tr,
+  .table tbody tr {
+    grid-template-columns: 80px 80px 110px 90px 110px 70px 60px;
+  }
+}

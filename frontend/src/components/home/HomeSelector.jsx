@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppMode } from '../../context/AppMode';
 import AdminPasswordModal from './AdminPasswordModal';
 import { Icons } from '../../lib/icons';
-import '../../styles/features/home.css';
+import '../../styles/features/home/home.css';
 
 export default function HomeSelector() {
   const { setMode } = useAppMode();

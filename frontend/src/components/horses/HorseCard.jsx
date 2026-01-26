@@ -1,43 +1,42 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
-import { useHorseCard } from '../../hooks/index.js';
-import { riderService } from '../../services/index.js';
+import { useState } from 'react';
+import { useHorseCard } from '../../hooks/useHorseCard.js';
 import {
   getHorseTypeConfig,
+  getLoanDays,
   getOwnerTypeConfig,
-  getStatusConfig,
   getRiderHorseLinkConfig,
+  getStatusConfig,
   WEEK_DAYS,
   WEEK_DAYS_EN,
-  getLoanDays,
 } from '../../lib/domain/domain-constants.js';
-import { isActive, formatDate } from '../../lib/helpers/index.js';
+import { formatDate, isActive } from '../../lib/helpers/index.js';
 import { Icons } from '../../lib/icons.jsx';
-import DomainBadge from '../common/DomainBadge.jsx';
 import DeleteConfirmationModal from '../common/DeleteConfirmationModal.jsx';
+import DomainBadge from '../common/DomainBadge.jsx';
 import Modal from '../common/Modal.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
-import '../../styles/features/horses.css';
 
 /**
- * HorseCard - Detailed horse information card (RiderCard style)
+ * HorseCard - Detailed horse information card
  */
-function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
+function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [riders, setRiders] = useState([]);
-  const [loadingRiders, setLoadingRiders] = useState(false);
 
   const {
-    horse: fetchedHorse,
+    fetchedHorse,
     loading,
-    error: loadError,
+    loadError,
     reload,
     // Pairing modal state
     showPairingModal,
     editingPairing,
     showDeletePairingModal,
     pairingToDelete,
+    // Riders data
+    riders,
+    loadingRiders,
     // Pairing actions
     handleCreatePairing,
     handleEditPairing,
@@ -46,36 +45,20 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
     handleDeletePairing,
     closePairingModal,
     closeDeletePairingModal,
-  } = useHorseCard(initialHorse?.id);
+  } = useHorseCard(horseId);
 
-  const horse = fetchedHorse || initialHorse;
+  const horse = fetchedHorse;
 
-  // Load riders for the pairing form
-  useEffect(() => {
-    const loadRiders = async () => {
-      try {
-        setLoadingRiders(true);
-        const data = await riderService.getAll();
-        setRiders(data || []);
-      } catch (err) {
-        console.error('Error loading riders:', err);
-      } finally {
-        setLoadingRiders(false);
-      }
-    };
-
-    if (showPairingModal) {
-      loadRiders();
-    }
-  }, [showPairingModal]);
-
-  function handleSuccess(message) {
+  // Local success/error handlers for pairing operations
+  function handleLocalSuccess(message) {
     setSuccessMessage(message);
     setErrorMessage('');
     setTimeout(() => setSuccessMessage(''), 3000);
+    reload();
+    onSuccess();
   }
 
-  function handleError(err) {
+  function handleLocalError(err) {
     setErrorMessage(err?.message || 'Une erreur est survenue');
     setTimeout(() => setErrorMessage(''), 5000);
   }
@@ -84,11 +67,11 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
     try {
       setErrorMessage('');
       await handlePairingSubmit(pairingData);
-      handleSuccess(
+      handleLocalSuccess(
         editingPairing?.id ? 'Pension modifiée avec succès' : 'Pension créée avec succès'
       );
     } catch (err) {
-      handleError(err);
+      handleLocalError(err);
       throw err;
     }
   };
@@ -97,16 +80,16 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
     try {
       setErrorMessage('');
       await handleDeletePairing();
-      handleSuccess('Pension supprimée avec succès');
+      handleLocalSuccess('Pension supprimée avec succès');
     } catch (err) {
-      handleError(err);
+      handleLocalError(err);
     }
   };
 
-  if (loading && !initialHorse) {
+  if (loading) {
     return (
-      <Modal isOpen={true} onClose={onClose} size="large">
-        <div className="modal-loading">
+      <Modal isOpen={true} onClose={onClose} size="lg">
+        <div className="loading">
           <Icons.Loading className="spin" />
           <p>Chargement...</p>
         </div>
@@ -116,9 +99,11 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
 
   if (!horse) {
     return (
-      <Modal isOpen={true} onClose={onClose} size="small">
-        <div className="modal-error">
-          <Icons.Warning />
+      <Modal isOpen={true} onClose={onClose} size="sm">
+        <div className="error">
+          <div className="error-icon">
+            <Icons.Warning />
+          </div>
           <h3>Cheval non trouvé</h3>
         </div>
       </Modal>
@@ -138,23 +123,22 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
       <Modal
         isOpen={true}
         onClose={onClose}
-        size="xlarge"
+        size="xl"
         title={
-          <div className="horse-card-title">
-            <div className="horse-card-avatar">
+          <div className="detail-card-title">
+            <div className="detail-card-avatar">
               <Icons.Horse />
             </div>
 
-            <div className="horse-card-title-text">
+            <div className="detail-card-title-text">
               <h2>{horse.name}</h2>
-              <div className="horse-card-meta">
+              <div className="detail-card-meta">
                 {horseTypeConfig && <DomainBadge config={horseTypeConfig} />}
                 {statusConfig && <DomainBadge config={statusConfig} />}
               </div>
             </div>
 
-            {/* ACTIONS */}
-            <div className="horse-card-actions">
+            <div className="detail-card-actions">
               <button
                 className="btn-icon-modern"
                 onClick={() => onEdit(horse)}
@@ -173,7 +157,7 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
           </div>
         }
       >
-        <div className="horse-card-content">
+        <div className="detail-card-content">
           {/* Messages */}
           {successMessage && (
             <div className="alert alert-success">
@@ -188,9 +172,9 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
             </div>
           )}
 
-          <div className="horse-card-grid">
+          <div className="detail-card-grid">
             {/* Left Column */}
-            <div className="horse-card-sidebar">
+            <div className="detail-card-sidebar">
               {/* Owner */}
               <div className="info-card">
                 <div className="info-card-header">
@@ -199,7 +183,6 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
                 <div className="info-card-body">
                   <div className="info-item-modern">
                     <div className="info-content">
-                      <span className="info-label">Type</span>
                       <div className="info-value">
                         {ownerTypeConfig && <DomainBadge config={ownerTypeConfig} />}
                       </div>
@@ -219,11 +202,9 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
                       <Icons.Check />
                     </div>
                     <div className="info-content">
-                      <span className="info-label">Date de début</span>
+                      <span className="info-label">Début</span>
                       <span className="info-value">
-                        {horse.activity_start_date
-                          ? formatDate(horse.activity_start_date)
-                          : 'Non définie'}
+                        {horse.activity_start_date ? formatDate(horse.activity_start_date) : '-'}
                       </span>
                     </div>
                   </div>
@@ -233,14 +214,14 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
                         <Icons.Warning />
                       </div>
                       <div className="info-content">
-                        <span className="info-label">Date de fin</span>
+                        <span className="info-label">Fin</span>
                         <span className="info-value">{formatDate(horse.activity_end_date)}</span>
                       </div>
                     </div>
                   ) : (
                     <div className="info-item-modern">
                       <div className="info-content">
-                        <span className="info-label">en activité</span>
+                        <span className="info-label">En activité</span>
                       </div>
                     </div>
                   )}
@@ -249,17 +230,16 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
             </div>
 
             {/* Right Column */}
-            <div className="horse-card-main">
+            <div className="detail-card-main">
               {/* Pairings Section */}
               <div className="data-card">
                 <div className="data-card-header">
                   <div className="data-card-title">
-                    <Icons.User />
                     <h3>Cavaliers</h3>
                     <span className="count-badge">{pairings.length}</span>
                   </div>
                   <button
-                    className="btn btn-sm btn-primary"
+                    className="btn btn-primary btn-sm"
                     onClick={handleCreatePairing}
                     title="Ajouter une pension"
                   >
@@ -284,7 +264,7 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
                           <div key={pairing.id} className="pairing-item-modern">
                             <div className="pairing-info">
                               <div className="pairing-header">
-                                <span className="pairing-horse-name">{pairing.rider_name}</span>
+                                <span>{pairing.rider_name}</span>
                                 {linkConfig && <DomainBadge config={linkConfig} />}
                               </div>
                               {isLoan && (
@@ -341,9 +321,10 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
           isOpen={showPairingModal}
           onClose={closePairingModal}
           title={editingPairing?.id ? 'Modifier la pension' : 'Nouvelle pension'}
+          size="md"
         >
           {loadingRiders ? (
-            <div className="modal-loading">
+            <div className="loading">
               <Icons.Loading className="spin" />
               <p>Chargement des cavaliers...</p>
             </div>
@@ -365,7 +346,7 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
         isOpen={showDeletePairingModal}
         onClose={closeDeletePairingModal}
         onPermanentDelete={handlePairingDelete}
-        itemType="pension"
+        itemType="package"
         itemName={pairingToDelete?.rider_name}
         hideRemoveFromInventory={true}
       />
@@ -374,10 +355,11 @@ function HorseCard({ horse: initialHorse, onClose, onEdit, onDelete }) {
 }
 
 HorseCard.propTypes = {
-  horse: PropTypes.object.isRequired,
+  horseId: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func,
 };
 
 export default HorseCard;

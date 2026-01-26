@@ -4,7 +4,7 @@ import { Icons } from '../../../../lib/icons';
 import { useEventBlockedEdit } from '../../../../hooks/useEventBlockedEdit';
 import BlockedEventForm from './BlockedEventForm';
 import BlockedEventDisplay from './BlockedEventDisplay';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-modal.css';
 
 function BlockedEventModal({ slotId, onClose, onUpdate }) {
   const {
@@ -37,7 +37,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
 
   if (loading) {
     return (
-      <Modal isOpen onClose={onClose} title="Chargement" size="medium">
+      <Modal isOpen onClose={onClose} title="Chargement" size="md">
         <div className="modal-loading">
           <Icons.Loading className="spin" />
           <p>Chargement des détails...</p>
@@ -61,7 +61,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
             <Icons.Close /> Fermer
           </button>
         }
-        size="medium"
+        size="md"
       >
         <p>{error || 'Erreur lors du chargement'}</p>
       </Modal>
@@ -101,7 +101,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
             </button>
           </>
         }
-        size="small"
+        size="sm"
       >
         {deleteError && (
           <div className="alert alert-error mb-16">
@@ -163,7 +163,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
         </div>
       }
       footer={modalFooter}
-      size="medium"
+      size="md"
     >
       {editError && (
         <div className="alert alert-error">

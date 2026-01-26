@@ -1,0 +1,105 @@
+/* PAIRINGS - Optimisé */
+@import '../../common.css';
+
+/* ============================================
+   PAIRINGS - Specific styles only
+   Most styles come from form-layouts.css
+   ============================================ */
+
+/* Horse/Rider selection card */
+.horse-selection-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--gradient-light);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.horse-selection-card .horse-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-lg);
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+}
+
+.horse-selection-card .horse-info {
+  flex: 1;
+}
+
+.horse-selection-card .horse-name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Days selector grid */
+.days-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.day-button {
+  position: relative;
+  aspect-ratio: 1;
+  padding: var(--spacing-sm);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day-button:hover:not(:disabled) {
+  border-color: var(--color-primary-light);
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
+}
+
+.day-button.selected {
+  border-color: var(--color-primary);
+  background: var(--gradient-primary);
+  color: var(--color-white);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.day-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .days-selector-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .day-button {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-sm) 6px;
+    flex: 1;
+    min-width: 40px;
+  }
+}

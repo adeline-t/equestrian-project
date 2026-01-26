@@ -66,11 +66,9 @@ const pairingService = {
   },
 
   update: async (id, data) => {
-    const payload = pairingService._normalizePayload(data);
-
     if (!id || isNaN(Number(id))) throw new Error('ID de pairing invalide');
 
-    const response = await api.put(`/pairings/${id}`, payload);
+    const response = await api.put(`/pairings/${id}`, data);
     return response.data;
   },
 

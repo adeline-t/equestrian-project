@@ -27,7 +27,7 @@ export * from './usePairingActions.js';
 export * from './usePairingForm.js';
 
 // Riders
-export * from './useRiderCard.js';
+export * from './useRiderDetails.js';
 export * from './useRiderForm.js';
 export * from './useRidersList.js';
 export * from './useRiderHorses.js';

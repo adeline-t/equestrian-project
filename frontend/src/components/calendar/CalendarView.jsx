@@ -1,16 +1,20 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 
-import { useCalendarView } from '../../hooks/useCalendarView';
 import { useAppMode } from '../../context/AppMode.jsx';
+import { useCalendarView } from '../../hooks/useCalendarView';
 
 import ErrorBoundary from '../common/ErrorBoundary';
 import WeekView from './WeekView';
+import ImportPlanningModal from '../home/ImportPlanningModal.jsx';
 
 import { getEventTypeOptions, getStatusOptions } from '../../lib/domain';
 import { Icons } from '../../lib/icons';
 
-import '../../styles/features/calendar.css';
+import '../../styles/features/calendar/calendar.css';
+
+import MobileCalendarView from './MobileCalendarView';
+import '../../styles/features/calendar/calendar-mobile.css';
 
 /* -----------------------
  * ERROR STATE
@@ -18,10 +22,10 @@ import '../../styles/features/calendar.css';
 function CalendarError({ error, onRetry }) {
   return (
     <div className="calendar-error" role="alert">
-      <Icons.Warning style={{ fontSize: 48, marginBottom: 16, color: '#e53e3e' }} />
-      <h3>Erreur de chargement</h3>
+      <Icons.Warning style={{ fontSize: 32, marginBottom: 12 }} />
+      <h3>Erreur</h3>
       <p>{error}</p>
-      <button className="btn btn-primary" onClick={onRetry}>
+      <button className="btn btn-primary btn-sm" onClick={onRetry}>
         <Icons.Repeat /> Réessayer
       </button>
     </div>
@@ -38,31 +42,32 @@ CalendarError.propTypes = {
 function CalendarLoading() {
   return (
     <div className="calendar-loading" role="status" aria-live="polite">
-      <Icons.Loading className="spin" style={{ fontSize: 48, marginBottom: 16 }} />
-      <h3>Chargement du calendrier…</h3>
-      <p>Veuillez patienter pendant le chargement du planning</p>
+      <Icons.Loading className="spin" style={{ fontSize: 32, marginBottom: 12 }} />
+      <h3>Chargement…</h3>
     </div>
   );
 }
 
 /* -----------------------
- * HEADER
+ * HEADER COMPACT
  * --------------------- */
 function CalendarHeader({ weekTitle, onPrevWeek, onNextWeek, onToday }) {
   return (
-    <div className="calendar-header flex-between mb-20">
-      <div className="header-title">
-        <h2>{weekTitle}</h2>
-      </div>
+    <div className="calendar-header flex-between">
+      <h2>{weekTitle}</h2>
       <div className="calendar-nav-buttons">
-        <button className="btn btn-secondary btn-sm" onClick={onPrevWeek}>
-          <Icons.ChevronLeft /> Précédente
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={onPrevWeek}
+          title="Semaine précédente"
+        >
+          <Icons.ChevronLeft />
         </button>
-        <button className="btn btn-primary" onClick={onToday}>
-          <Icons.Calendar /> Aujourd'hui
+        <button className="btn btn-primary btn-sm" onClick={onToday}>
+          Aujourd'hui
         </button>
-        <button className="btn btn-secondary btn-sm" onClick={onNextWeek}>
-          Suivante <Icons.ChevronRight />
+        <button className="btn btn-secondary btn-sm" onClick={onNextWeek} title="Semaine suivante">
+          <Icons.ChevronRight />
         </button>
       </div>
     </div>
@@ -76,7 +81,7 @@ CalendarHeader.propTypes = {
 };
 
 /* -----------------------
- * FILTERS
+ * FILTERS COMPACT - TOUT EN LIGNE
  * --------------------- */
 function CalendarFilters({
   filters,
@@ -84,10 +89,13 @@ function CalendarFilters({
   onCreateEvent,
   onCreateBlockedTime,
   onShowScheduled,
-  mode,
+  onShowImport,
 }) {
+  const { mode } = useAppMode();
+
   return (
     <div className="calendar-filters">
+      {/* Filtres à gauche */}
       <div className="filter-line">
         <div className="filter-group">
           <label>Type</label>
@@ -96,7 +104,7 @@ function CalendarFilters({
             value={filters.eventType}
             onChange={(e) => onFilterChange('eventType', e.target.value)}
           >
-            <option value="">Tous les types</option>
+            <option value="">Tous</option>
             {getEventTypeOptions().map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -111,7 +119,7 @@ function CalendarFilters({
             value={filters.status}
             onChange={(e) => onFilterChange('status', e.target.value)}
           >
-            <option value="">Tous les statuts</option>
+            <option value="">Tous</option>
             {getStatusOptions().map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -121,23 +129,37 @@ function CalendarFilters({
         </div>
       </div>
 
+      {/* Actions à droite */}
       <div className="filters-group">
         {mode === 'admin' && (
           <>
-            <button className="btn btn-info" onClick={onShowScheduled}>
-              <Icons.Calendar /> Événements en attente
+            <button
+              className="btn btn-info btn-sm"
+              onClick={onShowScheduled}
+              title="Événements en attente"
+            >
+              <Icons.Calendar />
+            </button>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={onShowImport}
+              title="Importer un planning"
+            >
+              <Icons.Add />
             </button>
           </>
         )}
-        <button className="btn btn-success" onClick={onCreateEvent}>
-          <Icons.Add /> Nouvel événement
+        <button className="btn btn-success btn-sm" onClick={onCreateEvent} title="Nouvel événement">
+          <Icons.Add />
         </button>
         {mode === 'admin' && (
-          <>
-            <button className="btn btn-warning" onClick={onCreateBlockedTime}>
-              <Icons.Blocked /> Bloquer un créneau
-            </button>
-          </>
+          <button
+            className="btn btn-warning btn-sm"
+            onClick={onCreateBlockedTime}
+            title="Bloquer un créneau"
+          >
+            <Icons.Blocked />
+          </button>
         )}
       </div>
     </div>
@@ -150,13 +172,13 @@ CalendarFilters.propTypes = {
   onCreateEvent: PropTypes.func.isRequired,
   onCreateBlockedTime: PropTypes.func.isRequired,
   onShowScheduled: PropTypes.func.isRequired,
-  mode: PropTypes.object.isRequired,
+  onShowImport: PropTypes.func.isRequired,
 };
 
 /* -----------------------
  * MODALS
  * --------------------- */
-function CalendarModals({ mode, ...props }) {
+function CalendarModals({ ...props }) {
   const BlockedEventModal = React.lazy(() => import('../events/edit/BlockedEventModal'));
   const EventModal = React.lazy(() => import('../events/edit/EventModal'));
   const CreateEventModal = React.lazy(() => import('../events/create/CreateEventModal'));
@@ -166,7 +188,7 @@ function CalendarModals({ mode, ...props }) {
   const ScheduledEventsModal = React.lazy(() => import('../events/edit/ScheduledEventsModal'));
 
   return (
-    <React.Suspense fallback={<div>Chargement du modal...</div>}>
+    <React.Suspense fallback={<div>Chargement…</div>}>
       {props.showSlotModal &&
         props.selectedSlot &&
         (props.isSelectedSlotBlocked ? (
@@ -212,15 +234,13 @@ function CalendarModals({ mode, ...props }) {
   );
 }
 
-CalendarModals.propTypes = {
-  mode: PropTypes.object.isRequired,
-};
+CalendarModals.propTypes = {};
 
 /* -----------------------
- * MAIN VIEW
+ * MAIN VIEW - OPTIMISÉ POUR L'ESPACE
  * --------------------- */
 function CalendarView() {
-  const mode = useAppMode(); // Mode accessible everywhere
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const {
     weekData,
@@ -255,6 +275,18 @@ function CalendarView() {
     loadWeekData,
   } = useCalendarView();
 
+  const handleShowImport = () => {
+    setShowImportModal(true);
+  };
+
+  const handleCloseImport = () => {
+    setShowImportModal(false);
+  };
+
+  const handleImportSuccess = () => {
+    loadWeekData();
+  };
+
   if (loading) return <CalendarLoading />;
   if (error) return <CalendarError error={error} onRetry={loadWeekData} />;
 
@@ -273,7 +305,7 @@ function CalendarView() {
         onCreateEvent={handleCreateEvent}
         onCreateBlockedTime={handleCreateBlockedTime}
         onShowScheduled={handleShowScheduled}
-        mode={mode}
+        onShowImport={handleShowImport}
       />
 
       <WeekView
@@ -282,9 +314,15 @@ function CalendarView() {
         onQuickCreate={handleCreateEvent}
       />
 
+      <MobileCalendarView
+        weekData={weekData}
+        onSlotClick={handleSlotClick}
+        onCreateEvent={() => setIsCreateModalOpen(true)}
+        currentDate={new Date()}
+      />
+
       <CalendarModals
         {...{
-          mode,
           showSlotModal,
           showCreateEventModal,
           showCreateBlockedModal,
@@ -298,6 +336,12 @@ function CalendarView() {
           onCloseScheduledModal: closeScheduledModal,
           onModalSuccess: handleModalSuccess,
         }}
+      />
+
+      <ImportPlanningModal
+        isOpen={showImportModal}
+        onClose={handleCloseImport}
+        onSuccess={handleImportSuccess}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import { EVENT_TYPES, getEventTypesOptionForMode } from '../../../../lib/domain/
 import { INSTRUCTORS } from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
 import { formatTimeForInput } from '../../../../lib/helpers/formatters/index.js';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-form.css';
 
 import { useAppMode } from '../../../../context/AppMode.jsx';
 

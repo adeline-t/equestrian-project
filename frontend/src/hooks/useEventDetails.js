@@ -17,7 +17,11 @@ export function useEventDetails(slotId) {
 
       setSlot(response.slot);
       setEvent(response.slot?.events || null);
-      setParticipants(response.participants || []);
+
+      // Filtrer les participants annulés
+      const activeParticipants = (response.participants || []).filter((p) => !p.is_cancelled);
+
+      setParticipants(activeParticipants);
     } catch (err) {
       console.error(err);
       setError('Erreur lors du chargement de l’événement');

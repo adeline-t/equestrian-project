@@ -3,21 +3,13 @@
    ============================================ */
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideIn {
@@ -28,6 +20,28 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -42,18 +56,19 @@
   }
 }
 
-/* ============================================
-   ANIMATION UTILITIES
-   ============================================ */
-
-.spin {
-  animation: spin 1s linear infinite;
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
-.fade-in {
-  animation: fadeIn var(--transition-base);
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-.slide-in {
-  animation: slideIn var(--transition-slow);
-}
+.spin { animation: spin 1s linear infinite; }
+.fade-in { animation: fadeIn var(--transition-base); }
+.slide-in { animation: slideIn var(--transition-slow); }
+.bounce { animation: bounce 2s infinite; }
+.pulse { animation: pulse 0.3s ease-out; }

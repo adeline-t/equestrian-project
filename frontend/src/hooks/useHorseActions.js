@@ -2,18 +2,11 @@ import { useState } from 'react';
 import { horseService } from '../services/index.js';
 import { getTodayISO } from '../lib/helpers/index.js';
 
-/**
- * Custom hook for managing horse CRUD operations
- * @param {Function} onSuccess - Callback function to execute on successful operation
- * @returns {Object} Horse action handlers and state
- */
 export function useHorseActions(onSuccess) {
   const [showModal, setShowModal] = useState(false);
   const [editingHorse, setEditingHorse] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [horseToDelete, setHorseToDelete] = useState(null);
-
-  // HorseCard modal state
   const [showHorseCard, setShowHorseCard] = useState(false);
   const [selectedHorse, setSelectedHorse] = useState(null);
 
@@ -81,7 +74,6 @@ export function useHorseActions(onSuccess) {
     setHorseToDelete(null);
   };
 
-  // HorseCard modal handlers
   const openHorseCard = (horse) => {
     setSelectedHorse(horse);
     setShowHorseCard(true);
@@ -93,23 +85,18 @@ export function useHorseActions(onSuccess) {
   };
 
   return {
-    // Form modal
     showModal,
     editingHorse,
     handleCreate,
     handleEdit,
     handleSubmit,
     closeModal,
-
-    // Delete modal
     showDeleteModal,
     horseToDelete,
     handleDeleteClick,
     handleRemoveFromInventory,
     handlePermanentDelete,
     closeDeleteModal,
-
-    // HorseCard modal
     showHorseCard,
     selectedHorse,
     openHorseCard,

@@ -1,10 +1,5 @@
 /* ============================================
-   BADGES – CONSOLIDATED & UNIFIED
-   Design System compliant
-   ============================================ */
-
-/* ============================================
-   BADGE BASE
+   BADGES - Optimisé
    ============================================ */
 
 .badge {
@@ -12,19 +7,14 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-
-  padding: 4px 12px;
+  padding: 4px var(--spacing-sm);
   border-radius: var(--radius-xl);
-
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   white-space: nowrap;
-
   color: var(--color-white);
-
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
-    opacity var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .badge.clickable {
@@ -34,47 +24,34 @@
 .badge.clickable:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
-  opacity: 0.9;
 }
 
-/* ============================================
-   COLOR VARIANT BADGES
-   ============================================ */
-
+/* COLOR VARIANTS */
 .badge-primary {
   background-image: var(--gradient-primary);
-  color: var(--color-white);
 }
 
 .badge-success {
   background-image: var(--gradient-success);
-  color: var(--color-white);
 }
 
 .badge-danger {
   background-image: var(--gradient-danger);
-  color: var(--color-white);
 }
 
 .badge-secondary {
   background-image: var(--gradient-secondary);
-  color: var(--color-white);
 }
 
 .badge-warning {
   background-image: var(--gradient-warning);
-  color: var(--color-white);
 }
 
 .badge-info {
   background-image: var(--gradient-info);
-  color: var(--color-white);
 }
 
-/* ============================================
-   HORSES
-   ============================================ */
-
+/* DOMAIN BADGES - Horses */
 .badge[data-type='pony'] {
   background: var(--gradient-pony);
 }
@@ -83,10 +60,7 @@
   background: var(--gradient-info);
 }
 
-/* ============================================
-   OWNERS
-   ============================================ */
-
+/* DOMAIN BADGES - Owners */
 .badge[data-type='laury'] {
   background: var(--gradient-primary);
 }
@@ -103,10 +77,7 @@
   background: var(--gradient-danger);
 }
 
-/* ============================================
-   RIDERS
-   ============================================ */
-
+/* DOMAIN BADGES - Riders */
 .badge[data-type='owner'] {
   background: var(--gradient-warning);
 }
@@ -115,12 +86,7 @@
   background: var(--gradient-success);
 }
 
-/* Note: 'club' déjà défini dans OWNERS */
-
-/* ============================================
-   PAIRINGS
-   ============================================ */
-
+/* DOMAIN BADGES - Pairings */
 .badge[data-type='own'] {
   background: var(--gradient-warning);
 }
@@ -129,30 +95,7 @@
   background: var(--gradient-success);
 }
 
-/* ============================================
-   ASSIGNMENTS
-   ============================================ */
-
-.badge[data-type='manual'] {
-  background: linear-gradient(
-    135deg,
-    var(--color-assignment-manual-light),
-    var(--color-assignment-manual-dark)
-  );
-}
-
-.badge[data-type='automatic'] {
-  background: linear-gradient(
-    135deg,
-    var(--color-assignment-automatic-light),
-    var(--color-assignment-automatic-dark)
-  );
-}
-
-/* ============================================
-   STATUS
-   ============================================ */
-
+/* STATUS BADGES */
 .badge[data-type='active'] {
   background: var(--gradient-success);
 }
@@ -173,49 +116,13 @@
   background: var(--gradient-danger);
 }
 
-/* ============================================
-   INSTRUCTORS
-   ============================================ */
-
-/* Laury */
-.badge[data-type='1'] {
-  background: var(--gradient-primary);
-}
-
-/* Kévin */
-.badge[data-type='2'] {
-  background: var(--gradient-info);
-}
-
-/* Julie */
-.badge[data-type='3'] {
-  background: var(--gradient-pony);
-}
-
-/* Capucine */
-.badge[data-type='4'] {
-  background: var(--gradient-warning);
-}
-
-/* Autre */
-.badge[data-type='0'] {
-  background: var(--gradient-secondary);
-}
-
-/* ============================================
-   EVENT TYPES
-   ============================================ */
-
+/* EVENT TYPE BADGES */
 .badge[data-type='private_lesson'] {
   background: var(--gradient-info);
 }
 
 .badge[data-type='grouped_lesson'] {
   background: var(--gradient-primary);
-}
-
-.badge[data-type='special'] {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
 }
 
 .badge[data-type='competition'] {
@@ -226,49 +133,20 @@
   background: var(--gradient-secondary);
 }
 
-.badge[data-type='service'] {
-  background: var(--gradient-alert-error);
-}
-
-.badge[data-type='loaner_free_time'] {
-  background: var(--gradient-success);
-}
-
-/* ============================================
-   SLOT STATUSES
-   ============================================ */
-
-.badge[data-type='scheduled'] {
-  background: var(--gradient-secondary);
-}
-
-.badge[data-type='confirmed'] {
-  background: var(--gradient-success);
-}
-
-/* Note: 'completed' et 'cancelled' déjà définis dans STATUS */
-
-/* ============================================
-   DAY BADGES (Loan days)
-   ============================================ */
-
+/* DAY BADGES */
 .day-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   min-width: 32px;
   padding: 4px 6px;
-
   border-radius: var(--radius-md);
   font-size: 10px;
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-
   background: var(--gradient-info);
   color: var(--color-white);
-
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast);
 }
 
 .day-badge.active {
@@ -277,7 +155,7 @@
 
 .day-badge.inactive {
   background: var(--gradient-light);
-  color: var(--color-gray-600);
+  color: var(--color-text-muted);
   border: 1px solid var(--color-gray-400);
   opacity: 0.6;
 }
@@ -286,19 +164,14 @@
   transform: translateY(-1px);
 }
 
-/* ============================================
-   COUNT BADGES
-   ============================================ */
-
+/* COUNT BADGES */
 .count-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  min-width: 24px;
-  height: 24px;
+  min-width: var(--spacing-lg);
+  height: var(--spacing-lg);
   padding: 0 var(--spacing-sm);
-
   background: var(--color-primary-purple);
   color: var(--color-white);
   border-radius: var(--radius-full);
@@ -310,7 +183,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 6px var(--spacing-sm);
   background: var(--gradient-info);
   color: var(--color-white);
   border-radius: var(--radius-full);
@@ -329,47 +202,32 @@
   box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
 }
 
-.riders-count-badge svg {
-  font-size: 14px;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-}
-
-/* ============================================
-   TODAY BADGE
-   ============================================ */
-
+/* TODAY BADGE */
 .today-badge {
   display: inline-block;
-  padding: 2px 8px;
-
+  padding: 2px var(--spacing-sm);
   background: var(--gradient-success);
   color: var(--color-white);
-
   border-radius: var(--radius-full);
   font-size: 10px;
   white-space: nowrap;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .badge {
     font-size: 10px;
-    padding: 3px 8px;
+    padding: 3px var(--spacing-sm);
   }
 
   .day-badge {
-    min-width: 32px;
-    padding: 3px 5px;
     min-width: 28px;
+    padding: 3px 5px;
     font-size: 9px;
   }
 
   .riders-count-badge {
-    padding: 4px 8px;
+    padding: 4px var(--spacing-sm);
     font-size: 11px;
     gap: 4px;
   }

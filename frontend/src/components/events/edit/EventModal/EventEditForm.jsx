@@ -6,7 +6,7 @@ import {
 } from '../../../../lib/domain/events';
 import { INSTRUCTORS, getInstructorLabel } from '../../../../lib/domain/domain-constants';
 import { formatTimeForInput } from '../../../../lib/helpers/formatters/index.js';
-import '../../../../styles/features/events.css';
+import '../../../../styles/features/events/event-form.css';
 import { useAppMode } from '../../../../context/AppMode.jsx';
 
 const INSTRUCTOR_OPTIONS = Object.keys(INSTRUCTORS).map((id) => ({

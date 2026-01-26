@@ -3,11 +3,10 @@ import { RIDER_TYPES } from '../lib/domain/index.js';
 import { validateRiderForm, getTodayISO } from '../lib/helpers/index.js';
 
 /**
- * Custom hook for managing rider form data and operations
- * @param {Object} rider - The rider object for editing
- * @param {Function} onSubmit - Submit handler
- * @param {Function} onCancel - Cancel handler
- * @returns {Object} Form data, handlers, and state
+ * Custom hook pour gérer le formulaire d'un cavalier
+ * @param {Object} rider - Cavalier à éditer (optionnel)
+ * @param {Function} onSubmit - Callback submission
+ * @param {Function} onCancel - Callback annulation
  */
 export function useRiderForm(rider, onSubmit, onCancel) {
   const [formData, setFormData] = useState({
@@ -39,9 +38,7 @@ export function useRiderForm(rider, onSubmit, onCancel) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }));
-    }
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const validateForm = () => {
