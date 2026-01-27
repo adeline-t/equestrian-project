@@ -47,7 +47,7 @@
   color: var(--color-text);
 }
 
-.participant-badge {
+.participant-badge- {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -63,11 +63,10 @@
   animation: slideIn 0.2s ease-out;
 }
 
-.participant-badge:hover {
+.participant-badge-:hover {
   border-color: var(--color-primary-light);
   box-shadow: var(--shadow-sm);
 }
-
 @media (max-width: 768px) {
   .participants-table-wrapper {
     overflow-x: auto;

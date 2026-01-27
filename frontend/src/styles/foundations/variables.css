@@ -2,47 +2,86 @@
    CSS VARIABLES - Design System v2.0
    Variables harmonisées et complètes
    ============================================ */
-
 :root {
-  /* COLORS - Primary */
+  /* ============================================
+     COLORS – CORE PALETTE (with gradients inline)
+     ============================================ */
+
+  /* ---------- Primary ---------- */
   --color-primary: #007bff;
   --color-primary-dark: #0056b3;
   --color-primary-light: #667eea;
   --color-primary-purple: #764ba2;
 
-  /* COLORS - Secondary */
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-primary-purple) 100%
+  );
+
+  /* ---------- Secondary ---------- */
   --color-secondary: #6c757d;
   --color-secondary-dark: #545b62;
 
-  /* COLORS - Success */
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--color-secondary) 0%,
+    var(--color-secondary-dark) 100%
+  );
+
+  /* ---------- Success ---------- */
   --color-success: #28a745;
   --color-success-dark: #1e7e34;
   --color-success-light: #d4edda;
   --color-success-medium: #48bb78;
   --color-success-medium-dark: #38a169;
 
-  /* COLORS - Danger */
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--color-success-medium) 0%,
+    var(--color-success-medium-dark) 100%
+  );
+
+  /* ---------- Danger ---------- */
   --color-danger: #dc3545;
   --color-danger-dark: #bd2130;
   --color-danger-light: #f8d7da;
   --color-danger-medium: #f56565;
   --color-danger-medium-dark: #e53e3e;
 
-  /* COLORS - Warning */
+  --gradient-danger: linear-gradient(
+    135deg,
+    var(--color-danger-medium) 0%,
+    var(--color-danger-medium-dark) 100%
+  );
+
+  /* ---------- Warning ---------- */
   --color-warning: #ffc107;
   --color-warning-dark: #e0a800;
   --color-warning-light: #fff3cd;
   --color-warning-orange: #ed8936;
   --color-warning-orange-dark: #dd6b20;
 
-  /* COLORS - Info */
+  --gradient-warning: linear-gradient(
+    135deg,
+    var(--color-warning-orange) 0%,
+    var(--color-warning-orange-dark) 100%
+  );
+
+  /* ---------- Info ---------- */
   --color-info: #17a2b8;
   --color-info-dark: #117a8b;
   --color-info-light: #d1ecf1;
   --color-info-blue: #4299e1;
   --color-info-blue-dark: #3182ce;
 
-  /* COLORS - Neutral */
+  --gradient-info: linear-gradient(
+    135deg,
+    var(--color-info-blue) 0%,
+    var(--color-info-blue-dark) 100%
+  );
+
+  /* ---------- Neutral / Gray ---------- */
   --color-white: #ffffff;
   --color-black: #000000;
   --color-gray-50: #f7fafc;
@@ -59,8 +98,246 @@
   --color-gray-800: #2d3748;
   --color-gray-900: #212529;
 
-  /* COLORS - Semantic Aliases */
+
+  /* ============================================
+     DOMAIN COLORS (colors + gradients together)
+     ============================================ */
+
+  /* Horses */
+  --color-pony-light: #ed64a6;
+  --color-pony-dark: #d53f8c;
+  --gradient-pony: linear-gradient(
+    135deg,
+    var(--color-pony-light) 0%,
+    var(--color-pony-dark) 100%
+  );
+
+  --color-horse-light: #63b3ed;
+  --color-horse-dark: #4299e1;
+  --gradient-horse: linear-gradient(
+    135deg,
+    var(--color-horse-light) 0%,
+    var(--color-horse-dark) 100%
+  );
+
+  /* Riders */
+  --color-rider-owner-light: #ed8936;
+  --color-rider-owner-dark: #dd6b20;
+  --gradient-rider-owner: linear-gradient(
+    135deg,
+    var(--color-rider-owner-dark) 0%,
+    var(--color-rider-owner-light) 100%
+  );
+
+  --color-rider-club-light: #4299e1;
+  --color-rider-club-dark: #3182ce;
+  --gradient-rider-club: linear-gradient(
+    135deg,
+    var(--color-rider-club-dark) 0%,
+    var(--color-rider-club-light) 100%
+  );
+
+  --color-rider-loaner-light: #28a745;
+  --color-rider-loaner-dark: #1e7e34;
+  --gradient-rider-loaner: linear-gradient(
+    135deg,
+    var(--color-rider-loaner-dark) 0%,
+    var(--color-rider-loaner-light) 100%
+  );
+
+  /* ============================================
+     SLOT STATUS (already correct pattern)
+     ============================================ */
+
+  --color-slot-scheduled-light: #ffc107;
+  --color-slot-scheduled-dark: #e0a800;
+  --gradient-slot-scheduled: linear-gradient(
+    135deg,
+    var(--color-slot-scheduled-dark) 0%,
+    var(--color-slot-scheduled-light) 100%
+  );
+
+  --color-slot-confirmed-light: #bee3f8;
+  --color-slot-confirmed-dark: #3182ce;
+  --gradient-slot-confirmed: linear-gradient(
+    135deg,
+    var(--color-slot-confirmed-dark) 0%,
+    var(--color-slot-confirmed-light) 100%
+  );
+
+  --color-slot-completed-light: #c6f6d5;
+  --color-slot-completed-dark: #38a169;
+  --gradient-slot-completed: linear-gradient(
+    135deg,
+    var(--color-slot-completed-dark) 0%,
+    var(--color-slot-completed-light) 100%
+  );
+
+  --color-slot-cancelled-light: #fed7d7;
+  --color-slot-cancelled-dark: #e53e3e;
+  --gradient-slot-cancelled: linear-gradient(
+    135deg,
+    var(--color-slot-cancelled-dark) 0%,
+    var(--color-slot-cancelled-light) 100%
+  );
+
+  /* ============================================
+   DOMAIN COLORS – OWNERS
+   ============================================ */
+
+/* LAURY */
+--color-laury-light: #fddce3;
+--color-laury-dark:  #f5576c;
+--gradient-laury: linear-gradient(
+  135deg,
+  var(--color-laury-dark) 0%,
+  var(--color-laury-light) 100%
+);
+
+/* OWNER */
+--color-owner-light: #fee3c5;
+--color-owner-dark:  #ed8936;
+--gradient-owner: linear-gradient(
+  135deg,
+  var(--color-owner-dark) 0%,
+  var(--color-owner-light) 100%
+);
+
+/* CLUB */
+--color-club-light: #dbeafe;
+--color-club-dark:  #4299e1;
+--gradient-club: linear-gradient(
+  135deg,
+  var(--color-club-dark) 0%,
+  var(--color-club-light) 100%
+);
+
+/* OTHER */
+--color-other-light: #fcdada;
+--color-other-dark:  #f56565;
+--gradient-other: linear-gradient(
+  135deg,
+  var(--color-other-dark) 0%,
+  var(--color-other-light) 100%
+);
+
+/* ============================================
+   DOMAIN COLORS – PAIRINGS
+   ============================================ */
+
+/* OWN */
+--color-pairing-own-light: #fef3c7;
+--color-pairing-own-dark:  #ed8936;
+--gradient-pairing-own: linear-gradient(
+  135deg,
+  var(--color-pairing-own-dark) 0%,
+  var(--color-pairing-own-light) 100%
+);
+
+/* LOAN */
+--color-pairing-loan-light: #d1fae5;
+--color-pairing-loan-dark:  #48bb78;
+--gradient-pairing-loan: linear-gradient(
+  135deg,
+  var(--color-pairing-loan-dark) 0%,
+  var(--color-pairing-loan-light) 100%
+);
+
+
+/* ============================================
+   DOMAIN COLORS – ASSIGNMENTS
+   ============================================ */
+
+/* MANUAL */
+--color-assignment-manual-light: #90cdf4;
+--color-assignment-manual-dark:  #4299e1;
+--gradient-assignment-manual: linear-gradient(
+  135deg,
+  var(--color-assignment-manual-dark) 0%,
+  var(--color-assignment-manual-light) 100%
+);
+
+/* AUTOMATIC */
+--color-assignment-automatic-light: #9ae6b4;
+--color-assignment-automatic-dark:  #38a169;
+--gradient-assignment-automatic: linear-gradient(
+  135deg,
+  var(--color-assignment-automatic-dark) 0%,
+  var(--color-assignment-automatic-light) 100%
+);
+
+
+/* ============================================
+   EVENT TYPE COLORS
+   ============================================ */
+
+/* PRIVATE LESSON */
+--color-event-private-lesson-light: #bee3f8;
+--color-event-private-lesson-dark:  #3182ce;
+--gradient-event-private-lesson: linear-gradient(
+  135deg,
+  var(--color-event-private-lesson-dark) 0%,
+  var(--color-event-private-lesson-light) 100%
+);
+
+/* GROUPED LESSON */
+--color-event-grouped-lesson-light: #c6f6d5;
+--color-event-grouped-lesson-dark:  #38a169;
+--gradient-event-grouped-lesson: linear-gradient(
+  135deg,
+  var(--color-event-grouped-lesson-dark) 0%,
+  var(--color-event-grouped-lesson-light) 100%
+);
+
+/* SPECIAL */
+--color-event-special-light: #faf089;
+--color-event-special-dark:  #d69e2e;
+--gradient-event-special: linear-gradient(
+  135deg,
+  var(--color-event-special-dark) 0%,
+  var(--color-event-special-light) 100%
+);
+
+/* COMPETITION */
+--color-event-competition-light: #e9d8fd;
+--color-event-competition-dark:  #805ad5;
+--gradient-event-competition: linear-gradient(
+  135deg,
+  var(--color-event-competition-dark) 0%,
+  var(--color-event-competition-light) 100%
+);
+
+/* BLOCKED */
+--color-event-blocked-light: #e2e8f0;
+--color-event-blocked-dark:  #4a5568;
+--gradient-event-blocked: linear-gradient(
+  135deg,
+  var(--color-event-blocked-dark) 0%,
+  var(--color-event-blocked-light) 100%
+);
+
+/* SERVICE */
+--color-event-service-light: #b2f5ea;
+--color-event-service-dark:  #319795;
+--gradient-event-service: linear-gradient(
+  135deg,
+  var(--color-event-service-dark) 0%,
+  var(--color-event-service-light) 100%
+);
+
+/* LOANER FREE TIME */
+--color-event-loaner-free-time-light: #c6f6d5;
+--color-event-loaner-free-time-dark:  #2f855a;
+--gradient-event-loaner-free-time: linear-gradient(
+  135deg,
+  var(--color-event-loaner-free-time-dark) 0%,
+  var(--color-event-loaner-free-time-light) 100%
+);
+
+
+    /* COLORS - Semantic Aliases */
   --color-surface: var(--color-white);
+  --color-bg-card: rgba(255, 255, 255, 0.95);
   --color-border: var(--color-gray-200);
   --color-border-light: var(--color-gray-150);
   --color-border-dark: var(--color-gray-300);
@@ -79,55 +356,48 @@
   --color-danger-badge-light: #fed7d7;
   --color-danger-badge-medium: #fc8181;
 
-  /* DOMAIN COLORS - Horses */
-  --color-pony-light: #ed64a6;
-  --color-pony-dark: #d53f8c;
-  --color-horse-light: #63b3ed;
-  --color-horse-dark: #4299e1;
+  /* Gradient Palette Aliases */
+  --gradient-palette-1: var(--gradient-primary);
+  --gradient-palette-2: var(--gradient-info);
+  --gradient-palette-3: var(--gradient-success);
+  --gradient-palette-4: var(--gradient-warning);
+  --gradient-palette-5: var(--gradient-danger);
+  --gradient-palette-6: var(--gradient-secondary);
+  --gradient-palette-7: var(--gradient-pony);
+  --gradient-palette-8: var(--gradient-alert-success);
+  --gradient-palette-9: var(--gradient-alert-error);
+  --gradient-palette-10: var(--gradient-event-service);
 
-  /* DOMAIN COLORS - Owners */
-  --color-laury-light: #fddce3;
-  --color-laury-dark: #f5576c;
-  --color-owner-light: #fee3c5;
-  --color-owner-dark: #ed8936;
-  --color-club-light: #dbeafe;
-  --color-club-dark: #4299e1;
-  --color-other-light: #fcdada;
-  --color-other-dark: #f56565;
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
 
-  /* DOMAIN COLORS - Riders */
-  --color-rider-owner-light: #ed8936;
-  --color-rider-owner-dark: #dd6b20;
-  --color-rider-club-light: #4299e1;
-  --color-rider-club-dark: #3182ce;
-  --color-rider-loaner-light: #28a745;
-  --color-rider-loaner-dark: #1e7e34;
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-normal: 1rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.75rem;
+  --font-size-4xl: 2rem;
 
-  /* DOMAIN COLORS - Pairings */
-  --color-pairing-own-light: #fef3c7;
-  --color-pairing-own-dark: #ed8936;
-  --color-pairing-loan-light: #d1fae5;
-  --color-pairing-loan-dark: #48bb78;
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
-  /* DOMAIN COLORS - Assignments */
-  --color-assignment-manual-light: #90cdf4;
-  --color-assignment-manual-dark: #4299e1;
-  --color-assignment-automatic-light: #9ae6b4;
-  --color-assignment-automatic-dark: #38a169;
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
 
-  /* DOMAIN COLORS - Status */
-  --color-status-active-light: #c6f6d5;
-  --color-status-active-dark: #48bb78;
-  --color-status-inactive-light: #e2e8f0;
-  --color-status-inactive-dark: #718096;
-  --color-status-pending-light: #fff5db;
-  --color-status-pending-dark: #ed8936;
-  --color-status-completed-light: #d6bcfa;
-  --color-status-completed-dark: #764ba2;
-  --color-status-cancelled-light: #fed7d7;
-  --color-status-cancelled-dark: #f56565;
-
-  /* SPACING */
+  /* ============================================
+     SPACING
+     ============================================ */
   --spacing-0: 0;
   --spacing-px: 1px;
   --spacing-2xs: 2px;
@@ -140,7 +410,9 @@
   --spacing-3xl: 48px;
   --spacing-4xl: 64px;
 
-  /* BORDER RADIUS */
+  /* ============================================
+     BORDER RADIUS
+     ============================================ */
   --radius-none: 0;
   --radius-sm: 4px;
   --radius-md: 6px;
@@ -150,7 +422,9 @@
   --radius-3xl: 24px;
   --radius-full: 9999px;
 
-  /* SHADOWS */
+  /* ============================================
+     SHADOWS
+     ============================================ */
   --shadow-none: none;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -158,36 +432,23 @@
   --shadow-xl: 0 10px 20px rgba(0, 0, 0, 0.2);
   --shadow-2xl: 0 20px 40px rgba(0, 0, 0, 0.25);
 
-  /* TRANSITIONS */
+  /* Mobile Action Button Shadows */
+  --shadow-mobile-btn-primary: 0 2px 8px rgba(66, 153, 225, 0.3);
+  --shadow-mobile-btn-primary-active: 0 1px 4px rgba(66, 153, 225, 0.4);
+  --shadow-mobile-btn-danger: 0 2px 8px rgba(220, 53, 69, 0.3);
+  --shadow-mobile-btn-danger-active: 0 1px 4px rgba(220, 53, 69, 0.4);
+
+  /* ============================================
+     TRANSITIONS
+     ============================================ */
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
   --transition-slower: 0.5s ease;
 
-  /* TYPOGRAPHY - Font Sizes */
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-normal: 1rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.75rem;
-  --font-size-4xl: 2rem;
-
-  /* TYPOGRAPHY - Font Weights */
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* TYPOGRAPHY - Line Heights */
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-
-  /* Z-INDEX System */
+  /* ============================================
+     Z-INDEX
+     ============================================ */
   --z-base: 0;
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -197,20 +458,15 @@
   --z-popover: 1060;
   --z-tooltip: 1070;
   --z-notification: 1080;
+  --z-mobile-action-bar: 95;
+  --z-calendar-header: 100;
+  --z-selection-overlay: 5;
+  --z-slot-card: 10;
+  --z-full-height-slot: 15;
 
-  /* GRADIENTS */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-purple) 100%);
-  --gradient-pony: linear-gradient(135deg, var(--color-pony-light) 0%, var(--color-pony-dark) 100%);
-  --gradient-success: linear-gradient(135deg, var(--color-success-medium) 0%, var(--color-success-medium-dark) 100%);
-  --gradient-danger: linear-gradient(135deg, var(--color-danger-medium) 0%, var(--color-danger-medium-dark) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--color-gray-500) 0%, var(--color-gray-650) 100%);
-  --gradient-warning: linear-gradient(135deg, var(--color-warning-orange) 0%, var(--color-warning-orange-dark) 100%);
-  --gradient-info: linear-gradient(135deg, var(--color-info-blue) 0%, var(--color-info-blue-dark) 100%);
-  --gradient-light: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-150) 100%);
-  --gradient-alert-success: linear-gradient(135deg, var(--color-success-badge-light) 0%, var(--color-success-badge-medium) 100%);
-  --gradient-alert-error: linear-gradient(135deg, var(--color-danger-badge-light) 0%, var(--color-danger-badge-medium) 100%);
-
-  /* CALENDAR SPECIFIC */
+  /* ============================================
+     CALENDAR + MOBILE ACTION BAR
+     ============================================ */
   --hour-height: 60px;
   --start-hour: 9;
   --end-hour: 22;
@@ -218,6 +474,21 @@
   --all-day-section-height: 50px;
   --selection-color: rgba(66, 153, 225, 0.2);
   --selection-border: var(--color-info-blue);
-  --today-bg: var(--color-info-light, #ebf8ff);
-  --hour-line-color: var(--color-gray-200);
+  --today-bg: rgba(66, 153, 225, 0.05);
+  --mobile-action-bar-height: 70px;
+  --mobile-header-height: auto;
+  --desktop-time-column-width: 64px;
+  --slot-border-radius: var(--radius-md);
+  --slot-padding: var(--spacing-sm);
+  --slot-gap: var(--spacing-xs);
+
+  /* Mobile Action Button Variables */
+  --mobile-action-btn-size: 56px;
+  --mobile-action-btn-size-sm: 52
+  --mobile-action-btn-gap: var(--spacing-2xs);
+  --mobile-action-label-font: var(--font-size-xs);
+  --mobile-action-label-font-sm: 0.5625rem;
+  --mobile-action-btn-primary-bg: var(--gradient-info);
+  --mobile-action-btn-danger-bg: var(--gradient-danger);
+  --mobile-action-btn-danger-active-bg: rgba(220, 53, 69, 0.1);
 }

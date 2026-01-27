@@ -125,12 +125,12 @@ function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
         onClose={onClose}
         size="xl"
         title={
-          <div className="detail-card-title">
-            <div className="detail-card-avatar">
+          <div className="modal-header">
+            <div className="info-card-avatar">
               <Icons.Horse />
             </div>
 
-            <div className="detail-card-title-text">
+            <div className="modal-header-text">
               <h2>{horse.name}</h2>
               <div className="detail-card-meta">
                 {horseTypeConfig && <DomainBadge config={horseTypeConfig} />}
@@ -138,7 +138,7 @@ function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
               </div>
             </div>
 
-            <div className="detail-card-actions">
+            <div className="header-actions-group">
               <button
                 className="btn-icon-modern"
                 onClick={() => onEdit(horse)}
@@ -157,7 +157,7 @@ function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
           </div>
         }
       >
-        <div className="detail-card-content">
+        <div className="modal-content-scrollable">
           {/* Messages */}
           {successMessage && (
             <div className="alert alert-success">
@@ -172,9 +172,9 @@ function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
             </div>
           )}
 
-          <div className="detail-card-grid">
+          <div className="layout-grid-content">
             {/* Left Column */}
-            <div className="detail-card-sidebar">
+            <div className="layout-sidebar-content">
               {/* Owner */}
               <div className="info-card">
                 <div className="info-card-header">
@@ -230,7 +230,7 @@ function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
             </div>
 
             {/* Right Column */}
-            <div className="detail-card-main">
+            <div className="layout-main-content">
               {/* Pairings Section */}
               <div className="data-card">
                 <div className="data-card-header">
@@ -261,7 +261,7 @@ function HorseCard({ horseId, onClose, onEdit, onDelete, onSuccess }) {
                         const loanDaysPairing = pairing.loan_days || [];
 
                         return (
-                          <div key={pairing.id} className="pairing-item-modern">
+                          <div key={pairing.id} className="pairing-row">
                             <div className="pairing-info">
                               <div className="pairing-header">
                                 <span>{pairing.rider_name}</span>

@@ -19,31 +19,52 @@ export function useEventBlockedEdit(slotId) {
 
   const refresh = async () => {
     setLoading(true);
+    setError(null);
     try {
       const fullSlot = await calendarService.getSlotFullDetails(slotId);
-      setSlot(fullSlot.slot);
-      setEvent(fullSlot.event);
 
+      if (!fullSlot || !fullSlot.slot) {
+        throw new Error('Aucune donnée reçue');
+      }
+
+      const slotData = fullSlot.slot;
+      const eventData = slotData.events; // L'event est dans slot.events !
+
+      if (!slotData) {
+        throw new Error('Slot introuvable');
+      }
+
+      setSlot(slotData);
+      setEvent(eventData);
+
+      // Préparer editData avec les valeurs du slot/event
       setEditData({
-        name: fullSlot.event?.name || '',
-        description: fullSlot.event?.description || '',
-        actual_instructor_id: fullSlot.slot?.actual_instructor_id || 1,
-        slot_date: fullSlot.slot?.slot_date || '',
-        start_time: formatTimeForInput(fullSlot.slot?.start_time) || '09:00',
-        end_time: formatTimeForInput(fullSlot.slot?.end_time) || '10:00',
-        is_all_day: fullSlot.slot?.is_all_day || false,
-        slot_status: fullSlot.slot?.slot_status || 'scheduled',
-        cancellation_reason: fullSlot.slot?.cancellation_reason || '',
+        name: eventData?.name || '',
+        description: eventData?.description || '',
+        instructor_id: eventData?.instructor_id || slotData?.actual_instructor_id || 1,
+        slot_date: slotData?.slot_date || '',
+        start_time: slotData?.start_time || '09:00',
+        end_time: slotData?.end_time || '10:00',
+        is_all_day: slotData?.is_all_day || false,
+        slot_status: slotData?.slot_status || 'SCHEDULED',
+        cancellation_reason: slotData?.cancellation_reason || '',
       });
+
+      setError(null);
     } catch (err) {
+      console.error('[useEventBlockedEdit] Error:', err);
       setError(err.message || 'Erreur lors du chargement du slot');
+      setSlot(null);
+      setEvent(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    refresh();
+    if (slotId) {
+      refresh();
+    }
   }, [slotId]);
 
   const startEdit = () => {
@@ -56,12 +77,12 @@ export function useEventBlockedEdit(slotId) {
       setEditData({
         name: event.name || '',
         description: event.description || '',
-        actual_instructor_id: slot.actual_instructor_id || 1,
+        instructor_id: event.instructor_id || slot.actual_instructor_id || 1,
         slot_date: slot.slot_date || '',
-        start_time: formatTimeForInput(slot.start_time) || '09:00',
-        end_time: formatTimeForInput(slot.end_time) || '10:00',
+        start_time: slot.start_time || '09:00',
+        end_time: slot.end_time || '10:00',
         is_all_day: slot.is_all_day || false,
-        slot_status: slot.slot_status || 'scheduled',
+        slot_status: slot.slot_status || 'SCHEDULED',
         cancellation_reason: slot.cancellation_reason || '',
       });
     }
@@ -75,11 +96,11 @@ export function useEventBlockedEdit(slotId) {
 
   const validateTimes = () => {
     if (!editData.is_all_day) {
-      const startTime = formatTimeForInput(editData.start_time);
-      const endTime = formatTimeForInput(editData.end_time);
+      const startTime = editData.start_time;
+      const endTime = editData.end_time;
 
       if (startTime >= endTime) {
-        setEditError('L heure de début doit être inférieure à l heure de fin.');
+        setEditError("L'heure de début doit être inférieure à l'heure de fin.");
         return false;
       }
     }
@@ -91,10 +112,11 @@ export function useEventBlockedEdit(slotId) {
 
     try {
       setSaving(true);
+      setEditError(null);
 
       const slotPayload = {
         slot_date: editData.slot_date,
-        actual_instructor_id: editData.actual_instructor_id,
+        actual_instructor_id: editData.instructor_id,
         is_all_day: editData.is_all_day,
         slot_status: editData.slot_status,
         cancellation_reason: editData.cancellation_reason || null,
@@ -114,16 +136,16 @@ export function useEventBlockedEdit(slotId) {
         const eventPayload = {
           name: editData.name,
           description: editData.description || null,
-          instructor_id: editData.actual_instructor_id,
+          instructor_id: editData.instructor_id,
         };
         await calendarService.updateEvent(event.id, eventPayload);
       }
 
       await refresh();
       setIsEditing(false);
-      setEditError(null);
       return true;
     } catch (err) {
+      console.error('[useEventBlockedEdit] Save error:', err);
       setEditError(err.message || 'Erreur lors de la sauvegarde');
       return false;
     } finally {
@@ -138,6 +160,7 @@ export function useEventBlockedEdit(slotId) {
       await calendarService.deleteSlot(slotId);
       return true;
     } catch (err) {
+      console.error('[useEventBlockedEdit] Delete error:', err);
       setDeleteError(err.message || 'Erreur lors de la suppression');
       return false;
     } finally {

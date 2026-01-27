@@ -36,7 +36,7 @@ export async function handlePackages(request, env) {
           `
           id,
           services_per_week,
-          group_lessons_per_week,
+          private_lessons_per_week,
           is_active,
           rider_id,
           created_at,
@@ -67,7 +67,7 @@ export async function handlePackages(request, env) {
           `
           id,
           services_per_week,
-          group_lessons_per_week,
+          private_lessons_per_week,
           is_active,
           rider_id,
           created_at,
@@ -94,7 +94,7 @@ export async function handlePackages(request, env) {
       if (!body)
         return jsonResponse({ error: 'Corps de requête invalide' }, 400, getSecurityHeaders());
 
-      const requiredFields = ['services_per_week', 'group_lessons_per_week', 'rider_id'];
+      const requiredFields = ['services_per_week', 'private_lessons_per_week', 'rider_id'];
       const missingFields = validateRequired(requiredFields, body);
       if (missingFields)
         return jsonResponse(
@@ -161,7 +161,7 @@ export async function handlePackages(request, env) {
 
       const packageData = {
         services_per_week: parseInt(body.services_per_week),
-        group_lessons_per_week: parseInt(body.group_lessons_per_week),
+        private_lessons_per_week: parseInt(body.private_lessons_per_week),
         rider_id: riderId,
         is_active: isActive,
       };
@@ -173,7 +173,7 @@ export async function handlePackages(request, env) {
           `
           id,
           services_per_week,
-          group_lessons_per_week,
+          private_lessons_per_week,
           is_active,
           rider_id,
           created_at,
@@ -301,10 +301,10 @@ export async function handlePackages(request, env) {
           body.services_per_week !== undefined
             ? parseInt(body.services_per_week)
             : currentPackage.services_per_week,
-        group_lessons_per_week:
-          body.group_lessons_per_week !== undefined
-            ? parseInt(body.group_lessons_per_week)
-            : currentPackage.group_lessons_per_week,
+        private_lessons_per_week:
+          body.private_lessons_per_week !== undefined
+            ? parseInt(body.private_lessons_per_week)
+            : currentPackage.private_lessons_per_week,
         is_active: willBeActive,
         rider_id,
         updated_at: new Date().toISOString(),
@@ -318,7 +318,7 @@ export async function handlePackages(request, env) {
           `
           id,
           services_per_week,
-          group_lessons_per_week,
+          private_lessons_per_week,
           is_active,
           rider_id,
           created_at,
@@ -446,7 +446,7 @@ export async function handleRiderPackages(request, env, riderId) {
         `
         id,
         services_per_week,
-        group_lessons_per_week,
+        private_lessons_per_week,
         is_active,
         rider_id,
         created_at,

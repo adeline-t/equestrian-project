@@ -52,14 +52,14 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="group_lessons_per_week">
-              Cours collectifs / semaine <span className="required">*</span>
+            <label htmlFor="private_lessons_per_week">
+              Cours privés / semaine <span className="required">*</span>
             </label>
             <input
               type="number"
-              id="group_lessons_per_week"
-              name="group_lessons_per_week"
-              value={formData.group_lessons_per_week}
+              id="private_lessons_per_week"
+              name="private_lessons_per_week"
+              value={formData.private_lessons_per_week}
               onChange={handleChange}
               min="0"
               step="1"
@@ -101,7 +101,7 @@ PackageForm.propTypes = {
   initialPackage: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     services_per_week: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    group_lessons_per_week: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    private_lessons_per_week: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     is_active: PropTypes.bool,
   }),
   riderId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

@@ -1,0 +1,109 @@
+/* ============================================
+   LIST CARD ITEMS - PARTICIPANTS & PAIRINGS
+   ============================================ */
+.pairings-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+/* ---------- PARTICIPANT / PAIRING ROW ---------- */
+.participant-row,
+.pairing-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.participant-row:hover,
+.pairing-row:hover {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-primary-light);
+  transform: translateX(2px);
+}
+
+.participant-info,
+.pairing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.participant-header,
+.pairing-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.participant-header span:first-child,
+.pairing-header span:first-child {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.participant-days,
+.pairing-days {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.participant-actions,
+.pairing-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ---------- PACKAGE ITEM ---------- */
+.package-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: var(--gradient-palette-10);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.package-item:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(2px);
+}
+
+.package-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.package-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .pairing-item-modern {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -1,0 +1,136 @@
+/* ============================================
+   MOBILE CALENDAR ACTIONS - FULLY VARIABLE
+   ============================================ */
+
+/* MOBILE ACTION BAR - Fixed Bottom */
+.mobile-calendar-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none; /* Hidden by default, shown on mobile */
+  align-items: center;
+  justify-content: space-around;
+  background: var(--color-surface);
+  border-top: 0.5px solid var(--color-border-light);
+  padding: var(--spacing-xs) var(--spacing-md);
+  padding-bottom: calc(var(--spacing-xs) + env(safe-area-inset-bottom, 0px));
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-mobile-action-bar);
+  gap: var(--spacing-sm);
+}
+
+/* MOBILE ACTION BUTTONS */
+.mobile-action-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mobile-action-btn-gap);
+  min-width: var(--mobile-action-btn-size);
+  min-height: var(--mobile-action-btn-size);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-2xl);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* BUTTON ACTIVE STATE */
+.mobile-action-btn:active {
+  transform: scale(0.95);
+  background: var(--color-bg-tertiary);
+}
+
+/* LABELS */
+.mobile-action-label {
+  font-size: var(--mobile-action-label-font);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+/* PRIMARY BUTTON */
+.mobile-action-btn.primary {
+  background: var(--mobile-action-btn-primary-bg);
+  color: var(--color-white);
+  box-shadow: var(--shadow-mobile-btn-primary);
+  flex: 0 0 auto;
+  min-width: var(--mobile-action-btn-size);
+  min-height: var(--mobile-action-btn-size);
+  border-radius: var(--radius-full);
+  padding: 0;
+}
+
+.mobile-action-btn.primary .mobile-action-label {
+  display: none; /* No label for primary button */
+}
+
+.mobile-action-btn.primary:active {
+  transform: scale(0.95);
+  box-shadow: var(--shadow-mobile-btn-primary-active);
+}
+
+/* DANGER BUTTON */
+.mobile-action-btn.danger {
+  background: var(--mobile-action-btn-danger-bg);
+  color: var(--color-white);
+  box-shadow: var(--shadow-mobile-btn-danger);
+}
+
+.mobile-action-btn.danger .mobile-action-label {
+  color: var(--color-white);
+}
+
+.mobile-action-btn.danger:active {
+  background: var(--mobile-action-btn-danger-active-bg);
+  box-shadow: var(--shadow-mobile-btn-danger-active);
+}
+
+/* ============================================
+   RESPONSIVE - SHOW ON MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .mobile-calendar-actions {
+    display: flex;
+  }
+
+  /* Hide desktop filters on mobile */
+  .calendar-filters {
+    display: none !important;
+  }
+
+  /* Adjust calendar view to account for bottom bar */
+  .mobile-calendar-view {
+    padding-bottom: calc(var(--mobile-action-bar-height) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-action-btn {
+    min-width: var(--mobile-action-btn-size-sm);
+    min-height: var(--mobile-action-btn-size-sm);
+    font-size: var(--font-size-xl);
+    gap: var(--mobile-action-btn-gap);
+  }
+
+  .mobile-action-label {
+    font-size: var(--mobile-action-label-font-sm);
+  }
+}
+
+/* Safe area support */
+@supports (padding: max(0px)) {
+  .mobile-calendar-actions {
+    padding-bottom: max(
+      var(--spacing-xs),
+      calc(var(--spacing-xs) + env(safe-area-inset-bottom, 0px))
+    );
+  }
+}

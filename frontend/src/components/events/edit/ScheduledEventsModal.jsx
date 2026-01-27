@@ -4,10 +4,11 @@ import { Icons } from '../../../lib/icons';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { getEventTypeConfig } from '../../../lib/domain/events';
-import { getInstructorConfig } from '../../../lib/domain/domain-constants';
 import DomainBadge from '../../common/DomainBadge.jsx';
 import { useEventScheduledList } from '../../../hooks/useEventScheduledList';
-import '../../../styles/features/events/event-modal.css';
+import '../../../styles/features/events/scheduled-events.css';
+import { getInstructorConfig } from '../../../lib/domain/domain-constants.js';
+import { shortName } from '../../../lib/helpers/index.js';
 
 function ScheduledEventsModal({ onClose, onUpdate }) {
   const { slots, loading, error, actionLoading, actionError, validateSlot, deleteSlot } =
@@ -63,62 +64,78 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
         isOpen
         onClose={() => setConfirmDelete(null)}
         title={
-          <span className="modal-title-danger">
+          <div className="modal-title-warning">
             <Icons.Warning /> Confirmer la suppression
-          </span>
-        }
-        footer={
-          <>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setConfirmDelete(null)}
-              disabled={actionLoading === confirmDelete}
-            >
-              <Icons.Cancel /> Annuler
-            </button>
-            <button
-              className="btn btn-danger"
-              onClick={confirmDeleteAction}
-              disabled={actionLoading === confirmDelete}
-            >
-              {actionLoading === confirmDelete ? (
-                <>
-                  <Icons.Loading className="spin" /> Suppression...
-                </>
-              ) : (
-                <>
-                  <Icons.Delete /> Supprimer
-                </>
-              )}
-            </button>
-          </>
+          </div>
         }
         size="sm"
       >
-        <div className="scheduled-delete-content">
-          {actionError && (
-            <div className="alert alert-error">
-              <Icons.Warning /> {actionError}
+        {actionError && (
+          <div className="alert alert-error">
+            <Icons.Warning /> {actionError}
+          </div>
+        )}
+
+        <p style={{ textAlign: 'center', margin: 'var(--spacing-md) 0' }}>
+          Êtes-vous sûr de vouloir supprimer cet événement ?
+        </p>
+
+        {slotToDelete && (
+          <div className="info-card">
+            <div className="info-card-body">
+              <div className="info-item-modern">
+                <div className="info-content">
+                  <span className="info-label">Événement</span>
+                  <span className="info-value">
+                    {slotToDelete.events?.name || eventTypeConfig?.label || 'Événement'}
+                  </span>
+                </div>
+              </div>
+              <div className="info-item-modern">
+                <div className="info-content">
+                  <span className="info-label">Date</span>
+                  <span className="info-value">
+                    {format(parseISO(slotToDelete.slot_date), 'EEEE d MMMM yyyy', { locale: fr })}
+                    {!slotToDelete.is_all_day && (
+                      <>
+                        {' '}
+                        • {slotToDelete.start_time} - {slotToDelete.end_time}
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+        )}
 
-          <p>Êtes-vous sûr de vouloir supprimer cet événement ?</p>
+        <div className="alert alert-danger">
+          <Icons.Warning /> Cette action est irréversible.
+        </div>
 
-          {slotToDelete && (
-            <div className="scheduled-delete-event">
-              <strong>{slotToDelete.event?.name || eventTypeConfig?.label || 'Événement'}</strong>
-              <br />
-              {format(parseISO(slotToDelete.slot_date), 'EEEE d MMMM yyyy', { locale: fr })}
-              {!slotToDelete.is_all_day && (
-                <>
-                  {' '}
-                  • {slotToDelete.start_time} - {slotToDelete.end_time}
-                </>
-              )}
-            </div>
-          )}
-
-          <p className="scheduled-delete-warning">Cette action est irréversible.</p>
+        <div className="modal-footer">
+          <button
+            className="btn btn-secondary"
+            onClick={() => setConfirmDelete(null)}
+            disabled={actionLoading === confirmDelete}
+          >
+            <Icons.Cancel /> Annuler
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={confirmDeleteAction}
+            disabled={actionLoading === confirmDelete}
+          >
+            {actionLoading === confirmDelete ? (
+              <>
+                <Icons.Loading className="spin" /> Suppression...
+              </>
+            ) : (
+              <>
+                <Icons.Delete /> Supprimer
+              </>
+            )}
+          </button>
         </div>
       </Modal>
     );
@@ -129,12 +146,11 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
       isOpen
       onClose={onClose}
       title={
-        <div className="modal-title-with-icon">
-          <Icons.Calendar />
-          Événements en attente de validation ({slots.length})
+        <div className="modal-title">
+          <span>Événements en attente de validation</span>
+          <span className="badge count-badge warning">{slots.length}</span>
         </div>
       }
-      footer={<></>}
       size="lg"
     >
       {loading && (
@@ -152,7 +168,9 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
 
       {!loading && !error && slots.length === 0 && (
         <div className="empty-state">
-          <Icons.Calendar className="empty-state-icon" />
+          <div className="empty-state-icon">
+            <Icons.Calendar />
+          </div>
           <p>Aucun événement en attente</p>
         </div>
       )}
@@ -169,93 +187,86 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
             });
 
             return (
-              <div key={date} className="section-compact">
+              <div key={date}>
                 {/* Date Header */}
-                <div className="scheduled-date-header">
-                  <div className="scheduled-date-title">{formattedDate}</div>
-                  <div className="scheduled-date-count">
-                    {daySlots.length} événement{daySlots.length > 1 ? 's' : ''}
-                  </div>
+                <div className="info-card-header">
+                  <Icons.Calendar />
+                  <h3>{formattedDate}</h3>
+                  <span className="count-badge">{daySlots.length}</span>
                 </div>
 
                 {/* Events List */}
-                <div className="scheduled-events-list">
+                <div className="data-card">
                   {daySlots.map((slot) => {
                     const event = slot.events;
                     const eventTypeConfig = getEventTypeConfig(event.event_type);
-                    const EventTypeIcon = eventTypeConfig?.icon || Icons.Calendar;
+                    const instructorConfig = getInstructorConfig(event.instructor_id);
                     const isProcessing = actionLoading === slot.id;
+                    console.log('event instructor', event.instructor_id);
+                    console.log('event instructor config', instructorConfig);
 
                     return (
                       <div
                         key={slot.id}
                         className={`card scheduled-event-card ${isProcessing ? 'processing' : ''}`}
                       >
-                        {/* MAIN CONTENT (defines height) */}
+                        {/* MAIN CONTENT */}
                         <div className="scheduled-event-main">
                           {/* Time */}
-                          <div className="scheduled-event-box scheduled-event-time">
-                            <div className="scheduled-event-time-label">
-                              {slot.is_all_day ? (
-                                <span>Journée</span>
-                              ) : (
-                                <div className="scheduled-event-time-range">
-                                  <span>{slot.start_time}</span>
-                                  <span>{slot.end_time}</span>
-                                </div>
-                              )}
-                            </div>
+                          <div className="scheduled-event-time">
+                            {slot.is_all_day ? (
+                              <span className="info-value">Journée entière</span>
+                            ) : (
+                              <div className="scheduled-event-time-range">
+                                <span className="info-value">{slot.start_time}</span>
+                                <span className="info-label">{slot.end_time}</span>
+                              </div>
+                            )}
                           </div>
 
                           {/* Event Details */}
-                          <div className="scheduled-event-box scheduled-event-details">
-                            <div className="scheduled-event-header">
-                              <div className="scheduled-event-title">
-                                {event.name || eventTypeConfig?.label || 'Événement'}
-                              </div>
+                          <div className="scheduled-event-details">
+                            <div className="info-value">
+                              {event.name || eventTypeConfig?.label || 'Événement'}
                             </div>
 
                             {/* Metadata */}
                             <div className="scheduled-event-metadata">
-                              <div className="scheduled-event-metadata-item">
-                                <EventTypeIcon className="metadata-icon" />
-                                {eventTypeConfig && <DomainBadge config={eventTypeConfig} />}
-                                {slot.actual_instructor_name && (
-                                  <>
-                                    <span className="scheduled-event-separator">•</span>
-                                    <Icons.User />
-                                    {slot.actual_instructor_name}
-                                  </>
-                                )}
-                              </div>
+                              {eventTypeConfig && <DomainBadge config={eventTypeConfig} />}
+                              {instructorConfig && <DomainBadge config={instructorConfig} />}
                             </div>
                           </div>
 
                           {/* Participants */}
                           {slot.event_participants?.length > 0 && (
-                            <div className="scheduled-event-box scheduled-event-participants">
-                              <div className="scheduled-event-participants-list">
-                                {slot.event_participants.map((participant, idx) => (
-                                  <div key={idx} className="scheduled-event-participant">
-                                    <span>{participant.riders.name}</span>
-                                    {participant.horse_id && (
-                                      <>
-                                        <span className="scheduled-event-separator">•</span>
-                                        <span>{participant.horses.name}</span>
-                                      </>
+                            <div className="scheduled-event-participants inline">
+                              {slot.event_participants.map((participant, idx) => (
+                                <span key={idx} className="participant-chip">
+                                  {participant.rider_id ? (
+                                    shortName(participant.riders.name)
+                                  ) : (
+                                    <b className="text-danger">N/A</b>
+                                  )}
+
+                                  <span className="text-muted">
+                                    {participant.horse_id ? (
+                                      shortName(participant.horses.name)
+                                    ) : (
+                                      <b className="text-danger">N/A</b>
                                     )}
-                                  </div>
-                                ))}
-                              </div>
+                                  </span>
+                                </span>
+                              ))}
                             </div>
                           )}
 
-                          {/* ACTIONS (now perfectly alignable) */}
-                          <div className="scheduled-event-actions">
+                          {/* ACTIONS */}
+                          <div className="card-actions">
                             <button
                               className="btn-icon-modern success"
                               onClick={(e) => handleValidate(slot, e)}
                               title="Valider"
+                              disabled={isProcessing}
                             >
                               <Icons.Check />
                             </button>
@@ -273,8 +284,12 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
 
                         {/* Created At */}
                         <div className="scheduled-event-created">
-                          Créé le{' '}
-                          {format(parseISO(slot.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                          <span className="info-label">
+                            Créé le{' '}
+                            {format(parseISO(slot.created_at), 'dd/MM/yyyy à HH:mm', {
+                              locale: fr,
+                            })}
+                          </span>
                         </div>
                       </div>
                     );

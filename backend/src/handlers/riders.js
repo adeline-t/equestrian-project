@@ -82,7 +82,7 @@ export async function handleRiders(request, env) {
 
           let activePackagesCount = 0;
           let servicesPerWeek = 0;
-          let groupLessonsPerWeek = 0;
+          let privateLessonsPerWeek = 0;
 
           packages?.forEach((pkg) => {
             const active = pkg.is_active;
@@ -90,7 +90,7 @@ export async function handleRiders(request, env) {
             if (active) {
               activePackagesCount++;
               servicesPerWeek += pkg.services_per_week || 0;
-              groupLessonsPerWeek += pkg.group_lessons_per_week || 0;
+              privateLessonsPerWeek += pkg.private_lessons_per_week || 0;
             }
           });
 
@@ -99,7 +99,7 @@ export async function handleRiders(request, env) {
             active_horses_count: activeHorsesCount,
             active_packages_count: activePackagesCount,
             services_per_week: servicesPerWeek,
-            group_lessons_per_week: groupLessonsPerWeek,
+            private_lessons_per_week: privateLessonsPerWeek,
           };
         })
       );
@@ -404,8 +404,8 @@ export async function handleRidersList(request, env) {
         const activePackagesCount = packages?.length || 0;
         const servicesPerWeek =
           packages?.reduce((sum, pkg) => sum + (pkg.services_per_week || 0), 0) || 0;
-        const groupLessonsPerWeek =
-          packages?.reduce((sum, pkg) => sum + (pkg.group_lessons_per_week || 0), 0) || 0;
+        const privateLessonsPerWeek =
+          packages?.reduce((sum, pkg) => sum + (pkg.private_lessons_per_week || 0), 0) || 0;
 
         return {
           ...rider,
@@ -413,7 +413,7 @@ export async function handleRidersList(request, env) {
           active_horses_count: activePairings.length,
           active_packages_count: activePackagesCount,
           services_per_week: servicesPerWeek,
-          group_lessons_per_week: groupLessonsPerWeek,
+          private_lessons_per_week: privateLessonsPerWeek,
         };
       })
     );

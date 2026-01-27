@@ -31,10 +31,7 @@ export function useEventBlockedCreate() {
 
       // Auto-generate name if user hasn't set a custom one
       if (name !== 'name' && !formData.name) {
-        const dateStr = format(new Date(formData.slot_date), 'dd/MM', { locale: fr });
-        const autoName = formData.is_all_day
-          ? `Bloqué - ${dateStr}`
-          : `Bloqué - ${dateStr} ${formData.start_time}`;
+        const autoName = 'Bloqué';
         setFormData((prev) => ({ ...prev, [name]: value, name: autoName }));
       } else {
         setFormData((prev) => ({ ...prev, [name]: value }));

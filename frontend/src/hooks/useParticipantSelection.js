@@ -77,8 +77,9 @@ export function useParticipantSelection(existingParticipants = [], editingPartic
             .filter((horse) => horse && horse.id);
           setRiderHorses(horsesData);
 
-          // Auto-select first horse if available and none selected
-          if (horsesData.length > 0 && !selectedHorseId) {
+          // Auto-select first horse ONLY if no horse is currently selected
+          // This allows initial auto-selection but preserves manual deselection
+          if (horsesData.length > 0 && selectedHorseId === null) {
             setSelectedHorseId(horsesData[0].id);
           }
         } else {
@@ -91,7 +92,7 @@ export function useParticipantSelection(existingParticipants = [], editingPartic
     };
 
     fetchRiderHorses();
-  }, [selectedRiderId, selectedHorseId]);
+  }, [selectedRiderId]); // Garder seulement selectedRiderId comme dépendance
 
   // Get available riders (excluding already selected ones)
   const getAvailableRiders = useCallback(

@@ -45,7 +45,7 @@ function RidersModal({ isOpen, onClose, horseName, riders, loading, error }) {
 
     return (
       <div className="modal-content">
-        <ul className="cards-list">
+        <ul className="data-card">
           {ridersArray.map((pairing) => {
             const linkConfig = getRiderHorseLinkConfig(pairing.link_type);
             const isLoan = pairing.link_type === 'loan';

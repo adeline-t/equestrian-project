@@ -95,7 +95,7 @@ CREATE TABLE lesson_participants (
 CREATE TABLE packages (
     id integer NOT NULL PRIMARY KEY,
     services_per_week integer NOT NULL CHECK (services_per_week >= 0),
-    group_lessons_per_week integer NOT NULL CHECK (group_lessons_per_week >= 0),
+    private_lessons_per_week integer NOT NULL CHECK (private_lessons_per_week >= 0),
     created_at timestamp NOT NULL DEFAULT now(),
     updated_at timestamp NOT NULL DEFAULT now(),
     rider_id integer NOT NULL,

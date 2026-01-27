@@ -1,0 +1,281 @@
+/* ============================================
+   CALENDAR COMPLETE - VARIABLE-DRIVEN
+   ============================================ */
+
+/* ============================================
+   VARIABLES (add these in :root)
+   ============================================ */
+:root {
+  /* Spacing & sizing */
+  --calendar-gap: var(--spacing-md);
+  --calendar-padding: var(--spacing-md);
+  --calendar-radius: var(--radius-lg);
+  --hour-height: 60px;
+  --day-header-height: 40px;
+  --all-day-section-height: 48px;
+
+  /* Colors */
+  --calendar-bg: var(--color-white);
+  --calendar-surface: var(--color-surface);
+  --calendar-bg-secondary: var(--color-gray-50);
+  --calendar-border: var(--color-border);
+  --calendar-border-dark: var(--color-border-dark);
+  --calendar-text: var(--color-gray-900);
+  --calendar-text-light: var(--color-gray-500);
+  --calendar-disabled: var(--color-gray-100);
+  --color-primary-light: var(--color-primary);
+  --color-white: #ffffff;
+  --color-danger-red: var(--color-danger);
+
+  /* Fonts */
+  --calendar-font-xs: var(--font-size-xs);
+  --calendar-font-sm: var(--font-size-sm);
+  --calendar-font-md: var(--font-size-md);
+  --calendar-font-lg: var(--font-size-lg);
+  --calendar-font-xl: var(--font-size-xl);
+  --calendar-font-weight-normal: 400;
+  --calendar-font-weight-medium: 500;
+  --calendar-font-weight-semibold: 600;
+  --calendar-font-weight-bold: 700;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #9b51e0 100%);
+  --gradient-info: linear-gradient(135deg, #4299e1 0%, #5da9e9 100%);
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --gradient-secondary: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+  --gradient-light: linear-gradient(to bottom, var(--color-white), var(--calendar-bg-secondary));
+
+  /* Selection */
+  --selection-color: rgba(66, 153, 225, 0.1);
+  --selection-border: rgba(66, 153, 225, 0.3);
+}
+
+/* ============================================
+   DESKTOP - ALL-DAY SLOTS
+   ============================================ */
+.all-day-section {
+  height: var(--all-day-section-height);
+  min-height: var(--all-day-section-height);
+  padding: var(--spacing-xs);
+  background: var(--calendar-bg-secondary);
+  border-bottom: 1px solid var(--calendar-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.all-day-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+.all-day-slot-card {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: var(--calendar-font-xs);
+  font-weight: var(--calendar-font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.all-day-slot-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.all-day-slot-card[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+.all-day-slot-card[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+.all-day-slot-card[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+.all-day-slot-card[data-type='blocked'] {
+  background: var(--gradient-secondary);
+  opacity: 0.8;
+}
+
+.all-day-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.all-day-slot-status-icon {
+  font-size: var(--calendar-font-sm);
+  flex-shrink: 0;
+}
+.all-day-slot-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   DESKTOP - FULL HEIGHT SLOTS
+   ============================================ */
+.full-height-slots-container {
+  position: absolute;
+  top: calc(var(--day-header-height) + var(--all-day-section-height));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  padding: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  pointer-events: none;
+}
+
+.full-height-slot-card {
+  flex: 1;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.full-height-slot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.full-height-slot-card[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.full-height-slot-card[data-type='blocked'] {
+  background: var(--gradient-secondary);
+}
+
+.full-height-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+.full-height-slot-icon {
+  font-size: var(--spacing-lg);
+  flex-shrink: 0;
+}
+.full-height-slot-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.full-height-slot-type {
+  font-size: var(--calendar-font-xs);
+  opacity: 0.9;
+  text-transform: uppercase;
+  font-weight: var(--calendar-font-weight-semibold);
+}
+.full-height-slot-name {
+  font-size: var(--calendar-font-sm);
+  font-weight: var(--calendar-font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   DESKTOP - DAY GRID
+   ============================================ */
+.day-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid var(--calendar-border);
+  background: var(--calendar-surface);
+}
+.day-column:last-child {
+  border-right: none;
+}
+.day-column.today {
+  background: linear-gradient(
+    to bottom,
+    var(--today-bg, var(--color-primary-light)),
+    transparent 80px
+  );
+}
+.day-column.past {
+  opacity: 0.7;
+}
+.day-column.invalid {
+  background: var(--calendar-disabled);
+  opacity: 0.5;
+}
+.day-column.has-full-height-event .day-grid-container {
+  pointer-events: none;
+}
+
+.day-grid-container {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.day-grid {
+  position: relative;
+  height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
+}
+
+.selection-overlay {
+  position: absolute;
+  background: var(--selection-color);
+  border: 2px solid var(--selection-border);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ============================================
+   DESKTOP - EVENT CARD
+   ============================================ */
+.event-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
+}
+.event-card:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+/* ============================================
+   MOBILE - ACTION BAR & EVENTS (same variables as previous)
+   ============================================ */

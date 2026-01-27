@@ -8,8 +8,6 @@ import {
 import { Icons } from '../../../../lib/icons.jsx';
 import { INSTRUCTORS } from '../../../../lib/domain';
 
-import '../../../../styles/features/events/event-form.css';
-
 // Convert domain map → array for UI
 const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
   id: Number(id),
@@ -18,12 +16,12 @@ const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
 
 function BlockedTimeForm({ formData, handleChange, setFormData }) {
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="blocked-time-form">
+    <form onSubmit={(e) => e.preventDefault()} className="entity-form">
       {/* GENERAL INFORMATION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      <div className="form-section">
+        <h3>Informations générales</h3>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label htmlFor="name">Nom</label>
           <input
             type="text"
@@ -36,7 +34,7 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
           />
         </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>
             Instructeur <span className="required">*</span>
           </label>
@@ -64,10 +62,10 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
       </div>
 
       {/* DATE SECTION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Date et horaires</h3>
+      <div className="form-section">
+        <h3>Date et horaires</h3>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label htmlFor="slot_date">
             Date <span className="required">*</span>
           </label>
@@ -82,7 +80,7 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
           />
         </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>Format</label>
           <div className="segmented-control">
             <button
@@ -137,7 +135,10 @@ function BlockedTimeForm({ formData, handleChange, setFormData }) {
               </div>
             </div>
 
-            <div className="blocked-time-duration-display">
+            <div
+              className="form-help"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
               <Icons.Clock />
               Durée:{' '}
               {formatDuration(calculateDurationMinutes(formData.start_time, formData.end_time))}

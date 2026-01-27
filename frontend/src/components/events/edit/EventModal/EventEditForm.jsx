@@ -31,8 +31,11 @@ export default function EventEditForm({ editData, onChange, onCancel, onSubmit, 
       }}
     >
       {/* GENERAL INFORMATION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      <div className="form-section">
+        <div className="info-card-header">
+          <Icons.Info />
+          <h3>Informations générales</h3>
+        </div>
 
         <div className="form-group mb-15">
           <label>Nom</label>

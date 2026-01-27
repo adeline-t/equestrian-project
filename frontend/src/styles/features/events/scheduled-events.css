@@ -1,0 +1,148 @@
+/* ============================================
+   SCHEDULED EVENTS MODAL - Ultra minimal
+   Maximum reuse from common.css
+   ============================================ */
+
+/* ============================================
+   CONTENT LAYOUT
+   ============================================ */
+
+.scheduled-events-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ============================================
+   EVENT CARD - Grid only
+   ============================================ */
+
+.scheduled-event-card {
+  padding: var(--spacing-md);
+}
+
+.scheduled-event-card.processing {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.scheduled-event-main {
+  display: grid;
+  grid-template-columns: 100px 180px 1fr auto;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+/* ============================================
+   TIME SECTION - Specific layout
+   ============================================ */
+
+.scheduled-event-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+  justify-content: center;
+}
+
+.scheduled-event-time-range {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ============================================
+   DETAILS SECTION - Specific layout
+   ============================================ */
+
+.scheduled-event-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.scheduled-event-metadata {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.metadata-icon {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PARTICIPANTS - Specific layout
+   ============================================ */
+
+.scheduled-event-participants {
+  min-width: 200px;
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-xs);
+}
+
+.scheduled-event-participants.inline {
+  display: flex;
+  gap: 4px;
+}
+
+.participant-chip {
+  font-size: 11px;
+  padding: 2px 6px;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.3;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-grey-50);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   FOOTER - Specific style
+   ============================================ */
+
+.scheduled-event-created {
+  text-align: right;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  margin-top: var(--spacing-md);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 992px) {
+  .scheduled-event-main {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .scheduled-event-time {
+    grid-row: 1 / 3;
+  }
+
+  .scheduled-event-participants {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .scheduled-event-details {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .scheduled-event-main {
+    grid-template-columns: 1fr;
+  }
+
+  .scheduled-event-card {
+    padding: var(--spacing-sm);
+  }
+}

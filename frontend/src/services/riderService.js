@@ -120,7 +120,7 @@ const riderService = {
     const validatedData = {
       rider_id: Number(riderId),
       services_per_week: Number(packageData.services_per_week) || 0,
-      group_lessons_per_week: Number(packageData.group_lessons_per_week) || 0,
+      private_lessons_per_week: Number(packageData.private_lessons_per_week) || 0,
       is_active: packageData.is_active !== undefined ? Boolean(packageData.is_active) : true,
       activity_start_date: packageData.activity_start_date || null,
       activity_end_date: packageData.activity_end_date || null,

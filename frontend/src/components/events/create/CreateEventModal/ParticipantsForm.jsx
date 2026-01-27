@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParticipantSelection } from '../../../../hooks/useParticipantSelection.js';
 import {
   RIDER_TYPES,
@@ -6,7 +6,7 @@ import {
   getRiderTypeLabel,
 } from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
-import '../../../../styles/features/events/event-participants.css';
+import { shortName } from '../../../../lib/helpers/index.js';
 
 function ParticipantsForm({
   participants,
@@ -16,12 +16,10 @@ function ParticipantsForm({
   updateParticipant,
 }) {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [validationError, setValidationError] = useState(null);
   const [riderTypeFilter, setRiderTypeFilter] = useState('all');
   const [riderSearch, setRiderSearch] = useState('');
   const [horseOwnershipFilter, setHorseOwnershipFilter] = useState('all');
-  const [showScrollHint, setShowScrollHint] = useState(true);
-
-  const containerRef = useRef(null);
 
   const participantSelection = useParticipantSelection(participants, null);
 
@@ -31,7 +29,6 @@ function ParticipantsForm({
     setSelectedRiderId,
     selectedHorseId,
     setSelectedHorseId,
-    setSelection,
     resetSelection,
     getAvailableRiders,
     getAvailableHorses,
@@ -39,36 +36,9 @@ function ParticipantsForm({
     getHorseName,
   } = participantSelection;
 
-  // Auto-select first horse when rider is selected
   useEffect(() => {
-    if (selectedRiderId) {
-      const availableHorses = getAvailableHorses(horseOwnershipFilter);
-      if (availableHorses.length > 0 && !selectedHorseId) {
-        setSelectedHorseId(availableHorses[0].id);
-      }
-    }
-  }, [
-    selectedRiderId,
-    horseOwnershipFilter,
-    selectedHorseId,
-    getAvailableHorses,
-    setSelectedHorseId,
-  ]);
-
-  // Détection du scroll pour masquer l'indicateur
-  useEffect(() => {
-    const container = containerRef.current?.closest('.create-event-participants-column');
-    if (!container) return;
-
-    const handleScroll = () => {
-      if (container.scrollTop > 20) {
-        setShowScrollHint(false);
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
+    setValidationError(null);
+  }, [selectedRiderId, selectedHorseId]);
 
   const startAdd = () => {
     resetSelection();
@@ -87,11 +57,31 @@ function ParticipantsForm({
   };
 
   const handleSubmit = () => {
-    // Permet cavalier seul OU cheval seul
     if (!selectedRiderId && !selectedHorseId) return;
 
-    addParticipant(selectedRiderId, selectedHorseId);
+    // Validation: Check if rider is already added
+    if (selectedRiderId) {
+      const riderExists = participants.some((p) => p.rider_id === selectedRiderId);
+      if (riderExists) {
+        setValidationError(
+          `Le cavalier ${getRiderName(selectedRiderId)} est déjà ajouté comme participant.`
+        );
+        return;
+      }
+    }
 
+    // Validation: Check if horse is already added
+    if (selectedHorseId) {
+      const horseExists = participants.some((p) => p.horse_id === selectedHorseId);
+      if (horseExists) {
+        setValidationError(
+          `Le cheval ${getHorseName(selectedHorseId)} est déjà ajouté comme participant.`
+        );
+        return;
+      }
+    }
+
+    addParticipant(selectedRiderId, selectedHorseId);
     resetSelection();
     setShowAddForm(false);
     setRiderSearch('');
@@ -101,47 +91,57 @@ function ParticipantsForm({
   const availableHorses = getAvailableHorses(horseOwnershipFilter);
 
   return (
-    <div className="form-section" ref={containerRef}>
-      <div className="participants-header">
-        <h3>Participants</h3>
-        {participants.length > 0 && (
-          <span className="participants-count">{participants.length}</span>
-        )}
+    <div className="form-section">
+      <div className="card-title">
+        <Icons.Users />
+        <span className="card-title-text">Participants</span>
+        {participants.length > 0 && <span className="count-badge">{participants.length}</span>}
       </div>
 
       {loading && (
-        <div className="alert alert-info mb-15">
+        <div className="alert alert-info">
           <Icons.Loading className="spin" /> Chargement des cavaliers et chevaux…
+        </div>
+      )}
+
+      {/* VALIDATION ERROR */}
+      {validationError && (
+        <div className="alert alert-error">
+          <Icons.Warning /> {validationError}
         </div>
       )}
 
       {/* EXISTING PARTICIPANTS */}
       {participants.length > 0 ? (
-        <div className="participants-list mb-20">
+        <div className="form-group">
           {participants.map((p) => (
-            <div key={p.id} className="participant-badge">
-              <div className="participant-badge-content">
-                <span className="participant-badge-rider">
-                  {p.rider_id ? getRiderName(p.rider_id) : 'Cavalier à définir'}
-                </span>
-                {p.rider_id && p.horse_id && <span className="participant-badge-separator">-</span>}
-                <span className="participant-badge-rider">
-                  {p.horse_id ? getHorseName(p.horse_id) : 'Cheval à définir'}
-                </span>
+            <div key={p.id} className="pairing-row">
+              <div className="pairing-info">
+                <div className="pairing-header">
+                  <span>
+                    {p.rider_id ? shortName(getRiderName(p.rider_id)) : 'Cavalier à définir'}
+                  </span>
+                  {p.rider_id && p.horse_id && <span className="text-muted">-</span>}
+                  <span>
+                    {p.horse_id ? shortName(getHorseName(p.horse_id)) : 'Cheval à définir'}
+                  </span>
+                </div>
               </div>
-              <button
-                type="reset"
-                className="btn-icon-modern danger participant-btn"
-                onClick={() => removeParticipant(p.id)}
-                title="Supprimer"
-              >
-                <Icons.Close />
-              </button>
+              <div className="pairing-actions">
+                <button
+                  type="button"
+                  className="btn-icon-modern danger"
+                  onClick={() => removeParticipant(p.id)}
+                  title="Supprimer"
+                >
+                  <Icons.Delete />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="empty-state-small mb-20">
+        <div className="empty-state-small">
           <Icons.Users />
           <p>Aucun participant ajouté</p>
         </div>
@@ -153,126 +153,144 @@ function ParticipantsForm({
         </button>
       )}
 
-      {/* ADD / EDIT FORM */}
+      {/* ADD FORM */}
       {showAddForm && (
-        <div className="event-form-section mt-20">
-          <div className="form-section-header">
-            <h4>Ajouter un participant</h4>
-
-            {/* Bouton d'ajout en haut à droite */}
+        <div className="card">
+          <div className="card-header">
             <button
               type="button"
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary"
               onClick={handleSubmit}
               disabled={!selectedRiderId && !selectedHorseId}
             >
               <Icons.Check /> Ajouter
             </button>
           </div>
-
-          {/* RIDER FILTERS */}
-          <div className="filter-section mb-15">
-            <div className="filter-pills">
-              <button
-                className={`pill ${riderTypeFilter === 'all' ? 'pill-active' : ''}`}
-                onClick={() => setRiderTypeFilter('all')}
-              >
-                Tous
-              </button>
-              {Object.values(RIDER_TYPES).map((type) => (
+          <div className="form-section">
+            {/* RIDER FILTERS */}
+            <div className="list-filters">
+              <div className="filter-pills">
                 <button
-                  key={type}
-                  className={`pill ${riderTypeFilter === type ? 'pill-active' : ''}`}
-                  onClick={() => setRiderTypeFilter(type)}
+                  className={`pill ${riderTypeFilter === 'all' ? 'pill-active' : ''}`}
+                  onClick={() => setRiderTypeFilter('all')}
                 >
-                  {getRiderTypeLabel(type)}
+                  Tous
                 </button>
-              ))}
+                {Object.values(RIDER_TYPES).map((type) => (
+                  <button
+                    key={type}
+                    className={`pill ${riderTypeFilter === type ? 'pill-active' : ''}`}
+                    onClick={() => setRiderTypeFilter(type)}
+                  >
+                    {getRiderTypeLabel(type)}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* RIDER SEARCH */}
-          <div className="form-group mb-15">
-            <input
-              type="text"
-              placeholder="Rechercher un cavalier..."
-              value={riderSearch}
-              onChange={(e) => setRiderSearch(e.target.value)}
-              className="form-input"
-            />
-          </div>
+            {/* RIDER SEARCH */}
+            <div className="form-group">
+              <label htmlFor="rider-search">Rechercher un cavalier</label>
+              <input
+                type="text"
+                id="rider-search"
+                placeholder="Rechercher un cavalier..."
+                value={riderSearch}
+                onChange={(e) => setRiderSearch(e.target.value)}
+                className="form-input"
+              />
+            </div>
 
-          {/* RIDER BUTTONS */}
-          <div className="form-group mb-15">
-            <label className="form-label-small">Cavalier (optionnel)</label>
-            <div className="event-form-times-group">
+            {/* RIDER SELECTION */}
+            <div className="form-group">
+              <label>Cavalier (optionnel)</label>
               {availableRiders.length > 0 ? (
-                availableRiders.map((r) => {
-                  const isActive = selectedRiderId === r.id;
-                  return (
-                    <button
-                      key={r.id}
-                      type="button"
-                      className={`btn-form ${isActive ? 'active' : ''}`}
-                      onClick={() => setSelectedRiderId(isActive ? null : r.id)}
-                    >
-                      {r.name}
-                    </button>
-                  );
-                })
+                <div className="btn-group">
+                  {/* Bouton "Aucun" pour cavalier */}
+                  <button
+                    key="none-rider"
+                    type="button"
+                    className={`btn form-btn-primary ${selectedRiderId === null ? 'active' : ''}`}
+                    onClick={() => setSelectedRiderId(null)}
+                  >
+                    Aucun
+                  </button>
+                  {availableRiders.map((r) => {
+                    const isActive = selectedRiderId === r.id;
+                    return (
+                      <button
+                        key={r.id}
+                        type="button"
+                        className={`btn form-btn-primary ${isActive ? 'active' : ''}`}
+                        onClick={() => setSelectedRiderId(isActive ? null : r.id)}
+                      >
+                        {r.name}
+                      </button>
+                    );
+                  })}
+                </div>
               ) : (
-                <p className="text-muted">Aucun cavalier disponible</p>
+                <p className="form-help">Aucun cavalier disponible</p>
               )}
             </div>
-          </div>
 
-          {/* HORSE FILTERS */}
-          <div className="filter-section mb-10">
-            <label className="form-label-small">Cheval (optionnel)</label>
-            <div className="filter-pills">
-              <button
-                className={`pill ${horseOwnershipFilter === 'all' ? 'pill-active' : ''}`}
-                onClick={() => setHorseOwnershipFilter('all')}
-              >
-                Tous
-              </button>
-              {Object.values(OWNER_TYPES).map((type) => (
+            {/* HORSE FILTERS */}
+            <div className="form-group">
+              <label>Cheval (optionnel)</label>
+              <div className="filter-pills">
                 <button
-                  key={type}
-                  className={`pill ${horseOwnershipFilter === type ? 'pill-active' : ''}`}
-                  onClick={() => setHorseOwnershipFilter(type)}
+                  className={`pill ${horseOwnershipFilter === 'all' ? 'pill-active' : ''}`}
+                  onClick={() => setHorseOwnershipFilter('all')}
                 >
-                  {type === OWNER_TYPES.LAURY
-                    ? 'Laury'
-                    : type === OWNER_TYPES.PRIVATE_OWNER
-                    ? 'Propriétaire'
-                    : type === OWNER_TYPES.CLUB
-                    ? 'Club'
-                    : 'Autre'}
+                  Tous
                 </button>
-              ))}
+                {Object.values(OWNER_TYPES).map((type) => (
+                  <button
+                    key={type}
+                    className={`pill ${horseOwnershipFilter === type ? 'pill-active' : ''}`}
+                    onClick={() => setHorseOwnershipFilter(type)}
+                  >
+                    {type === OWNER_TYPES.LAURY
+                      ? 'Laury'
+                      : type === OWNER_TYPES.PRIVATE_OWNER
+                      ? 'Propriétaire'
+                      : type === OWNER_TYPES.CLUB
+                      ? 'Club'
+                      : 'Autre'}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* HORSE BUTTONS */}
-          <div className="form-group mb-15">
-            <div className="event-form-times-group">
+            {/* HORSE SELECTION */}
+            <div className="form-group">
               {availableHorses.length > 0 ? (
-                availableHorses.map((h) => {
-                  const isActive = selectedHorseId === h.id;
-                  return (
-                    <button
-                      key={h.id}
-                      type="button"
-                      className={`btn-form ${isActive ? 'active' : ''}`}
-                      onClick={() => setSelectedHorseId(isActive ? null : h.id)}
-                    >
-                      {h.name}
-                    </button>
-                  );
-                })
+                <div className="btn-group">
+                  {/* Bouton "Aucun" pour cheval */}
+                  <button
+                    key="none-horse"
+                    type="button"
+                    className={`btn form-btn-primary ${selectedHorseId === null ? 'active' : ''}`}
+                    onClick={() => setSelectedHorseId(null)}
+                  >
+                    Aucun
+                  </button>
+                  {availableHorses.map((h) => {
+                    const isActive = selectedHorseId === h.id;
+                    return (
+                      <button
+                        key={h.id}
+                        type="button"
+                        className={`btn form-btn-primary ${isActive ? 'active' : ''}`}
+                        onClick={() => setSelectedHorseId(isActive ? null : h.id)}
+                      >
+                        {h.name}
+                      </button>
+                    );
+                  })}
+                </div>
               ) : (
-                <p className="text-muted">Aucun cheval disponible</p>
+                <p className="form-help">Aucun cheval disponible</p>
               )}
             </div>
           </div>

@@ -91,7 +91,7 @@ function RidersList() {
   }
 
   return (
-    <div className="card-enhanced">
+    <div className="card">
       {/* Header */}
       <div className="list-header">
         <h2>Liste des cavaliers</h2>

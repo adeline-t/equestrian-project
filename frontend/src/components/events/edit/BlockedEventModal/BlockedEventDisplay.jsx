@@ -4,105 +4,124 @@ import { getStatusConfig } from '../../../../lib/domain/events';
 import { getInstructorConfig } from '../../../../lib/domain/domain-constants';
 import DomainBadge from '../../../common/DomainBadge';
 import { formatDate, formatDateTime, formatTimeFlexible } from '../../../../lib/helpers/formatters';
-import '../../../../styles/features/events/event-modal.css';
 
 export default function BlockedEventDisplay({ slot, event, recurrence }) {
   if (!slot || !event) {
-    return <div className="blocked-event-loading">Chargement du créneau...</div>;
+    return (
+      <div className="alert alert-info">
+        <Icons.Loading className="spin" /> Chargement du créneau...
+      </div>
+    );
   }
 
   const instructorConfig = getInstructorConfig(event.instructor_id);
   const statusConfig = getStatusConfig(slot.slot_status);
-  const StatusIcon = statusConfig?.icon || Icons.Info;
+  console.log(statusConfig);
 
   return (
-    <div className="blocked-event-display">
-      {/* Header - Event Name & Status */}
-      <div className="blocked-event-display-header">
-        <h3 className="blocked-event-display-title">{event.name || 'Période bloquée'}</h3>
-
-        <div className="blocked-event-status-badge">
-          <StatusIcon className="blocked-event-status-icon" />
-          {statusConfig && <DomainBadge config={statusConfig} />}
+    <div className="modal-content-scrollable">
+      {/* HEADER */}
+      <div className="layout-sidebar-content">
+        <div className="info-card">
+          <div className="info-card-header">Statut</div>
+          <div className="info-card-body">
+            <div className="info-item-modern">
+              <div className="info-content">
+                <div className="info-value">
+                  <h3>{event.name || 'Période bloquée'}</h3>
+                </div>
+                {statusConfig && (
+                  <div className="header-badge">
+                    <DomainBadge config={statusConfig} />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Date & Time Section */}
-      <div className="blocked-event-datetime-section">
-        <div className="blocked-event-datetime-header">
-          <Icons.Calendar className="blocked-event-datetime-icon" />
-          Date et horaires
+      {/* DATE & TIME */}
+      <div className="info-card">
+        <div className="info-card-header">
+          <h3>Date et horaires</h3>
         </div>
-
-        <div className="blocked-event-datetime-content">
-          <div className="blocked-event-datetime-row">
-            <span className="blocked-event-datetime-label">Date :</span>
-            <span className="blocked-event-datetime-value">
-              {formatDate(slot.slot_date) || '—'}
-            </span>
+        <div className="info-card-body">
+          <div className="info-item-modern">
+            <div className="info-icon info-icon-success">
+              <Icons.Check />
+            </div>
+            <div className="info-content">
+              <span className="info-label">Date</span>
+              <span className="info-value">{formatDate(slot.slot_date) || '—'}</span>
+            </div>
           </div>
 
           {slot.is_all_day ? (
-            <div className="blocked-event-all-day-badge">
-              <Icons.Calendar className="blocked-event-all-day-icon" />
-              Journée entière
+            <div className="info-item-modern">
+              <div className="info-icon info-banner success">
+                <Icons.Clock />
+              </div>
+              <div className="info-content">
+                <span className="info-value">Journée entière</span>
+              </div>
             </div>
           ) : (
-            <>
-              <div className="blocked-event-datetime-row">
-                <span className="blocked-event-datetime-label">Début :</span>
-                <span className="blocked-event-datetime-value">
-                  {formatTimeFlexible(slot.start_time) || '—'}
-                </span>
+            <div className="info-item-modern">
+              <div className="info-content">
+                <span className="info-label">Début</span>
+                <span className="info-value">{formatTimeFlexible(slot.start_time) || '—'}</span>
               </div>
-              <div className="blocked-event-datetime-row">
-                <span className="blocked-event-datetime-label">Fin :</span>
-                <span className="blocked-event-datetime-value">
-                  {formatTimeFlexible(slot.end_time) || '—'}
-                </span>
+              <div className="info-content">
+                <span className="info-label">Fin</span>
+                <span className="info-value">{formatTimeFlexible(slot.end_time) || '—'}</span>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Details Section */}
-      <div className="blocked-event-details">
-        <div className="blocked-event-detail-item">
-          <div className="blocked-event-detail-label">
-            <Icons.User className="detail-label-icon" />
-            Instructeur
-          </div>
-          <div className="blocked-event-detail-value">
-            {instructorConfig && <DomainBadge config={instructorConfig} />}
-          </div>
+      {/* DETAILS */}
+      <div className="info-card">
+        <div className="info-card-header">
+          <h3>Détails</h3>
         </div>
 
-        {event.description && (
-          <div className="blocked-event-detail-item">
-            <div className="blocked-event-detail-label">
-              <Icons.Info className="detail-label-icon" />
-              Description
+        <div className="info-card-body">
+          <div className="info-item-modern">
+            <div className="info-content">
+              <span className="info-label">Instructeur</span>
+              <span className="info-value">
+                {instructorConfig ? <DomainBadge config={instructorConfig} /> : '—'}
+              </span>
             </div>
-            <div className="blocked-event-description">{event.description}</div>
           </div>
-        )}
 
-        {recurrence && (
-          <div className="blocked-event-detail-item">
-            <div className="blocked-event-detail-label">
-              <Icons.Repeat className="detail-label-icon" />
-              Récurrence
+          {event.description && (
+            <div className="info-item-modern">
+              <div className="info-content">
+                <div className="info-item full-width">
+                  <span className="info-label">Description</span>
+                  <p className="info-description">{event.description}</p>
+                </div>
+              </div>
             </div>
-            <div className="blocked-event-recurrence">{recurrence}</div>
-          </div>
-        )}
+          )}
+
+          {recurrence && (
+            <div className="info-item full-width">
+              <span className="info-label">
+                <Icons.Repeat /> Récurrence
+              </span>
+              <span className="info-value">{recurrence}</span>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Metadata Footer */}
-      <div className="blocked-event-metadata">
-        <Icons.Calendar className="metadata-icon" />
-        Créé le {formatDateTime(event.created_at) || '—'}
+      {/* METADATA */}
+      <div className="metadata-footer">
+        <span className="text-muted">Créé le {formatDateTime(event.created_at) || '—'}</span>
       </div>
     </div>
   );

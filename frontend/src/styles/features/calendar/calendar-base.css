@@ -1,0 +1,204 @@
+/* ============================================
+   CALENDAR BASE STYLES - FULLY VARIABLE
+   ============================================ */
+
+/* Optional additional variables for calendar (add to :root) */
+:root {
+  --calendar-bg: var(--color-surface);
+  --calendar-padding: var(--spacing-lg);
+  --calendar-gap: var(--spacing-md);
+  --calendar-radius: var(--radius-lg);
+  --calendar-header-title-size: var(--font-size-xl);
+  --calendar-header-title-color: var(--color-text);
+  --calendar-filter-bg: rgba(255, 255, 255, 0.7);
+  --calendar-filter-border: var(--color-border);
+  --calendar-loading-height: 400px;
+  --calendar-loading-icon-size: 32px;
+  --calendar-empty-icon-size: 48px;
+  --calendar-empty-icon-opacity: 0.3;
+  --calendar-empty-padding-vertical: var(--spacing-3xl);
+  --calendar-empty-padding-horizontal: var(--spacing-xl);
+  --calendar-empty-message-font: 17px;
+  --calendar-empty-message-weight: 400;
+  --calendar-error-color: var(--color-danger);
+}
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+.calendar-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--calendar-gap);
+  height: 100%;
+  background: var(--calendar-bg);
+  padding: var(--calendar-padding);
+  border-radius: var(--calendar-radius);
+}
+
+/* ============================================
+   CALENDAR HEADER (Navigation semaine)
+   ============================================ */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--calendar-gap);
+  flex-wrap: wrap;
+  gap: var(--calendar-gap);
+}
+
+.calendar-header__title {
+  margin: 0;
+  font-size: var(--calendar-header-title-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--calendar-header-title-color);
+}
+
+.calendar-header__nav {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+/* ============================================
+   CALENDAR FILTERS (Desktop only)
+   ============================================ */
+.calendar-filters {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-lg);
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background: var(--calendar-filter-bg);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--calendar-filter-border);
+  border-radius: var(--calendar-radius);
+  padding: var(--spacing-sm);
+}
+
+.calendar-filters__group {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.calendar-filters__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.calendar-filters__item label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.calendar-filters__item .form-select {
+  min-width: 140px;
+}
+
+.calendar-filters__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+/* ============================================
+   LOADING & ERROR STATES
+   ============================================ */
+.calendar-loading,
+.calendar-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--calendar-loading-height);
+  gap: var(--calendar-gap);
+  color: var(--color-gray-500);
+}
+
+.calendar-loading__spinner {
+  font-size: var(--calendar-loading-icon-size);
+  animation: spin 1s linear infinite;
+}
+
+.calendar-error__icon {
+  font-size: var(--calendar-loading-icon-size);
+  color: var(--calendar-error-color);
+}
+
+.calendar-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--calendar-empty-padding-vertical) var(--calendar-empty-padding-horizontal);
+  text-align: center;
+  color: var(--color-text-light);
+}
+
+.calendar-empty-state__icon {
+  font-size: var(--calendar-empty-icon-size);
+  opacity: var(--calendar-empty-icon-opacity);
+  margin-bottom: var(--calendar-gap);
+}
+
+.calendar-empty-state__message {
+  margin: 0;
+  font-size: var(--calendar-empty-message-font);
+  font-weight: var(--calendar-empty-message-weight);
+}
+
+.calendar-empty-state--mobile {
+  margin-top: var(--spacing-2xl);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .calendar-view {
+    padding: 0;
+    gap: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .calendar-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-surface);
+    border-bottom: 0.5px solid var(--color-border-light);
+  }
+
+  .calendar-filters {
+    display: none !important;
+  }
+}

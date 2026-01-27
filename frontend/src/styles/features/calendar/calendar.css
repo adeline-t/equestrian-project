@@ -1,5 +1,7 @@
-/* CALENDAR - Desktop View - Version condensée optimisée */
-@import '../../common.css';
+/* ============================================
+   CALENDAR DESKTOP - Specific styles only
+   Most styles come from common.css
+   ============================================ */
 
 :root {
   --hour-height: 60px;
@@ -8,6 +10,10 @@
   --day-header-height: 50px;
   --all-day-section-height: 50px;
 }
+
+/* ============================================
+   CALENDAR VIEW CONTAINER
+   ============================================ */
 
 .calendar-view {
   padding: var(--spacing-md);
@@ -18,11 +24,42 @@
   gap: var(--spacing-sm);
 }
 
+/* ============================================
+   CALENDAR HEADER & NAV
+   ============================================ */
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.calendar-nav-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+/* ============================================
+   CALENDAR FILTERS
+   ============================================ */
+
 .calendar-filters {
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-lg);
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
@@ -30,6 +67,40 @@
   border-radius: var(--radius-lg);
   padding: var(--spacing-sm);
 }
+
+.filter-line {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.filter-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.filter-group .form-select {
+  min-width: 140px;
+}
+
+.filters-group {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+/* ============================================
+   WEEK VIEW - GRID
+   ============================================ */
 
 .week-view {
   background: var(--gradient-light);
@@ -53,6 +124,60 @@
   background: var(--color-surface);
 }
 
+/* ============================================
+   TIME COLUMN
+   ============================================ */
+
+.time-column {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border-dark);
+  background: var(--color-bg-secondary);
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.time-header {
+  height: var(--day-header-height);
+  min-height: var(--day-header-height);
+  border-bottom: 1px solid var(--color-border-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  background: var(--gradient-light);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.time-all-day-spacer {
+  height: var(--all-day-section-height);
+  min-height: var(--all-day-section-height);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+}
+
+.time-slot {
+  height: var(--hour-height);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================
+   DAY COLUMN
+   ============================================ */
+
 .day-column {
   position: relative;
   display: flex;
@@ -70,6 +195,18 @@
 .day-column.today {
   background: linear-gradient(to bottom, var(--today-bg), transparent 80px);
 }
+
+.day-column.past {
+  opacity: 0.7;
+}
+
+.day-column.has-full-height-event .day-grid-container {
+  pointer-events: none;
+}
+
+/* ============================================
+   DAY HEADER
+   ============================================ */
 
 .day-header {
   height: var(--day-header-height);
@@ -97,6 +234,10 @@
   text-transform: capitalize;
 }
 
+/* ============================================
+   ALL-DAY SECTION
+   ============================================ */
+
 .all-day-section {
   height: var(--all-day-section-height);
   min-height: var(--all-day-section-height);
@@ -104,7 +245,222 @@
   background: var(--color-bg-secondary);
   border-bottom: 1px solid var(--color-border);
   overflow: hidden;
+  position: relative;
 }
+
+.all-day-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+.all-day-slot-card {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.all-day-slot-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.all-day-slot-card[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.all-day-slot-card[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.all-day-slot-card[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.all-day-slot-card[data-type='blocked'] {
+  background: var(--gradient-secondary);
+  opacity: 0.8;
+}
+
+.all-day-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.all-day-slot-status-icon {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.all-day-slot-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   FULL HEIGHT EVENTS (Competition/Blocked)
+   ============================================ */
+.full-height-slots-container {
+  position: absolute;
+  /* Commence après le header + all-day-section */
+  top: calc(var(--day-header-height) + var(--all-day-section-height));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15; /* Au-dessus de la grille */
+  padding: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  pointer-events: none; /* Pour laisser passer les clics sauf sur les cards */
+}
+
+.full-height-slot-card {
+  flex: 1;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto; /* Réactiver les clics sur la card */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.full-height-slot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.full-height-slot-card[data-type='competition'] {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.full-height-slot-card[data-type='blocked'] {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+.full-height-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.full-height-slot-icon {
+  font-size: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.full-height-slot-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.full-height-slot-type {
+  font-size: var(--font-size-xs);
+  opacity: 0.9;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+}
+
+.full-height-slot-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   DAY GRID
+   ============================================ */
+
+.day-grid-container {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.day-grid {
+  position: relative;
+  height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
+}
+
+.hour-markers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hour-marker-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hour-marker-row:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   SELECTION OVERLAY
+   ============================================ */
+
+.selection-overlay {
+  position: absolute;
+  background: var(--selection-color);
+  border: 2px solid var(--selection-border);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ============================================
+   EVENTS CONTAINER
+   ============================================ */
+
+.events-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.event-slot-wrapper {
+  position: absolute;
+  width: 100%;
+  pointer-events: auto;
+}
+
+/* ============================================
+   EVENT CARD
+   ============================================ */
 
 .event-card {
   position: absolute;
@@ -116,6 +472,7 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
 }
 
 .event-card:hover {
@@ -124,14 +481,19 @@
   z-index: 10;
 }
 
+/* ============================================
+   SLOT CONTENT
+   ============================================ */
+
 .slot-content {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: var(--spacing-xs);
   border-radius: var(--radius-md);
   color: var(--color-white);
   font-size: var(--font-size-xs);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  gap: 2px;
 }
 
 .slot-content[data-type='private_lesson'] {
@@ -151,9 +513,366 @@
   opacity: 0.8;
 }
 
+/* Layouts selon durée */
+.slot-content[data-layout='ultra-compact'] {
+  padding: 2px var(--spacing-xs);
+}
+
+.slot-content[data-layout='compact'] {
+  padding: var(--spacing-xs);
+}
+
+.slot-content[data-layout='normal'] {
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.slot-content[data-layout='comfortable'] {
+  padding: var(--spacing-sm);
+}
+
+/* ============================================
+   SLOT ELEMENTS
+   ============================================ */
+
+.slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  margin-bottom: 2px;
+}
+
+.slot-title {
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.slot-status-icon {
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}
+
+.slot-instructor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.slot-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.slot-duration {
+  opacity: 0.8;
+}
+
+.slot-participants {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+/* Ultra compact - only title */
+.slot-content[data-layout='ultra-compact'] .slot-instructor,
+.slot-content[data-layout='ultra-compact'] .slot-time,
+.slot-content[data-layout='ultra-compact'] .slot-participants {
+  display: none;
+}
+
+/* Compact - title + time */
+.slot-content[data-layout='compact'] .slot-instructor,
+.slot-content[data-layout='compact'] .slot-participants {
+  display: none;
+}
+
+/* ============================================
+   LOADING & ERROR STATES
+   ============================================ */
+
+.calendar-loading,
+.calendar-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl);
+  text-align: center;
+  color: var(--color-gray-600);
+}
+
+.calendar-error {
+  color: var(--color-danger);
+}
+
+/* ============================================
+   RESPONSIVE - HIDE ON MOBILE
+   ============================================ */
+
 @media (max-width: 768px) {
   .week-view,
   .calendar-filters {
     display: none !important;
   }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .full-height-slot-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .full-height-slot-type {
+    font-size: var(--font-size-xs);
+  }
+
+  .full-height-slot-name {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* ==============================================
+   SLOT CONTENT - Solution 2 (Avatars)
+============================================== */
+
+.slot-content {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+  overflow: hidden;
+}
+
+/* TOP ROW: Status + Name + Count */
+.slot-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+.slot-status-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.slot-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* BOTTOM ROW: Avatars */
+.slot-avatars-container {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Participant pair (rider + horse) */
+.participant-pair {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.participant-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Rider avatar - lighter background */
+.participant-avatar.rider {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-gray-800);
+}
+
+/* Horse avatar - darker background */
+.participant-avatar.horse {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-gray-900);
+}
+
+/* More participants indicator */
+.participant-avatar.more {
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--color-white);
+  font-size: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Empty state */
+.slot-empty-text {
+  font-size: 9px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Hover effect on event card */
+.event-card:hover .participant-avatar {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.participant-avatar {
+  transition: all 0.15s ease;
+}
+
+/* ==============================================
+   SLOT CONTENT - Badges arrondis
+============================================== */
+
+.slot-content {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+  overflow: hidden;
+}
+
+/* TOP ROW: Status + Name + Count */
+.slot-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+.slot-status-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.slot-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* BOTTOM ROW: Participants badges */
+.slot-participants-row {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.participant-badge {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 7px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 1;
+  transition: all 0.15s ease;
+  cursor: default;
+}
+
+.participant-badge:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.badge-rider {
+  color: var(--color-primary, #3b82f6);
+  font-weight: 700;
+}
+
+.badge-separator {
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: 400;
+  font-size: 8px;
+}
+
+.badge-horse {
+  color: var(--color-gray-700, #374151);
+  font-weight: 600;
+}
+
+/* More participants badge */
+.participant-badge.more {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--color-gray-800);
+  border-color: rgba(255, 255, 255, 0.3);
+  padding: 3px 6px;
+}
+
+.participant-badge.more:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Empty state */
+.slot-empty-text {
+  font-size: 9px;
+  opacity: 0.7;
+  font-style: italic;
+  padding: 2px 0;
+}
+
+/* Hover effect on event card */
+.event-card:hover .participant-badge {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }

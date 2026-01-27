@@ -112,7 +112,7 @@ function HorsesList() {
   }
 
   return (
-    <div className="card-enhanced">
+    <div className="card">
       {/* Header */}
       <div className="list-header">
         <h2>Liste des Chevaux</h2>

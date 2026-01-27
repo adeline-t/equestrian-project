@@ -7,7 +7,7 @@ const packageService = {
     const payload = {
       rider_id: Number(data.rider_id),
       services_per_week: Number(data.services_per_week),
-      group_lessons_per_week: Number(data.group_lessons_per_week),
+      private_lessons_per_week: Number(data.private_lessons_per_week),
       is_active: data.is_active ?? true,
     };
 

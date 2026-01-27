@@ -1,6 +1,6 @@
 # 📁 Project Files Export
 
-Generated on: Mon Jan 26 09:55:01 CET 2026
+Generated on: Mon Jan 26 21:28:05 CET 2026
 
 ## 📄 api.js
 **Path:** `config/api.js`
@@ -830,6 +830,26 @@ export function calculateDurationMinutes(startTime, endTime) {
 export * from './time.js';
 export * from './date.js';
 export * from './duration.js';
+export * from './name.js';
+```
+
+---
+
+## 📄 name.js
+**Path:** `helpers/formatters/name.js`
+
+```
+export function shortName(value = '') {
+  if (typeof value !== 'string') return '';
+
+  const parts = value.trim().split(/\s+/);
+
+  if (parts.length === 0) return '';
+
+  return parts
+    .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + ''))
+    .join(' ');
+}
 ```
 
 ---

@@ -1,16 +1,18 @@
 /* ============================================
-   CARDS - All Card Styles Consolidated
+   CARDS - Fully Variable-based & Consistent
    ============================================ */
 
 /* ============================================
    BASE CARD
    ============================================ */
-
 .card {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-gray-200);
-  padding: 20px;
+  background: var(--color-bg-card);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-xl);
+  margin-bottom: var(--spacing-lg);
   transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
@@ -19,405 +21,210 @@
   transform: translateY(-2px);
 }
 
-.card-enhanced {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 30px;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
-  margin-bottom: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card-enhanced h2 {
-  margin-bottom: 24px;
-  color: var(--color-gray-800);
-  font-size: 1.5rem;
+.card h2 {
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
-.card-enhanced h2::before {
-  content: '';
+.card h2::before {
+  content: ' ';
   width: 4px;
   height: 24px;
   background: var(--gradient-primary);
   border-radius: 2px;
 }
 
+.card .week-title h2::before {
+  width: 0;
+  border-radius: 0;
+}
+
 /* ============================================
    CARD SECTIONS
    ============================================ */
-
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .card-title {
-  font-size: 18px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-  margin: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
 }
 
-.card-footer {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-gray-200);
+.card-title-text,
+.card-title h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+.card-title svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.card-title .count-badge {
+  margin-left: auto;
 }
 
 .card-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
   align-items: center;
 }
 
 /* ============================================
-   INFO CARDS
+   INFO + DATA CARDS - CONSOLIDATED
    ============================================ */
-
+.data-card,
 .info-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-md);
   transition: all var(--transition-base);
 }
 
-.info-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-gray-300);
+.info-card {
+  overflow: hidden;
 }
 
+.data-card {
+  overflow: auto;
+}
+
+.data-card:hover,
+.info-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-dark);
+}
+
+/* ============================================
+   CARD HEADERS
+   ============================================ */
+.data-card-header,
 .info-card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: var(--gradient-light);
-  border-bottom: 1px solid var(--color-gray-200);
+  gap: var(--spacing-sm);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* Header Text / Titles */
+.data-card-title,
+.info-card-header h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
 }
 
 .info-card-header svg {
-  color: var(--color-primary);
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.info-card-header h3 {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-800);
-}
-
-.info-card-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  font-size: var(--font-size-base);
 }
 
 /* ============================================
-   INFO ROWS
+   CARD BODY
    ============================================ */
+.data-card-body,
+.info-card-body {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
 
-.info-row {
+/* ============================================
+   INFO ITEM MODERN
+   ============================================ */
+.info-item-modern,
+.data-card-body .info-item-modern {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 8px 0;
+  gap: var(--spacing-md);
 }
 
-.info-row:last-child {
-  border-bottom: none;
+.info-content,
+.data-card-body .info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs);
+  min-width: 0;
 }
 
-.info-row label {
-  min-width: 120px;
+.info-label,
+.data-card-body .info-label {
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
-  font-size: 14px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value,
+.data-card-body .info-value,
+.info-content p,
+.data-card-body .info-content p {
+  flex: 1;
   display: flex;
   align-items: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
 }
 
-.info-row span,
-.info-row p {
-  flex: 1;
-  color: var(--color-gray-900);
-  font-size: 14px;
-  margin: 0;
-}
-
-.info-item-modern {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.info-icon {
+/* ============================================
+   INFO ICONS
+   ============================================ */
+.info-icon,
+.info-icon-success,
+.info-icon-warning {
   width: 34px;
   height: 34px;
   border-radius: var(--radius-md);
-  background: var(--gradient-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  color: var(--color-primary);
-  font-size: 16px;
+  font-size: var(--font-size-base);
   transition: all var(--transition-base);
+}
+
+.info-icon {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .info-icon-success {
   background: var(--color-success-light);
   color: var(--color-success-dark);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  font-size: 16px;
 }
 
 .info-icon-warning {
-  background: var(--color-danger-light);
-  color: var(--color-danger-dark);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  font-size: 16px;
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
 }
 
-.info-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.info-label {
-  font-size: 0.75rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-gray-600);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-  word-wrap: break-word;
-}
-
-/* ============================================
-   DATA CARDS
-   ============================================ */
-
-.data-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  overflow: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all var(--transition-base);
-}
-
-.data-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-.data-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px;
-  background: var(--gradient-light);
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.data-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.data-card-title h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-}
-
-.data-card-body {
-  padding: 20px;
-}
-
-/* ============================================
-   STATS CARDS
-   ============================================ */
-
-.stat-card {
-  background-image: var(--gradient-light);
-  border: 2px solid var(--color-gray-200);
-  padding: 20px;
-  border-radius: var(--radius-xl);
-  text-align: center;
-  transition: all var(--transition-slow);
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.stat-number {
-  display: block;
-  font-size: 2rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  color: var(--color-gray-600);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stats-card {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
-}
-
-.stat-item:hover {
-  border-color: var(--color-primary-light);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-  transform: translateY(-2px);
-}
-
-.stat-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-value {
-  font-size: 1.2rem;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-gray-900);
-  line-height: 1;
-}
-
-/* ============================================
-   CARD LAYOUTS
-   ============================================ */
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.cards-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 768px) {
-  .card {
-    padding: 16px;
-  }
-
-  .card-enhanced {
-    padding: 20px;
-  }
-
-  .info-row {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .info-row label {
-    min-width: auto;
-  }
-
-  .cards-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-card {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ============================================
-   DETAIL CARDS - Entity detail view cards
-   Shared between HorseCard, RiderCard, etc.
-   ============================================ */
-
-/* ============================================
-   CARD TITLE (in modal header)
-   ============================================ */
-
-.detail-card-title {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  width: 100%;
-}
-
-.detail-card-avatar {
+.info-card-avatar {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);
@@ -427,20 +234,7 @@
   justify-content: center;
   color: var(--color-white);
   font-size: var(--font-size-2xl);
-  flex-shrink: 0;
   box-shadow: var(--shadow-lg);
-}
-
-.detail-card-title-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.detail-card-title-text h2 {
-  margin: 0 0 var(--spacing-xs) 0;
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
 }
 
 .detail-card-meta {
@@ -449,188 +243,27 @@
   flex-wrap: wrap;
 }
 
-.detail-card-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-/* ============================================
-   CARD CONTENT
-   ============================================ */
-
-.detail-card-content {
-  padding: var(--spacing-xs);
-}
-
-/* ============================================
-   CARD GRID LAYOUT
-   ============================================ */
-
-.detail-card-grid {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-md);
-}
-
-.detail-card-sidebar,
-.detail-card-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-/* ============================================
-   PAIRINGS LIST - Modern iOS style
-   ============================================ */
-
-.pairings-list-modern {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.pairing-item-modern {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
-}
-
-.pairing-item-modern:hover {
-  background: var(--color-gray-50);
-  border-color: var(--color-primary-light);
-  transform: translateX(2px);
-}
-
-.pairing-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  min-width: 0;
-}
-
-.pairing-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
-}
-
-.pairing-header span:first-child {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-}
-
-.pairing-days {
-  display: flex;
-  gap: var(--spacing-xs);
-  flex-wrap: wrap;
-}
-
-.pairing-actions {
-  display: flex;
-  gap: var(--spacing-xs);
-  align-items: center;
-  flex-shrink: 0;
-}
-
-/* ============================================
-   PACKAGE ITEM - Modern style
-   ============================================ */
-
-.package-item-modern {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-sm);
-  background: var(--gradient-light);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-}
-
-.package-item-modern:hover {
-  border-color: var(--color-primary-light);
-  box-shadow: var(--shadow-sm);
-  transform: translateX(2px);
-}
-
-.package-label {
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
-  font-weight: var(--font-weight-medium);
-}
-
-.package-value {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-}
-
-/* ============================================
-   INFO ITEMS - Simple layout
-   ============================================ */
-
-.detail-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
 /* ============================================
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 992px) {
-  .detail-card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-card-sidebar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 @media (max-width: 768px) {
-  .detail-card-content {
-    padding: var(--spacing-xs);
+  .card,
+  .info-card,
+  .data-card {
+    padding: var(--spacing-md);
   }
 
-  .detail-card-title {
-    flex-wrap: wrap;
-  }
-
-  .detail-card-avatar {
-    display: none;
-  }
-
-  .detail-card-actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .detail-card-sidebar {
-    grid-template-columns: 1fr;
-  }
-
-  .pairing-item-modern {
+  .info-row {
     flex-direction: column;
-    align-items: flex-start;
+    gap: var(--spacing-xs);
   }
 
-  .pairing-actions {
-    width: 100%;
-    justify-content: flex-end;
+  .info-row label {
+    min-width: auto;
+  }
+
+  .info-card-avatar {
+    display: none;
   }
 }

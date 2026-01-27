@@ -141,9 +141,6 @@ export const getHorseAssignmentLabel = (type) => getHorseAssignmentConfig(type)?
 export const STATUS_TYPES = {
   ACTIVE: 'active',
   INACTIVE: 'inactive',
-  PENDING: 'pending',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled',
 };
 
 export const STATUS_LABELS = {
@@ -154,18 +151,6 @@ export const STATUS_LABELS = {
   [STATUS_TYPES.INACTIVE]: {
     value: 'inactive',
     label: 'Inactif',
-  },
-  [STATUS_TYPES.PENDING]: {
-    value: 'pending',
-    label: 'En attente',
-  },
-  [STATUS_TYPES.COMPLETED]: {
-    value: 'completed',
-    label: 'Terminé',
-  },
-  [STATUS_TYPES.CANCELLED]: {
-    value: 'cancelled',
-    label: 'Annulé',
   },
 };
 

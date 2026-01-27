@@ -41,10 +41,7 @@ export async function handleEventParticipants(request, env, idParam) {
       const body = await request.json().catch(() => null);
       if (!body) return jsonResponse({ error: 'Corps invalide' }, 400, getSecurityHeaders());
 
-      const missing = validateRequired(
-        ['planning_slot_id', 'rider_id', 'horse_assignment_type'],
-        body
-      );
+      const missing = validateRequired(['planning_slot_id', 'horse_assignment_type'], body);
       if (missing)
         return jsonResponse({ error: `Champs requis: ${missing}` }, 400, getSecurityHeaders());
 

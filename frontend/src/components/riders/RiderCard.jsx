@@ -97,18 +97,18 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
       onClose={onClose}
       size="xl"
       title={
-        <div className="detail-card-title">
-          <div className="detail-card-avatar">
+        <div className="modal-header">
+          <div className="info-card-avatar">
             <Icons.User />
           </div>
-          <div className="detail-card-title-text">
+          <div className="modal-header-text">
             <h2>{rider.name}</h2>
             <div className="detail-card-meta">
               {riderTypeConfig && <DomainBadge config={riderTypeConfig} />}
               {statusConfig && <DomainBadge config={statusConfig} />}
             </div>
           </div>
-          <div className="detail-card-actions">
+          <div className="header-actions-group">
             <button
               className="btn-icon-modern"
               type="button"
@@ -131,7 +131,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
         </div>
       }
     >
-      <div className="detail-card-content">
+      <div className="modal-content-scrollable">
         {successMessage && (
           <div className="alert alert-success">
             <Icons.Check /> <span>{successMessage}</span>
@@ -143,9 +143,9 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
           </div>
         )}
 
-        <div className="detail-card-grid">
+        <div className="layout-grid-content">
           {/* Left Sidebar */}
-          <div className="detail-card-sidebar">
+          <div className="layout-sidebar-content">
             <div className="info-card">
               <div className="info-card-header">
                 <h3>Coordonnées</h3>
@@ -204,11 +204,11 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
           </div>
 
           {/* Right Column */}
-          <div className="detail-card-main">
+          <div className="layout-main-content">
             {/* Package */}
-            <div className="data-card">
-              <div className="data-card-header">
-                <div className="data-card-title">
+            <div className="info-card">
+              <div className="info-card-header">
+                <div className="info-card-title">
                   <h3>Forfait</h3>
                   {activePackage && <DomainBadge config={getStatusConfig('active')} />}
                 </div>
@@ -222,7 +222,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                     <Icons.Add /> Créer
                   </button>
                 ) : (
-                  <div className="detail-card-actions">
+                  <div className="header-actions-group">
                     <button
                       type="button"
                       className="btn-icon-modern"
@@ -242,7 +242,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                   </div>
                 )}
               </div>
-              <div className="data-card-body">
+              <div className="info-card-body">
                 {!activePackage ? (
                   <div className="empty-state-small">
                     <Icons.Packages />
@@ -250,13 +250,15 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                   </div>
                 ) : (
                   <div className="detail-card-body">
-                    <div className="package-item-modern">
+                    <div className="package-item">
                       <span className="package-label">Services hebdomadaires</span>
                       <span className="package-value">{activePackage.services_per_week}</span>
                     </div>
-                    <div className="package-item-modern">
+                    <div className="package-item">
                       <span className="package-label">Cours collectifs</span>
-                      <span className="package-value">{activePackage.group_lessons_per_week}</span>
+                      <span className="package-value">
+                        {activePackage.private_lessons_per_week}
+                      </span>
                     </div>
                   </div>
                 )}
@@ -291,7 +293,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                       const linkConfig = getRiderHorseLinkConfig(p.link_type);
                       const loanDays = p.loan_days || [];
                       return (
-                        <div key={p.id} className="pairing-item-modern">
+                        <div key={p.id} className="pairing-row">
                           <div className="pairing-info">
                             <div className="pairing-header">
                               <span>{p.horses?.name || 'N/A'}</span>

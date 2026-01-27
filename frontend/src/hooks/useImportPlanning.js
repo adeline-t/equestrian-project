@@ -46,8 +46,9 @@ export function useImportPlanning() {
    * Find or create a rider by name
    */
   const findOrCreateRider = async (riderName, existingRiders) => {
+    // Accepter null - retourner null si pas de nom
     if (!riderName || riderName.toLowerCase() === 'essai') {
-      return null; // Skip "essai" entries
+      return null;
     }
 
     // Try to find existing rider
@@ -78,6 +79,7 @@ export function useImportPlanning() {
    * Find or create a horse by name
    */
   const findOrCreateHorse = async (horseName, existingHorses) => {
+    // Accepter null - retourner null si pas de nom
     if (!horseName) return null;
 
     // Try to find existing horse
@@ -123,11 +125,14 @@ export function useImportPlanning() {
     const importResult = {
       ridersCreated: 0,
       ridersFound: 0,
+      ridersSkipped: 0, // NOUVEAU: cavaliers null
       horsesCreated: 0,
       horsesFound: 0,
+      horsesSkipped: 0, // NOUVEAU: chevaux null
       eventsCreated: 0,
       slotsCreated: 0,
       participantsCreated: 0,
+      participantsSkipped: 0, // NOUVEAU: participants sans cavalier ni cheval
       slotsSkipped: 0,
       errors: [],
     };
@@ -164,35 +169,49 @@ export function useImportPlanning() {
         setProgress((prev) => ({
           ...prev,
           current: i + 1,
-          details: [`Traitement: ${participant.rider_name || 'N/A'}`],
+          details: [
+            `Traitement: ${participant.rider_name || 'Sans cavalier'} - ${
+              participant.horse_name || 'Sans cheval'
+            }`,
+          ],
         }));
 
-        // Process rider
-        if (participant.rider_name && !riderMap.has(participant.rider_name)) {
-          const rider = await findOrCreateRider(participant.rider_name, existingRiders);
-          if (rider) {
-            riderMap.set(participant.rider_name, rider);
-            if (existingRiders.some((r) => r.id === rider.id)) {
-              importResult.ridersFound++;
-            } else {
-              importResult.ridersCreated++;
-              existingRiders.push(rider); // Add to list for future lookups
+        // Process rider (MODIFIÉ: accepter null)
+        if (participant.rider_name) {
+          if (!riderMap.has(participant.rider_name)) {
+            const rider = await findOrCreateRider(participant.rider_name, existingRiders);
+            if (rider) {
+              riderMap.set(participant.rider_name, rider);
+              if (existingRiders.some((r) => r.id === rider.id)) {
+                importResult.ridersFound++;
+              } else {
+                importResult.ridersCreated++;
+                existingRiders.push(rider); // Add to list for future lookups
+              }
             }
           }
+        } else {
+          // Cavalier null - compter mais ne pas créer
+          importResult.ridersSkipped++;
         }
 
-        // Process horse
-        if (participant.horse_name && !horseMap.has(participant.horse_name)) {
-          const horse = await findOrCreateHorse(participant.horse_name, existingHorses);
-          if (horse) {
-            horseMap.set(participant.horse_name, horse);
-            if (existingHorses.some((h) => h.id === horse.id)) {
-              importResult.horsesFound++;
-            } else {
-              importResult.horsesCreated++;
-              existingHorses.push(horse); // Add to list for future lookups
+        // Process horse (MODIFIÉ: accepter null)
+        if (participant.horse_name) {
+          if (!horseMap.has(participant.horse_name)) {
+            const horse = await findOrCreateHorse(participant.horse_name, existingHorses);
+            if (horse) {
+              horseMap.set(participant.horse_name, horse);
+              if (existingHorses.some((h) => h.id === horse.id)) {
+                importResult.horsesFound++;
+              } else {
+                importResult.horsesCreated++;
+                existingHorses.push(horse); // Add to list for future lookups
+              }
             }
           }
+        } else {
+          // Cheval null - compter mais ne pas créer
+          importResult.horsesSkipped++;
         }
       }
 
@@ -262,7 +281,7 @@ export function useImportPlanning() {
         }
       }
 
-      // Step 4: Process participants
+      // Step 4: Process participants (MODIFIÉ: accepter rider ou horse null)
       setProgress({
         step: 'Ajout des participants...',
         current: 0,
@@ -282,24 +301,45 @@ export function useImportPlanning() {
         setProgress((prev) => ({
           ...prev,
           current: i + 1,
-          details: [`Participant: ${participantData.rider_name || 'N/A'}`],
+          details: [
+            `Participant: ${participantData.rider_name || 'Sans cavalier'} - ${
+              participantData.horse_name || 'Sans cheval'
+            }`,
+          ],
         }));
 
-        const rider = riderMap.get(participantData.rider_name);
+        const rider = participantData.rider_name ? riderMap.get(participantData.rider_name) : null;
         const horse = participantData.horse_name ? horseMap.get(participantData.horse_name) : null;
 
-        if (!rider) {
+        // MODIFIÉ: Accepter les participants même sans cavalier ou sans cheval
+        // Mais au moins l'un des deux doit être présent
+        if (!rider && !horse) {
+          importResult.participantsSkipped++;
           importResult.errors.push(
-            `Cavalier non trouvé pour le participant ${participantData.id}: ${participantData.rider_name}`
+            `Participant ${participantData.id} ignoré: ni cavalier ni cheval`
           );
           continue;
+        }
+
+        // Si pas de cavalier, logger un warning mais continuer
+        if (!rider && horse) {
+          console.warn(
+            `Participant sans cavalier pour le créneau ${newSlotId}: cheval ${participantData.horse_name}`
+          );
+        }
+
+        // Si pas de cheval, logger un warning mais continuer
+        if (rider && !horse) {
+          console.warn(
+            `Participant sans cheval pour le créneau ${newSlotId}: cavalier ${participantData.rider_name}`
+          );
         }
 
         try {
           await calendarService.addParticipant({
             planning_slot_id: newSlotId,
-            rider_id: rider.id,
-            horse_id: horse ? horse.id : null,
+            rider_id: rider ? rider.id : null, // MODIFIÉ: accepter null
+            horse_id: horse ? horse.id : null, // MODIFIÉ: accepter null
             horse_assignment_type: 'manual',
             is_cancelled: false,
           });
@@ -307,7 +347,7 @@ export function useImportPlanning() {
           importResult.participantsCreated++;
         } catch (err) {
           importResult.errors.push(
-            `Erreur ajout participant ${participantData.rider_name}: ${err.message}`
+            `Erreur ajout participant ${participantData.rider_name || 'sans nom'}: ${err.message}`
           );
         }
       }

@@ -71,7 +71,6 @@
 /* ============================================
    MODAL SECTIONS
    ============================================ */
-
 .modal-header,
 .modal-footer {
   display: flex;
@@ -83,6 +82,8 @@
   justify-content: space-between;
   padding: var(--spacing-lg) var(--spacing-xl);
   border-bottom: 1px solid var(--color-border);
+  gap: var(--spacing-md);
+  width: 100%;
 }
 
 .modal-header h2,
@@ -110,7 +111,7 @@
 .modal-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   color: var(--color-text);
 }
 
@@ -134,6 +135,21 @@
   gap: var(--spacing-sm);
 }
 
+.modal-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-header-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.modal-content-scrollable {
+  padding: var(--spacing-xs);
+}
 /* ============================================
    MODAL TABS
    ============================================ */
@@ -267,10 +283,16 @@
   .modal {
     max-width: 95vw;
   }
-
+  .modal-header {
+    flex-wrap: wrap;
+  }
   .modal-header,
   .modal-footer {
     padding: var(--spacing-md) var(--spacing-lg);
+  }
+  .header-actions-group {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .modal-footer {

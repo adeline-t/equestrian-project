@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 export function usePackageForm(packageData, riderId, onSubmit) {
   const [formData, setFormData] = useState({
     services_per_week: String(packageData?.services_per_week ?? 0),
-    group_lessons_per_week: String(packageData?.group_lessons_per_week ?? 0),
+    private_lessons_per_week: String(packageData?.private_lessons_per_week ?? 0),
     is_active: packageData?.is_active ?? true,
   });
 
@@ -21,7 +21,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
   useEffect(() => {
     setFormData({
       services_per_week: String(packageData?.services_per_week ?? 0),
-      group_lessons_per_week: String(packageData?.group_lessons_per_week ?? 0),
+      private_lessons_per_week: String(packageData?.private_lessons_per_week ?? 0),
       is_active: packageData?.is_active ?? true,
     });
     setError(null);
@@ -48,7 +48,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
 
     try {
       const services = parseInt(formData.services_per_week, 10);
-      const lessons = parseInt(formData.group_lessons_per_week, 10);
+      const lessons = parseInt(formData.private_lessons_per_week, 10);
 
       if (Number.isNaN(services) || Number.isNaN(lessons)) {
         throw new Error('Les champs doivent contenir des nombres entiers valides');
@@ -64,7 +64,7 @@ export function usePackageForm(packageData, riderId, onSubmit) {
 
       await onSubmit(riderId, {
         services_per_week: services,
-        group_lessons_per_week: lessons,
+        private_lessons_per_week: lessons,
         is_active: formData.is_active,
       });
 

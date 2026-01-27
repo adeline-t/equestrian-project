@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Icons } from '../../../../lib/icons';
 import DomainBadge from '../../../common/DomainBadge';
@@ -7,7 +6,6 @@ import {
   getHorseTypeConfig,
   getHorseAssignmentConfig,
 } from '../../../../lib/domain/domain-constants';
-import '../../../../styles/features/events/event-participants.css';
 
 export default function EventParticipantRow({ participant, canEdit, onEdit, onDelete }) {
   const { rider, horse, horse_assignment_type, is_cancelled } = participant || {};
@@ -19,29 +17,25 @@ export default function EventParticipantRow({ participant, canEdit, onEdit, onDe
     : null;
 
   return (
-    <div className={`participant-mini-card ${is_cancelled ? 'cancelled' : ''}`}>
-      <div className="participant-mini-card-header">
-        <div className="participant-mini-card-title">
-          {riderTypeConfig ? (
-            <DomainBadge config={{ ...riderTypeConfig, label: rider.name }} />
+    <div className={`pairing-row ${is_cancelled ? 'cancelled' : ''}`}>
+      <div className="pairing-info">
+        <div className="pairing-header">
+          {rider ? (
+            <span>{rider.name}</span>
           ) : (
-            <>Cavalier à définir</>
+            <span className="text-muted">Cavalier à définir</span>
           )}
+          <span className="text-muted">-</span>
+          {horse ? <span>{horse.name}</span> : <span className="text-muted">Cheval à définir</span>}
         </div>
-
-        <span className="participant-mini-card-separator">-</span>
-
-        <div className="participant-mini-card-title">
-          {horseTypeConfig ? (
-            <DomainBadge config={{ ...horseTypeConfig, label: horse.name }} />
-          ) : (
-            <>Cheval à définir</>
-          )}
+        <div className="pairing-badges">
+          {riderTypeConfig && <DomainBadge config={riderTypeConfig} size="sm" />}
+          {horseTypeConfig && <DomainBadge config={horseTypeConfig} size="sm" />}
+          {horseAssignmentConfig && <DomainBadge config={horseAssignmentConfig} size="sm" />}
         </div>
       </div>
-
       {canEdit && (
-        <div className="participant-mini-card-actions">
+        <div className="pairing-actions">
           <button
             className="btn-icon-modern"
             onClick={() => onEdit?.(participant)}
@@ -49,7 +43,6 @@ export default function EventParticipantRow({ participant, canEdit, onEdit, onDe
           >
             <Icons.Edit />
           </button>
-
           <button
             className="btn-icon-modern danger"
             onClick={onDelete}
@@ -65,6 +58,7 @@ export default function EventParticipantRow({ participant, canEdit, onEdit, onDe
 
 EventParticipantRow.propTypes = {
   participant: PropTypes.object.isRequired,
+  canEdit: PropTypes.bool,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
 };

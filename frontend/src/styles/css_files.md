@@ -1,8 +1,9 @@
 # 📁 Project Files Export
 
-Generated on: Mon Jan 26 09:48:07 CET 2026
+Generated on: Mon Jan 26 21:34:39 CET 2026
 
 ## 📄 app.css
+
 **Path:** `app.css`
 
 ```
@@ -17,7 +18,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 /* ============================================
    NOTE: Feature-specific styles should be imported
    separately in their respective components:
-   
+
    - features/calendar/calendar/calendar.css for calendar features
    - features/events/event-modal.css for event modals
    - features/riders/riders-list.css for rider lists
@@ -32,6 +33,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 common.css
+
 **Path:** `common.css`
 
 ```
@@ -69,6 +71,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 alerts.css
+
 **Path:** `components/alerts.css`
 
 ```
@@ -126,6 +129,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 badges.css
+
 **Path:** `components/badges.css`
 
 ```
@@ -239,7 +243,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   background: var(--gradient-warning);
 }
 
-.badge[data-type='completed'] {
+.badge[data-type='confirmed'] {
   background: var(--gradient-info);
 }
 
@@ -262,6 +266,47 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 
 .badge[data-type='blocked'] {
   background: var(--gradient-secondary);
+}
+
+.badge[data-type='1'] {
+  background-image: var(--gradient-primary);
+}
+
+.badge[data-type='2'] {
+  background-image: var(--gradient-info);
+}
+
+.badge[data-type='3'] {
+  background-image: var(--gradient-success);
+}
+
+.badge[data-type='4'] {
+  background-image: var(--gradient-warning);
+}
+
+.badge[data-type='5'] {
+  background-image: var(--gradient-danger);
+}
+
+.badge[data-type='6'] {
+  background-image: var(--gradient-secondary);
+}
+
+.badge[data-type='7'] {
+  background-image: var(--gradient-pony);
+}
+
+.badge[data-type='8'] {
+  background-image: var(--gradient-alert-success);
+}
+
+.badge[data-type='9'] {
+  background-image: var(--gradient-alert-error);
+}
+
+.badge[data-type='10'] {
+  background-image: var(--gradient-light);
+  color: var(--color-text);
 }
 
 /* DAY BADGES */
@@ -308,6 +353,11 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
+}
+
+.count-badge.warning {
+  background: var(--color-warning-orange);
+  color: var(--color-white);
 }
 
 .riders-count-badge {
@@ -368,6 +418,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 buttons.css
+
 **Path:** `components/buttons.css`
 
 ```
@@ -428,6 +479,26 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   height: 36px;
   gap: 0;
   min-width: 36px;
+}
+
+.btn-modern {
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  color: var(--color-text-muted);
+  padding: var(--spacing-xs) var(--spacing-lg);
+}
+
+.btn-modern.danger {
+  background: var(--color-danger-light);
+  color: var(--color-danger-medium-dark);
+  border: 2px solid var(--color-danger-medium-dark);
+}
+
+.btn-modern.danger:hover:not(:disabled) {
+  background: var(--color-danger);
+  border-color: 2px var(--color-danger);
+  color: var(--color-white);
 }
 
 .btn-icon-modern {
@@ -594,7 +665,8 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 
 /* BUTTON GROUPS */
 .btn-group {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--spacing-sm);
 }
 
@@ -655,6 +727,34 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   height: 18px;
   flex-shrink: 0;
 }
+
+.form-btn-primary {
+  padding: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  color: var(--color-gray-700);
+  gap: var(--spacing-sm);
+}
+
+.form-btn-primary:hover {
+  color: var(--color-primary-light);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--color-primary-light);
+  background: var(--color-gray-100);
+}
+
+.form-btn-primary.active {
+  background-image: var(--gradient-primary);
+  color: var(--color-white);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: inset 0 0 0 1px var(--color-primary-dark);
+  border: none;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .btn {
@@ -695,6 +795,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 cards.css
+
 **Path:** `components/cards.css`
 
 ```
@@ -719,8 +820,8 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   transform: translateY(-2px);
 }
 
-.card-enhanced {
-  background: rgba(255, 255, 255, 0.95);
+.card {
+  background: var(--color-bg-card);
   backdrop-filter: blur(10px);
   padding: 30px;
   border-radius: var(--radius-xl);
@@ -729,7 +830,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.card-enhanced h2 {
+.card h2 {
   margin-bottom: 24px;
   color: var(--color-gray-800);
   font-size: 1.5rem;
@@ -739,12 +840,17 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
   gap: 12px;
 }
 
-.card-enhanced h2::before {
-  content: '';
+.card h2::before {
+  content: ' ';
   width: 4px;
   height: 24px;
   background: var(--gradient-primary);
   border-radius: 2px;
+}
+
+.card .week-title h2::before {
+  width: 0px;
+  border-radius: 0px;
 }
 
 /* ============================================
@@ -761,13 +867,29 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 }
 
 .card-title {
-  font-size: 18px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
-  margin: 0;
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-md);
+}
+
+.card-title-text {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1; /* alignement parfait */
+}
+
+.card-title svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Badge */
+.card-title .count-badge {
+  margin-left: auto; /* pousse le badge à droite si souhaité */
 }
 
 .card-footer {
@@ -812,7 +934,6 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 }
 
 .info-card-header svg {
-  color: var(--color-primary);
   font-size: 18px;
   flex-shrink: 0;
 }
@@ -1079,7 +1200,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
     padding: 16px;
   }
 
-  .card-enhanced {
+  .card {
     padding: 20px;
   }
 
@@ -1100,11 +1221,254 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   DETAIL CARDS - Entity detail view cards
+   Shared between HorseCard, RiderCard, etc.
+   ============================================ */
+
+/* ============================================
+   CARD TITLE (in modal header)
+   ============================================ */
+
+.detail-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.detail-card-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+}
+
+.detail-card-title-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-card-title-text h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.detail-card-meta {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.detail-card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   CARD CONTENT
+   ============================================ */
+
+.detail-card-content {
+  padding: var(--spacing-xs);
+}
+
+/* ============================================
+   CARD GRID LAYOUT
+   ============================================ */
+
+.detail-card-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.detail-card-grid.event {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+
+.detail-card-sidebar,
+.detail-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ============================================
+   PAIRINGS LIST - Modern iOS style
+   ============================================ */
+
+.pairings-list-modern {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.pairing-item-modern {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.pairing-item-modern:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-primary-light);
+  transform: translateX(2px);
+}
+
+.pairing-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.pairing-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.pairing-header span:first-child {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.pairing-days {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.pairing-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PACKAGE ITEM - Modern style
+   ============================================ */
+
+.package-item-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: var(--gradient-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.package-item-modern:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(2px);
+}
+
+.package-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.package-value {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+/* ============================================
+   INFO ITEMS - Simple layout
+   ============================================ */
+
+.detail-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 992px) {
+  .detail-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-card-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-card-content {
+    padding: var(--spacing-xs);
+  }
+
+  .detail-card-title {
+    flex-wrap: wrap;
+  }
+
+  .detail-card-avatar {
+    display: none;
+  }
+
+  .detail-card-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .detail-card-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .pairing-item-modern {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pairing-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
 ```
 
 ---
 
 ## 📄 error-boundary.css
+
 **Path:** `components/error-boundary.css`
 
 ```
@@ -1214,6 +1578,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 filters.css
+
 **Path:** `components/filters.css`
 
 ```
@@ -1288,6 +1653,7 @@ Generated on: Mon Jan 26 09:48:07 CET 2026
 ---
 
 ## 📄 forms.css
+
 **Path:** `components/forms.css`
 
 ```
@@ -1604,11 +1970,146 @@ input[type='radio'] {
     width: 100%;
   }
 }
+
+/* ============================================
+   FORM LAYOUTS - Common form structures
+   Shared between entity forms (Horse, Rider, etc.)
+   ============================================ */
+
+/* ============================================
+   ENTITY FORM CONTAINER
+   ============================================ */
+
+.entity-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* ============================================
+   FORM SECTIONS
+   ============================================ */
+
+.entity-form .form-section {
+  /* Utilise les styles de sections.css */
+}
+
+.entity-form .form-section h3 {
+  margin: 0 0 var(--spacing-md) 0;
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-gray-150);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-800);
+}
+
+/* ============================================
+   FORM GROUPS
+   ============================================ */
+
+.entity-form .form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.entity-form .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   REQUIRED INDICATOR
+   ============================================ */
+
+.required {
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
+/* ============================================
+   ERROR MESSAGES
+   ============================================ */
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.error-message svg {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   FORM INPUT ERROR STATE
+   ============================================ */
+
+.entity-form .form-input.error,
+.entity-form .form-select.error,
+.entity-form .form-textarea.error {
+  border-color: var(--color-danger);
+  background: var(--color-danger-light);
+}
+
+.entity-form .form-input.error:focus,
+.entity-form .form-select.error:focus,
+.entity-form .form-textarea.error:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* ============================================
+   FORM HELP TEXT
+   ============================================ */
+
+.form-help {
+  display: block;
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  font-style: italic;
+}
+
+/* ============================================
+   SEGMENTED CONTROL IN FORMS
+   ============================================ */
+
+.entity-form .segmented-control {
+  margin-top: var(--spacing-xs);
+}
+
+/* ============================================
+   FORM FOOTER (actions)
+   ============================================ */
+
+.entity-form .modal-footer {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid var(--color-border-light);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .entity-form .form-section h3 {
+    font-size: var(--font-size-sm);
+  }
+
+  .entity-form .modal-footer {
+    margin-top: var(--spacing-lg);
+  }
+}
 ```
 
 ---
 
 ## 📄 modals.css
+
 **Path:** `components/modals.css`
 
 ```
@@ -1626,7 +2127,7 @@ input[type='radio'] {
   align-items: center;
   justify-content: center;
   z-index: var(--z-modal-backdrop);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xs);
 }
 
 /* Modal Container */
@@ -1639,29 +2140,46 @@ input[type='radio'] {
   flex-direction: column;
   overflow: hidden;
   animation: slideIn var(--transition-slow);
+
+  width: 100%;
+  max-width: 100%;
+  margin: auto;
 }
 
 /* ============================================
    MODAL SIZES
    ============================================ */
 
-.modal-sm {
+.modal--sm {
   max-width: 400px;
-  width: 100%;
 }
 
-.modal-md {
+.modal--md {
   max-width: 600px;
-  width: 100%;
 }
 
-.modal-lg {
+.modal--lg {
   max-width: 900px;
-  width: 100%;
 }
 
-.modal-xl {
+.modal--xl {
   max-width: 1400px;
+}
+/* ============================================
+   MODAL CONTENT
+   ============================================ */
+
+.modal-content {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  animation: slideIn var(--transition-slow);
   width: 100%;
 }
 
@@ -1707,7 +2225,7 @@ input[type='radio'] {
 .modal-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   color: var(--color-text);
 }
 
@@ -1900,6 +2418,7 @@ input[type='radio'] {
 ---
 
 ## 📄 tables.css
+
 **Path:** `components/tables.css`
 
 ```
@@ -2027,11 +2546,349 @@ input[type='radio'] {
     flex-shrink: 0;
   }
 }
+
+/* ============================================
+   LIST VIEWS - Common styles for list pages
+   Shared between HorsesList, RidersList, etc.
+   ============================================ */
+
+/* ============================================
+   LIST HEADER
+   ============================================ */
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.list-header h2 {
+  margin: 0;
+}
+
+.list-header-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+/* ============================================
+   FILTER SECTION
+   ============================================ */
+
+.list-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* ============================================
+   MESSAGES SECTION
+   ============================================ */
+
+.list-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* ============================================
+   COUNT BADGE (for clickable counts)
+   ============================================ */
+
+.count-badge-interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px var(--spacing-sm);
+  background: var(--gradient-info);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-base);
+  cursor: default;
+}
+
+.count-badge-interactive.clickable {
+  cursor: pointer;
+}
+
+.count-badge-interactive.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+}
+
+/* ============================================
+   DAY BADGES (for loan/activity days)
+   ============================================ */
+
+.days-cell {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.days-cell .day-badge {
+  /* Utilise les styles existants de badges.css */
+}
+
+/* ============================================
+   BADGES CONTAINER (for multiple badges in cell)
+   ============================================ */
+
+.badges-cell {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .list-header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .list-header-actions .btn {
+    width: 100%;
+  }
+
+  .days-cell {
+    gap: 2px;
+    padding: 2px;
+    flex-wrap: wrap;
+  }
+}
+/* ==============================================
+   STATISTICS & DATA TABLES
+============================================== */
+
+/* Stats Grid */
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.stats-riders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: var(--spacing-md);
+}
+
+/* Data Table */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.data-table.compact {
+  font-size: var(--font-size-xs);
+}
+
+/* Table Headers */
+.data-table thead {
+  background: var(--color-bg-secondary);
+  border-bottom: 2px solid var(--color-border-dark);
+}
+
+.data-table th {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-header-sticky {
+  position: sticky;
+  left: 0;
+  background: var(--color-bg-secondary);
+  z-index: 2;
+  min-width: 150px;
+}
+
+.table-header-center {
+  text-align: center;
+}
+
+.table-header-left {
+  text-align: left;
+}
+
+.table-header-accent {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+/* Table Body */
+.data-table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+.data-table tbody tr:hover {
+  background: var(--color-bg-secondary);
+}
+
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.data-table td {
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* Table Cells */
+.table-cell-name {
+  position: sticky;
+  left: 0;
+  background: var(--color-surface);
+  z-index: 1;
+  font-weight: var(--font-weight-medium);
+}
+
+.data-table tbody tr:hover .table-cell-name {
+  background: var(--color-bg-secondary);
+}
+
+.table-cell-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.table-cell-content svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-gray-500);
+  flex-shrink: 0;
+}
+
+.table-cell-center {
+  text-align: center;
+}
+
+.table-cell-left {
+  text-align: left;
+}
+
+.table-cell-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.table-cell-accent {
+  background: var(--color-primary-light);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Count Pills */
+.count-pill {
+  display: inline-block;
+  min-width: 24px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+.count-pill.active {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.count-pill.empty {
+  color: var(--color-gray-400);
+}
+
+.count-total {
+  color: var(--color-primary);
+  font-size: var(--font-size-base);
+}
+
+/* Total Row */
+.table-row-total {
+  border-top: 2px solid var(--color-border-dark);
+  background: var(--color-bg-secondary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.table-row-total:hover {
+  background: var(--color-bg-secondary) !important;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl);
+  gap: var(--spacing-md);
+  color: var(--color-gray-600);
+}
+
+.loading-state svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-riders-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-container {
+    border-radius: 0;
+    margin: 0 calc(-1 * var(--spacing-md));
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .table-header-sticky,
+  .table-cell-name {
+    min-width: 100px;
+  }
+}
 ```
 
 ---
 
 ## 📄 utilities.css
+
 **Path:** `components/utilities.css`
 
 ```
@@ -2098,31 +2955,164 @@ input[type='radio'] {
 
 ---
 
-## 📄 calendar-mobile.css
-**Path:** `features/calendar/calendar-mobile.css`
+## 📄 calendar-actions-mobile.css
+
+**Path:** `features/calendar/calendar-actions-mobile.css`
 
 ```
-@import '../../common.css';
+/* ============================================
+   MOBILE CALENDAR ACTIONS
+   Bottom action bar only (no filters sheet)
+   ============================================ */
 
 /* ============================================
-   MOBILE CALENDAR VIEW - iOS Style
+   MOBILE ACTION BAR - Fixed Bottom
    ============================================ */
-.mobile-calendar-view {
-  display: none; /* Caché par défaut, visible sur mobile */
-  flex-direction: column;
-  height: 100%;
-  background: #f2f2f7; /* iOS background */
-  overflow: hidden;
+
+.mobile-calendar-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none; /* Hidden by default, shown on mobile */
+  align-items: center;
+  justify-content: space-around;
+  background: var(--color-white);
+  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-xs) var(--spacing-md);
+  padding-bottom: calc(var(--spacing-xs) + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 95;
+  gap: var(--spacing-sm);
 }
 
-.mobile-loading {
+.mobile-action-btn {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
+  min-width: 64px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--color-gray-600);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-action-btn:active {
+  transform: scale(0.95);
+  background: var(--color-gray-100);
+}
+
+.mobile-action-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-gray-600);
+}
+
+.mobile-action-btn.primary {
+  background: linear-gradient(135deg, #4299e1 0%, #5da9e9 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+  flex: 0 0 auto;
+  min-width: 56px;
+  min-height: 56px;
+  border-radius: 50%;
+  padding: 0;
+}
+
+.mobile-action-btn.primary .mobile-action-label {
+  display: none; /* No label for primary button */
+}
+
+.mobile-action-btn.primary:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(66, 153, 225, 0.4);
+}
+
+.mobile-action-btn.danger {
+  color: var(--color-danger-red);
+}
+
+.mobile-action-btn.danger .mobile-action-label {
+  color: var(--color-danger-red);
+}
+
+.mobile-action-btn.danger:active {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ============================================
+   RESPONSIVE - SHOW ON MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .mobile-calendar-actions {
+    display: flex;
+  }
+
+  /* Hide desktop filters on mobile */
+  .calendar-filters {
+    display: none !important;
+  }
+
+  /* Adjust calendar view to account for bottom bar */
+  .mobile-calendar-view {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-action-btn {
+    min-width: 56px;
+    font-size: 22px;
+    gap: 1px;
+  }
+
+  .mobile-action-label {
+    font-size: 9px;
+  }
+
+  .mobile-action-btn.primary {
+    min-width: 52px;
+    min-height: 52px;
+  }
+}
+
+/* Safe areas */
+@supports (padding: max(0px)) {
+  .mobile-calendar-actions {
+    padding-bottom: max(var(--spacing-xs), calc(var(--spacing-xs) + env(safe-area-inset-bottom, 0px)));
+  }
+}
+```
+
+---
+
+## 📄 calendar-mobile.css
+
+**Path:** `features/calendar/calendar-mobile.css`
+
+```
+/* ============================================
+   MOBILE CALENDAR VIEW - iOS Style
+   Styles spécifiques mobile uniquement
+   ============================================ */
+
+.mobile-calendar-view {
+  display: none;
+  flex-direction: column;
   height: 100%;
-  gap: var(--spacing-md);
-  color: var(--color-gray-500);
+  background: var(--color-gray-50);
+  overflow: hidden;
 }
 
 /* ============================================
@@ -2159,7 +3149,6 @@ input[type='radio'] {
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 0;
-  position: relative;
 }
 
 .mobile-day-button:active {
@@ -2175,24 +3164,22 @@ input[type='radio'] {
 }
 
 .mobile-day-number {
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 28px;
+  font-weight: 400;
   color: #000;
   line-height: 1;
 }
 
 .mobile-event-count {
-  font-size: 8px;
+  font-size: 12px;
   color: #8e8e93;
   min-height: 10px;
   line-height: 1;
   font-weight: 600;
 }
 
-/* Selected day - iOS blue */
 .mobile-day-button.selected {
-  background: #007aff;
-  color: var(--color-white);
+  background: var(--color-primary-light);
 }
 
 .mobile-day-button.selected .mobile-day-name,
@@ -2201,9 +3188,8 @@ input[type='radio'] {
   color: var(--color-white);
 }
 
-/* Today indicator */
 .mobile-day-button.today:not(.selected) .mobile-day-number {
-  color: #007aff;
+  color: var(--color-primary-light);
   font-weight: 400;
 }
 
@@ -2238,6 +3224,7 @@ input[type='radio'] {
 
 /* ============================================
    ALL-DAY EVENTS
+   RESPONSIVE
    ============================================ */
 
 .mobile-allday-section {
@@ -2294,7 +3281,7 @@ input[type='radio'] {
 }
 
 /* ============================================
-   TIMED EVENTS LIST - iOS Style
+   TIMED EVENTS LIST
    ============================================ */
 
 .mobile-events-list {
@@ -2323,7 +3310,266 @@ input[type='radio'] {
   background-color: #f8f8f8;
 }
 
-/* Time column - iOS style */
+/* ============================================
+   ALL-DAY EVENTS
+   ============================================ */
+
+.mobile-allday-section {
+  margin-bottom: var(--spacing-md);
+}
+.mobile-allday-card[data-type='private_lesson'] {
+  background: linear-gradient(135deg, #4299e1 0%, #5da9e9 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(66, 153, 225, 0.25);
+}
+
+.mobile-allday-card[data-type='grouped_lesson'] {
+  background: linear-gradient(135deg, #8b5cf6 0%, #9b51e0 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+}
+
+.mobile-allday-card[data-type='competition'] {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.25);
+}
+
+.mobile-allday-card[data-type='blocked'] {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.25);
+}
+
+/* All-day text colors */
+.mobile-allday-card[data-type] .mobile-allday-title,
+.mobile-allday-card[data-type] .mobile-allday-subtitle,
+.mobile-allday-card[data-type] .mobile-allday-icon {
+  color: var(--color-white);
+}
+
+/* ============================================
+   TIMED EVENTS - Colored Icons + Borders
+   ============================================ */
+
+/* Private Lesson */
+.mobile-event-card[data-type='private_lesson'] {
+  border-left: 4px solid #4299e1;
+}
+
+.mobile-event-card[data-type='private_lesson'] .mobile-event-icon {
+  background: linear-gradient(135deg, #4299e1 0%, #5da9e9 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 6px rgba(66, 153, 225, 0.3);
+}
+
+.mobile-event-card[data-type='private_lesson'] .mobile-time-value {
+  color: #4299e1;
+  font-weight: 600;
+}
+
+.mobile-event-card[data-type='private_lesson'] .mobile-event-divider {
+  background: linear-gradient(to bottom, #4299e1, rgba(66, 153, 225, 0.1));
+}
+
+/* Grouped Lesson */
+.mobile-event-card[data-type='grouped_lesson'] {
+  border-left: 4px solid #8b5cf6;
+}
+
+.mobile-event-card[data-type='grouped_lesson'] .mobile-event-icon {
+  background: linear-gradient(135deg, #8b5cf6 0%, #9b51e0 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.3);
+}
+
+.mobile-event-card[data-type='grouped_lesson'] .mobile-time-value {
+  color: #8b5cf6;
+  font-weight: 600;
+}
+
+.mobile-event-card[data-type='grouped_lesson'] .mobile-event-divider {
+  background: linear-gradient(to bottom, #8b5cf6, rgba(139, 92, 246, 0.1));
+}
+
+/* Competition */
+.mobile-event-card[data-type='competition'] {
+  border-left: 4px solid #fbbf24;
+}
+
+.mobile-event-card[data-type='competition'] .mobile-event-icon {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+}
+
+.mobile-event-card[data-type='competition'] .mobile-time-value {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.mobile-event-card[data-type='competition'] .mobile-event-divider {
+  background: linear-gradient(to bottom, #fbbf24, rgba(251, 191, 36, 0.1));
+}
+
+/* Blocked */
+.mobile-event-card[data-type='blocked'] {
+  border-left: 4px solid #6b7280;
+}
+
+.mobile-event-card[data-type='blocked'] .mobile-event-icon {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+  color: var(--color-white);
+  box-shadow: 0 2px 6px rgba(107, 114, 128, 0.3);
+}
+
+.mobile-event-card[data-type='blocked'] .mobile-time-value {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.mobile-event-card[data-type='blocked'] .mobile-event-divider {
+  background: linear-gradient(to bottom, #6b7280, rgba(107, 114, 128, 0.1));
+}
+
+/* ============================================
+   STATUS OVERLAYS
+   ============================================ */
+
+/* Pending - Yellow tint */
+.mobile-event-card[data-status='pending'] {
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.08) 0%, transparent 100%);
+}
+
+.mobile-allday-card[data-status='pending']::after {
+  content: '⏳';
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  font-size: 18px;
+}
+
+/* Confirmed - Blue tint */
+.mobile-event-card[data-status='confirmed'] {
+  background: linear-gradient(90deg, rgba(66, 153, 225, 0.08) 0%, transparent 100%);
+}
+
+.mobile-allday-card[data-status='confirmed']::after {
+  content: '✓';
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Cancelled - Greyed out */
+.mobile-event-card[data-status='cancelled'],
+.mobile-allday-card[data-status='cancelled'] {
+  opacity: 0.5;
+  filter: grayscale(60%);
+}
+
+.mobile-event-card[data-status='cancelled'] .mobile-event-title,
+.mobile-allday-card[data-status='cancelled'] .mobile-allday-title {
+  text-decoration: line-through;
+}
+
+/* ============================================
+   ACTIVE/HOVER STATES avec couleurs
+   ============================================ */
+
+.mobile-event-card[data-type='private_lesson']:active {
+  background: linear-gradient(90deg, rgba(66, 153, 225, 0.12) 0%, transparent 100%);
+}
+
+.mobile-event-card[data-type='grouped_lesson']:active {
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.12) 0%, transparent 100%);
+}
+
+.mobile-event-card[data-type='competition']:active {
+  background: linear-gradient(90deg, rgba(251, 191, 36, 0.12) 0%, transparent 100%);
+}
+
+.mobile-event-card[data-type='blocked']:active {
+  background: linear-gradient(90deg, rgba(107, 114, 128, 0.12) 0%, transparent 100%);
+}
+
+/* ============================================
+   EXTENDED EVENT TYPES (1-10)
+   ============================================ */
+
+.mobile-event-card[data-type='1'] .mobile-event-icon,
+.mobile-allday-card[data-type='1'] {
+  background: var(--gradient-primary);
+}
+
+.mobile-event-card[data-type='1'] {
+  border-left-color: var(--color-primary-purple);
+}
+
+.mobile-event-card[data-type='2'] .mobile-event-icon,
+.mobile-allday-card[data-type='2'] {
+  background: var(--gradient-info);
+}
+
+.mobile-event-card[data-type='2'] {
+  border-left-color: var(--color-info-blue);
+}
+
+.mobile-event-card[data-type='3'] .mobile-event-icon,
+.mobile-allday-card[data-type='3'] {
+  background: var(--gradient-success);
+}
+
+.mobile-event-card[data-type='3'] {
+  border-left-color: var(--color-success-green);
+}
+
+.mobile-event-card[data-type='4'] .mobile-event-icon,
+.mobile-allday-card[data-type='4'] {
+  background: var(--gradient-warning);
+}
+
+.mobile-event-card[data-type='4'] {
+  border-left-color: var(--color-warning-orange);
+}
+
+.mobile-event-card[data-type='5'] .mobile-event-icon,
+.mobile-allday-card[data-type='5'] {
+  background: var(--gradient-danger);
+}
+
+.mobile-event-card[data-type='5'] {
+  border-left-color: var(--color-danger-red);
+}
+
+.mobile-event-card[data-type='6'] .mobile-event-icon,
+.mobile-allday-card[data-type='6'] {
+  background: var(--gradient-secondary);
+}
+
+.mobile-event-card[data-type='7'] .mobile-event-icon,
+.mobile-allday-card[data-type='7'] {
+  background: var(--gradient-pony);
+}
+
+.mobile-event-card[data-type='8'] .mobile-event-icon,
+.mobile-allday-card[data-type='8'] {
+  background: var(--gradient-alert-success);
+}
+
+.mobile-event-card[data-type='9'] .mobile-event-icon,
+.mobile-allday-card[data-type='9'] {
+  background: var(--gradient-alert-error);
+}
+
+.mobile-event-card[data-type='10'] .mobile-event-icon,
+.mobile-allday-card[data-type='10'] {
+  background: var(--gradient-light);
+  color: var(--color-text);
+}
+
 .mobile-event-time {
   min-width: 48px;
   padding-right: var(--spacing-sm);
@@ -2340,7 +3586,6 @@ input[type='radio'] {
   line-height: 1.2;
 }
 
-/* Vertical divider */
 .mobile-event-divider {
   width: 2px;
   align-self: stretch;
@@ -2349,7 +3594,6 @@ input[type='radio'] {
   flex-shrink: 0;
 }
 
-/* Event content */
 .mobile-event-content {
   flex: 1;
   display: flex;
@@ -2388,12 +3632,11 @@ input[type='radio'] {
   white-space: nowrap;
 }
 
-/* Details */
 .mobile-event-details {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding-left: 44px; /* Aligné avec le texte */
+  padding-left: 44px;
 }
 
 .mobile-detail-line {
@@ -2424,7 +3667,7 @@ input[type='radio'] {
 }
 
 /* ============================================
-   FLOATING ACTION BUTTON - iOS Style
+   FLOATING ACTION BUTTON
    ============================================ */
 
 .mobile-fab {
@@ -2454,23 +3697,25 @@ input[type='radio'] {
   font-size: 28px;
 }
 
+.mobile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--spacing-md);
+  color: var(--color-gray-500);
+}
+
 /* ============================================
    RESPONSIVE - SHOW ON MOBILE
    ============================================ */
 
 @media (max-width: 768px) {
-  /* Cacher la vue desktop */
-  .week-view,
-  .calendar-filters {
-    display: none !important;
-  }
-
-  /* Afficher la vue mobile */
   .mobile-calendar-view {
     display: flex;
   }
 
-  /* Ajuster le container parent */
   .calendar-view {
     padding: 0;
     gap: 0;
@@ -2483,9 +3728,7 @@ input[type='radio'] {
     background: var(--color-white);
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
   }
-}
 
-@media (max-width: 480px) {
   .mobile-week-selector {
     gap: 2px;
     padding: 0;
@@ -2525,22 +3768,16 @@ input[type='radio'] {
     font-size: 26px;
   }
 }
-
-/* ============================================
-   SAFE AREAS (iPhone notch, etc.)
-   ============================================ */
-
-@supports (padding: max(0px)) {
-  .mobile-calendar-view {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+@media (max-width: 480px) {
+  .mobile-event-card[data-type] {
+    border-left-width: 3px;
   }
 
-  .mobile-calendar-header {
-    padding-top: max(var(--spacing-md), env(safe-area-inset-top, 0px));
-  }
-
-  .mobile-fab {
-    bottom: max(var(--spacing-xl), calc(var(--spacing-xl) + env(safe-area-inset-bottom, 0px)));
+  .mobile-event-icon,
+  .mobile-allday-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
   }
 }
 ```
@@ -2548,11 +3785,14 @@ input[type='radio'] {
 ---
 
 ## 📄 calendar.css
+
 **Path:** `features/calendar/calendar.css`
 
 ```
-/* CALENDAR - Desktop View - Version condensée optimisée */
-@import '../../common.css';
+/* ============================================
+   CALENDAR DESKTOP - Specific styles only
+   Most styles come from common.css
+   ============================================ */
 
 :root {
   --hour-height: 60px;
@@ -2561,6 +3801,10 @@ input[type='radio'] {
   --day-header-height: 50px;
   --all-day-section-height: 50px;
 }
+
+/* ============================================
+   CALENDAR VIEW CONTAINER
+   ============================================ */
 
 .calendar-view {
   padding: var(--spacing-md);
@@ -2571,11 +3815,42 @@ input[type='radio'] {
   gap: var(--spacing-sm);
 }
 
+/* ============================================
+   CALENDAR HEADER & NAV
+   ============================================ */
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.calendar-nav-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+/* ============================================
+   CALENDAR FILTERS
+   ============================================ */
+
 .calendar-filters {
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-lg);
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(8px);
@@ -2583,6 +3858,40 @@ input[type='radio'] {
   border-radius: var(--radius-lg);
   padding: var(--spacing-sm);
 }
+
+.filter-line {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.filter-group label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.filter-group .form-select {
+  min-width: 140px;
+}
+
+.filters-group {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+/* ============================================
+   WEEK VIEW - GRID
+   ============================================ */
 
 .week-view {
   background: var(--gradient-light);
@@ -2606,6 +3915,60 @@ input[type='radio'] {
   background: var(--color-surface);
 }
 
+/* ============================================
+   TIME COLUMN
+   ============================================ */
+
+.time-column {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border-dark);
+  background: var(--color-bg-secondary);
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.time-header {
+  height: var(--day-header-height);
+  min-height: var(--day-header-height);
+  border-bottom: 1px solid var(--color-border-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-600);
+  text-transform: uppercase;
+  background: var(--gradient-light);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.time-all-day-spacer {
+  height: var(--all-day-section-height);
+  min-height: var(--all-day-section-height);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-secondary);
+}
+
+.time-slot {
+  height: var(--hour-height);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================
+   DAY COLUMN
+   ============================================ */
+
 .day-column {
   position: relative;
   display: flex;
@@ -2623,6 +3986,18 @@ input[type='radio'] {
 .day-column.today {
   background: linear-gradient(to bottom, var(--today-bg), transparent 80px);
 }
+
+.day-column.past {
+  opacity: 0.7;
+}
+
+.day-column.has-full-height-event .day-grid-container {
+  pointer-events: none;
+}
+
+/* ============================================
+   DAY HEADER
+   ============================================ */
 
 .day-header {
   height: var(--day-header-height);
@@ -2650,6 +4025,10 @@ input[type='radio'] {
   text-transform: capitalize;
 }
 
+/* ============================================
+   ALL-DAY SECTION
+   ============================================ */
+
 .all-day-section {
   height: var(--all-day-section-height);
   min-height: var(--all-day-section-height);
@@ -2657,7 +4036,222 @@ input[type='radio'] {
   background: var(--color-bg-secondary);
   border-bottom: 1px solid var(--color-border);
   overflow: hidden;
+  position: relative;
 }
+
+.all-day-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+.all-day-slot-card {
+  flex: 1;
+  min-width: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.all-day-slot-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.all-day-slot-card[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.all-day-slot-card[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.all-day-slot-card[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.all-day-slot-card[data-type='blocked'] {
+  background: var(--gradient-secondary);
+  opacity: 0.8;
+}
+
+.all-day-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.all-day-slot-status-icon {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.all-day-slot-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   FULL HEIGHT EVENTS (Competition/Blocked)
+   ============================================ */
+.full-height-slots-container {
+  position: absolute;
+  /* Commence après le header + all-day-section */
+  top: calc(var(--day-header-height) + var(--all-day-section-height));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15; /* Au-dessus de la grille */
+  padding: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  pointer-events: none; /* Pour laisser passer les clics sauf sur les cards */
+}
+
+.full-height-slot-card {
+  flex: 1;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto; /* Réactiver les clics sur la card */
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.full-height-slot-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.full-height-slot-card[data-type='competition'] {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.full-height-slot-card[data-type='blocked'] {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+.full-height-slot-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.full-height-slot-icon {
+  font-size: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.full-height-slot-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.full-height-slot-type {
+  font-size: var(--font-size-xs);
+  opacity: 0.9;
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+}
+
+.full-height-slot-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================
+   DAY GRID
+   ============================================ */
+
+.day-grid-container {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.day-grid {
+  position: relative;
+  height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
+}
+
+.hour-markers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hour-marker-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hour-marker-row:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   SELECTION OVERLAY
+   ============================================ */
+
+.selection-overlay {
+  position: absolute;
+  background: var(--selection-color);
+  border: 2px solid var(--selection-border);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ============================================
+   EVENTS CONTAINER
+   ============================================ */
+
+.events-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.event-slot-wrapper {
+  position: absolute;
+  width: 100%;
+  pointer-events: auto;
+}
+
+/* ============================================
+   EVENT CARD
+   ============================================ */
 
 .event-card {
   position: absolute;
@@ -2669,6 +4263,7 @@ input[type='radio'] {
   display: flex;
   flex-direction: column;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
 }
 
 .event-card:hover {
@@ -2677,14 +4272,19 @@ input[type='radio'] {
   z-index: 10;
 }
 
+/* ============================================
+   SLOT CONTENT
+   ============================================ */
+
 .slot-content {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: var(--spacing-xs);
   border-radius: var(--radius-md);
   color: var(--color-white);
   font-size: var(--font-size-xs);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  gap: 2px;
 }
 
 .slot-content[data-type='private_lesson'] {
@@ -2704,17 +4304,375 @@ input[type='radio'] {
   opacity: 0.8;
 }
 
+/* Layouts selon durée */
+.slot-content[data-layout='ultra-compact'] {
+  padding: 2px var(--spacing-xs);
+}
+
+.slot-content[data-layout='compact'] {
+  padding: var(--spacing-xs);
+}
+
+.slot-content[data-layout='normal'] {
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.slot-content[data-layout='comfortable'] {
+  padding: var(--spacing-sm);
+}
+
+/* ============================================
+   SLOT ELEMENTS
+   ============================================ */
+
+.slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  margin-bottom: 2px;
+}
+
+.slot-title {
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.slot-status-icon {
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}
+
+.slot-instructor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.slot-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.slot-duration {
+  opacity: 0.8;
+}
+
+.slot-participants {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+/* Ultra compact - only title */
+.slot-content[data-layout='ultra-compact'] .slot-instructor,
+.slot-content[data-layout='ultra-compact'] .slot-time,
+.slot-content[data-layout='ultra-compact'] .slot-participants {
+  display: none;
+}
+
+/* Compact - title + time */
+.slot-content[data-layout='compact'] .slot-instructor,
+.slot-content[data-layout='compact'] .slot-participants {
+  display: none;
+}
+
+/* ============================================
+   LOADING & ERROR STATES
+   ============================================ */
+
+.calendar-loading,
+.calendar-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl);
+  text-align: center;
+  color: var(--color-gray-600);
+}
+
+.calendar-error {
+  color: var(--color-danger);
+}
+
+/* ============================================
+   RESPONSIVE - HIDE ON MOBILE
+   ============================================ */
+
 @media (max-width: 768px) {
   .week-view,
   .calendar-filters {
     display: none !important;
   }
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .full-height-slot-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .full-height-slot-type {
+    font-size: var(--font-size-xs);
+  }
+
+  .full-height-slot-name {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* ==============================================
+   SLOT CONTENT - Solution 2 (Avatars)
+============================================== */
+
+.slot-content {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+  overflow: hidden;
+}
+
+/* TOP ROW: Status + Name + Count */
+.slot-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+.slot-status-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.slot-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* BOTTOM ROW: Avatars */
+.slot-avatars-container {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Participant pair (rider + horse) */
+.participant-pair {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.participant-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Rider avatar - lighter background */
+.participant-avatar.rider {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-gray-800);
+}
+
+/* Horse avatar - darker background */
+.participant-avatar.horse {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--color-gray-900);
+}
+
+/* More participants indicator */
+.participant-avatar.more {
+  background: rgba(255, 255, 255, 0.4);
+  color: var(--color-white);
+  font-size: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Empty state */
+.slot-empty-text {
+  font-size: 9px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Hover effect on event card */
+.event-card:hover .participant-avatar {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.participant-avatar {
+  transition: all 0.15s ease;
+}
+
+/* ==============================================
+   SLOT CONTENT - Badges arrondis
+============================================== */
+
+.slot-content {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+  overflow: hidden;
+}
+
+/* TOP ROW: Status + Name + Count */
+.slot-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+.slot-status-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.slot-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* BOTTOM ROW: Participants badges */
+.slot-participants-row {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.participant-badge {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 7px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 1;
+  transition: all 0.15s ease;
+  cursor: default;
+}
+
+.participant-badge:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.badge-rider {
+  color: var(--color-primary, #3b82f6);
+  font-weight: 700;
+}
+
+.badge-separator {
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: 400;
+  font-size: 8px;
+}
+
+.badge-horse {
+  color: var(--color-gray-700, #374151);
+  font-weight: 600;
+}
+
+/* More participants badge */
+.participant-badge.more {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--color-gray-800);
+  border-color: rgba(255, 255, 255, 0.3);
+  padding: 3px 6px;
+}
+
+.participant-badge.more:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Empty state */
+.slot-empty-text {
+  font-size: 9px;
+  opacity: 0.7;
+  font-style: italic;
+  padding: 2px 0;
+}
+
+/* Hover effect on event card */
+.event-card:hover .participant-badge {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 ```
 
 ---
 
 ## 📄 event-form.css
+
 **Path:** `features/events/event-form.css`
 
 ```
@@ -2781,6 +4739,7 @@ input[type='radio'] {
 ---
 
 ## 📄 event-modal.css
+
 **Path:** `features/events/event-modal.css`
 
 ```
@@ -2861,6 +4820,7 @@ input[type='radio'] {
 ---
 
 ## 📄 event-participants.css
+
 **Path:** `features/events/event-participants.css`
 
 ```
@@ -2913,7 +4873,7 @@ input[type='radio'] {
   color: var(--color-text);
 }
 
-.participant-badge {
+.participant-badge- {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -2929,11 +4889,10 @@ input[type='radio'] {
   animation: slideIn 0.2s ease-out;
 }
 
-.participant-badge:hover {
+.participant-badge-:hover {
   border-color: var(--color-primary-light);
   box-shadow: var(--shadow-sm);
 }
-
 @media (max-width: 768px) {
   .participants-table-wrapper {
     overflow-x: auto;
@@ -2947,7 +4906,165 @@ input[type='radio'] {
 
 ---
 
+## 📄 scheduled-events.css
+
+**Path:** `features/events/scheduled-events.css`
+
+```
+/* ============================================
+   SCHEDULED EVENTS MODAL - Ultra minimal
+   Maximum reuse from common.css
+   ============================================ */
+
+/* ============================================
+   CONTENT LAYOUT
+   ============================================ */
+
+.scheduled-events-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ============================================
+   EVENT CARD - Grid only
+   ============================================ */
+
+.scheduled-event-card {
+  padding: var(--spacing-md);
+}
+
+.scheduled-event-card.processing {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.scheduled-event-main {
+  display: grid;
+  grid-template-columns: 100px 180px 1fr auto;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+/* ============================================
+   TIME SECTION - Specific layout
+   ============================================ */
+
+.scheduled-event-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+  justify-content: center;
+}
+
+.scheduled-event-time-range {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ============================================
+   DETAILS SECTION - Specific layout
+   ============================================ */
+
+.scheduled-event-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.scheduled-event-metadata {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.metadata-icon {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PARTICIPANTS - Specific layout
+   ============================================ */
+
+.scheduled-event-participants {
+  min-width: 200px;
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-xs);
+}
+
+.scheduled-event-participants.inline {
+  display: flex;
+  gap: 4px;
+}
+
+.participant-chip {
+  font-size: 11px;
+  padding: 2px 6px;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.3;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-grey-50);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   FOOTER - Specific style
+   ============================================ */
+
+.scheduled-event-created {
+  text-align: right;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+  margin-top: var(--spacing-md);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 992px) {
+  .scheduled-event-main {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .scheduled-event-time {
+    grid-row: 1 / 3;
+  }
+
+  .scheduled-event-participants {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .scheduled-event-details {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .scheduled-event-main {
+    grid-template-columns: 1fr;
+  }
+
+  .scheduled-event-card {
+    padding: var(--spacing-sm);
+  }
+}
+```
+
+---
+
 ## 📄 header-mobile.css
+
 **Path:** `features/home/header-mobile.css`
 
 ```
@@ -3057,7 +5174,7 @@ input[type='radio'] {
 
 .mode-label.mode-user {
   background: var(--color-primary-light);
-  color: var(--color-primary);
+  color: var(--color-white);
   border: none;
   cursor: pointer;
   transition: all var(--transition-base);
@@ -3167,7 +5284,7 @@ input[type='radio'] {
 
   .mode-badge-mobile.mode-user {
     background: var(--color-primary-light);
-    color: var(--color-primary);
+    color: var(--color-white);
   }
 
   .mode-badge-mobile:active {
@@ -3294,10 +5411,10 @@ input[type='radio'] {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-primary);
-    color: var(--color-white);
+    background: var(--color-white);
+    color: var(--color-primary-light);
     border-radius: 50%;
-    font-size: 24px;
+    font-size: 14px;
     flex-shrink: 0;
   }
 
@@ -3312,7 +5429,7 @@ input[type='radio'] {
   .mobile-user-name {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-gray-900);
+    color: var(--color-white);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -3320,7 +5437,7 @@ input[type='radio'] {
 
   .mobile-user-label {
     font-size: var(--font-size-sm);
-    color: var(--color-primary);
+    color: var(--color-white);
   }
 
   /* Mobile navigation links */
@@ -3409,7 +5526,7 @@ input[type='radio'] {
 
   .mobile-mode-badge.user {
     background: var(--color-primary-light);
-    color: var(--color-primary);
+    color: var(--color-white);
   }
 
   .mobile-mode-badge svg {
@@ -3458,6 +5575,7 @@ input[type='radio'] {
 ---
 
 ## 📄 header.css
+
 **Path:** `features/home/header.css`
 
 ```
@@ -3554,6 +5672,7 @@ input[type='radio'] {
 ---
 
 ## 📄 home.css
+
 **Path:** `features/home/home.css`
 
 ```
@@ -3698,13 +5817,165 @@ input[type='radio'] {
 
 ---
 
+## 📄 riders-selector.css
+
+**Path:** `features/home/riders-selector.css`
+
+```
+/* ============================================
+   RIDER SELECTOR MODAL
+   Style iOS moderne pour la sélection de cavalier
+   ============================================ */
+
+.rider-selector-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  min-height: 300px;
+}
+
+/* ============================================
+   FILTERS - Pills standard de l'app
+   ============================================ */
+
+.rider-selector-filters {
+  /* Pas de padding supplémentaire, les pills gèrent leur propre style */
+}
+
+/* ============================================
+   RIDERS LIST - iOS Style
+   ============================================ */
+
+.rider-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.rider-selector-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.rider-selector-card:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-primary-light);
+  transform: translateX(2px);
+}
+
+.rider-selector-card:active {
+  transform: scale(0.98);
+  background: var(--color-gray-100);
+}
+
+.rider-selector-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.rider-selector-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rider-selector-name {
+  font-size: 17px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rider-selector-type {
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+.rider-selector-chevron {
+  font-size: 24px;
+  color: var(--color-gray-400);
+  font-weight: 300;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .rider-selector-content {
+    gap: var(--spacing-md);
+    min-height: auto;
+  }
+
+  .rider-selector-card {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .rider-selector-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .rider-selector-name {
+    font-size: 16px;
+  }
+
+  .rider-selector-type {
+    font-size: 13px;
+  }
+
+  .rider-selector-chevron {
+    font-size: 20px;
+  }
+}
+
+/* ============================================
+   EMPTY STATE OVERRIDE
+   ============================================ */
+
+.rider-selector-list .empty-state-small {
+  margin-top: var(--spacing-lg);
+}
+```
+
+---
+
 ## 📄 horses-list.css
+
 **Path:** `features/horses/horses-list.css`
 
 ```
 /* HORSES - Liste & Table - Optimisé */
 @import '../../common.css';
 
+/* ============================================
+   HORSES LIST - Specific styles only
+   Most styles come from list-views.css
+   ============================================ */
+
+/* Table column widths specific to horses */
 .table thead tr,
 .table tbody tr {
   display: grid;
@@ -3712,79 +5983,10 @@ input[type='radio'] {
   gap: 0;
 }
 
-.horse-row {
-  position: relative;
-}
-
-.horse-row:hover {
-  background: var(--color-bg-hover);
-  cursor: pointer;
-}
-
-.loan-days-cell {
-  display: inline-flex !important;
-  flex-direction: row !important;
-  gap: var(--spacing-xs);
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  min-height: 40px;
-  padding: var(--spacing-xs) var(--spacing-sm);
-}
-
-.no-loan-days {
-  color: var(--color-gray-400);
-  font-size: var(--font-size-sm);
-  font-style: italic;
-}
-
 @media (max-width: 768px) {
   .table thead tr,
   .table tbody tr {
     grid-template-columns: 80px 80px 110px 90px 110px 70px 60px;
-  }
-
-  .loan-days-cell {
-    gap: 2px;
-    padding: 2px;
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 640px) {
-  .table thead,
-  .table thead tr {
-    display: none !important;
-  }
-
-  .table tbody tr {
-    display: block;
-    background: var(--color-surface);
-    margin-bottom: var(--spacing-md);
-    padding: var(--spacing-md);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-border-light);
-  }
-
-  .table tbody tr td {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--color-bg-tertiary);
-  }
-
-  .table tbody tr td:last-child {
-    border-bottom: none;
-  }
-
-  .table tbody tr td::before {
-    content: attr(data-label);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-muted);
-    margin-right: var(--spacing-sm);
-    flex-shrink: 0;
   }
 }
 ```
@@ -3792,6 +5994,7 @@ input[type='radio'] {
 ---
 
 ## 📄 import-planning.css
+
 **Path:** `features/import/import-planning.css`
 
 ```
@@ -3990,70 +6193,23 @@ input[type='radio'] {
 ---
 
 ## 📄 pairings.css
+
 **Path:** `features/pairings/pairings.css`
 
 ```
 /* PAIRINGS - Optimisé */
 @import '../../common.css';
 
-.pairing-form-modern {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
+/* ============================================
+   PAIRINGS - Specific styles only
+   Most styles come from form-layouts.css
+   ============================================ */
 
-.pairing-form-section {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  transition: all var(--transition-base);
-}
-
-.pairing-form-section:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-light);
-}
-
-.link-type-selector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-sm);
-}
-
-.link-type-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  text-align: center;
-  background: var(--color-surface);
-}
-
-.link-type-label:hover {
-  border-color: var(--color-primary-light);
-  background: rgba(102, 126, 234, 0.05);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-.link-type-option input:checked + .link-type-label {
-  border-color: var(--color-primary);
-  background: var(--gradient-primary);
-  color: var(--color-white);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
+/* Horse/Rider selection card */
 .horse-selection-card {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   padding: var(--spacing-md);
   background: var(--gradient-light);
   border: 2px solid var(--color-gray-200);
@@ -4088,10 +6244,12 @@ input[type='radio'] {
   gap: var(--spacing-sm);
 }
 
+/* Days selector grid */
 .days-selector-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
 }
 
 .day-button {
@@ -4124,12 +6282,13 @@ input[type='radio'] {
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-@media (max-width: 768px) {
-  .link-type-selector {
-    grid-template-columns: 1fr;
-    gap: 2px;
-  }
+.day-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
+/* Responsive */
+@media (max-width: 768px) {
   .days-selector-grid {
     display: flex;
     flex-wrap: wrap;
@@ -4139,45 +6298,8 @@ input[type='radio'] {
   .day-button {
     font-size: var(--font-size-xs);
     padding: var(--spacing-sm) 6px;
-  }
-}
-```
-
----
-
-## 📄 rider-card.css
-**Path:** `features/riders/rider-card.css`
-
-```
-/* ============================================
-   RIDER CARD - Styles minimaux
-   Utilise modal-card-* et card-* de common.css
-   ============================================ */
-
-/* Package Item - Style spécifique non disponible dans common */
-.package-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-sm);
-  background: var(--gradient-light);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-}
-
-.package-item:hover {
-  border-color: var(--color-primary-light);
-  box-shadow: var(--shadow-sm);
-  transform: translateX(2px);
-}
-
-/* Responsive overrides si nécessaire */
-@media (max-width: 768px) {
-  .package-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xs);
+    flex: 1;
+    min-width: 40px;
   }
 }
 ```
@@ -4185,12 +6307,19 @@ input[type='radio'] {
 ---
 
 ## 📄 riders-list.css
+
 **Path:** `features/riders/riders-list.css`
 
 ```
 /* RIDERS - Liste & Table - Optimisé */
 @import '../../common.css';
 
+/* ============================================
+   RIDERS LIST - Specific styles only
+   Most styles come from list-views.css
+   ============================================ */
+
+/* Table column widths specific to riders */
 .table thead tr,
 .table tbody tr {
   display: grid;
@@ -4205,14 +6334,6 @@ input[type='radio'] {
     1fr;
 }
 
-.horses-badges {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-  align-items: center;
-  justify-content: center;
-}
-
 @media (max-width: 768px) {
   .table thead tr,
   .table tbody tr {
@@ -4224,6 +6345,7 @@ input[type='radio'] {
 ---
 
 ## 📄 stats.css
+
 **Path:** `features/stats/stats.css`
 
 ```
@@ -4317,6 +6439,7 @@ input[type='radio'] {
 ---
 
 ## 📄 animations.css
+
 **Path:** `foundations/animations.css`
 
 ```
@@ -4399,6 +6522,7 @@ input[type='radio'] {
 ---
 
 ## 📄 reset.css
+
 **Path:** `foundations/reset.css`
 
 ```
@@ -4447,6 +6571,7 @@ textarea {
 ---
 
 ## 📄 variables.css
+
 **Path:** `foundations/variables.css`
 
 ```
@@ -4651,16 +6776,59 @@ textarea {
   --z-notification: 1080;
 
   /* GRADIENTS */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-purple) 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-primary-purple) 100%
+  );
   --gradient-pony: linear-gradient(135deg, var(--color-pony-light) 0%, var(--color-pony-dark) 100%);
-  --gradient-success: linear-gradient(135deg, var(--color-success-medium) 0%, var(--color-success-medium-dark) 100%);
-  --gradient-danger: linear-gradient(135deg, var(--color-danger-medium) 0%, var(--color-danger-medium-dark) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--color-gray-500) 0%, var(--color-gray-650) 100%);
-  --gradient-warning: linear-gradient(135deg, var(--color-warning-orange) 0%, var(--color-warning-orange-dark) 100%);
-  --gradient-info: linear-gradient(135deg, var(--color-info-blue) 0%, var(--color-info-blue-dark) 100%);
+  --gradient-success: linear-gradient(
+    135deg,
+    var(--color-success-medium) 0%,
+    var(--color-success-medium-dark) 100%
+  );
+  --gradient-danger: linear-gradient(
+    135deg,
+    var(--color-danger-medium) 0%,
+    var(--color-danger-medium-dark) 100%
+  );
+  --gradient-secondary: linear-gradient(
+    135deg,
+    var(--color-gray-500) 0%,
+    var(--color-gray-650) 100%
+  );
+  --gradient-warning: linear-gradient(
+    135deg,
+    var(--color-warning-orange) 0%,
+    var(--color-warning-orange-dark) 100%
+  );
+  --gradient-info: linear-gradient(
+    135deg,
+    var(--color-info-blue) 0%,
+    var(--color-info-blue-dark) 100%
+  );
   --gradient-light: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-150) 100%);
-  --gradient-alert-success: linear-gradient(135deg, var(--color-success-badge-light) 0%, var(--color-success-badge-medium) 100%);
-  --gradient-alert-error: linear-gradient(135deg, var(--color-danger-badge-light) 0%, var(--color-danger-badge-medium) 100%);
+  --gradient-alert-success: linear-gradient(
+    135deg,
+    var(--color-success-badge-light) 0%,
+    var(--color-success-badge-medium) 100%
+  );
+  --gradient-alert-error: linear-gradient(
+    135deg,
+    var(--color-danger-badge-light) 0%,
+    var(--color-danger-badge-medium) 100%
+  );
+
+  --gradient-palette-1: var(--gradient-primary);
+  --gradient-palette-2: var(--gradient-info);
+  --gradient-palette-3: var(--gradient-success);
+  --gradient-palette-4: var(--gradient-warning);
+  --gradient-palette-5: var(--gradient-danger);
+  --gradient-palette-6: var(--gradient-secondary);
+  --gradient-palette-7: var(--gradient-pony);
+  --gradient-palette-8: var(--gradient-alert-success);
+  --gradient-palette-9: var(--gradient-alert-error);
+  --gradient-palette-10: var(--gradient-light);
 
   /* CALENDAR SPECIFIC */
   --hour-height: 60px;
@@ -4678,6 +6846,7 @@ textarea {
 ---
 
 ## 📄 container.css
+
 **Path:** `layouts/container.css`
 
 ```
@@ -4746,7 +6915,7 @@ main {
     padding: var(--spacing-sm);
     width: 100%;
   }
-  
+
   .view-container {
     padding: var(--spacing-xs);
     gap: var(--spacing-xs);
@@ -4757,6 +6926,7 @@ main {
 ---
 
 ## 📄 empty-states.css
+
 **Path:** `layouts/empty-states.css`
 
 ```
@@ -4780,6 +6950,7 @@ main {
   background: var(--color-gray-100);
   border-radius: var(--radius-lg);
   border: 2px dashed var(--color-gray-400);
+  margin-bottom: var(--spacing-md);
 }
 .empty-state-icon {
   font-size: 64px;
@@ -4872,6 +7043,7 @@ main {
 ---
 
 ## 📄 flex.css
+
 **Path:** `layouts/flex.css`
 
 ```
@@ -5031,6 +7203,7 @@ main {
 ---
 
 ## 📄 grid.css
+
 **Path:** `layouts/grid.css`
 
 ```
@@ -5133,6 +7306,7 @@ main {
 ---
 
 ## 📄 headers.css
+
 **Path:** `layouts/headers.css`
 
 ```
@@ -5141,7 +7315,7 @@ main {
    ============================================ */
 
 header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-bg-card);
   backdrop-filter: blur(10px);
   color: var(--color-text);
   padding: var(--spacing-lg) 0;
@@ -5221,18 +7395,6 @@ nav a.active {
   position: relative;
 }
 
-.page-header h2::before {
-  content: '';
-  width: 4px;
-  height: var(--spacing-lg);
-  background: var(--gradient-primary);
-  border-radius: 2px;
-  position: absolute;
-  left: -16px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
 .section-header {
   display: flex;
   align-items: center;
@@ -5288,6 +7450,7 @@ nav a.active {
 ---
 
 ## 📄 sections.css
+
 **Path:** `layouts/sections.css`
 
 ```
@@ -5372,4 +7535,3 @@ nav a.active {
 ```
 
 ---
-

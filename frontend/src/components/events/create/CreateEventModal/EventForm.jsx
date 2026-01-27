@@ -2,8 +2,6 @@ import { EVENT_TYPES, getEventTypesOptionForMode } from '../../../../lib/domain/
 import { INSTRUCTORS } from '../../../../lib/domain/domain-constants.js';
 import { Icons } from '../../../../lib/icons.jsx';
 import { formatTimeForInput } from '../../../../lib/helpers/formatters/index.js';
-import '../../../../styles/features/events/event-form.css';
-
 import { useAppMode } from '../../../../context/AppMode.jsx';
 
 const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
@@ -27,27 +25,26 @@ function EventForm({ formData, handleFormChange, setFormData }) {
   const hideInstructorSelecteur = formData.event_type === EVENT_TYPES.LOANER_FREE_TIME;
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="event-form-modern">
+    <form onSubmit={(e) => e.preventDefault()}>
       {/* GENERAL INFORMATION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      <div className="form-section">
+        <h3>Informations générales</h3>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Nom</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleFormChange}
-              className="form-input"
-              placeholder="Un nom sera généré automatiquement si laissé vide"
-            />
-          </div>
+        <div className="form-group">
+          <label htmlFor="name">Nom</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleFormChange}
+            className="form-input"
+            placeholder="Un nom sera généré automatiquement si laissé vide"
+          />
         </div>
 
         {/* Event Type Selector */}
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>
             Type <span className="required">*</span>
           </label>
@@ -78,11 +75,12 @@ function EventForm({ formData, handleFormChange, setFormData }) {
         {!hideParticipantCount && (
           <div className="form-row">
             <div className="form-group">
-              <label>
+              <label htmlFor="min_participants">
                 Min participants <span className="required">*</span>
               </label>
               <input
                 type="number"
+                id="min_participants"
                 name="min_participants"
                 value={formData.min_participants}
                 onChange={handleFormChange}
@@ -93,11 +91,12 @@ function EventForm({ formData, handleFormChange, setFormData }) {
             </div>
 
             <div className="form-group">
-              <label>
+              <label htmlFor="max_participants">
                 Max participants <span className="required">*</span>
               </label>
               <input
                 type="number"
+                id="max_participants"
                 name="max_participants"
                 value={formData.max_participants}
                 onChange={handleFormChange}
@@ -141,27 +140,26 @@ function EventForm({ formData, handleFormChange, setFormData }) {
       </div>
 
       {/* DATE & TIME */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Date et horaires</h3>
+      <div className="form-section">
+        <h3>Date et horaires</h3>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>
-              Date <span className="required">*</span>
-            </label>
-            <input
-              type="date"
-              name="event_date"
-              value={formData.event_date}
-              onChange={handleFormChange}
-              className="form-input"
-              required
-            />
-          </div>
+        <div className="form-group">
+          <label htmlFor="event_date">
+            Date <span className="required">*</span>
+          </label>
+          <input
+            type="date"
+            id="event_date"
+            name="event_date"
+            value={formData.event_date}
+            onChange={handleFormChange}
+            className="form-input"
+            required
+          />
         </div>
 
         {/* All-day vs Time slots */}
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>Format</label>
 
           <div className="segmented-control">
@@ -189,11 +187,12 @@ function EventForm({ formData, handleFormChange, setFormData }) {
         {!formData.is_all_day && (
           <div className="form-row">
             <div className="form-group">
-              <label>
+              <label htmlFor="start_time">
                 Heure début <span className="required">*</span>
               </label>
               <input
                 type="time"
+                id="start_time"
                 name="start_time"
                 value={formatTimeForInput(formData.start_time)}
                 onChange={handleFormChange}
@@ -204,11 +203,12 @@ function EventForm({ formData, handleFormChange, setFormData }) {
             </div>
 
             <div className="form-group">
-              <label>
+              <label htmlFor="end_time">
                 Heure fin <span className="required">*</span>
               </label>
               <input
                 type="time"
+                id="end_time"
                 name="end_time"
                 value={formatTimeForInput(formData.end_time)}
                 onChange={handleFormChange}

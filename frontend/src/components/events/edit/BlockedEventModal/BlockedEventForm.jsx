@@ -8,7 +8,6 @@ import {
   formatTimeForInput,
   formatTimeForDatabase,
 } from '../../../../lib/helpers/formatters';
-import '../../../../styles/features/events/event-form.css';
 
 // Convert domain map → array for UI
 const instructorOptions = Object.entries(INSTRUCTORS).map(([id, label]) => ({
@@ -29,12 +28,15 @@ function BlockedEventForm({ editData, handleChange }) {
       : 0;
 
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="blocked-time-form">
+    <form onSubmit={(e) => e.preventDefault()}>
       {/* GENERAL INFORMATION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Informations générales</h3>
+      <div className="form-section">
+        <div className="info-card-header">
+          <Icons.Info />
+          <h3>Informations générales</h3>
+        </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label htmlFor="name">Nom de l'événement</label>
           <input
             type="text"
@@ -46,9 +48,9 @@ function BlockedEventForm({ editData, handleChange }) {
           />
         </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>
-            Instructeur <span className="required">*</span>
+            Instructeur <span className="text-danger">*</span>
           </label>
           <div className="segmented-control">
             {instructorOptions.map((inst) => (
@@ -65,13 +67,16 @@ function BlockedEventForm({ editData, handleChange }) {
         </div>
       </div>
 
-      {/* DATE AND TIME SECTION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Date et horaires</h3>
+      {/* DATE AND TIME */}
+      <div className="form-section">
+        <div className="info-card-header">
+          <Icons.Calendar />
+          <h3>Date et horaires</h3>
+        </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label htmlFor="slot_date">
-            Date <span className="required">*</span>
+            Date <span className="text-danger">*</span>
           </label>
           <input
             type="date"
@@ -83,7 +88,7 @@ function BlockedEventForm({ editData, handleChange }) {
           />
         </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>Format</label>
           <div className="segmented-control">
             <button
@@ -91,7 +96,7 @@ function BlockedEventForm({ editData, handleChange }) {
               className={`segment-btn ${editData.is_all_day ? 'active' : ''}`}
               onClick={() => handleChange('is_all_day', true)}
             >
-              <Icons.Calendar className="segment-icon" />
+              <Icons.Calendar />
               Journée entière
             </button>
             <button
@@ -99,8 +104,8 @@ function BlockedEventForm({ editData, handleChange }) {
               className={`segment-btn ${!editData.is_all_day ? 'active' : ''}`}
               onClick={() => handleChange('is_all_day', false)}
             >
-              <Icons.Clock className="segment-icon" />
-              Horaires
+              <Icons.Clock />
+              Horaires spécifiques
             </button>
           </div>
         </div>
@@ -109,7 +114,9 @@ function BlockedEventForm({ editData, handleChange }) {
           <>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="start_time">Heure début</label>
+                <label htmlFor="start_time">
+                  Heure de début <span className="text-danger">*</span>
+                </label>
                 <input
                   type="time"
                   id="start_time"
@@ -124,7 +131,9 @@ function BlockedEventForm({ editData, handleChange }) {
               </div>
 
               <div className="form-group">
-                <label htmlFor="end_time">Heure fin</label>
+                <label htmlFor="end_time">
+                  Heure de fin <span className="text-danger">*</span>
+                </label>
                 <input
                   type="time"
                   id="end_time"
@@ -138,22 +147,25 @@ function BlockedEventForm({ editData, handleChange }) {
             </div>
 
             {duration > 0 && (
-              <div className="blocked-time-duration-display">
+              <div className="info-banner info">
                 <Icons.Clock />
-                Durée: {formatDuration(duration)}
+                <span>Durée : {formatDuration(duration)}</span>
               </div>
             )}
           </>
         )}
       </div>
 
-      {/* STATUS SECTION */}
-      <div className="form-section mb-20">
-        <h3 className="mb-15">Statut</h3>
+      {/* STATUS */}
+      <div className="form-section">
+        <div className="info-card-header">
+          <Icons.Tag />
+          <h3>Statut</h3>
+        </div>
 
-        <div className="form-group mb-15">
+        <div className="form-group">
           <label>
-            Statut du créneau <span className="required">*</span>
+            Statut du créneau <span className="text-danger">*</span>
           </label>
           <div className="segmented-control">
             {Object.values(SLOT_STATUSES).map((status) => {
@@ -167,7 +179,7 @@ function BlockedEventForm({ editData, handleChange }) {
                   className={`segment-btn ${editData.slot_status === status ? 'active' : ''}`}
                   onClick={() => handleChange('slot_status', status)}
                 >
-                  <StatusIcon className="segment-icon" />
+                  <StatusIcon />
                   {config?.label || status}
                 </button>
               );

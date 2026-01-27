@@ -14,7 +14,7 @@ import {
 } from 'date-fns';
 
 /**
- * GET /api/calendar/stats/horses?month=YYYY-MM
+ * GET /api/stats/horses?month=YYYY-MM
  * Returns weekly event counts for club and Laury horses
  */
 export async function handleHorseStats(request, env) {
@@ -121,7 +121,7 @@ export async function handleHorseStats(request, env) {
 }
 
 /**
- * GET /api/calendar/stats/riders?month=YYYY-MM
+ * GET /api/stats/riders?month=YYYY-MM
  * Returns weekly event counts by type for all riders
  */
 export async function handleRiderStats(request, env) {
@@ -257,7 +257,7 @@ export async function handleRiderStats(request, env) {
 }
 
 /**
- * GET /api/calendar/stats/monthly?month=YYYY-MM
+ * GET /api/stats/monthly?month=YYYY-MM
  * Returns complete monthly stats (horses + riders)
  */
 export async function handleMonthlyStats(request, env) {

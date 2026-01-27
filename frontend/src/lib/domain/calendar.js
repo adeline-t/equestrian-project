@@ -1,5 +1,12 @@
 import { timeToMinutes } from '../helpers/formatters';
 
+export const CALENDAR_CONFIG = {
+  HOUR_HEIGHT: 60,
+  START_HOUR: 10,
+  END_HOUR: 22,
+  MIN_SELECTION_DURATION: 30,
+};
+
 export function calculateSlotPosition(slot, HOUR_HEIGHT, START_HOUR) {
   if (!slot.start_time || !slot.end_time) return { top: 0, height: 0 };
 

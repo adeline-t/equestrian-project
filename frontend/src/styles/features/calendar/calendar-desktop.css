@@ -1,0 +1,260 @@
+/* ============================================
+   CALENDAR DESKTOP STYLES - VARIABLE DRIVEN
+   ============================================ */
+
+/* ============================================
+   DESKTOP WEEK VIEW
+   ============================================ */
+.desktop-week-view {
+  background: var(--gradient-light);
+  border-radius: var(--calendar-radius, var(--radius-lg));
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--calendar-border, var(--color-border));
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-week-view__grid {
+  display: grid;
+  grid-template-columns: 64px repeat(7, minmax(0, 1fr));
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  background: var(--calendar-surface, var(--color-surface));
+}
+
+/* ============================================
+   DESKTOP TIME COLUMN
+   ============================================ */
+.desktop-time-column {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--calendar-border-dark, var(--color-border-dark));
+  background: var(--calendar-bg-secondary, var(--color-bg-secondary));
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+.desktop-time-column__header {
+  height: var(--day-header-height);
+  min-height: var(--day-header-height);
+  border-bottom: 1px solid var(--calendar-border-dark, var(--color-border-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--calendar-font-xs, var(--font-size-xs));
+  font-weight: var(--calendar-font-weight-semibold, var(--font-weight-semibold));
+  color: var(--calendar-text-light, var(--color-gray-600));
+  text-transform: uppercase;
+  background: var(--gradient-light);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.desktop-time-column__allday-spacer {
+  height: var(--all-day-section-height);
+  min-height: var(--all-day-section-height);
+  border-bottom: 1px solid var(--calendar-border, var(--color-border));
+  background: var(--calendar-bg-secondary, var(--color-bg-secondary));
+}
+
+.desktop-time-column__slot {
+  height: var(--hour-height);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+  border-bottom: 1px solid var(--calendar-border, var(--color-border));
+  font-size: var(--calendar-font-xs, var(--font-size-xs));
+  color: var(--calendar-text-light, var(--color-gray-600));
+  font-weight: var(--calendar-font-weight-medium, var(--font-weight-medium));
+}
+
+/* ============================================
+   DESKTOP DAY COLUMN
+   ============================================ */
+.desktop-day-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  border-right: 1px solid var(--calendar-border, var(--color-border));
+  background: var(--calendar-surface, var(--color-surface));
+}
+
+.desktop-day-column:last-child {
+  border-right: none;
+}
+
+.desktop-day-column--today {
+  background: linear-gradient(
+    to bottom,
+    var(--today-bg, var(--color-primary-light)),
+    transparent 80px
+  );
+}
+
+.desktop-day-column--past {
+  opacity: 0.7;
+}
+
+.desktop-day-column--has-full-height .desktop-day-column__grid-container {
+  pointer-events: none;
+}
+
+.desktop-day-column__allday-section {
+  height: var(--all-day-section-height);
+  min-height: var(--all-day-section-height);
+  padding: var(--spacing-xs);
+  background: var(--calendar-bg-secondary, var(--color-bg-secondary));
+  border-bottom: 1px solid var(--calendar-border, var(--color-border));
+  overflow: hidden;
+  position: relative;
+}
+
+.desktop-day-column__full-height {
+  position: absolute;
+  top: calc(var(--day-header-height) + var(--all-day-section-height));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  padding: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  pointer-events: none;
+}
+
+.desktop-day-column__grid-container {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   DESKTOP DAY HEADER
+   ============================================ */
+.desktop-day-header {
+  height: var(--day-header-height);
+  min-height: var(--day-header-height);
+  border-bottom: 1px solid var(--calendar-border-dark, var(--color-border-dark));
+  text-align: center;
+  background: linear-gradient(
+    to bottom,
+    var(--calendar-surface, var(--color-surface)),
+    var(--calendar-bg-secondary, var(--color-bg-secondary))
+  );
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs);
+}
+
+.desktop-day-header--today {
+  background: var(--gradient-primary);
+  color: var(--color-white);
+}
+
+.desktop-day-header--invalid {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.desktop-day-header__name {
+  font-weight: var(--calendar-font-weight-bold, var(--font-weight-bold));
+  font-size: var(--calendar-font-sm, var(--font-size-sm));
+  text-transform: capitalize;
+}
+
+/* ============================================
+   DESKTOP DAY GRID
+   ============================================ */
+.desktop-day-grid {
+  position: relative;
+  height: calc((var(--end-hour) - var(--start-hour)) * var(--hour-height));
+}
+
+.desktop-day-grid__markers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.desktop-day-grid__marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid var(--calendar-border, var(--color-border));
+}
+
+.desktop-day-grid__marker:last-child {
+  border-bottom: none;
+}
+
+.desktop-day-grid__selection {
+  position: absolute;
+  background: var(--selection-color);
+  border: 2px solid var(--selection-border);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.desktop-day-grid__events {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+}
+
+.desktop-day-grid__event-wrapper {
+  position: absolute;
+  width: 100%;
+  pointer-events: auto;
+}
+
+/* ============================================
+   ALL-DAY SLOTS (Desktop)
+   ============================================ */
+.all-day-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+.full-height-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+/* Card styles are in calendar-slots.css */
+
+/* ============================================
+   RESPONSIVE - HIDE ON MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .desktop-week-view,
+  .desktop-time-column,
+  .desktop-day-column {
+    display: none !important;
+  }
+}

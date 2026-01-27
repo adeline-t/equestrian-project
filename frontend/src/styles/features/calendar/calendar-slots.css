@@ -1,0 +1,845 @@
+/* ============================================
+   CALENDAR SLOTS - COMPLETE & UNIFIED STYLES
+   Variable-driven, supports all SlotCard variants
+   ============================================ */
+
+/* ============================================
+   DESKTOP - ALL-DAY SLOTS (variant: desktop-allday)
+   ============================================ */
+
+.all-day-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+.full-height-slots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  height: 100%;
+}
+
+/* Base SlotCard Styles */
+.slot-card {
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border-radius: var(--slot-border-radius, var(--radius-md));
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.slot-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  z-index: calc(var(--z-slot-card) + 1);
+}
+
+.slot-card:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   DESKTOP GRID VARIANT (vue semaine)
+   ============================================ */
+
+.slot-card--desktop-grid {
+  display: flex;
+  flex-direction: column;
+  padding: var(--slot-padding);
+  gap: var(--slot-gap);
+  color: var(--color-white);
+  min-height: 100%;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Event type colors */
+.slot-card--desktop-grid[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.slot-card--desktop-grid[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.slot-card--desktop-grid[data-type='competition'] {
+  background: var(--gradient-alert-error);
+}
+
+.slot-card--desktop-grid[data-type='blocked'] {
+  background: var(--gradient-secondary);
+  opacity: 0.85;
+}
+
+.slot-card--desktop-grid[data-type='service'] {
+  background: var(--gradient-pony);
+  opacity: 0.85;
+}
+
+.slot-card--desktop-grid[data-type='special'] {
+  background: var(--gradient-warning);
+  opacity: 0.85;
+}
+
+.slot-card--desktop-grid[data-type='loaner_free_time'] {
+  background: var(--gradient-success);
+  opacity: 0.85;
+}
+
+/* Header Row */
+.slot-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-height: 18px;
+}
+
+.slot-card__status-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.slot-card__title {
+  flex: 1;
+  font-weight: var(--font-weight-semibold);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-card__count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 6px;
+  border-radius: var(--radius-lg);
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Participants Row */
+.slot-card__participants {
+  flex: 1;
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: flex-start;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+.slot-card__participant-badge {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 3px 7px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 1;
+  transition: all var(--transition-fast);
+  cursor: default;
+  max-width: 100%;
+}
+
+.slot-card__participant-badge:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.badge-rider {
+  color: var(--color-info-blue);
+  font-weight: var(--font-weight-bold);
+}
+
+.badge-separator {
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: var(--font-weight-normal);
+  font-size: 8px;
+}
+
+.badge-horse {
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* More badge */
+.slot-card__participant-badge--more {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--color-gray-800);
+  border-color: rgba(255, 255, 255, 0.3);
+  padding: 3px 6px;
+}
+
+.slot-card__participant-badge--more:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Empty state */
+.slot-card__empty-text {
+  font-size: 9px;
+  opacity: 0.7;
+  font-style: italic;
+  padding: 2px 0;
+}
+
+/* ============================================
+   DESKTOP ALL-DAY VARIANT (petits slots horizontaux)
+   ============================================ */
+
+.slot-card--desktop-allday {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-white);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  min-width: 0;
+  flex: 1;
+}
+
+.slot-card--desktop-allday[data-type='private_lesson'] {
+  background: var(--gradient-info);
+}
+
+.slot-card--desktop-allday[data-type='grouped_lesson'] {
+  background: var(--gradient-primary);
+}
+
+.slot-card--desktop-allday[data-type='competition'] {
+  background: var(--gradient-warning);
+}
+
+.slot-card--desktop-allday[data-type='blocked'] {
+  background: var(--gradient-secondary);
+  opacity: 0.8;
+}
+
+.slot-card--desktop-allday .slot-card__content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+  width: 100%;
+}
+
+.slot-card--desktop-allday .slot-card__icon {
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.slot-card--desktop-allday .slot-card__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* ============================================
+   MOBILE TIMED VARIANT (liste avec horaire)
+   ============================================ */
+
+.slot-card--mobile-timed {
+  display: flex;
+  align-items: stretch;
+  background: var(--color-white);
+  border-bottom: 0.5px solid var(--color-border-light);
+  padding: var(--spacing-md);
+  gap: var(--spacing-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.slot-card--mobile-timed:last-child {
+  border-bottom: none;
+}
+
+.slot-card--mobile-timed:active {
+  background: var(--color-gray-50);
+}
+
+/* Time column */
+.slot-card__time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 50px;
+  padding-top: 2px;
+}
+
+.slot-card__time-value {
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  line-height: 1.2;
+}
+
+/* Divider */
+.slot-card__divider {
+  width: 3px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  align-self: stretch;
+  margin: 2px 0;
+}
+
+/* Event type colors for mobile divider */
+.slot-card--mobile-timed[data-type='private_lesson'] .slot-card__divider {
+  background: var(--color-info-blue);
+}
+
+.slot-card--mobile-timed[data-type='grouped_lesson'] .slot-card__divider {
+  background: var(--color-primary-light);
+}
+
+.slot-card--mobile-timed[data-type='competition'] .slot-card__divider {
+  background: var(--color-warning-orange);
+}
+
+.slot-card--mobile-timed[data-type='blocked'] .slot-card__divider {
+  background: var(--color-gray-500);
+}
+
+/* Content column */
+.slot-card--mobile-timed .slot-card__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.slot-card--mobile-timed .slot-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.slot-card--mobile-timed .slot-card__icon {
+  font-size: 18px;
+  color: var(--color-gray-700);
+  flex-shrink: 0;
+}
+
+.slot-card--mobile-timed .slot-card__title {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  line-height: 1.3;
+}
+
+.slot-card__details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.slot-card__detail-line {
+  font-size: 14px;
+  color: var(--color-gray-600);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status-specific styles for mobile */
+.slot-card--mobile-timed[data-status='cancelled'] {
+  opacity: 0.6;
+}
+
+.slot-card--mobile-timed[data-status='cancelled'] .slot-card__title {
+  text-decoration: line-through;
+}
+
+/* ============================================
+   MOBILE ALL-DAY VARIANT (carte compacte)
+   ============================================ */
+
+.slot-card--mobile-allday {
+  display: flex;
+  background: var(--color-white);
+  border-radius: 10px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  box-shadow: 0 0 0 0.5px var(--color-border-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.slot-card--mobile-allday:active {
+  background: var(--color-gray-50);
+  transform: scale(0.98);
+}
+
+.slot-card--mobile-allday .slot-card__content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.slot-card--mobile-allday .slot-card__icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+/* Event type colors for mobile all-day icons */
+.slot-card--mobile-allday[data-type='private_lesson'] .slot-card__icon {
+  color: var(--color-info-blue);
+}
+
+.slot-card--mobile-allday[data-type='grouped_lesson'] .slot-card__icon {
+  color: var(--color-primary-light);
+}
+
+.slot-card--mobile-allday[data-type='competition'] .slot-card__icon {
+  color: var(--color-warning-orange);
+}
+
+.slot-card--mobile-allday[data-type='blocked'] .slot-card__icon {
+  color: var(--color-gray-500);
+}
+
+.slot-card--mobile-allday .slot-card__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.slot-card--mobile-allday .slot-card__title {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slot-card__subtitle {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Hide desktop variants on mobile */
+  .slot-card--desktop-grid,
+  .slot-card--desktop-allday {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Hide mobile variants on desktop */
+  .slot-card--mobile-timed,
+  .slot-card--mobile-allday {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+.slot-card:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.slot-card:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slot-card {
+  animation: slideInFromBottom 0.3s ease-out;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .slot-card {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  .slot-card:hover {
+    transform: none;
+  }
+}
+
+/* ============================================
+   CALENDAR SLOTS - OVERLAP MANAGEMENT
+   Gestion du chevauchement des événements
+   ============================================ */
+
+/* ============================================
+   DESKTOP - OVERLAPPING COLUMNS
+   ============================================ */
+
+/* Wrapper d'événement avec gestion du z-index au hover */
+.desktop-day-grid__event-wrapper {
+  position: absolute;
+  z-index: var(--z-slot-card);
+  transition: z-index 0s;
+}
+
+/* Au hover, passer au premier plan */
+.desktop-day-grid__event-wrapper:hover {
+  z-index: calc(var(--z-slot-card) + 10) !important;
+}
+
+/* Espacement entre colonnes quand il y a chevauchement */
+.desktop-day-grid__event-wrapper[data-has-overlap='true'] {
+  padding-right: 2px;
+}
+
+/* ============================================
+   SLOT NARROW - Mode colonne étroite
+   ============================================ */
+
+/* Carte en mode étroit (affichage minimal) */
+.slot-card--desktop-grid[data-narrow='true'] {
+  /* Réduire le padding pour gagner de l'espace */
+  padding: 4px;
+  gap: 3px;
+}
+
+/* Header compact */
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__header {
+  gap: 3px;
+  min-height: 14px;
+}
+
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__status-icon {
+  width: 10px;
+  height: 10px;
+}
+
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__title {
+  font-size: 9px;
+  line-height: 1.1;
+}
+
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__count-badge {
+  font-size: 7px;
+  padding: 1px 4px;
+  border-radius: 6px;
+}
+
+/* Participants en mode compact - vertical stack au lieu de horizontal */
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__participants {
+  flex-direction: column;
+  gap: 2px;
+  align-items: stretch;
+}
+
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__participant-badge {
+  font-size: 7px;
+  padding: 2px 4px;
+  justify-content: center;
+  border-width: 1px;
+}
+
+.slot-card--desktop-grid[data-narrow='true'] .badge-separator {
+  font-size: 6px;
+}
+
+/* Empty text */
+.slot-card--desktop-grid[data-narrow='true'] .slot-card__empty-text {
+  font-size: 7px;
+}
+
+/* ============================================
+   SLOT HOVER - Expansion pleine largeur
+   ============================================ */
+
+/* Au hover, l'événement prend toute la largeur de la colonne jour */
+.desktop-day-grid__event-wrapper:hover .slot-card--desktop-grid[data-narrow='true'] {
+  /* Calculer pour prendre toute la largeur */
+  position: absolute;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+
+  /* Revenir au padding normal */
+  padding: var(--slot-padding);
+  gap: var(--slot-gap);
+
+  /* Box shadow pour le mettre en avant */
+  box-shadow: var(--shadow-lg);
+
+  /* Animation */
+  transition: all var(--transition-base);
+}
+
+/* Header en mode hover - retour à la normale */
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__header {
+  gap: var(--spacing-xs);
+  min-height: 18px;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__status-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__title {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__count-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: var(--radius-lg);
+}
+
+/* Participants en mode hover - retour horizontal */
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participants {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: flex-start;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participant-badge {
+  font-size: 9px;
+  padding: 3px 7px;
+  border-width: 1.5px;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .badge-separator {
+  font-size: 8px;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__empty-text {
+  font-size: 9px;
+}
+
+/* ============================================
+   INDICATEUR VISUEL DE COLONNES
+   ============================================ */
+
+/* Ajouter une petite bordure gauche pour indiquer qu'il y a plusieurs colonnes */
+.slot-card--desktop-grid[data-narrow='true']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+/* Au hover, retirer cet indicateur */
+.desktop-day-grid__event-wrapper:hover .slot-card--desktop-grid[data-narrow='true']::before {
+  display: none;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+
+/* Sur mobile, pas de mode narrow (liste simple) */
+@media (max-width: 768px) {
+  .slot-card--desktop-grid[data-narrow='true'] {
+    /* Désactiver tous les styles narrow sur mobile */
+    padding: var(--slot-padding);
+    gap: var(--slot-gap);
+  }
+
+  .slot-card--desktop-grid[data-narrow='true'] .slot-card__participants {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  /* Pas d'expansion au hover sur mobile */
+  .desktop-day-grid__event-wrapper:hover .slot-card--desktop-grid[data-narrow='true'] {
+    position: relative;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+  }
+}
+
+/* ============================================
+   COLUMN COUNT SPECIFIC ADJUSTMENTS
+   ============================================ */
+
+/* Avec 2 colonnes - encore assez lisible */
+.desktop-day-grid__event-wrapper[data-column-count='2']
+  .slot-card--desktop-grid[data-narrow='true'] {
+  min-width: 80px;
+}
+
+/* Avec 3 colonnes - très compact */
+.desktop-day-grid__event-wrapper[data-column-count='3']
+  .slot-card--desktop-grid[data-narrow='true'] {
+  min-width: 60px;
+}
+
+.desktop-day-grid__event-wrapper[data-column-count='3']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__title {
+  font-size: 8px;
+}
+
+.desktop-day-grid__event-wrapper[data-column-count='3']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participant-badge {
+  font-size: 6px;
+  padding: 1px 3px;
+}
+
+/* Avec 4+ colonnes - ultra compact, presque juste la couleur */
+.desktop-day-grid__event-wrapper[data-column-count='4']
+  .slot-card--desktop-grid[data-narrow='true'],
+.desktop-day-grid__event-wrapper[data-column-count='5']
+  .slot-card--desktop-grid[data-narrow='true'],
+.desktop-day-grid__event-wrapper[data-column-count='6']
+  .slot-card--desktop-grid[data-narrow='true'] {
+  min-width: 40px;
+  padding: 2px;
+}
+
+/* Cacher les participants si 4+ colonnes, juste afficher le titre */
+.desktop-day-grid__event-wrapper[data-column-count='4']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participants,
+.desktop-day-grid__event-wrapper[data-column-count='5']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participants,
+.desktop-day-grid__event-wrapper[data-column-count='6']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participants {
+  display: none;
+}
+
+.desktop-day-grid__event-wrapper[data-column-count='4']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__title,
+.desktop-day-grid__event-wrapper[data-column-count='5']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__title,
+.desktop-day-grid__event-wrapper[data-column-count='6']
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__title {
+  font-size: 7px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Au hover, tout redevient visible */
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__participants {
+  display: flex !important;
+}
+
+.desktop-day-grid__event-wrapper:hover
+  .slot-card--desktop-grid[data-narrow='true']
+  .slot-card__title {
+  writing-mode: horizontal-tb !important;
+  text-orientation: initial !important;
+}
+
+/* ============================================
+   ANIMATIONS & TRANSITIONS
+   ============================================ */
+
+.desktop-day-grid__event-wrapper {
+  transition: z-index 0s, transform var(--transition-base);
+}
+
+.slot-card--desktop-grid[data-narrow='true'] {
+  transition: all var(--transition-base);
+}
+
+/* Smooth expansion au hover */
+@media (prefers-reduced-motion: no-preference) {
+  .desktop-day-grid__event-wrapper:hover .slot-card--desktop-grid[data-narrow='true'] {
+    animation: expandSlot var(--transition-base) ease-out;
+  }
+}
+
+@keyframes expandSlot {
+  from {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Focus visible pour navigation clavier */
+.desktop-day-grid__event-wrapper:focus-within {
+  z-index: calc(var(--z-slot-card) + 10) !important;
+}
+
+.slot-card--desktop-grid[data-narrow='true']:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .slot-card--desktop-grid[data-narrow='true']::before {
+    width: 3px;
+    background: currentColor;
+  }
+}

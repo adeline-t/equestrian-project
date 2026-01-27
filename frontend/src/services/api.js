@@ -1,5 +1,5 @@
 /**
- * Unified API Service - Core + Calendar with advanced error handling & CRUD
+ * Core API & calendar API instances with interceptors
  */
 import axios from 'axios';
 import { API_SETTINGS, ERROR_MESSAGES, HTTP_STATUS } from '../lib/config';
@@ -7,8 +7,7 @@ import { API_SETTINGS, ERROR_MESSAGES, HTTP_STATUS } from '../lib/config';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
 
 // -------------------------------------------------------
-// Core API Instance (all resources)
-/* ----------------------------------------------------- */
+// Core API Instance
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -16,8 +15,7 @@ export const api = axios.create({
 });
 
 // -------------------------------------------------------
-// Calendar-specific API Instance
-/* ----------------------------------------------------- */
+// Calendar API Instance
 export const calendarApi = axios.create({
   baseURL: `${API_BASE_URL}/calendar`,
   headers: { 'Content-Type': 'application/json' },
@@ -25,8 +23,7 @@ export const calendarApi = axios.create({
 });
 
 // -------------------------------------------------------
-// Request Interceptors - Enhanced Logging
-/* ----------------------------------------------------- */
+// Interceptors for logging & error handling
 const logRequest = (prefix) => (config) => {
   console.log(`🟢 ${prefix}: ${config.method?.toUpperCase()} ${config.url}`);
   if (config.data) console.log(`📤 ${prefix} Data:`, config.data);
@@ -36,44 +33,29 @@ const logRequest = (prefix) => (config) => {
 api.interceptors.request.use(logRequest('API'));
 calendarApi.interceptors.request.use(logRequest('Calendar API'));
 
-// -------------------------------------------------------
-// Response Interceptors - Smart Error Handling
-/* ----------------------------------------------------- */
 const handleResponseError = (prefix) => (error) => {
   if (error.response) {
-    console.error(`🔴 ${prefix} Error [${error.response.status}]:`, {
+    console.error(`🔴 ${prefix} Error [${error.response.status}]`, {
       url: error.config?.url,
       data: error.response.data,
     });
   } else if (error.request) {
-    console.error(`🔴 ${prefix} Network Error:`, {
-      message: 'No response received',
-      url: error.config?.url,
-    });
+    console.error(`🔴 ${prefix} Network Error`, { url: error.config?.url });
   } else {
     console.error(`🔴 ${prefix} Request Error:`, error.message);
   }
   return Promise.reject(handleApiError(error));
 };
 
-api.interceptors.response.use((response) => {
-  console.log(`✅ API Response: ${response.status} ${response.config.url}`);
-  return response;
-}, handleResponseError('API'));
-
-calendarApi.interceptors.response.use((response) => {
-  console.log(`✅ Calendar Response: ${response.status} ${response.config.url}`);
-  return response;
-}, handleResponseError('Calendar API'));
+api.interceptors.response.use((r) => r, handleResponseError('API'));
+calendarApi.interceptors.response.use((r) => r, handleResponseError('Calendar API'));
 
 // -------------------------------------------------------
-// Error Handler - Smart Status Messages
-/* ----------------------------------------------------- */
+// Unified error handler
 const handleApiError = (error) => {
   if (error.response) {
     const { status, data } = error.response;
     const message = data?.error || data?.message || ERROR_MESSAGES?.UNKNOWN || 'Erreur inconnue';
-
     const statusMessages = {
       [HTTP_STATUS.BAD_REQUEST]: `${message} (Requête invalide)`,
       [HTTP_STATUS.UNAUTHORIZED]: `${message} (Non autorisé)`,
@@ -81,18 +63,13 @@ const handleApiError = (error) => {
       [HTTP_STATUS.NOT_FOUND]: `${message} (Non trouvé)`,
       [HTTP_STATUS.INTERNAL_SERVER_ERROR]: `${message} (Erreur serveur)`,
     };
-
     const errorMessage = statusMessages[status] || `${message} (${status})`;
     const customError = new Error(errorMessage);
     customError.response = error.response;
     customError.status = status;
     return customError;
   }
-
-  if (error.request) {
-    return new Error(ERROR_MESSAGES?.NETWORK || 'Erreur réseau');
-  }
-
+  if (error.request) return new Error(ERROR_MESSAGES?.NETWORK || 'Erreur réseau');
   return new Error(error.message || ERROR_MESSAGES?.UNKNOWN || 'Erreur inconnue');
 };
 
@@ -126,30 +103,4 @@ export const createCrudOperations = (resource) => ({
   },
 });
 
-// -------------------------------------------------------
-// Calendar-specific shortcuts (using calendarApi)
-/* ----------------------------------------------------- */
-export const calendarService = {
-  // Planning Slots
-  getSlots: (params) => calendarApi.get('/slots', { params }),
-  getSlot: (id) => calendarApi.get(`/slots/${id}`),
-  createSlot: (data) => calendarApi.post('/slots', data),
-  updateSlot: (id, data) => calendarApi.put(`/slots/${id}`, data),
-  deleteSlot: (id) => calendarApi.delete(`/slots/${id}`),
-
-  // Events
-  getEvents: (params) => calendarApi.get('/events', { params }),
-  getEvent: (id) => calendarApi.get(`/events/${id}`),
-  createEvent: (data) => calendarApi.post('/events', data),
-  updateEvent: (id, data) => calendarApi.put(`/events/${id}`, data),
-  deleteEvent: (id) => calendarApi.delete(`/events/${id}`),
-
-  // Participants
-  addParticipant: (data) => calendarApi.post('/participants', data),
-  removeParticipant: (id) => calendarApi.delete(`/participants/${id}`),
-};
-
-// -------------------------------------------------------
-// Exports
-/* ----------------------------------------------------- */
 export default api;

@@ -3,7 +3,7 @@
    ============================================ */
 
 header {
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-bg-card);
   backdrop-filter: blur(10px);
   color: var(--color-text);
   padding: var(--spacing-lg) 0;
@@ -28,6 +28,14 @@ header h1 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin: 0;
+}
+
+.header-actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 nav {
@@ -81,18 +89,6 @@ nav a.active {
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   position: relative;
-}
-
-.page-header h2::before {
-  content: '';
-  width: 4px;
-  height: var(--spacing-lg);
-  background: var(--gradient-primary);
-  border-radius: 2px;
-  position: absolute;
-  left: -16px;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .section-header {

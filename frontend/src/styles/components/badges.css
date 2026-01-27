@@ -26,89 +26,79 @@
   box-shadow: var(--shadow-md);
 }
 
-/* COLOR VARIANTS */
-.badge-primary {
-  background-image: var(--gradient-primary);
-}
+/* ============================================
+   DOMAIN BADGES – HORSES
+   ============================================ */
 
-.badge-success {
-  background-image: var(--gradient-success);
-}
-
-.badge-danger {
-  background-image: var(--gradient-danger);
-}
-
-.badge-secondary {
-  background-image: var(--gradient-secondary);
-}
-
-.badge-warning {
-  background-image: var(--gradient-warning);
-}
-
-.badge-info {
-  background-image: var(--gradient-info);
-}
-
-/* DOMAIN BADGES - Horses */
 .badge[data-type='pony'] {
   background: var(--gradient-pony);
 }
 
 .badge[data-type='horse'] {
-  background: var(--gradient-info);
+  background: var(--gradient-horse);
 }
 
-/* DOMAIN BADGES - Owners */
+/* ============================================
+   DOMAIN BADGES – OWNERS
+   ============================================ */
+
 .badge[data-type='laury'] {
-  background: var(--gradient-primary);
+  background: var(--gradient-laury);
 }
 
 .badge[data-type='private_owner'] {
-  background: var(--gradient-warning);
+  background: var(--gradient-owner);
 }
 
 .badge[data-type='club'] {
-  background: var(--gradient-info);
+  background: var(--gradient-club);
 }
 
 .badge[data-type='other'] {
-  background: var(--gradient-danger);
+  background: var(--gradient-other);
 }
 
-/* DOMAIN BADGES - Riders */
+/* ============================================
+   DOMAIN BADGES – RIDERS
+   ============================================ */
+
 .badge[data-type='owner'] {
-  background: var(--gradient-warning);
+  background: var(--gradient-rider-owner);
 }
 
 .badge[data-type='loaner'] {
-  background: var(--gradient-success);
+  background: var(--gradient-rider-loaner);
 }
 
-/* DOMAIN BADGES - Pairings */
+/* ============================================
+   DOMAIN BADGES – PAIRINGS
+   ============================================ */
+
 .badge[data-type='own'] {
-  background: var(--gradient-warning);
+  background: var(--gradient-pairing-own);
 }
 
 .badge[data-type='loan'] {
-  background: var(--gradient-success);
+  background: var(--gradient-pairing-loan);
 }
 
-/* STATUS BADGES */
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+
 .badge[data-type='active'] {
-  background: var(--gradient-success);
+  background: var(--gradient-status-active);
 }
 
 .badge[data-type='inactive'] {
-  background: var(--gradient-secondary);
+  background: var(--gradient-status-inactive);
 }
 
 .badge[data-type='pending'] {
   background: var(--gradient-warning);
 }
 
-.badge[data-type='completed'] {
+.badge[data-type='confirmed'] {
   background: var(--gradient-info);
 }
 
@@ -116,21 +106,65 @@
   background: var(--gradient-danger);
 }
 
-/* EVENT TYPE BADGES */
+/* ============================================
+   EVENT TYPE BADGES
+   ============================================ */
+
 .badge[data-type='private_lesson'] {
-  background: var(--gradient-info);
+  background: var(--gradient-event-private-lesson);
 }
 
 .badge[data-type='grouped_lesson'] {
-  background: var(--gradient-primary);
+  background: var(--gradient-event-grouped-lesson);
 }
 
 .badge[data-type='competition'] {
-  background: var(--gradient-warning);
+  background: var(--gradient-event-competition);
 }
 
 .badge[data-type='blocked'] {
-  background: var(--gradient-secondary);
+  background: var(--gradient-event-blocked);
+}
+
+.badge[data-type='1'] {
+  background-image: var(--gradient-primary);
+}
+
+.badge[data-type='2'] {
+  background-image: var(--gradient-info);
+}
+
+.badge[data-type='3'] {
+  background-image: var(--gradient-success);
+}
+
+.badge[data-type='4'] {
+  background-image: var(--gradient-warning);
+}
+
+.badge[data-type='5'] {
+  background-image: var(--gradient-danger);
+}
+
+.badge[data-type='6'] {
+  background-image: var(--gradient-secondary);
+}
+
+.badge[data-type='7'] {
+  background-image: var(--gradient-pony);
+}
+
+.badge[data-type='8'] {
+  background-image: var(--gradient-alert-success);
+}
+
+.badge[data-type='9'] {
+  background-image: var(--gradient-alert-error);
+}
+
+.badge[data-type='10'] {
+  background-image: var(--gradient-light);
+  color: var(--color-text);
 }
 
 /* DAY BADGES */
@@ -144,7 +178,7 @@
   font-size: 10px;
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-  background: var(--gradient-info);
+  background: var(--gradient-primary);
   color: var(--color-white);
   transition: transform var(--transition-fast);
 }
@@ -179,38 +213,9 @@
   font-weight: var(--font-weight-bold);
 }
 
-.riders-count-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px var(--spacing-sm);
-  background: var(--gradient-info);
+.count-badge.warning {
+  background: var(--color-warning-orange);
   color: var(--color-white);
-  border-radius: var(--radius-full);
-  font-size: 13px;
-  font-weight: var(--font-weight-semibold);
-  transition: all var(--transition-base);
-  cursor: default;
-}
-
-.riders-count-badge.clickable {
-  cursor: pointer;
-}
-
-.riders-count-badge.clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
-}
-
-/* TODAY BADGE */
-.today-badge {
-  display: inline-block;
-  padding: 2px var(--spacing-sm);
-  background: var(--gradient-success);
-  color: var(--color-white);
-  border-radius: var(--radius-full);
-  font-size: 10px;
-  white-space: nowrap;
 }
 
 /* RESPONSIVE */
@@ -224,11 +229,5 @@
     min-width: 28px;
     padding: 3px 5px;
     font-size: 9px;
-  }
-
-  .riders-count-badge {
-    padding: 4px var(--spacing-sm);
-    font-size: 11px;
-    gap: 4px;
   }
 }

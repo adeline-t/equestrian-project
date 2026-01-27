@@ -1,11 +1,15 @@
-import { runRecurrenceCron } from './cron.js';
+import { runRecurrenceCron } from './crons/cron.js';
 import { getSecurityHeaders, jsonResponse } from './db.js';
+import { runBillingCron } from './crons/cronBillingRefresh.js';
 
 // Riders & Horses
 import { handleRiderHorses, handleRiders, handleRidersList } from './handlers/riders.js';
 import { handleHorseRiders, handleHorses } from './handlers/horses.js';
 import { handlePackages, handleRiderPackages } from './handlers/packages.js';
 import { handlePairings } from './handlers/pairings.js';
+import { handleRiderMonthlyBilling } from './handlers/stats/riderMonthlyBilling.js';
+import { handleHorseStats, handleRiderStats, handleMonthlyStats } from './handlers/stats/stats.js';
+import { handleRiderUsageWeekly } from './handlers/stats/riderWeeklyUsage.js';
 
 // Calendar modular
 import { handleCalendarWeek } from './handlers/calendar/week.js';
@@ -13,11 +17,6 @@ import { handlePlanningSlots } from './handlers/calendar/slots.js';
 import { handleEvents } from './handlers/calendar/events.js';
 import { handleEventParticipants } from './handlers/calendar/participants.js';
 import { handleRecurrences } from './handlers/calendar/recurrences.js';
-import {
-  handleHorseStats,
-  handleRiderStats,
-  handleMonthlyStats,
-} from './handlers/calendar/stats.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -47,7 +46,7 @@ export default {
       // -----------------------
       // Riders routes
       // -----------------------
-      if (url.pathname === '/api/riders/list' && request.method === 'GET') {
+      if (path === '/api/riders/list' && request.method === 'GET') {
         return handleRidersList(request, env);
       }
       if (path.match(/^\/api\/riders\/\d+\/horses$/)) {
@@ -88,35 +87,44 @@ export default {
       }
 
       // -----------------------
-      // Calendar Stats routes (MUST come before general calendar routes)
+      // Rider Monthly Billing
       // -----------------------
-      if (path === '/api/calendar/stats/monthly') {
-        return handleMonthlyStats(request, env);
-      }
-      if (path === '/api/calendar/stats/horses') {
-        return handleHorseStats(request, env);
-      }
-      if (path === '/api/calendar/stats/riders') {
-        return handleRiderStats(request, env);
+      if (path === '/api/stats/rider-billing') {
+        return handleRiderMonthlyBilling(request, env);
       }
 
       // -----------------------
-      // Calendar routes (modulaire)
+      // Calendar Stats routes
+      // -----------------------
+      if (path === '/api/stats/monthly') {
+        return handleMonthlyStats(request, env);
+      }
+      if (path === '/api/stats/horses') {
+        return handleHorseStats(request, env);
+      }
+      if (path === '/api/stats/riders') {
+        return handleRiderStats(request, env);
+      }
+      if (path === '/api/stats/weekly') {
+        return handleRiderUsageWeekly(request, env);
+      }
+
+      // -----------------------
+      // Calendar routes (modular)
       // -----------------------
       if (path.startsWith('/api/calendar/week')) return handleCalendarWeek(request, env);
 
-      // Scheduled events route - MUST come before full-details
+      // Scheduled events route
       if (path === '/api/calendar/slots/scheduled') {
         return handlePlanningSlots(request, env, null);
       }
 
-      // Full details route must be checked before the general slots route
+      // Full details route before general slots
       if (path.match(/^\/api\/calendar\/slots\/\d+\/cancel$/)) {
         const slotId = path.split('/')[4];
         return handlePlanningSlots(request, env, slotId);
       }
 
-      // Full details route must be checked before the general slots route
       if (path.match(/^\/api\/calendar\/slots\/\d+\/full-details$/)) {
         const slotId = path.split('/')[4];
         return handlePlanningSlots(request, env, slotId);
@@ -176,5 +184,6 @@ export default {
   // -----------------------
   async scheduled(event, env, ctx) {
     await runRecurrenceCron(env);
+    await runBillingCron(env);
   },
 };

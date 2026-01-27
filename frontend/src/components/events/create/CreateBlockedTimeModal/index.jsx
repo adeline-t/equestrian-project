@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useEventBlockedCreate } from '../../../../hooks/useEventBlockedCreate.js';
 import { Icons } from '../../../../lib/icons';
-import '../../../../styles//events-modal.css';
 import Modal from '../../../common/Modal';
 import BlockedTimeForm from './BlockedTimeForm';
 
@@ -25,12 +24,26 @@ function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
   };
 
   return (
-    <Modal
-      isOpen={true}
-      onClose={onClose}
-      title="Bloquer une période"
-      size="md"
-      footer={
+    <Modal isOpen={true} onClose={onClose} title="Bloquer une période" size="md">
+      <div className="entity-form">
+        {error && (
+          <div className="alert alert-error">
+            <Icons.Warning />
+            {error}
+          </div>
+        )}
+
+        <div className="alert alert-warning">
+          <Icons.Info />
+          Cette période sera bloquée et aucun cours ne pourra être créé pendant ce créneau.
+        </div>
+
+        <BlockedTimeForm
+          formData={formData}
+          handleChange={handleChange}
+          setFormData={setFormData}
+        />
+
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" onClick={onClose} disabled={loading}>
             <Icons.Cancel />
@@ -55,21 +68,7 @@ function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
             )}
           </button>
         </div>
-      }
-    >
-      {error && (
-        <div className="alert alert-error mb-20">
-          <Icons.Warning />
-          {error}
-        </div>
-      )}
-
-      <div className="alert alert-warning mb-20">
-        <Icons.Info />
-        Cette période sera bloquée et aucun cours ne pourra être créé pendant ce créneau.
       </div>
-
-      <BlockedTimeForm formData={formData} handleChange={handleChange} setFormData={setFormData} />
     </Modal>
   );
 }
