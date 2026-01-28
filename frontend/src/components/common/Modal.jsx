@@ -15,7 +15,7 @@ import '../../styles/app.css';
  * @param {string} props.size - Modal size ('small', 'medium', 'large', 'xlarge')
  * @param {string} props.className - Additional CSS classes
  */
-const Modal = ({ isOpen, onClose, title, children, footer, size = 'medium', className = '' }) => {
+const Modal = ({ isOpen, onClose, title, children, footer, size = 'md', className = '' }) => {
   if (!isOpen) return null;
 
   return (
@@ -24,8 +24,10 @@ const Modal = ({ isOpen, onClose, title, children, footer, size = 'medium', clas
         <div className={`modal modal--${size} ${className}`} onClick={(e) => e.stopPropagation()}>
           <div className="modal-content">
             {title && (
-              <div className="modal-header">
-                <h2>{title}</h2>
+              <div className="modal-header modal-header-flex">
+                {typeof title === 'string' ? <h2>{title}</h2> : title}
+
+                {/* bouton close toujours aligné à droite */}
                 <button className="btn-close" onClick={onClose} aria-label="Close modal">
                   <Icons.Close />
                 </button>

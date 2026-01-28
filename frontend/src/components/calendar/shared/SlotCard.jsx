@@ -98,7 +98,9 @@ export default function SlotCard({ slot, variant = 'desktop-grid', onClick, isNa
       <div
         className="slot-card slot-card--desktop-allday"
         data-type={eventType}
-        onClick={handleClick}
+        onClick={(e) => {
+          handleClick(e);
+        }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();

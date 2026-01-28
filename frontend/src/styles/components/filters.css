@@ -1,4 +1,12 @@
-/* FILTERS - Optimisé */
+/* ============================================
+   FILTERS - Systèmes de filtrage
+   Filter sections, pills, buttons
+   ============================================ */
+
+/* ============================================
+   FILTER SECTION
+   ============================================ */
+
 .filter-section {
   display: flex;
   flex-direction: column;
@@ -10,6 +18,10 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+
+/* ============================================
+   FILTER PILLS
+   ============================================ */
 
 .filter-pills {
   display: flex;
@@ -48,6 +60,10 @@
   border-color: var(--color-primary);
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 
 @media (max-width: 768px) {
   .filter-buttons {

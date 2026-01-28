@@ -38,7 +38,14 @@ export default function AllDaySlot({ slots, variant = 'normal', onSlotClick }) {
     return (
       <div className="all-day-slots">
         {filteredSlots.map((slot) => (
-          <SlotCard key={slot.id} slot={slot} variant="desktop-allday" onClick={handleSlotClick} />
+          <SlotCard
+            key={slot.id}
+            slot={slot}
+            variant="desktop-allday"
+            onClick={() => {
+              handleSlotClick(slot);
+            }}
+          />
         ))}
       </div>
     );
@@ -51,7 +58,14 @@ export default function AllDaySlot({ slots, variant = 'normal', onSlotClick }) {
     return (
       <div className="full-height-slots">
         {filteredSlots.map((slot) => (
-          <SlotCard key={slot.id} slot={slot} variant="desktop-allday" onClick={handleSlotClick} />
+          <SlotCard
+            key={slot.id}
+            slot={slot}
+            variant="desktop-allday"
+            onClick={() => {
+              handleSlotClick(slot);
+            }}
+          />
         ))}
       </div>
     );

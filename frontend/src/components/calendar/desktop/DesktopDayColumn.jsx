@@ -8,6 +8,7 @@ import DesktopDayHeader from './DesktopDayHeader';
 import DesktopDayGrid from './DesktopDayGrid';
 import AllDaySlot from '../shared/AllDaySlot';
 
+const MINUTE_STEP = 15;
 /**
  * DesktopDayColumn - Une colonne jour complète (header + all-day + grid)
  */
@@ -81,9 +82,14 @@ export default function DesktopDayColumn({ date, dayName, slots, onSlotClick, on
 
     const rect = dayGridRef.current.getBoundingClientRect();
     const y = e.clientY - rect.top;
-    const totalMinutes = (y / HOUR_HEIGHT) * 60;
+
+    let totalMinutes = (y / HOUR_HEIGHT) * 60;
+
+    // 🔹 Arrondi à 15 minutes
+    totalMinutes = Math.round(totalMinutes / MINUTE_STEP) * MINUTE_STEP;
+
     const hour = Math.floor(totalMinutes / 60) + START_HOUR;
-    const minute = Math.floor(totalMinutes % 60);
+    const minute = totalMinutes % 60;
 
     startSelection(hour, minute);
   };
@@ -93,9 +99,14 @@ export default function DesktopDayColumn({ date, dayName, slots, onSlotClick, on
 
     const rect = dayGridRef.current.getBoundingClientRect();
     const y = e.clientY - rect.top;
-    const totalMinutes = (y / HOUR_HEIGHT) * 60;
+
+    let totalMinutes = (y / HOUR_HEIGHT) * 60;
+
+    // 🔹 Arrondi à 15 minutes
+    totalMinutes = Math.round(totalMinutes / MINUTE_STEP) * MINUTE_STEP;
+
     const hour = Math.floor(totalMinutes / 60) + START_HOUR;
-    const minute = Math.floor(totalMinutes % 60);
+    const minute = totalMinutes % 60;
 
     moveSelection(hour, minute);
   };

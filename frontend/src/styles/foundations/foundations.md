@@ -1,3 +1,489 @@
+# 📁 Project Files Export
+
+Generated on: Tue Jan 27 16:10:34 CET 2026
+
+## 📄 base-layouts.css
+**Path:** `base-layouts.css`
+
+```
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background: var(--gradient-primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ============================================
+   LAYOUTS & CONTAINERS
+   ============================================ */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  width: 90%;
+  max-width: 1400px;
+}
+
+main {
+  flex: 1;
+  padding-bottom: var(--spacing-3xl);
+}
+
+.view-container {
+  padding: var(--spacing-lg);
+  background: var(--color-bg-secondary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-x: auto;
+  padding: var(--spacing-sm);
+}
+
+/* ----------------------------
+   Flex Utilities
+---------------------------- */
+
+.flex {
+  display: flex;
+}
+.inline-flex {
+  display: inline-flex;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-row-reverse {
+  flex-direction: row-reverse;
+}
+.flex-column-reverse {
+  flex-direction: column-reverse;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+.align-items-start {
+  align-items: flex-start;
+}
+.align-items-center {
+  align-items: center;
+}
+.align-items-end {
+  align-items: flex-end;
+}
+.align-items-stretch {
+  align-items: stretch;
+}
+.justify-content-start {
+  justify-content: flex-start;
+}
+.justify-content-center {
+  justify-content: center;
+}
+.justify-content-end {
+  justify-content: flex-end;
+}
+.justify-content-between {
+  justify-content: space-between;
+}
+.justify-content-around {
+  justify-content: space-around;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ----------------------------
+   Grid Utilities
+---------------------------- */
+
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+}
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.grid-auto-fill {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+.two-column {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+}
+.two-column-balanced {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+.layout-grid-content {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+}
+.layout-grid-content.event {
+  grid-template-columns: 1fr 1fr;
+}
+.layout-sidebar-content,
+.layout-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* ----------------------------
+   Responsive
+---------------------------- */
+
+@media (max-width: 992px) {
+  .two-column {
+    grid-template-columns: 280px 1fr;
+  }
+  .layout-grid-content {
+    grid-template-columns: 1fr;
+  }
+  .layout-sidebar-content {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+    width: 95%;
+  }
+  .view-container {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .two-column,
+  .two-column-balanced {
+    grid-template-columns: 1fr;
+  }
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-sm);
+    width: 100%;
+  }
+  .view-container {
+    padding: var(--spacing-xs);
+    gap: var(--spacing-xs);
+  }
+}
+```
+
+---
+
+## 📄 utilities.css
+**Path:** `utilities.css`
+
+```
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ----------------------------
+   Animation Classes
+---------------------------- */
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+.fade-in {
+  animation: fadeIn var(--transition-base);
+}
+.slide-in {
+  animation: slideIn var(--transition-slow);
+}
+.bounce {
+  animation: bounce 2s infinite;
+}
+.pulse {
+  animation: pulse 0.3s ease-out;
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+
+/* SPACING */
+.mt-10 {
+  margin-top: 10px;
+}
+.mt-20 {
+  margin-top: var(--spacing-lg);
+}
+.mb-10 {
+  margin-bottom: 10px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+.mb-20 {
+  margin-bottom: var(--spacing-lg);
+}
+.mb-30 {
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* DISPLAY */
+.d-flex {
+  display: flex;
+}
+.d-inline-flex {
+  display: inline-flex;
+}
+.d-block {
+  display: block;
+}
+.d-none {
+  display: none;
+}
+
+/* TEXT */
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+.text-muted {
+  color: var(--color-text-muted);
+}
+.text-primary {
+  color: var(--color-primary);
+}
+.text-success {
+  color: var(--color-success);
+}
+.text-danger {
+  color: var(--color-danger);
+}
+
+.font-weight-normal {
+  font-weight: var(--font-weight-normal);
+}
+.font-weight-medium {
+  font-weight: var(--font-weight-medium);
+}
+.font-weight-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* WIDTH/HEIGHT */
+.w-100 {
+  width: 100%;
+}
+.h-100 {
+  height: 100%;
+}
+
+/* CURSOR */
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* TYPOGRAPHY */
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-lg);
+}
+```
+
+---
+
+## 📄 variables.css
+**Path:** `variables.css`
+
+```
 /* ============================================
    CSS VARIABLES - Design System v2.0
    Variables harmonisées et complètes
@@ -94,7 +580,7 @@
   --color-gray-500: #718096;
   --color-gray-600: #6c757d;
   --color-gray-650: #4a5568;
-  --color-gray-700: #040405;
+  --color-gray-700: #495057;
   --color-gray-800: #2d3748;
   --color-gray-900: #212529;
 
@@ -125,24 +611,24 @@
   --color-rider-owner-dark: #dd6b20;
   --gradient-rider-owner: linear-gradient(
     135deg,
-    var(--color-rider-owner-light) 0%,
-    var(--color-rider-owner-dark) 100%
+    var(--color-rider-owner-dark) 0%,
+    var(--color-rider-owner-light) 100%
   );
 
-  --color-rider-club-light: #63b3ed;
+  --color-rider-club-light: #4299e1;
   --color-rider-club-dark: #3182ce;
   --gradient-rider-club: linear-gradient(
     135deg,
-    var(--color-rider-club-light) 0%,
-    var(--color-rider-club-dark) 100%
+    var(--color-rider-club-dark) 0%,
+    var(--color-rider-club-light) 100%
   );
 
   --color-rider-loaner-light: #28a745;
   --color-rider-loaner-dark: #1e7e34;
   --gradient-rider-loaner: linear-gradient(
     135deg,
-    var(--color-rider-loaner-light) 0%,
-    var(--color-rider-loaner-dark) 100%
+    var(--color-rider-loaner-dark) 0%,
+    var(--color-rider-loaner-light) 100%
   );
 
   /* ============================================
@@ -153,32 +639,32 @@
   --color-slot-scheduled-dark: #e0a800;
   --gradient-slot-scheduled: linear-gradient(
     135deg,
-    var(--color-slot-scheduled-light) 0%,
-    var(--color-slot-scheduled-dark) 100%
+    var(--color-slot-scheduled-dark) 0%,
+    var(--color-slot-scheduled-light) 100%
   );
 
   --color-slot-confirmed-light: #bee3f8;
   --color-slot-confirmed-dark: #3182ce;
   --gradient-slot-confirmed: linear-gradient(
     135deg,
-    var(--color-slot-confirmed-light) 0%,
-    var(--color-slot-confirmed-dark) 100%
+    var(--color-slot-confirmed-dark) 0%,
+    var(--color-slot-confirmed-light) 100%
   );
 
   --color-slot-completed-light: #c6f6d5;
   --color-slot-completed-dark: #38a169;
   --gradient-slot-completed: linear-gradient(
     135deg,
-    var(--color-slot-completed-light) 0%,
-    var(--color-slot-completed-dark) 100%
+    var(--color-slot-completed-dark) 0%,
+    var(--color-slot-completed-light) 100%
   );
 
   --color-slot-cancelled-light: #fed7d7;
   --color-slot-cancelled-dark: #e53e3e;
   --gradient-slot-cancelled: linear-gradient(
     135deg,
-    var(--color-slot-cancelled-light) 0%,
-    var(--color-slot-cancelled-dark) 100%
+    var(--color-slot-cancelled-dark) 0%,
+    var(--color-slot-cancelled-light) 100%
   );
 
   /* ============================================
@@ -186,30 +672,30 @@
    ============================================ */
 
 /* LAURY */
---color-laury-light: #de37b4;
---color-laury-dark:  #de379b;
+--color-laury-light: #fddce3;
+--color-laury-dark:  #f5576c;
 --gradient-laury: linear-gradient(
   135deg,
-  var(--color-laury-light) 0%,
-  var(--color-laury-dark) 100%
+  var(--color-laury-dark) 0%,
+  var(--color-laury-light) 100%
 );
 
 /* OWNER */
---color-owner-light: #ed8936;
---color-owner-dark:  #dd6b20;
+--color-owner-light: #fee3c5;
+--color-owner-dark:  #ed8936;
 --gradient-owner: linear-gradient(
   135deg,
-  var(--color-owner-light) 0%,
-  var(--color-owner-dark) 100%
+  var(--color-owner-dark) 0%,
+  var(--color-owner-light) 100%
 );
 
 /* CLUB */
---color-club-light: #63b3ed;
---color-club-dark:  #3182ce;
+--color-club-light: #dbeafe;
+--color-club-dark:  #4299e1;
 --gradient-club: linear-gradient(
   135deg,
-  var(--color-club-light) 0%,
-  var(--color-club-dark) 100%
+  var(--color-club-dark) 0%,
+  var(--color-club-light) 100%
 );
 
 /* OTHER */
@@ -217,8 +703,8 @@
 --color-other-dark:  #f56565;
 --gradient-other: linear-gradient(
   135deg,
-  var(--color-other-light) 0%,
-  var(--color-other-dark) 100%
+  var(--color-other-dark) 0%,
+  var(--color-other-light) 100%
 );
 
 /* ============================================
@@ -226,21 +712,21 @@
    ============================================ */
 
 /* OWN */
---color-pairing-own-light: #ed8936;
---color-pairing-own-dark:  #dd6b20;
+--color-pairing-own-light: #fef3c7;
+--color-pairing-own-dark:  #ed8936;
 --gradient-pairing-own: linear-gradient(
   135deg,
-  var(--color-pairing-own-light) 0%,
-  var(--color-pairing-own-dark) 100%
+  var(--color-pairing-own-dark) 0%,
+  var(--color-pairing-own-light) 100%
 );
 
 /* LOAN */
---color-pairing-loan-light: #28a745;
---color-pairing-loan-dark:  #1e7e34;
+--color-pairing-loan-light: #d1fae5;
+--color-pairing-loan-dark:  #48bb78;
 --gradient-pairing-loan: linear-gradient(
   135deg,
-  var(--color-pairing-loan-light) 0%,
-  var(--color-pairing-loan-dark) 100%
+  var(--color-pairing-loan-dark) 0%,
+  var(--color-pairing-loan-light) 100%
 );
 
 
@@ -253,8 +739,8 @@
 --color-assignment-manual-dark:  #4299e1;
 --gradient-assignment-manual: linear-gradient(
   135deg,
-  var(--color-assignment-manual-light) 0%,
-  var(--color-assignment-manual-dark) 100%
+  var(--color-assignment-manual-dark) 0%,
+  var(--color-assignment-manual-light) 100%
 );
 
 /* AUTOMATIC */
@@ -262,8 +748,8 @@
 --color-assignment-automatic-dark:  #38a169;
 --gradient-assignment-automatic: linear-gradient(
   135deg,
-  var(--color-assignment-automatic-light) 0%,
-  var(--color-assignment-automatic-dark) 100%
+  var(--color-assignment-automatic-dark) 0%,
+  var(--color-assignment-automatic-light) 100%
 );
 
 
@@ -272,66 +758,66 @@
    ============================================ */
 
 /* PRIVATE LESSON */
---color-event-private-lesson-light: #4299e1;
+--color-event-private-lesson-light: #bee3f8;
 --color-event-private-lesson-dark:  #3182ce;
 --gradient-event-private-lesson: linear-gradient(
   135deg,
-  var(--color-event-private-lesson-light) 0%,
-  var(--color-event-private-lesson-dark) 100%
+  var(--color-event-private-lesson-dark) 0%,
+  var(--color-event-private-lesson-light) 100%
 );
 
 /* GROUPED LESSON */
---color-event-grouped-lesson-light: #48bb78;
+--color-event-grouped-lesson-light: #c6f6d5;
 --color-event-grouped-lesson-dark:  #38a169;
 --gradient-event-grouped-lesson: linear-gradient(
   135deg,
-  var(--color-event-grouped-lesson-light) 0%,
-  var(--color-event-grouped-lesson-dark) 100%
+  var(--color-event-grouped-lesson-dark) 0%,
+  var(--color-event-grouped-lesson-light) 100%
 );
 
 /* SPECIAL */
---color-event-special-light: #ed8936;
---color-event-special-dark:  #dd6b20;
+--color-event-special-light: #faf089;
+--color-event-special-dark:  #d69e2e;
 --gradient-event-special: linear-gradient(
   135deg,
-  var(--color-event-special-light) 0%,
-  var(--color-event-special-dark) 100%
+  var(--color-event-special-dark) 0%,
+  var(--color-event-special-light) 100%
 );
 
 /* COMPETITION */
---color-event-competition-light: #dc3545;
---color-event-competition-dark:  #bd2130;
+--color-event-competition-light: #e9d8fd;
+--color-event-competition-dark:  #805ad5;
 --gradient-event-competition: linear-gradient(
   135deg,
-  var(--color-event-competition-light) 0%,
-  var(--color-event-competition-dark) 100%
+  var(--color-event-competition-dark) 0%,
+  var(--color-event-competition-light) 100%
 );
 
 /* BLOCKED */
---color-event-blocked-light: #4a5568;
---color-event-blocked-dark:  #2d3748;
+--color-event-blocked-light: #e2e8f0;
+--color-event-blocked-dark:  #4a5568;
 --gradient-event-blocked: linear-gradient(
   135deg,
-  var(--color-event-blocked-light) 0%,
-  var(--color-event-blocked-dark) 100%
+  var(--color-event-blocked-dark) 0%,
+  var(--color-event-blocked-light) 100%
 );
 
 /* SERVICE */
---color-event-service-light: #fed7d7;
---color-event-service-dark:  #fc8181;
+--color-event-service-light: #b2f5ea;
+--color-event-service-dark:  #319795;
 --gradient-event-service: linear-gradient(
   135deg,
-  var(--color-event-service-light) 0%,
-  var(--color-event-service-dark) 100%
+  var(--color-event-service-dark) 0%,
+  var(--color-event-service-light) 100%
 );
 
 /* LOANER FREE TIME */
---color-event-loaner-free-time-light: #ed8936;
+--color-event-loaner-free-time-light: #c6f6d5;
 --color-event-loaner-free-time-dark:  #2f855a;
 --gradient-event-loaner-free-time: linear-gradient(
   135deg,
-  var(--color-event-loaner-free-time-light) 0%,
-  var(--color-event-loaner-free-time-dark) 100%
+  var(--color-event-loaner-free-time-dark) 0%,
+  var(--color-event-loaner-free-time-light) 100%
 );
 
 
@@ -492,3 +978,7 @@
   --mobile-action-btn-danger-bg: var(--gradient-danger);
   --mobile-action-btn-danger-active-bg: rgba(220, 53, 69, 0.1);
 }
+```
+
+---
+

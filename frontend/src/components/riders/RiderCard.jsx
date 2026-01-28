@@ -17,6 +17,10 @@ import PackageForm from '../packages/PackageForm.jsx';
 import PairingForm from '../pairings/PairingForm.jsx';
 import { useAppMode } from '../../context/AppMode.jsx';
 
+import '../../styles/components/layouts.css';
+import '../../styles/components/cards.css';
+import '../../styles/components/list-items.css';
+import '../../styles/foundations/base-layouts.css';
 function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
@@ -97,15 +101,17 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
       onClose={onClose}
       size="xl"
       title={
-        <div className="modal-header">
-          <div className="info-card-avatar">
-            <Icons.User />
-          </div>
-          <div className="modal-header-text">
-            <h2>{rider.name}</h2>
-            <div className="detail-card-meta">
-              {riderTypeConfig && <DomainBadge config={riderTypeConfig} />}
-              {statusConfig && <DomainBadge config={statusConfig} />}
+        <div className="modal-header-content">
+          <div className="modal-header-content">
+            <div className="info-card-avatar">
+              <Icons.User />
+            </div>
+            <div className="modal-header-text">
+              <h2>{rider.name}</h2>
+              <div className="detail-card-meta">
+                {riderTypeConfig && <DomainBadge config={riderTypeConfig} />}
+                {statusConfig && <DomainBadge config={statusConfig} />}
+              </div>
             </div>
           </div>
           <div className="header-actions-group">
@@ -150,7 +156,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
               <div className="info-card-header">
                 <h3>Coordonnées</h3>
               </div>
-              <div className="info-card-body">
+              <div className="info-card-body flex-row">
                 <div className="info-item-modern">
                   <div className="info-content">
                     <span className="info-label">Email</span>
@@ -213,34 +219,36 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                   {activePackage && <DomainBadge config={getStatusConfig('active')} />}
                 </div>
 
-                {!activePackage ? (
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm"
-                    onClick={packageActions.handleCreate}
-                  >
-                    <Icons.Add /> Créer
-                  </button>
-                ) : (
-                  <div className="header-actions-group">
+                <div className="header-actions-group">
+                  {!activePackage ? (
                     <button
                       type="button"
-                      className="btn-icon-modern"
-                      onClick={() => packageActions.handleEdit(activePackage)}
-                      title="Modifier"
+                      className="btn btn-primary btn-sm"
+                      onClick={packageActions.handleCreate}
                     >
-                      <Icons.Edit />
+                      <Icons.Add /> Créer
                     </button>
-                    <button
-                      type="button"
-                      className="btn-icon-modern danger"
-                      onClick={() => packageActions.handleDeleteClick(activePackage)}
-                      title="Supprimer"
-                    >
-                      <Icons.Delete />
-                    </button>
-                  </div>
-                )}
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="btn-icon-modern"
+                        onClick={() => packageActions.handleEdit(activePackage)}
+                        title="Modifier"
+                      >
+                        <Icons.Edit />
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-icon-modern danger"
+                        onClick={() => packageActions.handleDeleteClick(activePackage)}
+                        title="Supprimer"
+                      >
+                        <Icons.Delete />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
               <div className="info-card-body">
                 {!activePackage ? (
@@ -249,7 +257,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                     <p>Aucun forfait</p>
                   </div>
                 ) : (
-                  <div className="detail-card-body">
+                  <div className="info-card-body">
                     <div className="package-item">
                       <span className="package-label">Services hebdomadaires</span>
                       <span className="package-value">{activePackage.services_per_week}</span>

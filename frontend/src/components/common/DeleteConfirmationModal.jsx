@@ -29,7 +29,7 @@ function DeleteConfirmationModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="sm"
+      size="md"
       title={
         <div className="modal-title">
           <Icons.Warning />

@@ -1,5 +1,63 @@
 /* ============================================
-   EMPTY & LOADING STATES
+   ALERTS & STATES - Messages et états
+   Alerts, loading, error, empty states
+   ============================================ */
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.alert {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  border-left: 4px solid;
+  margin-bottom: var(--spacing-md);
+}
+
+.alert-info {
+  background: var(--color-info-light);
+  color: var(--color-info-dark);
+  border-left-color: var(--color-info);
+}
+
+.alert-success {
+  background-image: var(--gradient-alert-success);
+  color: var(--color-success-dark);
+  border-left-color: var(--color-success);
+}
+
+.alert-warning {
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
+  border-left-color: var(--color-warning);
+}
+
+.alert-error,
+.alert-danger {
+  background-image: var(--gradient-alert-error);
+  color: var(--color-danger-dark);
+  border-left-color: var(--color-danger);
+}
+
+.alert strong {
+  font-weight: var(--font-weight-semibold);
+}
+
+.alert p {
+  margin: 0;
+}
+
+.alert p + p {
+  margin-top: var(--spacing-sm);
+}
+
+/* ============================================
+   EMPTY STATES
    ============================================ */
 
 .empty-state {
@@ -20,6 +78,7 @@
   border: 2px dashed var(--color-gray-400);
   margin-bottom: var(--spacing-md);
 }
+
 .empty-state-icon {
   font-size: 64px;
   margin-bottom: var(--spacing-lg);
@@ -46,7 +105,12 @@
   font-size: var(--font-size-sm);
 }
 
-.loading {
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.loading,
+.loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,11 +118,21 @@
   padding: var(--spacing-3xl) var(--spacing-lg);
   text-align: center;
   color: var(--color-text-muted);
+  gap: var(--spacing-md);
 }
 
 .loading p {
   margin-top: var(--spacing-sm);
   color: var(--color-text-muted);
+}
+
+.loading-state {
+  color: var(--color-gray-600);
+}
+
+.loading-state svg {
+  width: 32px;
+  height: 32px;
 }
 
 .loading-spinner {
@@ -70,6 +144,19 @@
   animation: spin 1s linear infinite;
   margin: 0 auto var(--spacing-md);
 }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   ERROR STATE
+   ============================================ */
 
 .error {
   display: flex;
@@ -92,6 +179,10 @@
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
 }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 
 @media (max-width: 768px) {
   .empty-state {

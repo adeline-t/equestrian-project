@@ -3,27 +3,30 @@
    Import all foundations, layouts, and components
    ============================================ */
 
-/* Foundations */
+/* 1. Foundations */
 @import './foundations/variables.css';
-@import './foundations/reset.css';
-@import './foundations/animations.css';
+@import './foundations/base-layouts.css';
+@import './foundations/utilities.css';
 
-/* Layouts */
-@import './layouts/container.css';
-@import './layouts/grid.css';
-@import './layouts/flex.css';
-@import './layouts/headers.css';
-@import './layouts/sections.css';
-@import './layouts/empty-states.css';
+/* 2. Components de base */
+@import './components/components.css';
+@import './components/layouts.css';
 
-/* Components */
-@import './components/buttons.css';
-@import './components/forms.css';
-@import './components/badges.css';
+/* 3. Conteneurs */
 @import './components/cards.css';
+
+/* 4. Tables et listes */
 @import './components/tables.css';
-@import './components/modals.css';
-@import './components/alerts.css';
+
+/* 5. Filtres */
 @import './components/filters.css';
-@import './components/utilities.css';
-@import './components/error-boundary.css';
+
+/* 6. États et alertes */
+@import './components/alerts-states.css';
+
+/* 7. Modales */
+@import './components/modals.css';
+
+/* 8. Formulaires (pour RiderForm) */
+@import './components/form-controls.css';
+@import './components/form-layouts.css';

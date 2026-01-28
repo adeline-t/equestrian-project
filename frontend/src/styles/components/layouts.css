@@ -1,4 +1,9 @@
 /* ============================================
+   LAYOUTS - Structures de page
+   Headers, sections, dividers
+   ============================================ */
+
+/* ============================================
    HEADERS
    ============================================ */
 
@@ -33,11 +38,12 @@ header h1 {
 .header-actions-group {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--spacing-sm);
   margin-left: auto;
-  flex-shrink: 0;
 }
 
+/* Navigation */
 nav {
   display: flex;
   gap: var(--spacing-sm);
@@ -66,6 +72,10 @@ nav a.active {
   box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
 }
 
+/* ============================================
+   PAGE HEADER
+   ============================================ */
+
 .page-header {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -91,6 +101,10 @@ nav a.active {
   position: relative;
 }
 
+/* ============================================
+   SECTION HEADER
+   ============================================ */
+
 .section-header {
   display: flex;
   align-items: center;
@@ -114,6 +128,37 @@ nav a.active {
   color: var(--color-primary);
   font-size: var(--spacing-md);
 }
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* ============================================
+   DIVIDERS
+   ============================================ */
+
+.section-divider {
+  height: 2px;
+  background: var(--gradient-primary);
+  border: none;
+  margin: var(--spacing-xl) 0;
+  border-radius: var(--radius-full);
+}
+
+.section-divider-light {
+  height: 1px;
+  background: var(--color-border);
+  border: none;
+  margin: var(--spacing-lg) 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 
 @media (max-width: 768px) {
   header .container {

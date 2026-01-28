@@ -5,13 +5,25 @@
    HORSES LIST - Specific styles only
    Most styles come from list-views.css
    ============================================ */
+.badges-cell {
+  max-width: 200px; /* Limite badges chevaux */
+}
 
-/* Table column widths specific to horses */
-.table thead tr,
-.table tbody tr {
+.days-cell {
+  min-width: 320px; /* Espace pour 7 jours */
+}
+
+.horses-list .table thead tr,
+.horses-list .table tbody tr {
   display: grid;
-  grid-template-columns: 200px 120px 140px 140px 420px 100px 1fr;
-  gap: 0;
+  align-items: center;
+  grid-template-columns:
+    2fr
+    minmax(100px, 150px)
+    minmax(120px, 180px)
+    minmax(80px, 110px)
+    minmax(320px, 480px)
+    1fr;
 }
 
 @media (max-width: 768px) {

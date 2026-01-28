@@ -19,8 +19,8 @@ import {
   HORSE_KIND_FILTERS,
   OWNERSHIP_TYPE_FILTERS,
 } from '../../lib/helpers/filters/activityFilters.js';
-import '../../styles/features/horses/horses-list.css';
 import { useAppMode } from '../../context/AppMode.jsx';
+import '../../styles/features/horses/horses-list.css';
 
 function HorsesList() {
   const { mode } = useAppMode();
@@ -252,7 +252,7 @@ function HorsesList() {
                   </>
                 )}
                 <th>Jours de pension</th>
-                <th> </th>
+                <th> - </th>
               </tr>
             </thead>
             <tbody>

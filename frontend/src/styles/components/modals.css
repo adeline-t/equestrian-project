@@ -1,5 +1,10 @@
 /* ============================================
-   MODAL – BASE
+   MODALS - Fenêtres modales
+   Overlay, structure, tailles, sections
+   ============================================ */
+
+/* ============================================
+   MODAL BASE
    ============================================ */
 
 /* Overlay */
@@ -25,7 +30,6 @@
   flex-direction: column;
   overflow: hidden;
   animation: slideIn var(--transition-slow);
-
   width: 100%;
   max-width: 100%;
   margin: auto;
@@ -50,6 +54,7 @@
 .modal--xl {
   max-width: 1400px;
 }
+
 /* ============================================
    MODAL CONTENT
    ============================================ */
@@ -59,11 +64,9 @@
   border-radius: var(--radius-xl);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
-
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
   animation: slideIn var(--transition-slow);
   width: 100%;
 }
@@ -71,9 +74,33 @@
 /* ============================================
    MODAL SECTIONS
    ============================================ */
+/* Header flexible pour toutes les modales */
+.modal-header.modal-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* titre à gauche, actions à droite */
+  gap: var(--spacing-md);
+}
+
+/* Si tu as un groupe de boutons dans le header */
+.modal-header .header-actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.modal-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+  min-width: 0;
+}
+
 .modal-header,
 .modal-footer {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: var(--spacing-sm);
 }
@@ -122,19 +149,6 @@
   color: var(--color-danger);
 }
 
-.modal-body {
-  flex: 1;
-  padding: var(--spacing-md);
-  overflow-y: auto;
-}
-
-.modal-footer {
-  justify-content: flex-end;
-  padding: var(--spacing-md) var(--spacing-xl);
-  border-top: 1px solid var(--color-border);
-  gap: var(--spacing-sm);
-}
-
 .modal-header-text {
   flex: 1;
   min-width: 0;
@@ -147,9 +161,23 @@
   color: var(--color-text);
 }
 
+.modal-body {
+  flex: 1;
+  padding: var(--spacing-md);
+  overflow-y: auto;
+}
+
 .modal-content-scrollable {
   padding: var(--spacing-xs);
 }
+
+.modal-footer {
+  justify-content: flex-end;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-top: 1px solid var(--color-border);
+  gap: var(--spacing-sm);
+}
+
 /* ============================================
    MODAL TABS
    ============================================ */
@@ -283,21 +311,16 @@
   .modal {
     max-width: 95vw;
   }
+
   .modal-header {
     flex-wrap: wrap;
-  }
-  .modal-header,
-  .modal-footer {
     padding: var(--spacing-md) var(--spacing-lg);
-  }
-  .header-actions-group {
-    width: 100%;
-    justify-content: flex-start;
   }
 
   .modal-footer {
     flex-direction: column;
     align-items: stretch;
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 
   .modal-body {

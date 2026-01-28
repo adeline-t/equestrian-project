@@ -5,10 +5,16 @@
    RIDERS LIST - Specific styles only
    Most styles come from list-views.css
    ============================================ */
+.riders-list .badges-cell {
+  max-width: 200px; /* Limite badges chevaux */
+}
 
-/* Table column widths specific to riders */
-.table thead tr,
-.table tbody tr {
+.riders-list .days-cell {
+  min-width: 280px; /* Espace pour 7 jours */
+}
+
+.riders-list .table thead tr,
+.riders-list .table tbody tr {
   display: grid;
   align-items: center;
   grid-template-columns:

@@ -161,7 +161,7 @@ function RidersList() {
               <th>Téléphone</th>
               <th>Chevaux</th>
               <th>Jours d'activité</th>
-              <th />
+              <th> - </th>
             </tr>
           </thead>
           <tbody>

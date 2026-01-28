@@ -1,0 +1,198 @@
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ----------------------------
+   Animation Classes
+---------------------------- */
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+.fade-in {
+  animation: fadeIn var(--transition-base);
+}
+.slide-in {
+  animation: slideIn var(--transition-slow);
+}
+.bounce {
+  animation: bounce 2s infinite;
+}
+.pulse {
+  animation: pulse 0.3s ease-out;
+}
+
+/* ============================================
+   Utilities
+   ============================================ */
+
+/* SPACING */
+.mt-10 {
+  margin-top: 10px;
+}
+.mt-20 {
+  margin-top: var(--spacing-lg);
+}
+.mb-10 {
+  margin-bottom: 10px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+.mb-20 {
+  margin-bottom: var(--spacing-lg);
+}
+.mb-30 {
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* DISPLAY */
+.d-flex {
+  display: flex;
+}
+.d-inline-flex {
+  display: inline-flex;
+}
+.d-none {
+  display: none;
+}
+
+/* TEXT */
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+.text-muted {
+  color: var(--color-text-muted);
+}
+.text-primary {
+  color: var(--color-primary);
+}
+.text-success {
+  color: var(--color-success);
+}
+.text-danger {
+  color: var(--color-danger);
+}
+
+.font-weight-normal {
+  font-weight: var(--font-weight-normal);
+}
+.font-weight-medium {
+  font-weight: var(--font-weight-medium);
+}
+.font-weight-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+/* WIDTH/HEIGHT */
+.w-100 {
+  width: 100%;
+}
+.h-100 {
+  height: 100%;
+}
+
+/* CURSOR */
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+/* TYPOGRAPHY */
+.subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-lg);
+}

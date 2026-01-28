@@ -1,12 +1,22 @@
 /* ============================================
-   LIST CARD ITEMS - PARTICIPANTS & PAIRINGS
+   LIST ITEMS - Éléments de liste
+   Participants, pairings, packages
    ============================================ */
+
+/* ============================================
+   PAIRINGS LIST
+   ============================================ */
+
 .pairings-list-modern {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
 }
-/* ---------- PARTICIPANT / PAIRING ROW ---------- */
+
+/* ============================================
+   PARTICIPANT / PAIRING ROW
+   ============================================ */
+
 .participant-row,
 .pairing-row {
   display: flex;
@@ -66,13 +76,15 @@
   flex-shrink: 0;
 }
 
-/* ---------- PACKAGE ITEM ---------- */
+/* ============================================
+   PACKAGE ITEM
+   ============================================ */
+
 .package-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-sm);
-  background: var(--gradient-palette-10);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   transition: all var(--transition-base);
@@ -95,6 +107,10 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 
 @media (max-width: 768px) {
   .pairing-item-modern {

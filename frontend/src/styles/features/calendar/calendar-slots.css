@@ -57,34 +57,34 @@
 
 /* Event type colors */
 .slot-card--desktop-grid[data-type='private_lesson'] {
-  background: var(--gradient-info);
+  background: var(--gradient-event-private-lesson);
 }
 
 .slot-card--desktop-grid[data-type='grouped_lesson'] {
-  background: var(--gradient-primary);
+  background: var(--gradient-event-grouped-lesson);
 }
 
 .slot-card--desktop-grid[data-type='competition'] {
-  background: var(--gradient-alert-error);
+  background: var(--gradient-event-competition);
 }
 
 .slot-card--desktop-grid[data-type='blocked'] {
-  background: var(--gradient-secondary);
+  background: var(--gradient-event-blocked);
   opacity: 0.85;
 }
 
 .slot-card--desktop-grid[data-type='service'] {
-  background: var(--gradient-pony);
+  background: var(--gradient-event-service);
   opacity: 0.85;
 }
 
 .slot-card--desktop-grid[data-type='special'] {
-  background: var(--gradient-warning);
+  background: var(--gradient-event-special);
   opacity: 0.85;
 }
 
 .slot-card--desktop-grid[data-type='loaner_free_time'] {
-  background: var(--gradient-success);
+  background: var(--gradient-event-loaner-free-time);
   opacity: 0.85;
 }
 
@@ -215,11 +215,11 @@
 }
 
 .slot-card--desktop-allday[data-type='competition'] {
-  background: var(--gradient-warning);
+  background: var(--gradient-event-competition);
 }
 
 .slot-card--desktop-allday[data-type='blocked'] {
-  background: var(--gradient-secondary);
+  background: var(--gradient-event-blocked);
   opacity: 0.8;
 }
 
