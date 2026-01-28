@@ -1,5 +1,12 @@
-import { calendarApi } from './api.js';
-import { format, startOfMonth, endOfMonth, eachWeekOfInterval, endOfWeek } from 'date-fns';
+import { api } from './api.js';
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachWeekOfInterval,
+  endOfWeek,
+  startOfWeek,
+} from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 export const statsService = {
@@ -8,39 +15,66 @@ export const statsService = {
   // -----------------
   getMonthlyStats: async (month) => {
     const monthStr = typeof month === 'string' ? month : format(month, 'yyyy-MM');
-    const response = await calendarApi.get('/stats/monthly', { params: { month: monthStr } });
+    const response = await api.get('/stats/monthly', { params: { month: monthStr } });
     return response.data;
   },
 
   getHorseStats: async (month) => {
     const monthStr = typeof month === 'string' ? month : format(month, 'yyyy-MM');
-    const response = await calendarApi.get('/stats/horses', { params: { month: monthStr } });
+    const response = await api.get('/stats/horses', { params: { month: monthStr } });
     return response.data;
   },
 
   getRiderStats: async (month) => {
     const monthStr = typeof month === 'string' ? month : format(month, 'yyyy-MM');
-    const response = await calendarApi.get('/stats/riders', { params: { month: monthStr } });
+    const response = await api.get('/stats/riders', { params: { month: monthStr } });
+    return response.data;
+  },
+
+  getSlotStats: async (monthOrParams) => {
+    let params = {};
+
+    if (typeof monthOrParams === 'string' || monthOrParams instanceof Date) {
+      const monthStr =
+        typeof monthOrParams === 'string' ? monthOrParams : format(monthOrParams, 'yyyy-MM');
+      params.month = monthStr;
+    } else if (typeof monthOrParams === 'object') {
+      params = monthOrParams;
+      // Ensure month is formatted correctly if it's a Date
+      if (params.month instanceof Date) {
+        params.month = format(params.month, 'yyyy-MM');
+      }
+    }
+
+    const response = await api.get('/stats/slots', { params });
+    console.info('getSlotStats', response.data);
     return response.data;
   },
 
   // -----------------
-  // Weekly rider usage (nouveau endpoint)
+  // Weekly rider usage
   // -----------------
   getRiderWeeklyUsage: async (monthOrParams) => {
     let params = {};
 
     if (typeof monthOrParams === 'string' || monthOrParams instanceof Date) {
-      // Si c'est un mois, on transforme en 'YYYY-MM'
       const monthStr =
         typeof monthOrParams === 'string' ? monthOrParams : format(monthOrParams, 'yyyy-MM');
       params.month = monthStr;
     } else if (typeof monthOrParams === 'object') {
-      // Si c'est un objet de params optionnels (firstWeekStart, lastWeekEnd, etc.)
       params = monthOrParams;
     }
 
-    const response = await calendarApi.get('/stats/weekly', { params });
+    const response = await api.get('/stats/weekly', { params });
+    return response.data;
+  },
+
+  // -----------------
+  // Monthly billing
+  // -----------------
+  getRiderMonthlyBilling: async (month) => {
+    const monthStr = typeof month === 'string' ? month : format(month, 'yyyy-MM');
+    const response = await api.get('/stats/rider-billing', { params: { month: monthStr } });
     return response.data;
   },
 
@@ -58,6 +92,7 @@ export const statsService = {
       { start: firstWeekStart, end: lastWeekEnd },
       { weekStartsOn: 1 }
     );
+
     return weeks.map((weekStart, index) => ({
       weekNumber: index + 1,
       startDate: format(weekStart, 'yyyy-MM-dd'),

@@ -11,8 +11,23 @@ export function useMonthlyStats(initialMonth = new Date()) {
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(initialMonth));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Horse stats
   const [horseStats, setHorseStats] = useState([]);
+
+  // Rider stats (weekly event counts by type)
   const [riderStats, setRiderStats] = useState([]);
+
+  // Rider weekly usage (services/private lessons consumption)
+  const [riderWeeklyUsage, setRiderWeeklyUsage] = useState([]);
+
+  // Rider monthly billing
+  const [riderMonthlyBilling, setRiderMonthlyBilling] = useState([]);
+
+  // Slot stats (all valid slots with events and participants)
+  const [slotStats, setSlotStats] = useState(null);
+
+  // Weeks metadata
   const [weeks, setWeeks] = useState([]);
 
   const loadStats = useCallback(async () => {
@@ -25,16 +40,21 @@ export function useMonthlyStats(initialMonth = new Date()) {
       // Get weeks for the month
       const weeksData = statsService.getWeeksOfMonth(currentMonth);
       setWeeks(weeksData);
-      console.log('weeksdata', weeksData);
 
-      // Load horse and rider stats in parallel
-      const [horses, riders] = await Promise.all([
+      // Load all stats in parallel
+      const [horses, riders, weeklyUsage, monthlyBilling, slots] = await Promise.all([
         statsService.getHorseStats(monthStr),
         statsService.getRiderStats(monthStr),
+        statsService.getRiderWeeklyUsage(monthStr),
+        statsService.getRiderMonthlyBilling(monthStr),
+        statsService.getSlotStats(monthStr),
       ]);
 
       setHorseStats(horses || []);
       setRiderStats(riders || []);
+      setRiderWeeklyUsage(weeklyUsage || []);
+      setRiderMonthlyBilling(monthlyBilling || []);
+      setSlotStats(slots || null);
     } catch (err) {
       console.error('Error loading monthly stats:', err);
       setError(err.message || 'Erreur lors du chargement des statistiques');
@@ -72,16 +92,34 @@ export function useMonthlyStats(initialMonth = new Date()) {
   }, []);
 
   return {
+    // State
     currentMonth,
     loading,
     error,
-    horseStats,
-    riderStats,
     weeks,
+
+    // Horse statistics
+    horseStats,
+
+    // Rider statistics (event counts by type)
+    riderStats,
+
+    // Rider weekly usage (package consumption)
+    riderWeeklyUsage,
+
+    // Rider monthly billing
+    riderMonthlyBilling,
+
+    // Slot statistics (all valid slots with events and participants)
+    slotStats,
+
+    // Navigation methods
     goToPreviousMonth,
     goToNextMonth,
     goToCurrentMonth,
     goToMonth,
+
+    // Reload
     reload: loadStats,
   };
 }

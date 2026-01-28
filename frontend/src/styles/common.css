@@ -11,6 +11,7 @@
 /* 2. Components de base */
 @import './components/components.css';
 @import './components/layouts.css';
+@import './components/tabs.css';
 
 /* 3. Conteneurs */
 @import './components/cards.css';

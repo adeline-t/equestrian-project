@@ -202,8 +202,6 @@ function ScheduledEventsModal({ onClose, onUpdate }) {
                     const eventTypeConfig = getEventTypeConfig(event.event_type);
                     const instructorConfig = getInstructorConfig(event.instructor_id);
                     const isProcessing = actionLoading === slot.id;
-                    console.log('event instructor', event.instructor_id);
-                    console.log('event instructor config', instructorConfig);
 
                     return (
                       <div

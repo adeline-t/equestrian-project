@@ -17,6 +17,7 @@ import { handlePlanningSlots } from './handlers/calendar/slots.js';
 import { handleEvents } from './handlers/calendar/events.js';
 import { handleEventParticipants } from './handlers/calendar/participants.js';
 import { handleRecurrences } from './handlers/calendar/recurrences.js';
+import { handleSlotStats } from './handlers/stats/slotMonthlyStats.js';
 
 export default {
   async fetch(request, env, ctx) {
@@ -89,24 +90,27 @@ export default {
       // -----------------------
       // Rider Monthly Billing
       // -----------------------
-      if (path === '/api/stats/rider-billing') {
+      if (path.startsWith('/api/stats/rider-billing')) {
         return handleRiderMonthlyBilling(request, env);
       }
 
       // -----------------------
       // Calendar Stats routes
       // -----------------------
-      if (path === '/api/stats/monthly') {
+      if (path.startsWith('/api/stats/monthly')) {
         return handleMonthlyStats(request, env);
       }
-      if (path === '/api/stats/horses') {
+      if (path.startsWith('/api/stats/horses')) {
         return handleHorseStats(request, env);
       }
-      if (path === '/api/stats/riders') {
+      if (path.startsWith('/api/stats/riders')) {
         return handleRiderStats(request, env);
       }
-      if (path === '/api/stats/weekly') {
+      if (path.startsWith('/api/stats/weekly')) {
         return handleRiderUsageWeekly(request, env);
+      }
+      if (path.startsWith('/api/stats/slots')) {
+        return handleSlotStats(request, env);
       }
 
       // -----------------------

@@ -334,6 +334,14 @@
   background: var(--gradient-event-blocked);
 }
 
+.badge[data-type='service'] {
+  background: var(--gradient-event-service);
+}
+
+.badge[data-type='special'] {
+  background: var(--gradient-event-special);
+}
+
 /* NUMBERED BADGES */
 .badge[data-type='1'] {
   background-image: var(--gradient-primary);
@@ -416,6 +424,20 @@
   height: var(--spacing-lg);
   padding: 0 var(--spacing-sm);
   background: var(--color-primary-purple);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.count-badge.selected {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--spacing-lg);
+  height: var(--spacing-lg);
+  padding: 0 var(--spacing-sm);
+  background: transparent;
   color: var(--color-white);
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);

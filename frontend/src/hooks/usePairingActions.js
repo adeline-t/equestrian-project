@@ -15,13 +15,11 @@ export function usePairingActions(onSuccess) {
   const [pairingToDelete, setPairingToDelete] = useState(null);
 
   const handleCreate = () => {
-    console.log('create pairing');
     setEditingPairing(null);
     setShowPairingModal(true);
   };
 
   const handleEdit = (pairing) => {
-    console.log('edit pairing :', pairing);
     const pairingWithDays = {
       ...pairing,
       loan_days: pairing.loan_days || [],

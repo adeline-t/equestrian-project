@@ -186,26 +186,6 @@
   color: var(--color-white);
 }
 
-/* Count Pills */
-.count-pill {
-  display: inline-block;
-  min-width: 24px;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  text-align: center;
-}
-
-.count-pill.active {
-  background: var(--color-primary-light);
-  color: var(--color-primary-dark);
-}
-
-.count-pill.empty {
-  color: var(--color-gray-400);
-}
-
 .count-total {
   color: var(--color-primary);
   font-size: var(--font-size-base);

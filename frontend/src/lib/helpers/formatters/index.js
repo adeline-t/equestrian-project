@@ -5,4 +5,4 @@
 export * from './time.js';
 export * from './date.js';
 export * from './duration.js';
-export * from './name.js';
+export * from './string.js';

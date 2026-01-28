@@ -4,18 +4,7 @@ import horseService from '../services/horseService';
 import { calendarService } from '../services/calendarService';
 import { getTodayISO } from '../lib/helpers';
 import { EVENT_TYPES } from '../lib/domain';
-
-/**
- * Normalize string for comparison (case-insensitive, diacritic-insensitive)
- */
-function normalizeString(str) {
-  if (!str) return '';
-  return str
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .trim();
-}
+import { normalizeString } from '../lib/helpers';
 
 /**
  * Check if two strings match (fuzzy match)

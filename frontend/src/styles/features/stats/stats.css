@@ -15,6 +15,7 @@
   align-items: center;
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
+  text-transform: capitalize;
 }
 
 /* ============================================
@@ -213,17 +214,15 @@
 }
 
 .count-pill.active {
-  background: var(--color-primary-light);
-  color: var(--color-white);
+  color: var(--color-primary-light);
 }
 
 .count-pill.empty {
   color: var(--color-gray-400);
 }
 
-.count-total {
+.stats-count-total {
   color: var(--color-white);
-  font-size: var(--font-size-base);
 }
 
 /* ============================================
@@ -259,34 +258,21 @@
   height: 32px;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-
-@media (max-width: 1024px) {
-  .stats-riders-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
 @media (max-width: 768px) {
+  .stats-header {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+  }
+
   .stats-view {
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs);
+    margin-top: 0;
   }
 
-  .data-table th,
-  .data-table td {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-xs);
-  }
-
-  .table-header-sticky,
-  .table-cell-name {
-    min-width: 100px;
+  .data-card-body {
+    padding: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
   }
 }

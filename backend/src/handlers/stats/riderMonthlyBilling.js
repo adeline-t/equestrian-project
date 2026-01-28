@@ -4,11 +4,11 @@ import {
   handleUnexpectedError,
   handleValidationError,
 } from '../../utils/errorHandler.js';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { format, startOfMonth } from 'date-fns';
 
 /**
  * GET /api/stats/rider-billing?month=YYYY-MM
- * Returns monthly billing summary per rider
+ * Returns monthly billing summary per rider with rider_type
  */
 export async function handleRiderMonthlyBilling(request, env) {
   if (request.method !== 'GET') {
@@ -32,19 +32,40 @@ export async function handleRiderMonthlyBilling(request, env) {
   try {
     const monthDate = new Date(`${month}-01`);
     const monthStart = format(startOfMonth(monthDate), 'yyyy-MM-dd');
-    const monthEnd = format(endOfMonth(monthDate), 'yyyy-MM-dd');
 
-    // Fetch billing data
+    // Fetch billing data - use .eq() for exact match on month_start
     const { data: billing, error: billingError } = await db
       .from('rider_monthly_billing')
       .select('*')
-      .gte('month_start', monthStart)
-      .lte('month_start', monthEnd)
+      .eq('month_start', monthStart) // ← Changement ici
       .order('rider_id');
 
     if (billingError) return handleDatabaseError(billingError, 'riderBilling.fetch', env);
 
-    return jsonResponse(billing || [], 200, getSecurityHeaders());
+    // Extract unique rider IDs
+    const riderIds = [...new Set((billing || []).map((b) => b.rider_id))];
+
+    // Fetch rider types for these IDs
+    const { data: riders, error: ridersError } = await db
+      .from('riders')
+      .select('id, rider_type')
+      .in('id', riderIds);
+
+    if (ridersError) return handleDatabaseError(ridersError, 'riderBilling.fetchRiders', env);
+
+    // Create a lookup map
+    const riderTypeMap = (riders || []).reduce((acc, rider) => {
+      acc[rider.id] = rider.rider_type;
+      return acc;
+    }, {});
+
+    // Enrich billing data with rider_type
+    const enrichedBilling = (billing || []).map((bill) => ({
+      ...bill,
+      rider_type: riderTypeMap[bill.rider_id] || null,
+    }));
+
+    return jsonResponse(enrichedBilling, 200, getSecurityHeaders());
   } catch (err) {
     return handleUnexpectedError(err, 'riderBilling', env);
   }

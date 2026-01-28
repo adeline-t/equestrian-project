@@ -9,3 +9,12 @@ export function shortName(value = '') {
     .map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + ''))
     .join(' ');
 }
+
+export function normalizeString(str) {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .trim();
+}

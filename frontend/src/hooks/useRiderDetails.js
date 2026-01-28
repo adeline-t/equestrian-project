@@ -45,11 +45,9 @@ export function useRiderDetails(riderId) {
         isActive(p.pairing_start_date, p.pairing_end_date)
       );
       setPairings(activePair);
-      console.log('activePairing', activePair);
 
       // Extraire chevaux liés aux pairings
       const horseList = activePair.map((p) => p.horses).filter(Boolean);
-      console.log('horseList :', horseList);
       setHorses(horseList);
     } catch (err) {
       setError(err.message || String(err));

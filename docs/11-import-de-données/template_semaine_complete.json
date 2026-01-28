@@ -1,0 +1,392 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "event_type": "private_lesson",
+      "name": "Cours particulier",
+      "min_participants": 1,
+      "max_participants": 1
+    },
+    {
+      "id": 2,
+      "event_type": "group_lesson",
+      "name": "Cours collectif",
+      "min_participants": 2,
+      "max_participants": 6
+    },
+    {
+      "id": 3,
+      "event_type": "group_lesson",
+      "name": "Cours club (Saut)",
+      "min_participants": 3,
+      "max_participants": 8
+    },
+    {
+      "id": 4,
+      "event_type": "rest",
+      "name": "Repos",
+      "min_participants": 0,
+      "max_participants": 0
+    },
+    {
+      "id": 5,
+      "event_type": "training",
+      "name": "Entraînement",
+      "min_participants": 1,
+      "max_participants": 4
+    }
+  ],
+  "planning_slots": [
+    {
+      "id": 1,
+      "event_id": 1,
+      "slot_date": "2026-02-02",
+      "start_time": "09:00",
+      "end_time": "10:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 2,
+      "event_id": 1,
+      "slot_date": "2026-02-02",
+      "start_time": "10:00",
+      "end_time": "11:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 3,
+      "event_id": 2,
+      "slot_date": "2026-02-02",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 4,
+      "event_id": 3,
+      "slot_date": "2026-02-02",
+      "start_time": "15:00",
+      "end_time": "16:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 5,
+      "event_id": 1,
+      "slot_date": "2026-02-02",
+      "start_time": "16:00",
+      "end_time": "17:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 6,
+      "event_id": 4,
+      "slot_date": "2026-02-03",
+      "start_time": "00:00",
+      "end_time": "23:59",
+      "is_all_day": true,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 7,
+      "event_id": 4,
+      "slot_date": "2026-02-03",
+      "start_time": "00:00",
+      "end_time": "23:59",
+      "is_all_day": true,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 8,
+      "event_id": 1,
+      "slot_date": "2026-02-04",
+      "start_time": "13:00",
+      "end_time": "14:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 9,
+      "event_id": 2,
+      "slot_date": "2026-02-04",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 10,
+      "event_id": 1,
+      "slot_date": "2026-02-04",
+      "start_time": "17:00",
+      "end_time": "18:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 11,
+      "event_id": 5,
+      "slot_date": "2026-02-05",
+      "start_time": "18:00",
+      "end_time": "19:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 12,
+      "event_id": 1,
+      "slot_date": "2026-02-05",
+      "start_time": "19:00",
+      "end_time": "20:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 13,
+      "event_id": 2,
+      "slot_date": "2026-02-06",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 14,
+      "event_id": 1,
+      "slot_date": "2026-02-06",
+      "start_time": "15:00",
+      "end_time": "16:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 15,
+      "event_id": 1,
+      "slot_date": "2026-02-06",
+      "start_time": "16:00",
+      "end_time": "17:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 16,
+      "event_id": 2,
+      "slot_date": "2026-02-07",
+      "slot_date": "2026-02-07",
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 17,
+      "event_id": 1,
+      "slot_date": "2026-02-07",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 18,
+      "event_id": 1,
+      "slot_date": "2026-02-07",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 19,
+      "event_id": 1,
+      "slot_date": "2026-02-08",
+      "start_time": "15:00",
+      "end_time": "16:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 20,
+      "event_id": 1,
+      "slot_date": "2026-02-08",
+      "start_time": "16:00",
+      "end_time": "17:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    }
+  ],
+  "event_participants": [
+    {
+      "id": 1,
+      "planning_slot_id": 1,
+      "rider_name": "Charlotte",
+      "horse_name": "Zelda"
+    },
+    {
+      "id": 2,
+      "planning_slot_id": 2,
+      "rider_name": "Mathilde",
+      "horse_name": "Zelda"
+    },
+    {
+      "id": 3,
+      "planning_slot_id": 3,
+      "rider_name": "Léna",
+      "horse_name": "Héra"
+    },
+    {
+      "id": 4,
+      "planning_slot_id": 3,
+      "rider_name": "Océane",
+      "horse_name": "Nuits"
+    },
+    {
+      "id": 5,
+      "planning_slot_id": 3,
+      "rider_name": "Gabriel",
+      "horse_name": "Lady"
+    },
+    {
+      "id": 6,
+      "planning_slot_id": 4,
+      "rider_name": "Loana",
+      "horse_name": "Lady"
+    },
+    {
+      "id": 7,
+      "planning_slot_id": 4,
+      "rider_name": "Tiphaine",
+      "horse_name": "Bounty"
+    },
+    {
+      "id": 8,
+      "planning_slot_id": 4,
+      "rider_name": "Claire",
+      "horse_name": "Perfect"
+    },
+    {
+      "id": 9,
+      "planning_slot_id": 4,
+      "rider_name": "Maureen",
+      "horse_name": "Larsouille"
+    },
+    {
+      "id": 10,
+      "planning_slot_id": 5,
+      "rider_name": "Léna",
+      "horse_name": "Héra"
+    },
+    {
+      "id": 11,
+      "planning_slot_id": 6,
+      "rider_name": null,
+      "horse_name": "Perfect"
+    },
+    {
+      "id": 12,
+      "planning_slot_id": 7,
+      "rider_name": null,
+      "horse_name": "Drakkar"
+    },
+    {
+      "id": 13,
+      "planning_slot_id": 8,
+      "rider_name": "Léna",
+      "horse_name": "Lutèce"
+    },
+    {
+      "id": 14,
+      "planning_slot_id": 9,
+      "rider_name": "Loana",
+      "horse_name": "Lady"
+    },
+    {
+      "id": 15,
+      "planning_slot_id": 9,
+      "rider_name": "Léna",
+      "horse_name": "Héra"
+    },
+    {
+      "id": 16,
+      "planning_slot_id": 10,
+      "rider_name": "Myriam",
+      "horse_name": "Lady"
+    },
+    {
+      "id": 17,
+      "planning_slot_id": 11,
+      "rider_name": "Maureen",
+      "horse_name": "Larsouille"
+    },
+    {
+      "id": 18,
+      "planning_slot_id": 12,
+      "rider_name": "Charlotte",
+      "horse_name": "Zelda"
+    },
+    {
+      "id": 19,
+      "planning_slot_id": 13,
+      "rider_name": "Léna",
+      "horse_name": "Héra"
+    },
+    {
+      "id": 20,
+      "planning_slot_id": 13,
+      "rider_name": "Tiphaine",
+      "horse_name": "Bounty"
+    },
+    {
+      "id": 21,
+      "planning_slot_id": 14,
+      "rider_name": "Léna",
+      "horse_name": "Lutèce"
+    },
+    {
+      "id": 22,
+      "planning_slot_id": 15,
+      "rider_name": "Tiphaine",
+      "horse_name": "Bounty"
+    },
+    {
+      "id": 23,
+      "planning_slot_id": 16,
+      "rider_name": "Océane",
+      "horse_name": "Nuits"
+    },
+    {
+      "id": 24,
+      "planning_slot_id": 16,
+      "rider_name": "Charlotte",
+      "horse_name": "Zelda"
+    },
+    {
+      "id": 25,
+      "planning_slot_id": 17,
+      "rider_name": "Gabriel",
+      "horse_name": "Lady"
+    },
+    {
+      "id": 26,
+      "planning_slot_id": 18,
+      "rider_name": "Léna",
+      "horse_name": "Héra"
+    },
+    {
+      "id": 27,
+      "planning_slot_id": 19,
+      "rider_name": "Léna",
+      "horse_name": "Lutèce"
+    },
+    {
+      "id": 28,
+      "planning_slot_id": 20,
+      "rider_name": "Claire",
+      "horse_name": "Perfect"
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+/* ================================
+   RIDER USAGE CARDS — MODERN THEME
+   ================================ */
+
+/* Container principal */
+.rider-usage-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Header fixe */
+.rider-usage-header {
+  display: grid;
+  grid-template-columns: 220px 150px repeat(auto-fit, minmax(70px, 1fr)) 80px;
+  gap: 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-gray-150);
+  border-radius: var(--radius-lg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  align-items: center;
+}
+
+.header-rider,
+.header-usage-type,
+.header-week,
+.header-total {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-gray-500);
+  font-weight: 600;
+}
+
+.header-rider {
+  text-align: left;
+  padding-right: var(--spacing-md);
+}
+
+.header-usage-type {
+  text-align: left;
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-sm);
+}
+
+.header-week {
+  text-align: center;
+  padding: 0 var(--spacing-sm);
+}
+
+.header-total {
+  text-align: center;
+  padding-left: var(--spacing-sm);
+}
+
+/* Séparateur dans le header */
+.rider-usage-header::after {
+  content: '';
+  grid-column: 2;
+  width: 1px;
+  height: 100%;
+  background: var(--color-primary-lighter);
+}
+
+/* Carte par cavalier */
+.rider-usage-card {
+  display: grid;
+  grid-template-columns: 220px 1px 1fr;
+  gap: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  align-items: stretch;
+}
+
+.rider-usage-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-primary-light);
+}
+
+/* Section nom du cavalier */
+.card-rider-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-card);
+}
+
+.cell-rider-name {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  align-items: center;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  font-size: 0.95rem;
+}
+
+.rider-package-info {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin-top: var(--spacing-xs);
+}
+
+/* Séparateur vertical */
+.card-separator {
+  width: 1px;
+  background: var(--color-primary-lighter);
+}
+
+/* Section consommation */
+.card-usage-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ligne dans la section consommation */
+.card-row {
+  display: grid;
+  grid-template-columns: 150px repeat(auto-fit, minmax(70px, 1fr)) 80px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  align-items: center;
+  transition: background-color 0.15s ease;
+}
+
+.card-row:not(:last-child) {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.card-row:hover {
+  background: var(--color-primary-lighter);
+}
+
+/* Ligne warning (dépassements) */
+.card-row-warning {
+  background: var(--color-danger-light);
+}
+
+.card-row-warning:hover {
+  background: var(--color-danger-light);
+}
+
+/* Cellule type de consommation */
+.cell-usage-type {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding-right: var(--spacing-sm);
+  font-size: 0.85rem;
+}
+
+.cell-usage-type .icon-xs {
+  width: 14px;
+  height: 14px;
+  color: var(--color-gray-700);
+}
+
+/* Cellule semaine */
+.cell-week {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Cellule total */
+.cell-total {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: var(--spacing-sm);
+}
+
+/* Total count */
+.count-total {
+  color: var(--color-primary);
+  font-size: 0.95rem;
+}
+
+.count-total.error {
+  color: var(--color-danger);
+}
+
+/* Text muted */
+.text-muted {
+  color: var(--color-gray-500);
+  font-weight: 400;
+}
+
+/* Animation d'entrée */
+.rider-usage-card {
+  animation: fadeSlideIn 0.3s ease-out backwards;
+}
+
+.rider-usage-card:nth-child(2) {
+  animation-delay: 0.03s;
+}
+.rider-usage-card:nth-child(3) {
+  animation-delay: 0.06s;
+}
+.rider-usage-card:nth-child(4) {
+  animation-delay: 0.09s;
+}
+.rider-usage-card:nth-child(5) {
+  animation-delay: 0.12s;
+}
+.rider-usage-card:nth-child(n + 6) {
+  animation-delay: 0.15s;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--spacing-xs);
+  }
+  /* Header fixe */
+  .rider-usage-header {
+    display: none;
+  }
+
+  .rider-usage-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-usage-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Ligne dans la section consommation */
+  .card-row,
+  .card-separator {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20px repeat(auto-fit, minmax(20px, 40px));
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-xs);
+  }
+
+  .cell-week {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    gap: 0;
+    margin: 0;
+  }
+
+  .header-rider,
+  .header-usage-type,
+  .header-week,
+  .header-total {
+    font-size: 0.7rem;
+    text-transform: capitalize;
+    color: var(--color-gray-500);
+    font-weight: 400;
+    text-align: center;
+    padding: 0 var(--spacing-xs);
+  }
+
+  .count-pill.warning {
+    font-weight: 400;
+    font-size: small;
+  }
+}

@@ -16,7 +16,8 @@ import {
 /**
  * GET /api/stats/weekly?month=YYYY-MM
  * Returns weekly usage per rider (services / private lessons / extras)
- * Simplified version using rider_usage_weekly view
+ * Simplified version using rider_usage_weekly view with rider_type
+ * APPROACH 2: Two separate queries if view doesn't support joins
  */
 export async function handleRiderUsageWeekly(request, env) {
   if (request.method !== 'GET') {
@@ -25,6 +26,7 @@ export async function handleRiderUsageWeekly(request, env) {
 
   const url = new URL(request.url);
   const monthParam = url.searchParams.get('month');
+
   if (!monthParam || !/^\d{4}-\d{2}$/.test(monthParam)) {
     return handleValidationError(
       'Paramètre "month" requis au format YYYY-MM',
@@ -44,7 +46,6 @@ export async function handleRiderUsageWeekly(request, env) {
     // Determine weeks for the month (including partial weeks)
     const firstWeekStart = startOfWeek(monthStart, { weekStartsOn: 1 });
     const lastWeekEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
-
     const weeks = eachWeekOfInterval(
       { start: firstWeekStart, end: lastWeekEnd },
       { weekStartsOn: 1 }
@@ -59,18 +60,37 @@ export async function handleRiderUsageWeekly(request, env) {
 
     if (usageError) return handleDatabaseError(usageError, 'riderWeeklyUsage.fetch', env);
 
+    // Extract unique rider IDs
+    const riderIds = [...new Set((weeklyUsage || []).map((row) => row.rider_id))];
+
+    // Fetch rider types for these IDs
+    const { data: riders, error: ridersError } = await db
+      .from('riders')
+      .select('id, rider_type')
+      .in('id', riderIds);
+
+    if (ridersError) return handleDatabaseError(ridersError, 'riderWeeklyUsage.fetchRiders', env);
+
+    // Create rider_type lookup map
+    const riderTypeMap = (riders || []).reduce((acc, rider) => {
+      acc[rider.id] = rider.rider_type;
+      return acc;
+    }, {});
+
     // Group by rider
     const ridersMap = {};
-    weeklyUsage.forEach((row) => {
+    (weeklyUsage || []).forEach((row) => {
       if (!ridersMap[row.rider_id]) {
         ridersMap[row.rider_id] = {
           riderId: row.rider_id,
           riderName: row.rider_name,
+          riderType: riderTypeMap[row.rider_id] || null, // ✅ ADD rider_type from lookup
           servicesPerWeek: row.services_per_week,
           privateLessonsPerWeek: row.private_lessons_per_week,
           weeks: [],
         };
       }
+
       ridersMap[row.rider_id].weeks.push({
         weekStart: format(row.week_start, 'yyyy-MM-dd'),
         servicesConsumed: Number(row.services_consumed),

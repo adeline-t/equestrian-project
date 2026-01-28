@@ -16,7 +16,6 @@ export default function BlockedEventDisplay({ slot, event, recurrence }) {
 
   const instructorConfig = getInstructorConfig(event.instructor_id);
   const statusConfig = getStatusConfig(slot.slot_status);
-  console.log(statusConfig);
 
   return (
     <div className="modal-content-scrollable">

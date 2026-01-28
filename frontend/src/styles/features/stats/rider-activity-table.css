@@ -1,0 +1,249 @@
+/* Container principal */
+.rider-activity-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background: var(--color-primary-lighter);
+  border: 1px solid var(--color-border-dark);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+}
+
+/* Header fixe */
+.rider-activity-header {
+  display: grid;
+  grid-template-columns: 200px 200px repeat(auto-fit, minmax(100px, 1fr));
+  margin: 5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  align-items: center;
+}
+
+.header-rider,
+.header-event-type,
+.header-week {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.header-rider {
+  text-align: center;
+  padding-right: var(--spacing-md);
+}
+
+.header-event-type {
+  text-align: left;
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-sm);
+}
+
+.header-week {
+  text-align: center;
+  padding: 0 var(--spacing-sm);
+}
+
+/* Carte par cavalier */
+.rider-activity-card {
+  display: grid;
+  grid-template-columns: 200px 1px 1fr;
+  gap: 0;
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.rider-activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hover-shadow);
+  border: 1px solid var(--color-primary-light);
+}
+
+/* Section nom du cavalier - à gauche */
+.card-rider-section {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-card);
+}
+
+.cell-rider-name {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  align-items: center;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+/* Séparateur vertical */
+.card-separator {
+  width: 1px;
+  background: var(--color-gray-200);
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* Section événements - à droite */
+.card-events-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ligne dans la section événements */
+.card-row {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 180px repeat(auto-fit, minmax(70px, 1fr));
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  align-items: center;
+}
+
+.card-row:hover {
+  background: var(--hover-bg);
+}
+
+/* Ligne total */
+.card-row-total {
+  color: var(--color-primary-light);
+  background: var(--color-white);
+  border-top: 2px solid var(--color-primary-lighter);
+}
+
+.card-row-total:hover {
+  background: var(--accent-soft);
+}
+
+/* Cellule type d'événement */
+.cell-event-type {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  padding-right: var(--spacing-sm);
+}
+
+/* Count pills */
+.count-pill {
+  background: none;
+  padding: 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+}
+
+.count-pill.active {
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.count-pill.active:hover {
+  transform: scale(1.15);
+}
+
+.count-pill.empty {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+/* Total count */
+.count-total {
+  color: var(--color-primary-light);
+  font-size: 0.95rem;
+}
+/* Badge adjustments */
+.cell-event-type .badge-small {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Animation d'entrée */
+.rider-activity-card {
+  animation: fadeSlideIn 0.3s ease-out backwards;
+}
+
+.rider-activity-card:nth-child(2) {
+  animation-delay: 0.03s;
+}
+.rider-activity-card:nth-child(3) {
+  animation-delay: 0.06s;
+}
+.rider-activity-card:nth-child(4) {
+  animation-delay: 0.09s;
+}
+.rider-activity-card:nth-child(5) {
+  animation-delay: 0.12s;
+}
+.rider-activity-card:nth-child(n + 6) {
+  animation-delay: 0.15s;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .data-card-title,
+  .info-card-title,
+  .info-card-header h3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    flex: 1;
+  }
+
+  .data-card-title,
+  .detail-card-meta {
+    font-weight: var(--font-weight-normal);
+    font-size: italic;
+  }
+
+  /* Count pills */
+  .count-pill {
+    background: none;
+    padding: 0 2px;
+    font-size: 0.8rem;
+    font-weight: 400;
+    display: inline-block;
+    min-width: 16px;
+    text-align: center;
+  }
+
+  .count-pill.active {
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  .count-pill.active:hover {
+    transform: none;
+  }
+
+  .count-pill.empty {
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+}

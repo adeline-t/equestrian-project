@@ -1,0 +1,358 @@
+/* ===================================
+   EVENT TYPE SLOTS SECTION
+   ================================== */
+
+.event-type-slots-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Filtres */
+.section-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type='checkbox'] {
+  cursor: pointer;
+}
+
+/* Grille de cards */
+.event-type-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+/* ===================================
+   EVENT TYPE CARD
+   ================================== */
+
+.event-type-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.event-type-card:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* En-tête de la card */
+.event-type-card-header {
+  padding: var(--spacing-lg);
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.event-type-info {
+  margin-bottom: var(--spacing-md);
+}
+
+.event-type-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs);
+}
+
+.stat-value {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stat-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-divider {
+  color: var(--color-text-disabled);
+  font-weight: 300;
+}
+
+/* Corps de la card */
+.event-type-card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================================
+   WEEK ROW
+   ================================== */
+
+.week-row {
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.week-row:last-child {
+  border-bottom: none;
+}
+
+.week-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  transition: background 0.2s ease;
+}
+
+.week-row-header.clickable {
+  cursor: pointer;
+}
+
+.week-row-header.clickable:hover {
+  background: var(--color-bg-subtle);
+}
+
+.week-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.week-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.week-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.week-count {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.week-count-empty {
+  font-size: var(--text-sm);
+  color: var(--color-text-disabled);
+  font-style: italic;
+}
+
+.expand-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.expand-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Détails de la semaine */
+.week-row-details {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md);
+  background: var(--color-bg-subtle);
+  border-top: 1px solid var(--color-border-light);
+}
+
+.slot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.slot-item:last-child {
+  margin-bottom: 0;
+}
+
+.slot-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.slot-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.slot-name {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-participants {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-primary-bg);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.participants-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--color-primary);
+}
+
+.participants-count {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* ===================================
+   RESPONSIVE
+   ================================== */
+
+@media (max-width: 768px) {
+  .event-type-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-type-card-header {
+    padding: var(--spacing-md);
+  }
+
+  .week-row-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .week-row-details {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .stat-value {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .week-row-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .week-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .slot-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .slot-participants {
+    align-self: flex-end;
+  }
+}
+/* Groupe slot + participants */
+.slot-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.slot-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Détails des participants */
+.slot-participants-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs);
+  padding-left: calc(14px + var(--spacing-sm) + var(--spacing-sm)); /* Aligné avec le nom du slot */
+  margin-top: var(--spacing-xs);
+}
+
+.participant-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  padding: var(--spacing-2xs) var(--spacing-sm);
+  background: var(--color-bg);
+  border-radius: var(--radius-xs);
+}
+
+.participant-rider {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.participant-separator {
+  color: var(--color-text-disabled);
+}
+
+.participant-horse {
+  color: var(--color-text-muted);
+}
+
+/* Ligne de filtres avec boutons d'export */
+.filters-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.export-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .export-buttons {
+    width: 100%;
+  }
+
+  .export-buttons button {
+    flex: 1;
+  }
+}

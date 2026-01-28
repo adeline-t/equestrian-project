@@ -8,10 +8,17 @@
      ============================================ */
 
   /* ---------- Primary ---------- */
-  --color-primary: #007bff;
-  --color-primary-dark: #0056b3;
-  --color-primary-light: #667eea;
-  --color-primary-purple: #764ba2;
+  /* =========================
+     COLORS - Primary
+     ========================= */
+  --color-primary: #007bff;             /* couleur principale */
+  --color-primary-light: #667eea;       /* clair */
+  --color-primary-lighter: #e9edf9;     /* très clair, pour backgrounds ou survol */
+  --color-primary-dark: #0056b3;        /* foncé, pour texte ou état actif */
+  --color-primary-darker: #003d80;      /* très foncé, pour contraste fort */
+  --color-primary-purple: #764ba2;      /* variante pour accents */
+  --color-primary-transparent: rgba(0,123,255,0.1);  /* version transparente */
+  --color-primary-gradient: linear-gradient(90deg, #007bff, #764ba2); /* dégradé */
 
   --gradient-primary: linear-gradient(
     135deg,

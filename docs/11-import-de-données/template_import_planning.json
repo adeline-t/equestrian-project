@@ -1,0 +1,80 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "event_type": "private_lesson",
+      "name": "Cours particulier",
+      "min_participants": 1,
+      "max_participants": 1
+    },
+    {
+      "id": 2,
+      "event_type": "group_lesson",
+      "name": "Cours collectif débutants",
+      "min_participants": 2,
+      "max_participants": 6
+    },
+    {
+      "id": 3,
+      "event_type": "rest",
+      "name": "Repos",
+      "min_participants": 0,
+      "max_participants": 0
+    }
+  ],
+  "planning_slots": [
+    {
+      "id": 1,
+      "event_id": 1,
+      "slot_date": "2026-01-29",
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 2,
+      "event_id": 2,
+      "slot_date": "2026-01-29",
+      "start_time": "15:00",
+      "end_time": "16:00",
+      "is_all_day": false,
+      "slot_status": "scheduled"
+    },
+    {
+      "id": 3,
+      "event_id": 3,
+      "slot_date": "2026-01-29",
+      "start_time": "00:00",
+      "end_time": "23:59",
+      "is_all_day": true,
+      "slot_status": "scheduled"
+    }
+  ],
+  "event_participants": [
+    {
+      "id": 1,
+      "planning_slot_id": 1,
+      "rider_name": "Charlotte",
+      "horse_name": "Zelda"
+    },
+    {
+      "id": 2,
+      "planning_slot_id": 2,
+      "rider_name": "Léna",
+      "horse_name": "Héra"
+    },
+    {
+      "id": 3,
+      "planning_slot_id": 2,
+      "rider_name": "Océane",
+      "horse_name": "Nuits"
+    },
+    {
+      "id": 4,
+      "planning_slot_id": 3,
+      "rider_name": null,
+      "horse_name": "Perfect"
+    }
+  ]
+}
