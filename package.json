@@ -5,6 +5,7 @@
   "devDependencies": {
     "@types/node": "^25.0.9",
     "knip": "^5.82.1",
+    "terser": "^5.46.0",
     "typescript": "^5.9.3"
   },
   "scripts": {
