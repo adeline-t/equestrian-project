@@ -1,8 +1,12 @@
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
 import { CALENDAR_CONFIG } from '../../../lib/domain/calendar';
-import { calculateOverlapColumns, calculateSlotPositionWithColumns } from '../../../lib/domain/calendar-overlap';
+import {
+  calculateOverlapColumns,
+  calculateSlotPositionWithColumns,
+} from '../../../lib/domain/calendar-overlap';
 import SlotCard from '../shared/SlotCard';
+import { isBlockedEvent } from '../../../lib/domain';
 
 /**
  * DesktopDayGrid - Grille horaire avec marqueurs et événements
@@ -15,6 +19,10 @@ export default function DesktopDayGrid({ slots, onSlotClick, isSelecting, select
   const slotsWithColumns = useMemo(() => {
     return calculateOverlapColumns(slots || []);
   }, [slots]);
+
+  const handleSlotClick = (slot) => {
+    onSlotClick?.(slot, isBlockedEvent(slot.events));
+  };
 
   return (
     <div className="desktop-day-grid">
@@ -46,17 +54,19 @@ export default function DesktopDayGrid({ slots, onSlotClick, isSelecting, select
             if (!style) return null;
 
             return (
-              <div 
-                key={slot.id} 
-                className="desktop-day-grid__event-wrapper" 
+              <div
+                key={slot.id}
+                className="desktop-day-grid__event-wrapper"
                 style={style}
                 data-has-overlap={slot.totalColumns > 1}
                 data-column-count={slot.totalColumns}
               >
-                <SlotCard 
-                  slot={slot} 
-                  variant="desktop-grid" 
-                  onClick={onSlotClick}
+                <SlotCard
+                  slot={slot}
+                  variant="desktop-grid"
+                  onClick={() => {
+                    handleSlotClick(slot);
+                  }}
                   isNarrow={slot.totalColumns > 1}
                 />
               </div>

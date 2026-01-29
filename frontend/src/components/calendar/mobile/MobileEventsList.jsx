@@ -3,12 +3,17 @@ import { format, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import SlotCard from '../shared/SlotCard';
 import EmptyState from '../shared/EmptyState';
+import { isBlockedEvent } from '../../../lib/domain';
 
 /**
  * MobileEventsList - Liste des événements du jour sélectionné
  */
 export default function MobileEventsList({ selectedDate, allDaySlots, timedSlots, onSlotClick }) {
   const hasNoEvents = allDaySlots.length === 0 && timedSlots.length === 0;
+
+  const handleSlotClick = (slot) => {
+    onSlotClick?.(slot, isBlockedEvent(slot.events));
+  };
 
   return (
     <div className="mobile-events-list">
@@ -24,7 +29,14 @@ export default function MobileEventsList({ selectedDate, allDaySlots, timedSlots
       {allDaySlots.length > 0 && (
         <div className="mobile-events-list__allday-section">
           {allDaySlots.map((slot) => (
-            <SlotCard key={slot.id} slot={slot} variant="mobile-allday" onClick={onSlotClick} />
+            <SlotCard
+              key={slot.id}
+              slot={slot}
+              variant="mobile-allday"
+              onClick={() => {
+                handleSlotClick(slot);
+              }}
+            />
           ))}
         </div>
       )}
@@ -33,7 +45,14 @@ export default function MobileEventsList({ selectedDate, allDaySlots, timedSlots
       {timedSlots.length > 0 ? (
         <div className="mobile-events-list__timed-section">
           {timedSlots.map((slot) => (
-            <SlotCard key={slot.id} slot={slot} variant="mobile-timed" onClick={onSlotClick} />
+            <SlotCard
+              key={slot.id}
+              slot={slot}
+              variant="mobile-timed"
+              onClick={() => {
+                handleSlotClick(slot);
+              }}
+            />
           ))}
         </div>
       ) : hasNoEvents ? (

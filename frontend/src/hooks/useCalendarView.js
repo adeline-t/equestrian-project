@@ -84,6 +84,7 @@ export function useCalendarView() {
    * SLOT / EVENT MODAL HANDLERS
    * ----------------------------------------------------- */
   const handleSlotClick = useCallback((slot, isSlotEventBlocked) => {
+    console.log('handleSlotClick', slot, isSlotEventBlocked);
     setSelectedSlot(slot);
     setIsSelectedSlotBlocked(isSlotEventBlocked);
     setShowSlotModal(true);
