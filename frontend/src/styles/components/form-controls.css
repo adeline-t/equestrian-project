@@ -2,7 +2,24 @@
    FORM CONTROLS - Contrôles avancés
    Segmented controls, inline forms, validation, actions
    ============================================ */
+/* ============================================
+   FORM GROUP HEADER WITH FILTER
+   ============================================ */
 
+.form-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.form-group-header label {
+  margin-bottom: 0;
+}
+
+.form-group-header .btn-icon-modern {
+  flex-shrink: 0;
+}
 /* ============================================
    SEGMENTED CONTROL
    ============================================ */

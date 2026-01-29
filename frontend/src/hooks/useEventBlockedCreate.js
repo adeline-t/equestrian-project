@@ -12,8 +12,8 @@ import { getTodayISO } from '../lib/helpers/index.js';
 export function useEventBlockedCreate() {
   const [formData, setFormData] = useState({
     slot_date: getTodayISO(),
-    start_time: '09:00',
-    end_time: '10:00',
+    start_time: '16:00',
+    end_time: '17:00',
     is_all_day: false,
     slot_status: SLOT_STATUSES.SCHEDULED,
     event_type: EVENT_TYPES.BLOCKED,
@@ -40,11 +40,11 @@ export function useEventBlockedCreate() {
     [formData.name, formData.slot_date, formData.start_time, formData.is_all_day]
   );
 
-  const resetForm = useCallback((initialDate) => {
+  const resetForm = useCallback(() => {
     setFormData({
-      slot_date: initialDate || getTodayISO(),
-      start_time: '09:00',
-      end_time: '10:00',
+      slot_date: getTodayISO(),
+      start_time: '16:00',
+      end_time: '17:00',
       is_all_day: false,
       slot_status: SLOT_STATUSES.SCHEDULED,
       event_type: EVENT_TYPES.BLOCKED,
@@ -60,14 +60,7 @@ export function useEventBlockedCreate() {
 
     try {
       setLoading(true);
-
-      // Generate final name
-      const dateStr = format(new Date(formData.slot_date), 'dd/MM', { locale: fr });
-      const finalName =
-        formData.name ||
-        (formData.is_all_day
-          ? `Bloqué - ${dateStr}`
-          : `Bloqué - ${dateStr} ${formData.start_time}`);
+      const finalName = formData.name;
 
       // ⚠️ STEP 1: Create EVENT first (required for foreign key constraint)
       const eventPayload = {

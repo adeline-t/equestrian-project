@@ -4,16 +4,9 @@ import { Icons } from '../../../../lib/icons';
 import Modal from '../../../common/Modal';
 import BlockedTimeForm from './BlockedTimeForm';
 
-function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
+function CreateBlockedTimeModal({ onClose, onSuccess }) {
   const { formData, handleChange, setFormData, loading, error, createBlockedTime } =
     useEventBlockedCreate();
-
-  // Initialize date when modal opens
-  useEffect(() => {
-    if (initialDate) {
-      setFormData((prev) => ({ ...prev, slot_date: initialDate }));
-    }
-  }, [initialDate, setFormData]);
 
   const handleSubmit = async () => {
     const result = await createBlockedTime();
@@ -62,8 +55,8 @@ function CreateBlockedTimeModal({ onClose, onSuccess, initialDate }) {
               </>
             ) : (
               <>
-                <Icons.Blocked />
-                Bloquer
+                <Icons.Add />
+                Bloquer le créneau
               </>
             )}
           </button>

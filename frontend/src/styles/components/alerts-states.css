@@ -11,12 +11,17 @@
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* Changé de flex-start à center */
   gap: var(--spacing-sm);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
   border-left: 4px solid;
   margin-bottom: var(--spacing-md);
+}
+
+/* Si l'alerte contient plusieurs lignes de texte, revenir à flex-start */
+.alert.multiline {
+  align-items: flex-start;
 }
 
 .alert-info {

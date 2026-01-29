@@ -98,6 +98,7 @@ export const Icons = {
   Import: FaFileImport,
   Export: FaFileExport,
   File: FaFile,
+  Filter: FaFilter,
 };
 
 export const renderIcon = (Icon, props = {}) => {

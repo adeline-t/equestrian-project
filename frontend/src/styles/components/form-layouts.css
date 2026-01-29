@@ -10,7 +10,7 @@
 .entity-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 0;
 }
 
 /* ============================================
@@ -21,9 +21,9 @@
   background: var(--gradient-light);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   transition: all var(--transition-base);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .form-section:hover {
@@ -37,7 +37,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
   border-bottom: 1px solid var(--color-border);
-  margin: 0 0 var(--spacing-md) 0;
+  margin: 0 0 var(--spacing-xs) 0;
   padding-bottom: var(--spacing-sm);
 }
 
@@ -98,8 +98,8 @@
    ============================================ */
 
 .entity-form .modal-footer {
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-lg);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
   border-top: 2px solid var(--color-border-light);
 }
 

@@ -12,7 +12,7 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
 
   // Participants logic
   const participantList = useParticipantList();
-  const { participants, addParticipant, removeParticipant, updateParticipant } = participantList;
+  const { participants, addParticipant, removeParticipant } = participantList;
 
   const handleSubmit = async () => {
     const result = await createEvent(participants);
@@ -54,10 +54,9 @@ function CreateEventModal({ onClose, onSuccess, initialDate, initialStartTime, i
           <div className="layout-main-content">
             <ParticipantsForm
               participants={participants}
-              canAddParticipant={true}
+              canAddParticipant={participants.length < formData.max_participants}
               addParticipant={addParticipant}
               removeParticipant={removeParticipant}
-              updateParticipant={updateParticipant}
             />
           </div>
         </div>

@@ -197,7 +197,6 @@ main {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: var(--spacing-lg);
-  margin-top: var(--spacing-md);
 }
 .layout-grid-content.event {
   grid-template-columns: 1fr 1fr;

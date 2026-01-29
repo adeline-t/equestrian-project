@@ -34,33 +34,6 @@ export function useParticipantList(initialParticipants = []) {
     setParticipants((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
-  const updateParticipant = useCallback(
-    (id, riderId, horseId, horseAssignmentType = HORSE_ASSIGNMENT_TYPES.MANUAL) => {
-      setParticipants((prev) => {
-        // Prevent duplicate rider + horse combinations (excluding current participant)
-        const hasDuplicate = prev.some(
-          (p) => p.id !== id && p.rider_id === riderId && p.horse_id === horseId
-        );
-
-        if (hasDuplicate) {
-          return prev;
-        }
-
-        return prev.map((p) =>
-          p.id === id
-            ? {
-                ...p,
-                rider_id: riderId,
-                horse_id: horseId,
-                horse_assignment_type: horseAssignmentType,
-              }
-            : p
-        );
-      });
-    },
-    []
-  );
-
   const clearParticipants = useCallback(() => {
     setParticipants([]);
   }, []);
@@ -69,7 +42,6 @@ export function useParticipantList(initialParticipants = []) {
     participants,
     addParticipant,
     removeParticipant,
-    updateParticipant,
     clearParticipants,
   };
 }

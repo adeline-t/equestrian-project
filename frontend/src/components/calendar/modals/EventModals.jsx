@@ -58,12 +58,8 @@ export default function EventModals({
       )}
 
       {/* Modale de création de temps bloqué */}
-      {showCreateBlockedModal && createEventData && (
-        <CreateBlockedTimeModal
-          initialDate={createEventData.date}
-          onClose={onCloseCreateBlockedModal}
-          onSuccess={onModalSuccess}
-        />
+      {showCreateBlockedModal && (
+        <CreateBlockedTimeModal onClose={onCloseCreateBlockedModal} onSuccess={onModalSuccess} />
       )}
 
       {/* Modale des événements planifiés */}
