@@ -5,12 +5,7 @@ import { useAppMode } from '../../../context/AppMode';
 /**
  * MobileActionBar - Barre d'actions fixe en bas (mobile uniquement)
  */
-export default function MobileActionBar({
-  onCreateEvent,
-  onCreateBlockedTime,
-  onShowScheduled,
-  onShowImport,
-}) {
+export default function MobileActionBar({ onCreateEvent, onCreateBlockedTime, onShowScheduled }) {
   const { mode } = useAppMode();
 
   return (
@@ -54,5 +49,4 @@ MobileActionBar.propTypes = {
   onCreateEvent: PropTypes.func.isRequired,
   onCreateBlockedTime: PropTypes.func.isRequired,
   onShowScheduled: PropTypes.func.isRequired,
-  onShowImport: PropTypes.func.isRequired,
 };

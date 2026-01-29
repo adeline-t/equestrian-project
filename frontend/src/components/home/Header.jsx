@@ -3,6 +3,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import AdminModal from './AdminPasswordModal';
 import RiderSelectorModal from './RiderSelectorModal';
 import RiderCard from '../riders/RiderCard';
+import AdminMenu from './AdminMenu';
+import ImportPlanningModal from './ImportPlanningModal';
+import ExportPlanningModal from './ExportPlanningModal';
 import { useAppMode } from '../../context/AppMode';
 import { useCurrentRider } from '../../hooks/useCurrrentRider';
 import { Icons } from '../../lib/icons';
@@ -17,6 +20,9 @@ export default function Header() {
   const [isRiderModalOpen, setRiderModalOpen] = useState(mode === 'user' && !rider);
   const [selectedRiderId, setSelectedRiderId] = useState(null);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Ouvre automatiquement la modale rider si mode user et aucun rider sélectionné
   useEffect(() => {
@@ -48,6 +54,37 @@ export default function Header() {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleOpenAdminMenu = () => {
+    setAdminMenuOpen(true);
+    setMobileMenuOpen(false);
+  };
+
+  const handleCloseAdminMenu = () => {
+    setAdminMenuOpen(false);
+  };
+
+  const handleOpenImport = () => {
+    setShowImportModal(true);
+  };
+
+  const handleCloseImport = () => {
+    setShowImportModal(false);
+  };
+
+  const handleImportSuccess = () => {
+    handleCloseImport();
+    // Rafraîchir la page ou les données nécessaires
+    window.location.reload();
+  };
+
+  const handleOpenExport = () => {
+    setShowExportModal(true);
+  };
+
+  const handleCloseExport = () => {
+    setShowExportModal(false);
+  };
+
   return (
     <>
       <header className="header">
@@ -65,9 +102,13 @@ export default function Header() {
 
             {/* Mode badge mobile */}
             {mode === 'admin' ? (
-              <div className="mode-badge-mobile mode-admin">
+              <button
+                className="mode-badge-mobile mode-admin"
+                onClick={handleOpenAdminMenu}
+                title="Administration"
+              >
                 <Icons.Settings />
-              </div>
+              </button>
             ) : (
               <button
                 className="mode-badge-mobile mode-user"
@@ -109,9 +150,13 @@ export default function Header() {
 
               {/* Label de mode desktop */}
               {mode === 'admin' ? (
-                <div className="mode-label mode-admin">
+                <button
+                  className="mode-label mode-admin admin-btn"
+                  onClick={handleOpenAdminMenu}
+                  title="Administration"
+                >
                   <Icons.Settings className="icon-small" /> Admin
-                </div>
+                </button>
               ) : (
                 <button
                   className="mode-label mode-user rider-badge-btn"
@@ -146,6 +191,18 @@ export default function Header() {
                   <div className="mobile-user-info">
                     <span className="mobile-user-name">{rider.name}</span>
                     <span className="mobile-user-label">Voir mon profil</span>
+                  </div>
+                  <Icons.ChevronRight />
+                </button>
+              )}
+
+              {/* Admin button */}
+              {mode === 'admin' && (
+                <button className="mobile-admin-card" onClick={handleOpenAdminMenu}>
+                  <Icons.Settings className="mobile-admin-icon" />
+                  <div className="mobile-admin-info">
+                    <span className="mobile-admin-name">Administration</span>
+                    <span className="mobile-admin-label">Import / Export</span>
                   </div>
                   <Icons.ChevronRight />
                 </button>
@@ -218,6 +275,7 @@ export default function Header() {
       )}
 
       <AdminModal isOpen={isAdminModalOpen} onClose={() => setAdminModalOpen(false)} />
+
       <RiderSelectorModal
         isOpen={mode === 'user' && !rider && isRiderModalOpen}
         onClose={() => setRiderModalOpen(false)}
@@ -236,6 +294,23 @@ export default function Header() {
           onDelete={() => setSelectedRiderId(null)}
         />
       )}
+
+      {/* AdminMenu - juste un menu de navigation */}
+      <AdminMenu
+        isOpen={isAdminMenuOpen}
+        onClose={handleCloseAdminMenu}
+        onOpenImport={handleOpenImport}
+        onOpenExport={handleOpenExport}
+      />
+
+      {/* Modales d'import/export - gérées au niveau du Header */}
+      <ImportPlanningModal
+        isOpen={showImportModal}
+        onClose={handleCloseImport}
+        onSuccess={handleImportSuccess}
+      />
+
+      <ExportPlanningModal isOpen={showExportModal} onClose={handleCloseExport} />
     </>
   );
 }

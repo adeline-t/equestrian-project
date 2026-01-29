@@ -15,7 +15,6 @@ export default function MobileCalendarView({
   onCreateEvent,
   onCreateBlockedTime,
   onShowScheduled,
-  onShowImport,
   currentDate,
 }) {
   const [selectedDate, setSelectedDate] = useState(currentDate || new Date());
@@ -94,7 +93,6 @@ export default function MobileCalendarView({
         onCreateEvent={onCreateEvent}
         onCreateBlockedTime={onCreateBlockedTime}
         onShowScheduled={onShowScheduled}
-        onShowImport={onShowImport}
       />
     </div>
   );
@@ -113,6 +111,5 @@ MobileCalendarView.propTypes = {
   onCreateEvent: PropTypes.func.isRequired,
   onCreateBlockedTime: PropTypes.func.isRequired,
   onShowScheduled: PropTypes.func.isRequired,
-  onShowImport: PropTypes.func.isRequired,
   currentDate: PropTypes.instanceOf(Date),
 };

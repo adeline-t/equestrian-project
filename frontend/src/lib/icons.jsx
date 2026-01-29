@@ -41,6 +41,9 @@ import {
   FaChartBar,
   FaBars, // ✨ NOUVEAU
   FaSignOutAlt,
+  FaFileImport,
+  FaFileExport,
+  FaFile,
 } from 'react-icons/fa';
 
 export const Icons = {
@@ -92,6 +95,9 @@ export const Icons = {
   Menu: FaBars,
   X: FaTimes, // (alias de Close)
   LogOut: FaSignOutAlt,
+  Import: FaFileImport,
+  Export: FaFileExport,
+  File: FaFile,
 };
 
 export const renderIcon = (Icon, props = {}) => {

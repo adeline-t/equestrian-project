@@ -14,7 +14,6 @@ import MobileCalendarView from './mobile/MobileCalendarView';
 
 // Modales
 import EventModals from './modals/EventModals';
-import ImportPlanningModal from '../home/ImportPlanningModal';
 
 /**
  * CalendarError - État d'erreur
@@ -58,8 +57,6 @@ function CalendarLoading() {
  * - Orchestration desktop/mobile
  */
 function CalendarView() {
-  const [showImportModal, setShowImportModal] = useState(false);
-
   // Hook custom qui gère toute la logique métier
   const {
     weekData,
@@ -94,14 +91,6 @@ function CalendarView() {
     loadWeekData,
   } = useCalendarView();
 
-  // Handlers pour la modale d'import
-  const handleShowImport = () => setShowImportModal(true);
-  const handleCloseImport = () => setShowImportModal(false);
-  const handleImportSuccess = () => {
-    loadWeekData();
-    handleCloseImport();
-  };
-
   // États de chargement/erreur
   if (loading) return <CalendarLoading />;
   if (error) return <CalendarError error={error} onRetry={loadWeekData} />;
@@ -123,7 +112,6 @@ function CalendarView() {
         onCreateEvent={handleCreateEvent}
         onCreateBlockedTime={handleCreateBlockedTime}
         onShowScheduled={handleShowScheduled}
-        onShowImport={handleShowImport}
       />
 
       {/* Vue desktop */}
@@ -140,7 +128,6 @@ function CalendarView() {
         onCreateEvent={handleCreateEvent}
         onCreateBlockedTime={handleCreateBlockedTime}
         onShowScheduled={handleShowScheduled}
-        onShowImport={handleShowImport}
         currentDate={new Date()}
       />
 
@@ -158,13 +145,6 @@ function CalendarView() {
         onCloseCreateBlockedModal={closeCreateBlockedModal}
         onCloseScheduledModal={closeScheduledModal}
         onModalSuccess={handleModalSuccess}
-      />
-
-      {/* Modale d'import */}
-      <ImportPlanningModal
-        isOpen={showImportModal}
-        onClose={handleCloseImport}
-        onSuccess={handleImportSuccess}
       />
     </div>
   );

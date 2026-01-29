@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useImportPlanning } from '../../hooks/useImportPlanning';
-import '../../styles/features/import/import-planning.css';
+import '../../styles/features/import-export/import-planning.css';
 import PropTypes from 'prop-types';
 import { Icons } from '../../lib/icons';
 

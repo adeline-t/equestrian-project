@@ -12,7 +12,6 @@ export default function CalendarFilters({
   onCreateEvent,
   onCreateBlockedTime,
   onShowScheduled,
-  onShowImport,
 }) {
   const { mode } = useAppMode();
 
@@ -55,17 +54,6 @@ export default function CalendarFilters({
         </div>
       </div>
 
-      {/* Actions admin */}
-      {mode === 'admin' && (
-        <button
-          className="btn btn-ghost btn-sm"
-          onClick={onShowImport}
-          title="Importer un planning"
-        >
-          <Icons.Calendar /> Importer un planning
-        </button>
-      )}
-
       {/* Actions principales */}
       <div className="calendar-filters__actions">
         {mode === 'admin' && (
@@ -106,5 +94,4 @@ CalendarFilters.propTypes = {
   onCreateEvent: PropTypes.func.isRequired,
   onCreateBlockedTime: PropTypes.func.isRequired,
   onShowScheduled: PropTypes.func.isRequired,
-  onShowImport: PropTypes.func.isRequired,
 };

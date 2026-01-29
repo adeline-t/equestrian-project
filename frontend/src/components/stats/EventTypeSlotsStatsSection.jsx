@@ -10,8 +10,6 @@ import {
 } from '../../lib/helpers';
 import DomainBadge from '../common/DomainBadge';
 import '../../styles/features/stats/event-type-slots-cards.css';
-import { exportToCSV, exportToPDF } from '../../lib/helpers/exports';
-import { format } from 'date-fns';
 
 function EventTypeSlotsStatsSection({ stats, weeks, currentMonth }) {
   const [selectedEventType, setSelectedEventType] = useState('all');
@@ -105,17 +103,6 @@ function EventTypeSlotsStatsSection({ stats, weeks, currentMonth }) {
     return eventStats.filter((stat) => stat.eventType === selectedEventType);
   }, [eventStats, selectedEventType]);
 
-  // Handlers d'export
-  const handleExportCSV = () => {
-    const monthStr = format(currentMonth, 'yyyy-MM');
-    const filename = `statistiques-evenements-${monthStr}.csv`;
-    exportToCSV(filteredStats, filename);
-  };
-
-  const handleExportPDF = () => {
-    exportToPDF(filteredStats, currentMonth);
-  };
-
   return (
     <div className="event-type-slots-section">
       <div className="section-filters">
@@ -133,15 +120,6 @@ function EventTypeSlotsStatsSection({ stats, weeks, currentMonth }) {
           />
           Afficher les événements sans participants
         </label>
-
-        <div className="export-buttons">
-          <button className="btn btn-secondary btn-sm" onClick={handleExportCSV}>
-            Export CSV
-          </button>
-          <button className="btn btn-secondary btn-sm" onClick={handleExportPDF}>
-            Export PDF
-          </button>
-        </div>
       </div>
 
       {filteredStats.length === 0 ? (
