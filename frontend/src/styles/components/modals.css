@@ -101,13 +101,6 @@
   gap: var(--spacing-md);
 }
 
-/* Groupe d’actions dans le header */
-.modal-header .header-actions-group {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
 .modal-header-content {
   display: flex;
   align-items: center;
@@ -134,6 +127,7 @@
   align-items: center;
   gap: var(--spacing-md);
   color: var(--color-text);
+  width: 100%;
 }
 
 .modal-title-warning {
@@ -295,11 +289,6 @@
    MODAL HEADER - ICON ALIGNMENT FIX
    ============================================ */
 
-.modal-header h2,
-.modal-header h3 {
-  line-height: var(--line-height-normal);
-}
-
 .modal-header h2 svg,
 .modal-header h2 i,
 .modal-header h3 svg,
@@ -311,10 +300,6 @@
   width: 24px;
   height: 24px;
   line-height: 1;
-}
-
-.modal-title {
-  line-height: var(--line-height-normal);
 }
 
 .modal-title svg {

@@ -4,8 +4,8 @@ import { getDatabase } from '../db.js';
  * Runs the recurrence cron job: generates planning slots and participants
  *
  * Architecture:
- * - recurrences.event_id → events.id (l'event est créé avant la recurrence)
- * - planning_slots.event_id → events.id (les slots référencent l'event)
+ * - recurrences.event_id → events.id
+ * - planning_slots.event_id → events.id
  * - event_participants.planning_slot_id → planning_slots.id
  */
 export async function runRecurrenceCron(env) {
@@ -13,13 +13,15 @@ export async function runRecurrenceCron(env) {
   const db = getDatabase(env);
 
   try {
-    // 1️⃣ Fetch all active recurrences
-    const { data: recurrences, error } = await db
+    // 1️⃣ Fetch all active recurrences linked to an event
+    const { data: recurrences, error: recurrencesError } = await db
       .from('recurrences')
       .select('*, events(*)')
       .not('event_id', 'is', null);
 
-    if (error) throw new Error(`Error fetching recurrences: ${error.message}`);
+    if (recurrencesError) {
+      throw new Error(`Error fetching recurrences: ${recurrencesError.message}`);
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -31,7 +33,7 @@ export async function runRecurrenceCron(env) {
       // 2️⃣ Fetch existing slots for this event from today onwards
       const { data: existingSlots, error: slotsError } = await db
         .from('planning_slots')
-        .select('slot_date, start_time, end_time')
+        .select('slot_date, start_time, end_time, is_all_day')
         .eq('event_id', eventId)
         .gte('slot_date', todayStr);
 
@@ -40,19 +42,21 @@ export async function runRecurrenceCron(env) {
         continue;
       }
 
-      // 3️⃣ Create a Set of existing slot keys for quick lookup
-      const existingSlotKeys = new Set(
-        existingSlots?.map((s) => `${s.slot_date}_${s.start_time}_${s.end_time}`) || []
-      );
+      // 3️⃣ Build normalized slot keys
+      const buildSlotKey = (slot) => {
+        if (slot.is_all_day) {
+          return `${slot.slot_date}_ALL_DAY`;
+        }
+        return `${slot.slot_date}_${slot.start_time}_${slot.end_time}`;
+      };
+
+      const existingSlotKeys = new Set(existingSlots?.map(buildSlotKey) || []);
 
       // 4️⃣ Generate slots for the next X weeks
       const nextSlots = generateNextSlots(rec, 3);
 
-      // 5️⃣ Filter out slots that already exist
-      const slotsToCreate = nextSlots.filter((slot) => {
-        const key = `${slot.slot_date}_${slot.start_time}_${slot.end_time}`;
-        return !existingSlotKeys.has(key);
-      });
+      // 5️⃣ Filter out already existing slots
+      const slotsToCreate = nextSlots.filter((slot) => !existingSlotKeys.has(buildSlotKey(slot)));
 
       if (slotsToCreate.length === 0) {
         console.log(`No new slots to create for recurrence ${rec.id} (event ${eventId})`);
@@ -60,6 +64,8 @@ export async function runRecurrenceCron(env) {
       }
 
       // 6️⃣ Insert new planning slots
+      const now = new Date().toISOString();
+
       const slotInserts = slotsToCreate.map((slot) => ({
         slot_status: 'scheduled',
         actual_instructor_id: null,
@@ -69,8 +75,8 @@ export async function runRecurrenceCron(env) {
         end_time: slot.end_time,
         is_all_day: slot.is_all_day,
         event_id: eventId,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: now,
+        updated_at: now,
       }));
 
       const { data: insertedSlots, error: insertError } = await db
@@ -110,8 +116,8 @@ export async function runRecurrenceCron(env) {
               horse_id: p.horse_id,
               horse_assignment_type: 'automatic',
               is_cancelled: false,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
+              created_at: now,
+              updated_at: now,
             });
           }
         }
@@ -138,7 +144,8 @@ export async function runRecurrenceCron(env) {
 
 /**
  * Generate planning slots from a recurrence for the next X weeks
- * Returns { slot_date: YYYY-MM-DD, start_time: HH:mm:ss, end_time: HH:mm:ss, is_all_day }
+ * Returns:
+ * { slot_date: YYYY-MM-DD, start_time: HH:mm:ss, end_time: HH:mm:ss, is_all_day }
  */
 function generateNextSlots(rec, weeksAhead = 3) {
   const slots = [];
@@ -149,30 +156,27 @@ function generateNextSlots(rec, weeksAhead = 3) {
     const currentDay = new Date(today);
     currentDay.setDate(today.getDate() + i);
 
-    // Map JS getDay() (0=Sun) -> DB week_days (1=Mon ... 7=Sun)
+    // JS getDay(): 0=Sun → DB: 7=Sun
     const dayOfWeek = currentDay.getDay() === 0 ? 7 : currentDay.getDay();
     if (!rec.week_days?.includes(dayOfWeek)) continue;
 
-    const slotDate = currentDay.toISOString().split('T')[0]; // YYYY-MM-DD
+    const slotDate = currentDay.toISOString().split('T')[0];
 
-    let startTime, endTime, isAllDay;
-
-    if (rec.start_time && rec.end_time) {
-      startTime = rec.start_time; // time string from DB: HH:mm:ss
-      endTime = rec.end_time;
-      isAllDay = false;
+    if (!rec.is_all_day) {
+      slots.push({
+        slot_date: slotDate,
+        start_time: rec.start_time,
+        end_time: rec.end_time,
+        is_all_day: false,
+      });
     } else {
-      startTime = '00:00:00';
-      endTime = '23:59:59';
-      isAllDay = true;
+      slots.push({
+        slot_date: slotDate,
+        start_time: '00:00:00',
+        end_time: '23:59:59',
+        is_all_day: true,
+      });
     }
-
-    slots.push({
-      slot_date: slotDate,
-      start_time: startTime,
-      end_time: endTime,
-      is_all_day: isAllDay,
-    });
   }
 
   return slots;

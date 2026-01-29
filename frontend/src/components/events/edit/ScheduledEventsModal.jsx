@@ -1,14 +1,14 @@
-import { useMemo, useState } from 'react';
-import Modal from '../../common/Modal';
-import { Icons } from '../../../lib/icons';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { getEventTypeConfig } from '../../../lib/domain/events';
-import DomainBadge from '../../common/DomainBadge.jsx';
+import { useMemo, useState } from 'react';
 import { useEventScheduledList } from '../../../hooks/useEventScheduledList';
-import '../../../styles/features/events/scheduled-events.css';
 import { getInstructorConfig } from '../../../lib/domain/domain-constants.js';
+import { getEventTypeConfig } from '../../../lib/domain/events';
 import { shortName } from '../../../lib/helpers/index.js';
+import { Icons } from '../../../lib/icons';
+import '../../../styles/features/events/scheduled-events.css';
+import DomainBadge from '../../common/DomainBadge.jsx';
+import Modal from '../../common/Modal';
 
 function ScheduledEventsModal({ onClose, onUpdate }) {
   const { slots, loading, error, actionLoading, actionError, validateSlot, deleteSlot } =

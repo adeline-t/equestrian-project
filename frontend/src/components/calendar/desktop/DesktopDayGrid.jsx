@@ -7,11 +7,13 @@ import {
 } from '../../../lib/domain/calendar-overlap';
 import SlotCard from '../shared/SlotCard';
 import { isBlockedEvent } from '../../../lib/domain';
+import { useAppMode } from '../../../context/AppMode.jsx';
 
 /**
  * DesktopDayGrid - Grille horaire avec marqueurs et événements
  */
 export default function DesktopDayGrid({ slots, onSlotClick, isSelecting, selectionStyle }) {
+  const { mode, currentRider } = useAppMode();
   const { HOUR_HEIGHT, START_HOUR, END_HOUR } = CALENDAR_CONFIG;
   const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
 
@@ -21,6 +23,7 @@ export default function DesktopDayGrid({ slots, onSlotClick, isSelecting, select
   }, [slots]);
 
   const handleSlotClick = (slot) => {
+    if (isBlockedEvent(slot.events) && mode !== 'admin') return;
     onSlotClick?.(slot, isBlockedEvent(slot.events));
   };
 

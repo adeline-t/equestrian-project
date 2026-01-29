@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useAppMode } from '../../../../context/AppMode.jsx';
 import { useEventDetails } from '../../../../hooks/useEventDetails';
 import { useEventEdit } from '../../../../hooks/useEventEdit';
 import { useEventParticipantActions } from '../../../../hooks/useEventParticipantActions';
+import { useRecurrence } from '../../../../hooks/useRecurrence';
 import { getInstructorConfig } from '../../../../lib/domain';
 import {
   EVENT_TYPES,
@@ -12,16 +14,14 @@ import {
 } from '../../../../lib/domain/events';
 import { calculateDurationMinutes, formatDate, formatDuration } from '../../../../lib/helpers';
 import { Icons } from '../../../../lib/icons';
+import DeleteConfirmationModal from '../../../common/DeleteConfirmationModal';
 import DomainBadge from '../../../common/DomainBadge';
 import Modal from '../../../common/Modal';
-import DeleteConfirmationModal from '../../../common/DeleteConfirmationModal';
-import { useAppMode } from '../../../../context/AppMode.jsx';
 import ParticipantsForm from '../../create/CreateEventModal/ParticipantsForm';
-import EventEditForm from './EventEditForm';
-import EventParticipantRow from './EventParticipantRow';
-import { useRecurrence } from '../../../../hooks/useRecurrence';
 import RecurrenceCard from '../../recurrences/RecurrenceCard';
 import RecurrenceForm from '../../recurrences/RecurrenceForm';
+import EventEditForm from './EventEditForm';
+import EventParticipantRow from './EventParticipantRow';
 
 export default function EventModal({ slotId, onClose, onDelete }) {
   const { slot, event, participants, loading, error, reload } = useEventDetails(slotId);
@@ -309,7 +309,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
                   <h3>Capacité</h3>
                 </div>
                 <div className="info-card-body">
-                  <div className="stat-display">
+                  <div className="info-value">
                     <span className="stat-number">{participants.length}</span>
                     <span className="stat-separator">/</span>
                     <span className="stat-total">{event.max_participants || '∞'}</span>

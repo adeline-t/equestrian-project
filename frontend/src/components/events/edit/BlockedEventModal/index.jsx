@@ -78,7 +78,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
         onClose={onClose}
         title={
           <div className="modal-title">
-            <Icons.Blocked /> Période bloquée
+            <Icons.Blocked /> <h3>Période bloquée</h3>
             {!isEditing && (
               <div className="header-actions-group">
                 <button

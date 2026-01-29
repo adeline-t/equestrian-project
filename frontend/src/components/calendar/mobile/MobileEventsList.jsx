@@ -4,14 +4,17 @@ import { fr } from 'date-fns/locale';
 import SlotCard from '../shared/SlotCard';
 import EmptyState from '../shared/EmptyState';
 import { isBlockedEvent } from '../../../lib/domain';
+import { useAppMode } from '../../../context/AppMode';
 
 /**
  * MobileEventsList - Liste des événements du jour sélectionné
  */
 export default function MobileEventsList({ selectedDate, allDaySlots, timedSlots, onSlotClick }) {
+  const { mode, currentRider } = useAppMode();
   const hasNoEvents = allDaySlots.length === 0 && timedSlots.length === 0;
 
   const handleSlotClick = (slot) => {
+    if (isBlockedEvent(slot.events) && mode !== 'admin') return;
     onSlotClick?.(slot, isBlockedEvent(slot.events));
   };
 

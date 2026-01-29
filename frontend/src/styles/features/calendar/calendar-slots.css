@@ -107,7 +107,6 @@
   flex: 1;
   font-weight: var(--font-weight-semibold);
   font-size: 11px;
-  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -280,7 +279,6 @@
   font-size: 15px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-900);
-  line-height: 1.2;
 }
 
 /* Divider */
@@ -334,7 +332,6 @@
   font-size: 16px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-gray-900);
-  line-height: 1.3;
 }
 
 .slot-card__details {
@@ -346,7 +343,6 @@
 .slot-card__detail-line {
   font-size: 14px;
   color: var(--color-gray-600);
-  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -549,7 +545,6 @@
 
 .slot-card--desktop-grid[data-narrow='true'] .slot-card__title {
   font-size: 9px;
-  line-height: 1.1;
 }
 
 .slot-card--desktop-grid[data-narrow='true'] .slot-card__count-badge {
@@ -623,7 +618,6 @@
   .slot-card--desktop-grid[data-narrow='true']
   .slot-card__title {
   font-size: 11px;
-  line-height: 1.2;
 }
 
 .desktop-day-grid__event-wrapper:hover

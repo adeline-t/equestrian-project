@@ -8,7 +8,9 @@ import RecurrenceCard from '../../recurrences/RecurrenceCard';
 import RecurrenceForm from '../../recurrences/RecurrenceForm';
 import { useRecurrence } from '../../../../hooks/useRecurrence';
 import '../../../../styles/features/events/recurrence-styles.css';
+import { useAppMode } from '../../../../context/AppMode';
 export default function BlockedEventDisplay({ slot, event }) {
+  const { mode, currentRider } = useAppMode();
   const {
     recurrences,
     loading: recurrenceLoading,
@@ -127,15 +129,17 @@ export default function BlockedEventDisplay({ slot, event }) {
           </div>
 
           {/* RECURRENCE CARD */}
-          <RecurrenceCard
-            recurrences={recurrences}
-            isCreating={isCreating}
-            loading={recurrenceLoading}
-            error={recurrenceError}
-            deleting={deleting}
-            onStartCreating={startCreating}
-            onDelete={deleteRecurrence}
-          />
+          {mode === 'admin' && (
+            <RecurrenceCard
+              recurrences={recurrences}
+              isCreating={isCreating}
+              loading={recurrenceLoading}
+              error={recurrenceError}
+              deleting={deleting}
+              onStartCreating={startCreating}
+              onDelete={deleteRecurrence}
+            />
+          )}
 
           {/* METADATA */}
           <div className="metadata-footer">

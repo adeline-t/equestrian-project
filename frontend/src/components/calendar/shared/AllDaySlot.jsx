@@ -3,6 +3,7 @@ import { EVENT_TYPES } from '../../../lib/domain';
 import { isBlockedEvent } from '../../../lib/domain/events';
 import SlotCard from './SlotCard';
 import '../../../styles/features/calendar/calendar-slots.css';
+import { useAppMode } from '../../../context/AppMode';
 
 /**
  * AllDaySlot - Composant pour afficher les slots journée entière
@@ -10,6 +11,8 @@ import '../../../styles/features/calendar/calendar-slots.css';
  */
 export default function AllDaySlot({ slots, variant = 'normal', onSlotClick }) {
   if (!slots || slots.length === 0) return null;
+
+  const { mode, currentRider } = useAppMode();
 
   // Filtrer selon la variante
   const filteredSlots =
@@ -28,6 +31,7 @@ export default function AllDaySlot({ slots, variant = 'normal', onSlotClick }) {
   if (filteredSlots.length === 0) return null;
 
   const handleSlotClick = (slot) => {
+    if (isBlockedEvent(slot.events) && mode !== 'admin') return;
     onSlotClick?.(slot, isBlockedEvent(slot.events));
   };
 

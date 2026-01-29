@@ -88,21 +88,18 @@
   font-weight: 400;
   color: var(--calendar-text-muted, #8e8e93);
   text-transform: capitalize;
-  line-height: 1;
 }
 
 .mobile-day-selector__day-number {
   font-size: var(--calendar-font-lg, 28px);
   font-weight: 400;
   color: var(--calendar-text, #000);
-  line-height: 1;
 }
 
 .mobile-day-selector__event-count {
   font-size: var(--calendar-font-sm, 12px);
   color: var(--calendar-text-muted, #8e8e93);
   min-height: 10px;
-  line-height: 1;
   font-weight: 600;
 }
 
@@ -229,7 +226,6 @@
 .mobile-action-bar__label {
   font-size: var(--calendar-font-xxs, 10px);
   font-weight: 500;
-  line-height: 1;
   white-space: nowrap;
   color: var(--calendar-text, var(--color-gray-600));
 }
