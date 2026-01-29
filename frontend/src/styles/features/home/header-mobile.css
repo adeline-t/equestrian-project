@@ -335,6 +335,24 @@
     transform: scale(0.98);
   }
 
+  .mobile-admin-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-danger-light);
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-align: left;
+    width: 100%;
+  }
+
+  .mobile-admin-card:active {
+    transform: scale(0.98);
+  }
+
   .mobile-user-icon {
     width: 48px;
     height: 48px;

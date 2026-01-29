@@ -200,10 +200,7 @@ export default function Header() {
               {mode === 'admin' && (
                 <button className="mobile-admin-card" onClick={handleOpenAdminMenu}>
                   <Icons.Settings className="mobile-admin-icon" />
-                  <div className="mobile-admin-info">
-                    <span className="mobile-admin-name">Administration</span>
-                    <span className="mobile-admin-label">Import / Export</span>
-                  </div>
+                  <span className="mobile-admin-label">Import / Export de fichiers</span>
                   <Icons.ChevronRight />
                 </button>
               )}
