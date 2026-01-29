@@ -154,10 +154,6 @@
   font-weight: var(--calendar-empty-message-weight);
 }
 
-.calendar-empty-state--mobile {
-  margin-top: var(--spacing-2xl);
-}
-
 /* ============================================
    ANIMATIONS
    ============================================ */

@@ -11,14 +11,6 @@
 }
 
 /* ============================================
-   FILTERS - Pills standard de l'app
-   ============================================ */
-
-.rider-selector-filters {
-  /* Pas de padding supplémentaire, les pills gèrent leur propre style */
-}
-
-/* ============================================
    RIDERS LIST - iOS Style
    ============================================ */
 
@@ -34,22 +26,22 @@
   gap: var(--spacing-md);
   padding: var(--spacing-md);
   background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .rider-selector-card:hover {
-  background: var(--color-gray-50);
-  border-color: var(--color-primary-light);
+  background: var(--color-bg-hover);
+  border-color: var(--color-primary);
   transform: translateX(2px);
 }
 
 .rider-selector-card:active {
   transform: scale(0.98);
-  background: var(--color-gray-100);
+  background: var(--color-bg-secondary);
 }
 
 .rider-selector-icon {
@@ -76,7 +68,7 @@
 .rider-selector-name {
   font-size: 17px;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-gray-900);
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -84,14 +76,22 @@
 
 .rider-selector-type {
   font-size: 14px;
-  color: var(--color-gray-600);
+  color: var(--color-text-muted);
 }
 
 .rider-selector-chevron {
   font-size: 24px;
-  color: var(--color-gray-400);
+  color: var(--color-text-secondary);
   font-weight: 300;
   flex-shrink: 0;
+}
+
+/* ============================================
+   EMPTY STATE OVERRIDE
+   ============================================ */
+
+.rider-selector-list .empty-state-small {
+  margin-top: var(--spacing-lg);
 }
 
 /* ============================================
@@ -125,12 +125,4 @@
   .rider-selector-chevron {
     font-size: 20px;
   }
-}
-
-/* ============================================
-   EMPTY STATE OVERRIDE
-   ============================================ */
-
-.rider-selector-list .empty-state-small {
-  margin-top: var(--spacing-lg);
 }
