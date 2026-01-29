@@ -27,8 +27,7 @@
 }
 
 .scheduled-event-main {
-  display: grid;
-  grid-template-columns: 100px 180px 1fr auto;
+  display: flex;
   gap: var(--spacing-md);
   align-items: center;
 }

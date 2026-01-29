@@ -201,6 +201,7 @@ main {
 .layout-grid-content.event {
   grid-template-columns: 1fr 1fr;
 }
+
 .layout-sidebar-content,
 .layout-main-content {
   display: flex;

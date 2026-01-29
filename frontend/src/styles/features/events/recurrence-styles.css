@@ -1,0 +1,6 @@
+/* ========================================
+   RECURRENCE FORM
+   ======================================== */
+.layout-grid-content.simple {
+  grid-template-columns: 1fr;
+}

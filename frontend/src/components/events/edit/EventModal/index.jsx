@@ -19,9 +19,26 @@ import { useAppMode } from '../../../../context/AppMode.jsx';
 import ParticipantsForm from '../../create/CreateEventModal/ParticipantsForm';
 import EventEditForm from './EventEditForm';
 import EventParticipantRow from './EventParticipantRow';
+import { useRecurrence } from '../../../../hooks/useRecurrence';
+import RecurrenceCard from '../../recurrences/RecurrenceCard';
+import RecurrenceForm from '../../recurrences/RecurrenceForm';
 
 export default function EventModal({ slotId, onClose, onDelete }) {
   const { slot, event, participants, loading, error, reload } = useEventDetails(slotId);
+  const {
+    recurrences,
+    loading: recurrenceLoading,
+    error: recurrenceError,
+    isCreating,
+    saving: recurrenceSaving,
+    saveError: recurrenceSaveError,
+    deleting: recurrenceDeleting,
+    startCreating,
+    cancelCreating,
+    createRecurrence,
+    deleteRecurrence,
+  } = useRecurrence(event?.id);
+
   const { mode, currentRider } = useAppMode();
 
   const [successMessage, setSuccessMessage] = useState('');
@@ -29,6 +46,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancellationReason, setCancellationReason] = useState('');
+  const [showCreateReccurenceModal, setShowCreateReccurenceModal] = useState(false);
 
   const participantActions = useEventParticipantActions(async (msg) => {
     setSuccessMessage(msg);
@@ -41,6 +59,11 @@ export default function EventModal({ slotId, onClose, onDelete }) {
     setTimeout(() => setSuccessMessage(''), 3000);
     reload();
   });
+
+  const handleCreateRecurrence = () => {
+    setShowCreateReccurenceModal(true);
+    startCreating();
+  };
 
   const handleDeleteEvent = async () => {
     const success = await eventEdit.deleteSlot(slot.id);
@@ -174,7 +197,7 @@ export default function EventModal({ slotId, onClose, onDelete }) {
             </div>
           )}
 
-          <div className="layout-grid-content">
+          <div className="layout-grid-content event">
             {/* SIDEBAR */}
             <div className="layout-sidebar-content">
               {/* Informations */}
@@ -337,6 +360,19 @@ export default function EventModal({ slotId, onClose, onDelete }) {
                   )}
                 </div>
               </div>
+
+              {/* Dans layout-sidebar-content */}
+              {mode === 'admin' && (
+                <RecurrenceCard
+                  recurrences={recurrences}
+                  loading={recurrenceLoading}
+                  error={recurrenceError}
+                  deleting={recurrenceDeleting}
+                  isCreating={isCreating}
+                  onStartCreating={handleCreateRecurrence}
+                  onDelete={deleteRecurrence}
+                />
+              )}
             </div>
           </div>
 
@@ -465,6 +501,24 @@ export default function EventModal({ slotId, onClose, onDelete }) {
         itemName={event.name}
         allowSoftDelete={false}
       />
+
+      {showCreateReccurenceModal && (
+        <Modal
+          size="md"
+          title="Nouvelle récurrence"
+          isOpen={showCreateReccurenceModal}
+          onClose={onClose}
+        >
+          <RecurrenceForm
+            isOpen={isCreating}
+            onSave={createRecurrence}
+            onCancel={cancelCreating}
+            saving={recurrenceSaving}
+            saveError={recurrenceSaveError}
+            slotData={slot}
+          />
+        </Modal>
+      )}
     </>
   );
 }

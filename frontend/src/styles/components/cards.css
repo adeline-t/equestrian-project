@@ -215,8 +215,9 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
-  line-height: var(--line-height-normal); /* AJOUT */
-  margin: 0; /* AJOUT pour les paragraphes */
+  line-height: var(--line-height-normal);
+  margin: 0;
+  gap: var(--spacing-xs);
 }
 
 /* ============================================
@@ -239,7 +240,7 @@
 
 .info-icon {
   background: var(--color-primary-light);
-  color: var(--color-primary);
+  color: var(--color-white);
 }
 
 .info-icon-success {

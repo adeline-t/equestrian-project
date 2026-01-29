@@ -129,7 +129,7 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
             </div>
           )
         }
-        size="md"
+        size="lg"
       >
         {editError && (
           <div className="alert alert-error">
