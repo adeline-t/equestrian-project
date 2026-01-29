@@ -25,9 +25,10 @@ const normalizeSlotTimes = (slot) => {
  * Manages week navigation, data loading, and slot interactions
  */
 export function useCalendarView() {
-  const [currentWeekStart, setCurrentWeekStart] = useState(() =>
-    startOfWeek(new Date(), { weekStartsOn: 1 })
-  );
+  // Mémoriser todaysWeekStart pour qu'il ne change pas à chaque rendu
+  const todaysWeekStart = useMemo(() => startOfWeek(new Date(), { weekStartsOn: 1 }), []);
+
+  const [currentWeekStart, setCurrentWeekStart] = useState(todaysWeekStart);
 
   const [weekData, setWeekData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,10 +78,7 @@ export function useCalendarView() {
    * ----------------------------------------------------- */
   const handlePrevWeek = useCallback(() => setCurrentWeekStart((prev) => subWeeks(prev, 1)), []);
   const handleNextWeek = useCallback(() => setCurrentWeekStart((prev) => addWeeks(prev, 1)), []);
-  const handleToday = useCallback(
-    () => setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 })),
-    []
-  );
+  const handleToday = useCallback(() => setCurrentWeekStart(todaysWeekStart), [todaysWeekStart]);
 
   /* -------------------------------------------------------
    * SLOT / EVENT MODAL HANDLERS
@@ -91,17 +89,14 @@ export function useCalendarView() {
     setShowSlotModal(true);
   }, []);
 
-  const handleCreateEvent = useCallback(
-    (selectionData) => {
-      setCreateEventData({
-        date: selectionData?.date || getTodayISO(),
-        start_time: selectionData?.start_time || '16:00',
-        end_time: selectionData?.end_time || '17:00',
-      });
-      setShowCreateEventModal(true);
-    },
-    [currentWeekStart]
-  );
+  const handleCreateEvent = useCallback((selectionData) => {
+    setCreateEventData({
+      date: selectionData?.date || getTodayISO(),
+      start_time: selectionData?.start_time || '16:00',
+      end_time: selectionData?.end_time || '17:00',
+    });
+    setShowCreateEventModal(true);
+  }, []);
 
   const handleCreateBlockedTime = useCallback(() => {
     setCreateEventData({
@@ -117,37 +112,34 @@ export function useCalendarView() {
   }, []);
 
   const closeSlotModal = useCallback(() => {
+    loadWeekData();
     setShowSlotModal(false);
     setSelectedSlot(null);
-  }, []);
+  }, [loadWeekData]);
 
   const closeCreateEventModal = useCallback(() => {
+    loadWeekData();
     setShowCreateEventModal(false);
     setCreateEventData(null);
-  }, []);
+  }, [loadWeekData]);
 
   const closeCreateBlockedModal = useCallback(() => {
+    loadWeekData();
     setShowCreateBlockedModal(false);
     setCreateEventData(null);
-  }, []);
+  }, [loadWeekData]);
 
   const closeScheduledModal = useCallback(() => {
+    loadWeekData();
     setShowScheduledModal(false);
-  }, []);
+  }, [loadWeekData]);
 
   const handleModalSuccess = useCallback(() => {
     loadWeekData();
     closeSlotModal();
     closeCreateEventModal();
     closeCreateBlockedModal();
-    closeScheduledModal();
-  }, [
-    loadWeekData,
-    closeSlotModal,
-    closeCreateEventModal,
-    closeCreateBlockedModal,
-    closeScheduledModal,
-  ]);
+  }, [loadWeekData, closeSlotModal, closeCreateEventModal, closeCreateBlockedModal]);
 
   /* -------------------------------------------------------
    * FILTER HANDLERS
