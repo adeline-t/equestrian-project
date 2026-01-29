@@ -25,6 +25,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Cours individuel',
     icon: Icons.PrivateLesson,
     slotClass: 'slot-private',
+    max_participants: 1,
   },
 
   [EVENT_TYPES.GROUPED_LESSON]: {
@@ -33,6 +34,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Cours en groupe',
     icon: Icons.GroupLesson,
     slotClass: 'slot-grouped',
+    max_participants: 6,
   },
 
   [EVENT_TYPES.SPECIAL]: {
@@ -41,6 +43,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Événement spécial',
     icon: Icons.Lesson,
     slotClass: 'slot-special',
+    max_participants: 1,
   },
 
   [EVENT_TYPES.COMPETITION]: {
@@ -49,6 +52,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Compétition',
     icon: Icons.Competition,
     slotClass: 'slot-competition',
+    max_participants: 6,
   },
 
   [EVENT_TYPES.BLOCKED]: {
@@ -57,6 +61,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Créneau bloqué',
     icon: Icons.Blocked,
     slotClass: 'slot-blocked',
+    max_participants: 0,
   },
 
   [EVENT_TYPES.SERVICE]: {
@@ -65,6 +70,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Service équestre',
     icon: Icons.Service,
     slotClass: 'slot-service',
+    max_participants: 1,
   },
 
   [EVENT_TYPES.LOANER_FREE_TIME]: {
@@ -73,6 +79,7 @@ export const EVENT_TYPE_CONFIG = {
     description: 'Temps libre demi-pension',
     icon: Icons.Horse,
     slotClass: 'slot-loaner',
+    max_participants: 1,
   },
 };
 

@@ -461,7 +461,6 @@
   }
 
   .modal-header {
-    flex-wrap: wrap;
     padding: var(--spacing-md) var(--spacing-lg);
   }
 

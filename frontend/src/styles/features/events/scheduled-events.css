@@ -114,7 +114,7 @@
 
 @media (max-width: 992px) {
   .scheduled-event-main {
-    grid-template-columns: 80px 1fr;
+    flex-direction: column;
   }
 
   .scheduled-event-time {
@@ -133,7 +133,7 @@
 
 @media (max-width: 768px) {
   .scheduled-event-main {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .scheduled-event-card {

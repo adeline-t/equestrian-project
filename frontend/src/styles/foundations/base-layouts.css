@@ -201,6 +201,10 @@ main {
   grid-template-columns: 1fr 1fr;
 }
 
+.layout-grid-content.simple {
+  grid-template-columns: 1fr;
+}
+
 .layout-sidebar-content,
 .layout-main-content {
   display: flex;
@@ -216,7 +220,7 @@ main {
   .two-column {
     grid-template-columns: 280px 1fr;
   }
-  .layout-grid-content {
+  .layout-grid-content .layout-grid-content.event {
     grid-template-columns: 1fr;
   }
   .layout-sidebar-content {
@@ -246,15 +250,8 @@ main {
     align-items: flex-start;
     gap: var(--spacing-md);
   }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: var(--spacing-sm);
-    width: 100%;
-  }
-  .view-container {
-    padding: var(--spacing-xs);
-    gap: var(--spacing-xs);
+  .layout-grid-content,
+  .layout-grid-content.event {
+    grid-template-columns: 1fr;
   }
 }

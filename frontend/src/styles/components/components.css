@@ -306,7 +306,7 @@
   background: var(--gradient-status-inactive);
 }
 
-.badge[data-type='pending'] {
+.badge[data-type='scheduled'] {
   background: var(--gradient-warning);
 }
 

@@ -1,7 +1,12 @@
 import { useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { calendarService } from '../services/calendarService';
-import { EVENT_TYPES, getEventTypeLabel, SLOT_STATUSES } from '../lib/domain/events';
+import {
+  EVENT_TYPES,
+  getEventTypeConfig,
+  getEventTypeLabel,
+  SLOT_STATUSES,
+} from '../lib/domain/events';
 import { formatTimeForDatabase, calculateDurationMinutes } from '../lib/helpers/formatters';
 import { getTodayISO } from '../lib/helpers';
 import { validateEventForm } from '../lib/helpers/validators';
@@ -19,7 +24,7 @@ export function useEventCreate(initialDate, initialStartTime, initialEndTime) {
     actual_instructor_id: null,
     cancellation_reason: '',
     event_type: EVENT_TYPES.PRIVATE_LESSON,
-    instructor_id: 0,
+    instructor_id: 1,
     min_participants: 1,
     max_participants: 1,
     name: '',
@@ -45,6 +50,15 @@ export function useEventCreate(initialDate, initialStartTime, initialEndTime) {
         ).padStart(2, '0')}`;
 
         setFormData((prev) => ({ ...prev, [name]: value, end_time: newEnd }));
+      } else if (name === 'event_type') {
+        const config = getEventTypeConfig(newValue);
+
+        console.log(config);
+        setFormData((prev) => ({
+          ...prev,
+          [name]: newValue,
+          max_participants: config.max_participants ?? 1,
+        }));
       } else {
         setFormData((prev) => ({ ...prev, [name]: newValue }));
       }
