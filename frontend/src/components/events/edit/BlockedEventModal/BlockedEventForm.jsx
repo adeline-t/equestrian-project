@@ -32,7 +32,6 @@ function BlockedEventForm({ editData, handleChange }) {
       {/* GENERAL INFORMATION */}
       <div className="form-section">
         <div className="info-card-header">
-          <Icons.Info />
           <h3>Informations générales</h3>
         </div>
 
@@ -70,7 +69,6 @@ function BlockedEventForm({ editData, handleChange }) {
       {/* DATE AND TIME */}
       <div className="form-section">
         <div className="info-card-header">
-          <Icons.Calendar />
           <h3>Date et horaires</h3>
         </div>
 
@@ -159,7 +157,6 @@ function BlockedEventForm({ editData, handleChange }) {
       {/* STATUS */}
       <div className="form-section">
         <div className="info-card-header">
-          <Icons.Tag />
           <h3>Statut</h3>
         </div>
 

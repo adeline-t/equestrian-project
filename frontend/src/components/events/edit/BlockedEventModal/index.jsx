@@ -112,22 +112,20 @@ function BlockedEventModal({ slotId, onClose, onUpdate }) {
               </button>
 
               {/* Right side - Edit/Save buttons */}
-              <div className="modal-footer-actions">
-                <button className="btn btn-secondary" onClick={cancelEdit} disabled={saving}>
-                  <Icons.Cancel /> Annuler
-                </button>
-                <button className="btn btn-primary" onClick={saveEdit} disabled={saving}>
-                  {saving ? (
-                    <>
-                      <Icons.Loading className="spin" /> Sauvegarde...
-                    </>
-                  ) : (
-                    <>
-                      <Icons.Check /> Sauvegarder
-                    </>
-                  )}
-                </button>
-              </div>
+              <button className="btn btn-secondary" onClick={cancelEdit} disabled={saving}>
+                <Icons.Cancel /> Annuler
+              </button>
+              <button className="btn btn-primary" onClick={saveEdit} disabled={saving}>
+                {saving ? (
+                  <>
+                    <Icons.Loading className="spin" /> Sauvegarde...
+                  </>
+                ) : (
+                  <>
+                    <Icons.Check /> Sauvegarder
+                  </>
+                )}
+              </button>
             </div>
           )
         }
