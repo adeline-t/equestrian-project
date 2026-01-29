@@ -22,7 +22,5 @@
 
 /* À la fin de app.css */
 @import './features/calendar/calendar-base.css';
-@import './features/calendar/calendar-actions-mobile.css';
 @import './features/calendar/calendar-desktop.css';
 @import './features/calendar/calendar-mobile.css';
-@import './features/calendar/calendar-complete.css';

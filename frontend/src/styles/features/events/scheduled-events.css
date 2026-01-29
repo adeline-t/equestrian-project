@@ -70,11 +70,6 @@
   flex-wrap: wrap;
 }
 
-.metadata-icon {
-  font-size: var(--font-size-sm);
-  flex-shrink: 0;
-}
-
 /* ============================================
    PARTICIPANTS - Specific layout
    ============================================ */

@@ -114,15 +114,16 @@
 
 /* BUTTON VARIANTS - GHOST */
 .btn-ghost {
-  background: none;
-  border: none;
+  background: transparent;
+  border: 1px solid var(--color-border);
   color: var(--color-text-muted);
-  padding: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
 }
 
 .btn-ghost:hover:not(:disabled) {
   background: var(--color-bg-hover);
-  color: var(--color-text);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 /* MODERN BUTTONS */
@@ -142,7 +143,7 @@
 
 .btn-modern.danger:hover:not(:disabled) {
   background: var(--color-danger);
-  border-color: 2px var(--color-danger);
+  border-color: var(--color-danger);
   color: var(--color-white);
 }
 
@@ -431,22 +432,48 @@
 }
 
 .count-badge.selected {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--spacing-lg);
-  height: var(--spacing-lg);
-  padding: 0 var(--spacing-sm);
   background: transparent;
   color: var(--color-white);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
 }
 
 .count-badge.warning {
   background: var(--color-warning-orange);
   color: var(--color-white);
+}
+
+/* MODE BADGES */
+.mode-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.mode-label.mode-admin {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.mode-label.mode-user {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.mode-label.mode-user:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.mobile-mode-badge {
+  min-height: 36px;
+  border-radius: var(--radius-md);
 }
 
 /* ============================================

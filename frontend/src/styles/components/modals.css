@@ -29,11 +29,9 @@
   width: 100%;
   max-width: 100%;
   margin: auto;
-
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
   animation: slideIn var(--transition-slow);
 }
 
@@ -44,18 +42,21 @@
 .modal--sm {
   max-width: 400px;
 }
+
 .modal--md {
   max-width: 600px;
 }
+
 .modal--lg {
   max-width: 900px;
 }
+
 .modal--xl {
   max-width: 1400px;
 }
 
 /* ============================================
-   MODAL CONTENT
+   MODAL CONTENT (Legacy - à fusionner avec .modal)
    ============================================ */
 
 .modal-content {
@@ -64,11 +65,9 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-height: 90vh;
   width: 100%;
-
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
   animation: slideIn var(--transition-slow);
 }
 
@@ -76,16 +75,10 @@
    MODAL SECTIONS
    ============================================ */
 
-.modal-header,
-.modal-footer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-/* Header */
+/* Header Base */
 .modal-header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
@@ -94,7 +87,7 @@
 }
 
 /* Header flexible (titre + actions) */
-.modal-header.modal-header-flex {
+.modal-header-flex {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -155,6 +148,21 @@
   color: var(--color-text);
 }
 
+/* Icon alignment fix */
+.modal-header h2 svg,
+.modal-header h2 i,
+.modal-header h3 svg,
+.modal-header h3 i,
+.modal-title svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+}
+
 /* Body */
 .modal-body {
   flex: 1;
@@ -168,6 +176,8 @@
 
 /* Footer */
 .modal-footer {
+  display: flex;
+  align-items: center;
   justify-content: flex-end;
   padding: var(--spacing-md) var(--spacing-xl);
   border-top: 1px solid var(--color-border);
@@ -190,14 +200,11 @@
   border: none;
   padding: 12px 16px;
   cursor: pointer;
-
   font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-600);
-
   border-bottom: 2px solid transparent;
   transition: all var(--transition-base);
-
   display: flex;
   align-items: center;
   gap: 8px;
@@ -292,36 +299,168 @@
 }
 
 /* ============================================
-   MODAL HEADER - ICON ALIGNMENT FIX
+   MOBILE MENU – ACTIONS UNIFIÉES
    ============================================ */
 
-.modal-header h2,
-.modal-header h3 {
-  line-height: var(--line-height-normal);
+.mobile-menu-action {
+  width: 100%;
+  justify-content: flex-start;
+  padding: var(--spacing-md);
+  font-weight: var(--font-weight-medium);
 }
 
-.modal-header h2 svg,
-.modal-header h2 i,
-.modal-header h3 svg,
-.modal-header h3 i {
+.mobile-menu-action svg {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   CHANGELOG MODAL - Styles spécifiques
+   ============================================ */
+
+.changelog-modal {
+  max-width: 800px;
+  max-height: 90vh;
+}
+
+.changelog-content {
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  max-height: calc(90vh - 180px);
+}
+
+/* Loading and Error States */
+.changelog-loading,
+.changelog-error {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  line-height: 1;
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-secondary);
 }
 
-.modal-title {
-  line-height: var(--line-height-normal);
+.changelog-error {
+  color: var(--color-danger);
+  gap: var(--spacing-sm);
 }
 
-.modal-title svg {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  line-height: 1;
+/* Markdown Elements */
+.changelog-h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.changelog-h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.changelog-h2::before {
+  content: '📦';
+  font-size: 1.2rem;
+}
+
+.changelog-h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  padding-left: var(--spacing-sm);
+  border-left: 3px solid var(--color-primary);
+}
+
+.changelog-h3::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  margin-right: var(--spacing-sm);
+}
+
+.changelog-paragraph {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.changelog-list {
+  list-style: none;
+  padding-left: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.changelog-item {
+  padding: var(--spacing-xs) 0;
+  color: var(--color-text);
+  line-height: 1.6;
+  position: relative;
+  padding-left: var(--spacing-lg);
+}
+
+.changelog-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.changelog-strong {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.changelog-divider {
+  margin: var(--spacing-xl) 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  opacity: 0.5;
+}
+
+/* Version Badge Styling */
+.changelog-h2 code {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Scroll Styling */
+.changelog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.changelog-content::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.changelog-content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.changelog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
 }
 
 /* ============================================
@@ -373,5 +512,32 @@
 
   .modal-card-header {
     flex-wrap: wrap;
+  }
+
+  /* Changelog responsive */
+  .changelog-modal {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .changelog-content {
+    padding: var(--spacing-md);
+    max-height: calc(95vh - 160px);
+  }
+
+  .changelog-h1 {
+    font-size: 1.5rem;
+  }
+
+  .changelog-h2 {
+    font-size: 1.25rem;
+  }
+
+  .changelog-h3 {
+    font-size: 1rem;
+  }
+
+  .changelog-item {
+    padding-left: var(--spacing-md);
   }
 }

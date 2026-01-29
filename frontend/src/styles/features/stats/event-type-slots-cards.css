@@ -283,6 +283,7 @@
     align-self: flex-end;
   }
 }
+
 /* Groupe slot + participants */
 .slot-group {
   display: flex;
@@ -300,7 +301,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2xs);
-  padding-left: calc(14px + var(--spacing-sm) + var(--spacing-sm)); /* Aligné avec le nom du slot */
+  padding-left: calc(14px + var(--spacing-sm) + var(--spacing-sm));
   margin-top: var(--spacing-xs);
 }
 
@@ -328,31 +329,5 @@
   color: var(--color-text-muted);
 }
 
-/* Ligne de filtres avec boutons d'export */
-.filters-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-}
-
-.export-buttons {
-  display: flex;
-  gap: var(--spacing-sm);
-}
-
-@media (max-width: 768px) {
-  .filters-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .export-buttons {
-    width: 100%;
-  }
-
-  .export-buttons button {
-    flex: 1;
-  }
-}
+/* Note: Les classes .filters-row, .export-buttons et .export-buttons button
+   ont été supprimées car non utilisées dans le code */

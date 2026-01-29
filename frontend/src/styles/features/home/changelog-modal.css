@@ -1,0 +1,175 @@
+/* Changelog Modal Styles */
+
+.changelog-modal {
+  max-width: 800px;
+  max-height: 90vh;
+}
+
+.changelog-content {
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  max-height: calc(90vh - 180px);
+}
+
+/* Loading and Error States */
+.changelog-loading,
+.changelog-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.changelog-error {
+  color: var(--danger);
+  gap: var(--spacing-sm);
+}
+
+/* Markdown Elements */
+.changelog-h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--border);
+}
+
+.changelog-h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.changelog-h2::before {
+  content: '📦';
+  font-size: 1.2rem;
+}
+
+.changelog-h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  padding-left: var(--spacing-sm);
+  border-left: 3px solid var(--primary);
+}
+
+.changelog-h3::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  margin-right: var(--spacing-sm);
+}
+
+.changelog-paragraph {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+.changelog-list {
+  list-style: none;
+  padding-left: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.changelog-item {
+  padding: var(--spacing-xs) 0;
+  color: var(--text-primary);
+  line-height: 1.6;
+  position: relative;
+  padding-left: var(--spacing-lg);
+}
+
+.changelog-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.changelog-strong {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.changelog-divider {
+  margin: var(--spacing-xl) 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  opacity: 0.5;
+}
+
+/* Version Badge Styling */
+.changelog-h2 code {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .changelog-modal {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .changelog-content {
+    padding: var(--spacing-md);
+    max-height: calc(95vh - 160px);
+  }
+
+  .changelog-h1 {
+    font-size: 1.5rem;
+  }
+
+  .changelog-h2 {
+    font-size: 1.25rem;
+  }
+
+  .changelog-h3 {
+    font-size: 1rem;
+  }
+
+  .changelog-item {
+    padding-left: var(--spacing-md);
+  }
+}
+
+/* Scroll Styling */
+.changelog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.changelog-content::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.changelog-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.changelog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

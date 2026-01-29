@@ -19,27 +19,6 @@
 }
 
 /* ============================================
-   STATS SECTIONS
-   ============================================ */
-
-.stats-section {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-}
-
-.stats-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-lg);
-  background: var(--gradient-light);
-  border-bottom: 1px solid var(--color-border);
-}
-
-/* ============================================
    STATS GRIDS
    ============================================ */
 
@@ -60,20 +39,6 @@
    STAT CARDS
    ============================================ */
 
-.stat-card {
-  background-image: var(--gradient-light);
-  border: 2px solid var(--color-gray-200);
-  padding: 20px;
-  border-radius: var(--radius-xl);
-  text-align: center;
-  transition: all var(--transition-slow);
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
 .stat-number {
   display: block;
   font-size: 2rem;
@@ -88,37 +53,6 @@
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-/* ============================================
-   STATS TABLES
-   ============================================ */
-
-.stats-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--font-size-sm);
-}
-
-.stats-table thead {
-  background: var(--color-bg-secondary);
-  border-bottom: 2px solid var(--color-border);
-}
-
-.stats-table th {
-  padding: var(--spacing-sm) var(--spacing-md);
-  text-align: center;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-}
-
-.stats-table tbody tr {
-  border-bottom: 1px solid var(--color-border-light);
-  transition: background var(--transition-fast);
-}
-
-.stats-table tbody tr:hover {
-  background: var(--color-bg-hover);
 }
 
 /* ============================================
@@ -189,10 +123,6 @@
   text-align: center;
 }
 
-.table-cell-left {
-  text-align: left;
-}
-
 .table-cell-accent {
   background: var(--color-primary-light);
   color: var(--color-white);
@@ -226,20 +156,6 @@
 }
 
 /* ============================================
-   TOTAL ROW
-   ============================================ */
-
-.table-row-total {
-  border-top: 2px solid var(--color-border-dark);
-  background: var(--color-bg-secondary);
-  font-weight: var(--font-weight-semibold);
-}
-
-.table-row-total:hover {
-  background: var(--color-bg-secondary) !important;
-}
-
-/* ============================================
    LOADING STATE
    ============================================ */
 
@@ -251,11 +167,6 @@
   padding: var(--spacing-3xl);
   gap: var(--spacing-md);
   color: var(--color-gray-600);
-}
-
-.loading-state svg {
-  width: 32px;
-  height: 32px;
 }
 
 @media (max-width: 768px) {
@@ -276,3 +187,22 @@
     margin-top: var(--spacing-sm);
   }
 }
+
+/* Note: Les classes suivantes ont été supprimées car non utilisées :
+   
+   Sections :
+   - .stats-section
+   - .stats-section-header
+   
+   Cartes :
+   - .stat-card
+   - .stat-card:hover
+   
+   Tables :
+   - .stats-table et ses variantes (remplacées par .data-table)
+   - .table-cell-left
+   - .table-row-total et :hover
+   
+   SVG :
+   - .loading-state svg (géré dans React)
+*/

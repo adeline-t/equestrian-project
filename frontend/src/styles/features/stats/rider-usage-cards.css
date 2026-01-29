@@ -26,8 +26,7 @@
 
 .header-rider,
 .header-usage-type,
-.header-week,
-.header-total {
+.header-week {
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -49,11 +48,6 @@
 .header-week {
   text-align: center;
   padding: 0 var(--spacing-sm);
-}
-
-.header-total {
-  text-align: center;
-  padding-left: var(--spacing-sm);
 }
 
 /* Séparateur dans le header */
@@ -173,15 +167,6 @@
   align-items: center;
 }
 
-/* Cellule total */
-.cell-total {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-left: var(--spacing-sm);
-}
-
 /* Total count */
 .count-total {
   color: var(--color-primary);
@@ -234,6 +219,7 @@
   .card {
     padding: var(--spacing-xs);
   }
+
   /* Header fixe */
   .rider-usage-header {
     display: none;
@@ -273,8 +259,7 @@
 
   .header-rider,
   .header-usage-type,
-  .header-week,
-  .header-total {
+  .header-week {
     font-size: 0.7rem;
     text-transform: capitalize;
     color: var(--color-gray-500);
@@ -288,3 +273,6 @@
     font-size: small;
   }
 }
+
+/* Note: Les classes .header-total et .cell-total ont été supprimées
+   car non utilisées dans le code */

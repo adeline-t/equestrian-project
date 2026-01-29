@@ -6,11 +6,11 @@ import RiderCard from '../riders/RiderCard';
 import AdminMenu from './AdminMenu';
 import ImportPlanningModal from './ImportPlanningModal';
 import ExportPlanningModal from './ExportPlanningModal';
+import ChangelogModal from './ChangelogModal';
 import { useAppMode } from '../../context/AppMode';
 import { useCurrentRider } from '../../hooks/useCurrrentRider';
 import { Icons } from '../../lib/icons';
 import '../../styles/features/home/header.css';
-import '../../styles/features/home/header-mobile.css';
 
 export default function Header() {
   const { mode, resetMode } = useAppMode();
@@ -23,6 +23,7 @@ export default function Header() {
   const [isAdminMenuOpen, setAdminMenuOpen] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showChangelogModal, setShowChangelogModal] = useState(false);
 
   // Ouvre automatiquement la modale rider si mode user et aucun rider sélectionné
   useEffect(() => {
@@ -85,6 +86,15 @@ export default function Header() {
     setShowExportModal(false);
   };
 
+  const handleOpenChangelog = () => {
+    setShowChangelogModal(true);
+    setMobileMenuOpen(false);
+  };
+
+  const handleCloseChangelog = () => {
+    setShowChangelogModal(false);
+  };
+
   return (
     <>
       <header className="header">
@@ -144,6 +154,16 @@ export default function Header() {
                   <Icons.BarChart /> Statistiques
                 </NavLink>
               )}
+
+              {/* Bouton Changelog */}
+              <button
+                className="btn btn-ghost changelog-btn"
+                onClick={handleOpenChangelog}
+                title="Voir l'historique des versions"
+              >
+                <Icons.File />
+              </button>
+
               <button className="btn btn-secondary" onClick={handleLogout}>
                 Changer de profil
               </button>
@@ -248,8 +268,17 @@ export default function Header() {
                 )}
               </div>
 
+              {/* Changelog button in mobile menu */}
+              <button className="btn btn-ghost mobile-menu-action" onClick={handleOpenChangelog}>
+                <Icons.File />
+                <span>Historique des versions</span>
+              </button>
+
               {/* Logout button */}
-              <button className="mobile-logout-btn" onClick={handleLogout}>
+              <button
+                className="btn btn-outline-secondary mobile-menu-action"
+                onClick={handleLogout}
+              >
                 <Icons.LogOut />
                 <span>Changer de profil</span>
               </button>
@@ -257,11 +286,11 @@ export default function Header() {
               {/* Mode indicator */}
               <div className="mobile-menu-footer">
                 {mode === 'admin' ? (
-                  <div className="mobile-mode-badge admin">
+                  <div className="btn btn-sm btn-danger mobile-menu-action">
                     <Icons.Settings /> Mode Admin
                   </div>
                 ) : (
-                  <div className="mobile-mode-badge user">
+                  <div className="btn btn-sm btn-primary mobile-menu-action" aria-disabled>
                     <Icons.User /> Mode Utilisateur
                   </div>
                 )}
@@ -308,6 +337,9 @@ export default function Header() {
       />
 
       <ExportPlanningModal isOpen={showExportModal} onClose={handleCloseExport} />
+
+      {/* Modale Changelog */}
+      <ChangelogModal isOpen={showChangelogModal} onClose={handleCloseChangelog} />
     </>
   );
 }
