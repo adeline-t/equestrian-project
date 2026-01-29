@@ -45,6 +45,7 @@ import {
   FaFileExport,
   FaFile,
 } from 'react-icons/fa';
+import { FaBoltLightning } from 'react-icons/fa6';
 
 export const Icons = {
   Add: FaPlus,
@@ -99,6 +100,7 @@ export const Icons = {
   Export: FaFileExport,
   File: FaFile,
   Filter: FaFilter,
+  ChangeLog: FaBoltLightning,
 };
 
 export const renderIcon = (Icon, props = {}) => {

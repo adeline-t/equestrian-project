@@ -162,7 +162,7 @@
   padding: var(--spacing-xs) var(--spacing-md);
   padding-bottom: calc(var(--spacing-xs) + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -2px 10px var(--calendar-shadow-light, rgba(0, 0, 0, 0.05));
-  z-index: 95;
+  z-index: 5;
   gap: var(--spacing-sm);
 }
 

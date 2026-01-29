@@ -3,6 +3,45 @@
    Desktop & Mobile
    ============================================ */
 
+/* Variables UI uniformisées */
+:root {
+  /* Fonts */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Buttons / Icons */
+  --btn-size-sm: 32px;
+  --btn-size-md: 40px;
+  --btn-size-lg: 48px;
+
+  /* Gaps in flex / grid */
+  --gap-xs: 4px;
+  --gap-sm: 8px;
+  --gap-md: 16px;
+  --gap-lg: 24px;
+}
+
+/* ============================================
+   HEADER BASE
+   ============================================ */
+
 .header {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
@@ -17,7 +56,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--spacing-md) var(--spacing-lg);
-  gap: var(--spacing-lg);
+  gap: var(--gap-lg);
 }
 
 /* ============================================
@@ -29,7 +68,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: var(--spacing-lg);
+  gap: var(--gap-lg);
 }
 
 .header-mobile {
@@ -49,13 +88,13 @@
 .header-nav {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: var(--gap-md);
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--gap-xs);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
   text-decoration: none;
@@ -68,45 +107,32 @@
 .nav-link:hover {
   background: var(--color-bg-hover);
   color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 .nav-link.active {
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   color: var(--color-white);
-}
-
-/* Changelog button */
-.changelog-btn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  transition: all var(--transition-base);
-}
-
-.changelog-btn:hover {
-  background-color: var(--color-bg-hover);
-  color: var(--color-primary);
 }
 
 /* Mode labels desktop */
 .mode-label {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--gap-xs);
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--transition-base);
 }
 
 .mode-label.mode-admin,
 .mode-label.admin-btn {
   background: var(--color-danger-light);
   color: var(--color-danger);
-  cursor: pointer;
-  transition: all var(--transition-base);
 }
 
 .mode-label.mode-admin:hover,
@@ -114,20 +140,11 @@
   background: var(--color-danger);
   color: var(--color-white);
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.mode-label.mode-admin:active,
-.mode-label.admin-btn:active {
-  transform: translateY(0);
 }
 
 .mode-label.mode-user {
   background: var(--color-primary-light);
-  color: var(--color-primary);
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-base);
+  color: var(--color-white);
 }
 
 .mode-label.mode-user:hover {
@@ -136,7 +153,7 @@
 }
 
 /* ============================================
-   MOBILE HEADER - COMPACT
+   MOBILE HEADER
    ============================================ */
 
 @media (max-width: 768px) {
@@ -149,19 +166,19 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: var(--spacing-sm);
+    gap: var(--gap-sm);
   }
 
   .header-container {
     padding: var(--spacing-sm) var(--spacing-md);
-    min-height: 56px;
+    min-height: var(--btn-size-md);
   }
 
   .header-title-mobile {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    font-size: var(--font-size-lg);
+    gap: var(--gap-xs);
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
     color: var(--color-text);
     margin: 0;
@@ -175,8 +192,13 @@
     white-space: nowrap;
   }
 
-  /* Mobile menu toggle button */
-  .mobile-menu-toggle {
+  .mobile-menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .mobile-menu-.toggle {
     width: 40px;
     height: 40px;
     display: flex;
@@ -189,6 +211,23 @@
     cursor: pointer;
     transition: all var(--transition-base);
     flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .mobile-menu-toggle svg {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+    z-index: 10;
   }
 
   .mobile-menu-toggle:hover {
@@ -199,10 +238,9 @@
     transform: scale(0.95);
   }
 
-  /* Mode badge mobile - compact */
   .mode-badge-mobile {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -211,6 +249,12 @@
     cursor: pointer;
     transition: all var(--transition-base);
     flex-shrink: 0;
+    transform: scale(0.95);
+  }
+
+  .mode-badge-mobile svg {
+    width: 20px;
+    height: 20px;
   }
 
   .mode-badge-mobile.mode-admin {
@@ -233,8 +277,8 @@
     transform: scale(0.95);
   }
 
-  .changelog-btn {
-    display: none; /* Accessible via le menu burger */
+  .changelog {
+    display: none; /* Accessible via menu burger */
   }
 }
 
@@ -250,7 +294,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: var(--z-overlay);
+    z-index: 400;
     animation: fadeIn 0.2s ease;
   }
 
@@ -265,7 +309,7 @@
 
   .mobile-menu {
     position: fixed;
-    top: 0;
+    top: var(--btn-size-md);
     left: 0;
     bottom: 0;
     width: 280px;
@@ -302,8 +346,8 @@
   }
 
   .mobile-menu-header button {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -313,6 +357,11 @@
     color: var(--color-text-muted);
     cursor: pointer;
     transition: all var(--transition-base);
+  }
+
+  .mobile-menu-header button svg {
+    width: 40px;
+    height: 40px;
   }
 
   .mobile-menu-header button:hover {
@@ -325,118 +374,46 @@
     padding: var(--spacing-md);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--gap-md);
   }
 
-  /* User card in mobile menu */
-  .mobile-user-card {
+  .mobile-user-card,
+  .mobile-admin-card {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--gap-md);
     padding: var(--spacing-md);
-    background: var(--color-primary);
-    border: none;
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all var(--transition-base);
-    text-align: left;
     width: 100%;
   }
 
-  .mobile-user-card:active {
-    transform: scale(0.98);
+  .mobile-user-card {
+    background: var(--color-primary);
+  }
+
+  .mobile-admin-card {
+    background: var(--color-danger);
   }
 
   .mobile-user-icon {
-    width: 48px;
-    height: 48px;
+    width: var(--btn-size-lg);
+    height: var(--btn-size-lg);
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--color-white);
     color: var(--color-primary);
     border-radius: 50%;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
-  .mobile-user-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
-
-  .mobile-user-name {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-white);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mobile-user-label {
     font-size: var(--font-size-sm);
-    color: var(--color-white);
-  }
-
-  /* Admin card in mobile menu */
-  .mobile-admin-card {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md);
-    background: var(--color-danger);
-    border: none;
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    transition: all var(--transition-base);
-  }
-
-  .mobile-admin-card:hover {
-    background: var(--color-danger-dark);
-    transform: translateX(4px);
-  }
-
-  .mobile-admin-icon {
-    font-size: 32px;
-    color: var(--color-white);
     flex-shrink: 0;
-  }
-
-  .mobile-admin-info {
-    flex: 1;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .mobile-admin-name {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-white);
-  }
-
-  .mobile-admin-label {
-    font-size: var(--font-size-sm);
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  /* Mobile navigation links */
-  .mobile-menu-links {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
   }
 
   .mobile-nav-link {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--gap-md);
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     text-decoration: none;
@@ -447,15 +424,18 @@
 
   .mobile-nav-link:hover {
     background: var(--color-bg-hover);
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
   }
-
   .mobile-nav-link.active {
-    background: var(--color-primary);
+    background: var(--gradient-primary);
     color: var(--color-white);
   }
 
-  /* Mobile menu footer */
   .mobile-menu-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
     padding-top: var(--spacing-md);
     border-top: 1px solid var(--color-border);
   }
@@ -487,19 +467,11 @@
   .header-title {
     font-size: var(--font-size-lg);
   }
-
   .header-nav {
-    gap: var(--spacing-sm);
+    gap: var(--gap-sm);
   }
-
   .nav-link {
     padding: var(--spacing-xs) var(--spacing-sm);
     font-size: var(--font-size-sm);
   }
 }
-
-/* Note: Les styles SVG et les classes spécifiques mobile ont été supprimés car :
-   - Les SVG sont stylés directement dans les composants React
-   - Certaines classes mobile (.mobile-logout-btn, .mobile-mode-badge) ne sont plus utilisées
-   - Les icônes sont gérées via inline styles ou props pour plus de flexibilité
-*/

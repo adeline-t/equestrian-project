@@ -155,38 +155,40 @@ export default function Header() {
                 </NavLink>
               )}
 
-              {/* Bouton Changelog */}
-              <button
-                className="btn btn-ghost changelog-btn"
-                onClick={handleOpenChangelog}
-                title="Voir l'historique des versions"
-              >
-                <Icons.File />
-              </button>
+              <div className="btn-group">
+                {/* Label de mode desktop */}
+                {mode === 'admin' ? (
+                  <button
+                    className="mode-label mode-admin admin-btn"
+                    onClick={handleOpenAdminMenu}
+                    title="Administration"
+                  >
+                    <Icons.Settings className="icon-small" /> Admin
+                  </button>
+                ) : (
+                  <button
+                    className="mode-label mode-user rider-badge-btn"
+                    onClick={openRiderCard}
+                    title="Voir votre profil"
+                  >
+                    <Icons.User className="icon-small" />
+                    {rider ? rider.name : 'Utilisateur'}
+                  </button>
+                )}
 
-              <button className="btn btn-secondary" onClick={handleLogout}>
-                Changer de profil
-              </button>
+                <button className="btn btn-outline-secondary" onClick={handleLogout}>
+                  Changer de profil
+                </button>
 
-              {/* Label de mode desktop */}
-              {mode === 'admin' ? (
+                {/* Bouton Changelog */}
                 <button
-                  className="mode-label mode-admin admin-btn"
-                  onClick={handleOpenAdminMenu}
-                  title="Administration"
+                  className="btn btn-outline-primary changelog"
+                  onClick={handleOpenChangelog}
+                  title="Voir l'historique des versions"
                 >
-                  <Icons.Settings className="icon-small" /> Admin
+                  <Icons.ChangeLog /> Nouveautés
                 </button>
-              ) : (
-                <button
-                  className="mode-label mode-user rider-badge-btn"
-                  onClick={openRiderCard}
-                  title="Voir votre profil"
-                >
-                  <Icons.User className="icon-small" />
-                  {rider ? rider.name : 'Utilisateur'}
-                </button>
-              )}
+              </div>
             </nav>
           </div>
         </div>
@@ -218,7 +220,7 @@ export default function Header() {
 
               {/* Admin button */}
               {mode === 'admin' && (
-                <button className="mobile-admin-card" onClick={handleOpenAdminMenu}>
+                <button className="btn btn-outline-primary" onClick={handleOpenAdminMenu}>
                   <Icons.Settings className="mobile-admin-icon" />
                   <span className="mobile-admin-label">Import / Export de fichiers</span>
                   <Icons.ChevronRight />
@@ -268,29 +270,25 @@ export default function Header() {
                 )}
               </div>
 
-              {/* Changelog button in mobile menu */}
-              <button className="btn btn-ghost mobile-menu-action" onClick={handleOpenChangelog}>
-                <Icons.File />
-                <span>Historique des versions</span>
-              </button>
-
-              {/* Logout button */}
-              <button
-                className="btn btn-outline-secondary mobile-menu-action"
-                onClick={handleLogout}
-              >
-                <Icons.LogOut />
-                <span>Changer de profil</span>
-              </button>
-
               {/* Mode indicator */}
               <div className="mobile-menu-footer">
+                {/* Changelog button in mobile menu */}
+                <button className="btn btn-outline-primary" onClick={handleOpenChangelog}>
+                  <Icons.File />
+                  <span>Historique des versions</span>
+                </button>
+
+                {/* Logout button */}
+                <button className="btn btn-outline-secondary" onClick={handleLogout}>
+                  <Icons.LogOut />
+                  <span>Changer de profil</span>
+                </button>
                 {mode === 'admin' ? (
-                  <div className="btn btn-sm btn-danger mobile-menu-action">
+                  <div className="btn btn-sm btn-danger">
                     <Icons.Settings /> Mode Admin
                   </div>
                 ) : (
-                  <div className="btn btn-sm btn-primary mobile-menu-action" aria-disabled>
+                  <div className="btn btn-sm btn-primary" aria-disabled>
                     <Icons.User /> Mode Utilisateur
                   </div>
                 )}
