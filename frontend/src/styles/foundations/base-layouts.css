@@ -51,8 +51,6 @@ textarea {
 .container {
   margin: 0 auto;
   padding: var(--spacing-lg);
-  width: 90%;
-  max-width: 1400px;
 }
 
 main {

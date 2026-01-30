@@ -111,15 +111,7 @@ export default function Header() {
             </h1>
 
             {/* Mode badge mobile */}
-            {mode === 'admin' ? (
-              <button
-                className="mode-badge-mobile mode-admin"
-                onClick={handleOpenAdminMenu}
-                title="Administration"
-              >
-                <Icons.Settings />
-              </button>
-            ) : (
+            {mode !== 'admin' && (
               <button
                 className="mode-badge-mobile mode-user"
                 onClick={openRiderCard}
@@ -154,42 +146,41 @@ export default function Header() {
                   <Icons.BarChart /> Statistiques
                 </NavLink>
               )}
-
-              <div className="btn-group">
-                {/* Label de mode desktop */}
-                {mode === 'admin' ? (
-                  <button
-                    className="mode-label mode-admin admin-btn"
-                    onClick={handleOpenAdminMenu}
-                    title="Administration"
-                  >
-                    <Icons.Settings className="icon-small" /> Admin
-                  </button>
-                ) : (
-                  <button
-                    className="mode-label mode-user rider-badge-btn"
-                    onClick={openRiderCard}
-                    title="Voir votre profil"
-                  >
-                    <Icons.User className="icon-small" />
-                    {rider ? rider.name : 'Utilisateur'}
-                  </button>
-                )}
-
-                <button className="btn btn-outline-secondary" onClick={handleLogout}>
-                  Changer de profil
-                </button>
-
-                {/* Bouton Changelog */}
-                <button
-                  className="btn btn-outline-primary changelog"
-                  onClick={handleOpenChangelog}
-                  title="Voir l'historique des versions"
-                >
-                  <Icons.ChangeLog /> Nouveautés
-                </button>
-              </div>
             </nav>
+            <div className="btn-group">
+              {/* Label de mode desktop */}
+              {mode === 'admin' ? (
+                <button
+                  className="mode-label mode-admin admin-btn"
+                  onClick={handleOpenAdminMenu}
+                  title="Administration"
+                >
+                  <Icons.Settings className="icon-small" /> Admin
+                </button>
+              ) : (
+                <button
+                  className="mode-label mode-user rider-badge-btn"
+                  onClick={openRiderCard}
+                  title="Voir votre profil"
+                >
+                  <Icons.User className="icon-small" />
+                  {rider ? rider.name : 'Utilisateur'}
+                </button>
+              )}
+
+              <button className="btn btn-outline-secondary" onClick={handleLogout}>
+                Changer de profil
+              </button>
+
+              {/* Bouton Changelog */}
+              <button
+                className="btn btn-outline-primary changelog"
+                onClick={handleOpenChangelog}
+                title="Voir l'historique des versions"
+              >
+                <Icons.ChangeLog /> Nouveautés
+              </button>
+            </div>
           </div>
         </div>
       </header>

@@ -188,16 +188,12 @@
 }
 
 .mobile-action-bar__button--primary {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary, #4299e1) 0%,
-    var(--color-primary-light, #5da9e9) 100%
-  );
-  color: var(--calendar-primary-text, var(--color-white));
+  background: var(--gradient-primary);
+  color: var(--color-white);
   box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
   flex: 0 0 auto;
-  min-width: 56px;
-  min-height: 56px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 50%;
   padding: 0;
 }
@@ -267,23 +263,6 @@
 
   .mobile-events-list__header {
     padding: 0 var(--spacing-xs);
-  }
-}
-
-@media (max-width: 480px) {
-  .mobile-action-bar__button {
-    min-width: 56px;
-    font-size: var(--calendar-font-lg, 22px);
-    gap: 1px;
-  }
-
-  .mobile-action-bar__label {
-    font-size: var(--calendar-font-xxs, 9px);
-  }
-
-  .mobile-action-bar__button--primary {
-    min-width: 52px;
-    min-height: 52px;
   }
 }
 
