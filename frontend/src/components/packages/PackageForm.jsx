@@ -53,7 +53,7 @@ function PackageForm({ initialPackage = null, riderId, onSubmit, onCancel }) {
 
           <div className="form-group">
             <label htmlFor="private_lessons_per_week">
-              Cours privés / semaine <span className="required">*</span>
+              Cours particuliers / semaine <span className="required">*</span>
             </label>
             <input
               type="number"

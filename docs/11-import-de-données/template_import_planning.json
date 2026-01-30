@@ -9,17 +9,24 @@
     },
     {
       "id": 2,
-      "event_type": "group_lesson",
+      "event_type": "grouped_lesson",
       "name": "Cours collectif débutants",
-      "min_participants": 2,
+      "min_participants": 1,
       "max_participants": 6
     },
     {
       "id": 3,
-      "event_type": "rest",
+      "event_type": "blocked",
       "name": "Repos",
       "min_participants": 0,
       "max_participants": 0
+    },
+    {
+      "id": 4,
+      "event_type": "service",
+      "name": "Essai",
+      "min_participants": 1,
+      "max_participants": 1
     }
   ],
   "planning_slots": [
@@ -45,8 +52,8 @@
       "id": 3,
       "event_id": 3,
       "slot_date": "2026-01-29",
-      "start_time": "00:00",
-      "end_time": "23:59",
+      "start_time": null,
+      "end_time": null,
       "is_all_day": true,
       "slot_status": "scheduled"
     }

@@ -70,7 +70,7 @@ function RiderUsageStatsSection({ stats, weeks }) {
       <div className="data-card-header">
         <div className="data-card-title">
           <h3>Consommation des forfaits</h3>
-          <span className="detail-card-meta">Services et cours privés par semaine</span>
+          <span className="detail-card-meta">Services et cours particuliers par semaine</span>
         </div>
       </div>
 
@@ -155,7 +155,9 @@ function RiderUsageCard({ rider, weeks }) {
           <DomainBadge config={configRiderType} />
           <div className="rider-package-info">
             {rider.servicesPerWeek || 0} services
-            {rider.privateLessonsPerWeek > 0 && <> + {rider.privateLessonsPerWeek} cours privés</>}
+            {rider.privateLessonsPerWeek > 0 && (
+              <> + {rider.privateLessonsPerWeek} cours particuliers</>
+            )}
             <span className="text-muted"> / semaine</span>
           </div>
         </div>
@@ -210,10 +212,10 @@ function RiderUsageCard({ rider, weeks }) {
           })}
         </div>
 
-        {/* Ligne Cours privés */}
+        {/* Ligne Cours particuliers */}
         <div className="card-row">
           <div className="cell-usage-type">
-            <span>Cours privés</span>
+            <span>Cours particuliers</span>
           </div>
 
           {weeks.map((week) => {

@@ -152,7 +152,7 @@ function RiderBillingStatsSection({ stats, month }) {
                   <Icons.User />
                 </div>
                 <div className="summary-card-content">
-                  <div className="summary-card-label">Cours privés totaux</div>
+                  <div className="summary-card-label">Cours particuliers totaux</div>
                   <div className="summary-card-value">{globalTotals.privateLessons}</div>
                 </div>
               </div>
@@ -187,8 +187,8 @@ function RiderBillingStatsSection({ stats, month }) {
                       <th className="table-header-sticky">Cavalier</th>
                       <th className="table-header-center">Forfait services</th>
                       <th className="table-header-center">Services consommés</th>
-                      <th className="table-header-center">Forfait cours privés</th>
-                      <th className="table-header-center">Cours privés consommés</th>
+                      <th className="table-header-center">Forfait cours particuliers</th>
+                      <th className="table-header-center">Cours particuliers consommés</th>
                       <th className="table-header-center">Compétitions</th>
                       <th className="table-header-center">Spéciaux</th>
                       <th className="table-header-center">Dépassements</th>
