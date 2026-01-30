@@ -32,7 +32,6 @@ wrangler-output/
 .next/
 .nuxt/
 .cache/
-public/
 .out/
 .storybook-out/
 
@@ -157,7 +156,3 @@ docs/generated/
 # ========================================
 # END OF GITIGNORE
 # ========================================
-gitignored_files.txt
-copy_gitignored.sh
-frontend/src/components/calendar/export_files.sh
-frontend/fix-imports.sh
