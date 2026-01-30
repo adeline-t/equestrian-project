@@ -263,7 +263,7 @@ function RiderCard({ riderId, onClose, onEdit, onDelete, onSuccess }) {
                       <span className="package-value">{activePackage.services_per_week}</span>
                     </div>
                     <div className="package-item">
-                      <span className="package-label">Cours collectifs</span>
+                      <span className="package-label">Cours particuliers</span>
                       <span className="package-value">
                         {activePackage.private_lessons_per_week}
                       </span>
