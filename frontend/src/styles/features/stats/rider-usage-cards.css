@@ -12,19 +12,18 @@
 /* Header fixe */
 .rider-usage-header {
   display: grid;
-  grid-template-columns: 220px 150px repeat(auto-fit, minmax(70px, 1fr)) 80px;
+  grid-template-columns: 220px 150px repeat(auto-fit, minmax(70px, 1fr));
+  width: 100%;
   gap: 0;
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-card);
   border: 1px solid var(--color-gray-150);
   border-radius: var(--radius-lg);
-  position: sticky;
   top: 0;
   z-index: 10;
   align-items: center;
 }
 
-.header-rider,
 .header-usage-type,
 .header-week {
   font-size: 0.7rem;
@@ -37,6 +36,11 @@
 .header-rider {
   text-align: left;
   padding-right: var(--spacing-md);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-gray-500);
+  font-weight: 600;
 }
 
 .header-usage-type {
@@ -50,19 +54,10 @@
   padding: 0 var(--spacing-sm);
 }
 
-/* Séparateur dans le header */
-.rider-usage-header::after {
-  content: '';
-  grid-column: 2;
-  width: 1px;
-  height: 100%;
-  background: var(--color-primary-lighter);
-}
-
 /* Carte par cavalier */
 .rider-usage-card {
-  display: grid;
-  grid-template-columns: 220px 1px 1fr;
+  display: flex;
+  flex-direction: row;
   gap: 0;
   background: var(--color-bg-card);
   border: 1px solid var(--color-gray-200);
@@ -85,6 +80,7 @@
   justify-content: center;
   padding: var(--spacing-lg);
   background: var(--color-bg-card);
+  width: 300px;
 }
 
 .cell-rider-name {
@@ -107,24 +103,23 @@
 
 /* Séparateur vertical */
 .card-separator {
-  width: 1px;
-  background: var(--color-primary-lighter);
+  display: none;
 }
 
 /* Section consommation */
 .card-usage-section {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 /* Ligne dans la section consommation */
 .card-row {
-  display: grid;
-  grid-template-columns: 150px repeat(auto-fit, minmax(70px, 1fr)) 80px;
-  gap: var(--spacing-sm);
+  display: flex;
+  flex-direction: row;
+  width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
   align-items: center;
-  transition: background-color 0.15s ease;
 }
 
 .card-row:not(:last-child) {
@@ -151,6 +146,7 @@
   gap: var(--spacing-xs);
   padding-right: var(--spacing-sm);
   font-size: 0.85rem;
+  width: 100%;
 }
 
 .cell-usage-type .icon-xs {
@@ -165,6 +161,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 /* Total count */
@@ -181,27 +178,6 @@
 .text-muted {
   color: var(--color-gray-500);
   font-weight: 400;
-}
-
-/* Animation d'entrée */
-.rider-usage-card {
-  animation: fadeSlideIn 0.3s ease-out backwards;
-}
-
-.rider-usage-card:nth-child(2) {
-  animation-delay: 0.03s;
-}
-.rider-usage-card:nth-child(3) {
-  animation-delay: 0.06s;
-}
-.rider-usage-card:nth-child(4) {
-  animation-delay: 0.09s;
-}
-.rider-usage-card:nth-child(5) {
-  animation-delay: 0.12s;
-}
-.rider-usage-card:nth-child(n + 6) {
-  animation-delay: 0.15s;
 }
 
 @keyframes fadeSlideIn {
@@ -273,6 +249,3 @@
     font-size: small;
   }
 }
-
-/* Note: Les classes .header-total et .cell-total ont été supprimées
-   car non utilisées dans le code */
