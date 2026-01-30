@@ -53,7 +53,7 @@ export async function runRecurrenceCron(env) {
       const existingSlotKeys = new Set(existingSlots?.map(buildSlotKey) || []);
 
       // 4️⃣ Generate slots for the next X weeks
-      const nextSlots = generateNextSlots(rec, 3);
+      const nextSlots = generateNextSlots(rec, 12);
 
       // 5️⃣ Filter out already existing slots
       const slotsToCreate = nextSlots.filter((slot) => !existingSlotKeys.has(buildSlotKey(slot)));
@@ -147,7 +147,7 @@ export async function runRecurrenceCron(env) {
  * Returns:
  * { slot_date: YYYY-MM-DD, start_time: HH:mm:ss, end_time: HH:mm:ss, is_all_day }
  */
-function generateNextSlots(rec, weeksAhead = 3) {
+function generateNextSlots(rec, weeksAhead = 12) {
   const slots = [];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
